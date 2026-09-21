@@ -632,6 +632,7 @@ ActiveRecord::Schema.define(version: 2023_05_08_082157) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "blogs", "users"
   add_foreign_key "bookmarks", "members"
   add_foreign_key "bookmarks", "users"
   add_foreign_key "collections", "users"
@@ -641,15 +642,21 @@ ActiveRecord::Schema.define(version: 2023_05_08_082157) do
   add_foreign_key "exhibitions", "exhibition_groups"
   add_foreign_key "exhibitions", "prefectures"
   add_foreign_key "items", "collections"
+  add_foreign_key "links", "users"
+  add_foreign_key "matches", "users"
   add_foreign_key "members_events", "events"
   add_foreign_key "members_events", "members"
   add_foreign_key "name_schedules", "names"
   add_foreign_key "name_schedules", "schedules"
+  add_foreign_key "place_reviews", "places"
   add_foreign_key "places_events", "events"
   add_foreign_key "places_events", "places"
   add_foreign_key "questions", "users"
   add_foreign_key "reviews", "members"
   add_foreign_key "reviews", "users"
+  add_foreign_key "schedules", "users"
+  add_foreign_key "user_contacts", "users"
   add_foreign_key "user_tags", "tags"
   add_foreign_key "user_tags", "users"
+  add_foreign_key "users", "prefectures"
 end
