@@ -1,3 +1,6 @@
+// The asset manifest also compiles this stylesheet independently.
+@import "brand_palette";
+
 // Shared interaction states and surfaces, loaded after legacy page styles.
 .site-brand {
   background: $cb-surface;

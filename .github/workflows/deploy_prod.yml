@@ -18,11 +18,13 @@ jobs:
               port: ${{ secrets.DEPLOY_PORT }}
               key: ${{ secrets.DEPLOY_KEY }}
               script: |
+                set -eu
                 cd ${{ secrets.DEPLOY_DIR }}
-                git pull origin master
-                npm install --prefix . 2>/dev/null || true
+                git pull --ff-only origin master
+                npm ci --ignore-scripts --no-audit --no-fund
                 ~/.rbenv/shims/bundle exec rake db:migrate RAILS_ENV=production
                 ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
+                ~/.rbenv/shims/ruby bin/verify_brand_assets
                 kill -USR2 $(cat tmp/pids/unicorn.pid)
           - name: Deploy to circle-book-web-server2
             uses: appleboy/ssh-action@master
@@ -32,8 +34,10 @@ jobs:
               port: ${{ secrets.DEPLOY_PORT }}
               key: ${{ secrets.DEPLOY_KEY }}
               script: |
+                set -eu
                 cd ${{ secrets.DEPLOY_DIR }}
-                git pull origin master
-                npm install --prefix . 2>/dev/null || true
+                git pull --ff-only origin master
+                npm ci --ignore-scripts --no-audit --no-fund
                 ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
+                ~/.rbenv/shims/ruby bin/verify_brand_assets
                 kill -USR2 $(cat tmp/pids/unicorn.pid)

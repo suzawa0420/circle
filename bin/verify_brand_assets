@@ -1,0 +1,14 @@
+require 'json'
+
+root = File.expand_path('..', __dir__)
+manifests = Dir[File.join(root, 'public/assets/.sprockets-manifest-*.json')]
+abort 'Asset verification failed: no manifest' if manifests.empty?
+manifests.each do |path|
+  manifest = JSON.parse(File.read(path))
+  asset = manifest.fetch('assets').fetch('application.css')
+  css = File.read(File.join(root, 'public/assets', asset))
+  unless css.include?('.site-brand__image') && css.match?(/#16835d/i) && css.match?(/width:\s*200px/)
+    abort 'Asset verification failed: application.css is missing the brand styles'
+  end
+end
+puts 'Brand asset verification passed'
