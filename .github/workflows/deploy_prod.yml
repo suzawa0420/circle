@@ -2,42 +2,115 @@ name: deploy_prod
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: circle-production
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-
     steps:
-          - name: Deploy to circle-book-web-server3
-            uses: appleboy/ssh-action@master
-            with:
-              host: ${{ secrets.DEPLOY_HOST1 }}
-              username: ${{ secrets.DEPLOY_USER }}
-              port: ${{ secrets.DEPLOY_PORT }}
-              key: ${{ secrets.DEPLOY_KEY }}
-              script: |
-                set -eu
-                cd ${{ secrets.DEPLOY_DIR }}
-                git pull --ff-only origin master
-                npm ci --ignore-scripts --no-audit --no-fund
-                ~/.rbenv/shims/bundle exec rake db:migrate RAILS_ENV=production
-                ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
-                ~/.rbenv/shims/ruby bin/verify_brand_assets
-                kill -USR2 $(cat tmp/pids/unicorn.pid)
-          - name: Deploy to circle-book-web-server2
-            uses: appleboy/ssh-action@master
-            with:
-              host: ${{ secrets.DEPLOY_HOST2 }}
-              username: ${{ secrets.DEPLOY_USER }}
-              port: ${{ secrets.DEPLOY_PORT }}
-              key: ${{ secrets.DEPLOY_KEY }}
-              script: |
-                set -eu
-                cd ${{ secrets.DEPLOY_DIR }}
-                git pull --ff-only origin master
-                npm ci --ignore-scripts --no-audit --no-fund
-                ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
-                ~/.rbenv/shims/ruby bin/verify_brand_assets
-                kill -USR2 $(cat tmp/pids/unicorn.pid)
+      - name: server3 - Update code
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST1 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            git pull --ff-only origin master
+      - name: server3 - Install frontend dependencies
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST1 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            npm ci --ignore-scripts --no-audit --no-fund
+      - name: server3 - Check migrations
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST1 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/bundle exec rake db:migrate RAILS_ENV=production
+      - name: server3 - Compile and verify assets
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST1 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
+            ~/.rbenv/shims/ruby bin/verify_brand_assets
+      - name: server3 - Restart Unicorn
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST1 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            kill -USR2 $(cat tmp/pids/unicorn.pid)
+      - name: server2 - Update code
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            git pull --ff-only origin master
+      - name: server2 - Install frontend dependencies
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            npm ci --ignore-scripts --no-audit --no-fund
+      - name: server2 - Compile and verify assets
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
+            ~/.rbenv/shims/ruby bin/verify_brand_assets
+      - name: server2 - Restart Unicorn
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            kill -USR2 $(cat tmp/pids/unicorn.pid)
