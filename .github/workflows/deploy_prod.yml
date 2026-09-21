@@ -4,6 +4,11 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        options: [all, server2]
+        default: all
 
 concurrency:
   group: circle-production
@@ -14,6 +19,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: server3 - Update code
+        if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST1 }}
@@ -25,6 +31,7 @@ jobs:
             cd ${{ secrets.DEPLOY_DIR }}
             git pull --ff-only origin master
       - name: server3 - Install frontend dependencies
+        if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST1 }}
@@ -36,6 +43,7 @@ jobs:
             cd ${{ secrets.DEPLOY_DIR }}
             npm ci --ignore-scripts --no-audit --no-fund
       - name: server3 - Check migrations
+        if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST1 }}
@@ -47,6 +55,7 @@ jobs:
             cd ${{ secrets.DEPLOY_DIR }}
             ~/.rbenv/shims/bundle exec rake db:migrate RAILS_ENV=production
       - name: server3 - Compile and verify assets
+        if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST1 }}
@@ -59,6 +68,7 @@ jobs:
             ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
             ~/.rbenv/shims/ruby bin/verify_brand_assets
       - name: server3 - Restart Unicorn
+        if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST1 }}
@@ -69,6 +79,36 @@ jobs:
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
             kill -USR2 $(cat tmp/pids/unicorn.pid)
+      - name: server2 - Check SSH connection
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: 'true'
+      - name: server2 - Check repository directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            git rev-parse --is-inside-work-tree >/dev/null
+      - name: server2 - Fetch master
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            git fetch origin master
       - name: server2 - Update code
         uses: appleboy/ssh-action@master
         with:
