@@ -10,7 +10,6 @@ gem 'sassc-rails'
 gem 'terser'
 
 gem 'execjs'
-gem 'therubyracer'
 
 
 gem 'coffee-rails', '~> 4.2'
@@ -95,7 +94,6 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'bullet' #N+1問題
   gem 'derailed_benchmarks' #メモリ容量チェック
   gem 'letter_opener'
   gem 'letter_opener_web', '~> 1.0'
@@ -104,7 +102,6 @@ end
 group :test do
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
-  gem 'chromedriver-helper'
 end
 
 group :production do
@@ -114,4 +111,3 @@ group :production do
   gem 'unicorn'
   gem 'net-http'
 end
-

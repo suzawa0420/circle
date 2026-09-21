@@ -68,8 +68,6 @@ GEM
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
-    archive-zip (0.12.0)
-      io-like (~> 0.3.0)
     autoprefixer-rails (10.4.13.0)
       execjs (~> 2)
     aws-eventstream (1.2.0)
@@ -1509,9 +1507,6 @@ GEM
       ssrf_filter (~> 1.0)
     case_transform (0.2)
       activesupport
-    chromedriver-helper (2.1.1)
-      archive-zip (~> 0.10)
-      nokogiri (~> 1.8)
     chronic (0.10.2)
     climate_control (0.2.0)
     cloudinary (1.25.0)
@@ -1622,7 +1617,6 @@ GEM
     image_processing (1.12.2)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
-    io-like (0.3.1)
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
@@ -1653,8 +1647,6 @@ GEM
       actionmailer (>= 3.2)
       letter_opener (~> 1.0)
       railties (>= 3.2)
-    libv8 (3.16.14.19)
-    libv8 (3.16.14.19-x86_64-linux)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -1770,7 +1762,6 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    ref (2.0.0)
     regexp_parser (2.8.0)
     responders (3.1.0)
       actionpack (>= 5.2)
@@ -1838,9 +1829,6 @@ GEM
       climate_control (>= 0.0.3, < 1.0)
     terser (1.1.17)
       execjs (>= 0.3.0, < 3)
-    therubyracer (0.12.3)
-      libv8 (~> 3.16.14.15)
-      ref
     thor (1.2.2)
     thread_safe (0.3.6)
     tilt (2.1.0)
@@ -1883,6 +1871,7 @@ GEM
 PLATFORMS
   ruby
   x86_64-darwin-21
+  x86_64-darwin-24
   x86_64-linux
 
 DEPENDENCIES
@@ -1900,7 +1889,6 @@ DEPENDENCIES
   byebug
   capybara (>= 2.15)
   carrierwave
-  chromedriver-helper
   cloudinary
   cocoon
   coffee-rails (~> 4.2)
@@ -1950,7 +1938,6 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   sqlite3
   terser
-  therubyracer
   trix
   turbolinks (~> 5)
   tzinfo-data
