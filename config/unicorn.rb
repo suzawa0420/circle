@@ -1,6 +1,9 @@
 root_path = File.expand_path('../../', __FILE__)
 
-worker_processes 8
+# This instance has two vCPUs. Keeping the default below the CPU count's
+# high-concurrency threshold prevents request workers from exhausting
+# Lightsail burst capacity; it can be overridden per server when measured.
+worker_processes ENV.fetch("UNICORN_WORKERS", 4).to_i
 
 working_directory root_path
 

@@ -5,7 +5,7 @@ before_action :set_matches
 
 
 	def index
-		@matches = Match.all.order(updated_at: "DESC").page(params[:page])
+		@matches = matches_with_user_details.order(updated_at: :desc).page(params[:page])
 	end
 
 	def new
@@ -54,14 +54,14 @@ before_action :set_matches
 	end
 
 	def show
-		@user = User.find(params[:id])
+		@user = User.includes(:event, :prefecture, :prefecture_sub).find(params[:id])
 		@match = Match.find_by(user_id: @user.id)
-		@event = Event.find_by(id: @user.event_id)
-		@prefecture = Prefecture.find_by(id: @user.prefecture_id)
-		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
+		@event = @user.event
+		@prefecture = @user.prefecture
+		@sub_prefecture = @user.prefecture_sub
 
-		@users = User.where(event_id: @event.id, prefecture_id: @prefecture.id)
-		@matches = Match.where(user_id: @users.map { |user| user.id }).where.not(id: @match.id).order(updated_at: "DESC")
+		user_ids = User.where(event_id: @event.id, prefecture_id: @prefecture.id).select(:id)
+		@matches = matches_with_user_details.where(user_id: user_ids).where.not(id: @match.id).order(updated_at: :desc)
 
 
 
@@ -96,9 +96,9 @@ before_action :set_matches
 
 	def event
 		@event = Event.find_by(ruby: params[:ruby])
-		@users = User.where(event_id: @event.id)
+		user_ids = User.where(event_id: @event.id).select(:id)
 
-		@matches = Match.where(user_id: @users.map { |user| user.id }).order(updated_at: "DESC").page(params[:page])
+		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
  
 		# パンくず
 		@b2_name = @event.name
@@ -107,8 +107,8 @@ before_action :set_matches
 
 	def prefecture
 		@prefecture = Prefecture.find_by(kana: params[:kana])
-		@users = User.where(prefecture_id: @prefecture.id)
-		@matches = Match.where(user_id: @users.map { |user| user.id }).order(updated_at: "DESC").page(params[:page])
+		user_ids = User.where(prefecture_id: @prefecture.id).select(:id)
+		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
 
 		# パンくず
 		@b2_name = @prefecture.name
@@ -118,8 +118,8 @@ before_action :set_matches
 	def event_prefecture
 		@event = Event.find_by(ruby: params[:ruby])
 		@prefecture = Prefecture.find_by(kana: params[:kana])
-		@users = User.where(event_id: @event.id, prefecture_id: @prefecture.id)
-		@matches = Match.where(user_id: @users.map { |user| user.id }).order(updated_at: "DESC").page(params[:page])
+		user_ids = User.where(event_id: @event.id, prefecture_id: @prefecture.id).select(:id)
+		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
 
 		# パンくず
 		@b2_name = @event.name
@@ -129,6 +129,10 @@ before_action :set_matches
 	end
 
 private
+	def matches_with_user_details
+		Match.includes(user: [:event, :prefecture])
+	end
+
 	def match_params
 		params.require(:match).permit(
 			:age_group, :member, :level, :recruit, :comment

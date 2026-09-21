@@ -9,10 +9,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/prefectures/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/prefectures/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/tag/#{tag.id}") do
               = tag.name
@@ -25,10 +25,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/#{user.event.ruby}/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/#{user.event.ruby}/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/#{user.event.ruby}/#{user.prefecture.kana}/#{@city.city_kana}/tag/#{tag.id}") do
               = tag.name
@@ -41,10 +41,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/#{user.event.ruby}/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/#{user.event.ruby}/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/#{user.event.ruby}/#{user.prefecture.kana}/tag/#{tag.id}") do
               = tag.name
@@ -57,10 +57,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/#{user.event.ruby}/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/#{user.event.ruby}/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/#{user.event.ruby}/tag/#{tag.id}") do
               = tag.name
@@ -73,10 +73,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/prefectures/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/prefectures/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/prefectures/#{user.prefecture.kana}/#{@city.city_kana}/tag/#{tag.id}") do
               = tag.name
@@ -89,10 +89,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/prefectures/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/prefectures/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/prefectures/#{user.prefecture.kana}/tag/#{tag.id}") do
               = tag.name
@@ -105,10 +105,10 @@
           = user.prefecture.name
       - if user.prefecture_sub_id.present?
         %li
-          = link_to("/prefectures/#{Prefecture.find_by(id: user.prefecture_sub_id).kana}") do
-            = Prefecture.find_by(id: user.prefecture_sub_id).name
+          = link_to("/prefectures/#{user.prefecture_sub.kana}") do
+            = user.prefecture_sub.name
       - if user.tags.present?
-        - user.tags.order(:order => :asc).each do |tag|
+        - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
           %li
             = link_to("/tag/#{tag.id}") do
               = tag.name

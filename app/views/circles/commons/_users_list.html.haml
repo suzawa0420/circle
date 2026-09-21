@@ -117,7 +117,7 @@
                     %i.fa.fa-calendar.icon_c
                     = user.schedule
                   - if user.switch == "募集中"
-                    - user.schedules.where("day > ?", DateTime.yesterday).order(:day => :asc).first(2).each do |schedule|
+                    - user.upcoming_schedules.first(2).each do |schedule|
                       .text_slide.user_item_schedule
                         ・#{Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")}
                         - if schedule.time_s.present?
@@ -139,7 +139,7 @@
                 = link_to prefecture_path(user.prefecture_sub.kana) do
                   = user.prefecture_sub.name
             - if user.tags.present?
-              - user.tags.order(:order => :asc).each do |tag|
+              - user.tags.sort_by { |tag| tag.order.to_i }.each do |tag|
                 %li
                   = link_to tag_path(tag.id) do
                     = tag.name

@@ -16,6 +16,6 @@
         .slide_content
           %i.fa.fa-map-marker
           = user.prefecture.name
-          = "・#{Prefecture.find(user.prefecture_sub_id).name}" if user.prefecture_sub_id.present?
+          = "・#{user.prefecture_sub.name}" if user.prefecture_sub_id.present?
           = "：#{user.area}" if user.area.present?
   .reset

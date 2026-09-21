@@ -167,8 +167,10 @@ Rails.application.routes.draw do
     resource :member, only: [:show, :destroy]
   end
 
-  # ヘルスチェック用のルーティング
-  get 'health', to: 'healthcheck#index'
+  # ロードバランサー用。DBやApplicationControllerの共通処理に依存せず応答する。
+  get 'health', to: proc { |_env|
+    [200, { 'Content-Type' => 'text/plain', 'Cache-Control' => 'no-store' }, ['ok']]
+  }
 
 
   # 静的ページ
