@@ -73,7 +73,6 @@
 class User < ApplicationRecord
 	has_many :blogs, dependent: :destroy
 	has_many :schedules, dependent: :destroy
-	has_many :upcoming_schedules, -> { where("day > ?", DateTime.yesterday).order(day: :asc) }, class_name: "Schedule"
 	has_many :places
 	has_many :opinions
 	has_many :questions, dependent: :destroy
@@ -144,7 +143,7 @@ class User < ApplicationRecord
 	mount_uploader :gallery_04, ImageUploader
 
   # 新User用
-	scope :list, -> {(where(ng_account: nil).or(User.where(ng_account: "OK")).where.not(switch: "").where.not(appeal: "")).includes([:event, :prefecture, :prefecture_sub, :tags, :reviews, :upcoming_schedules])}
+  scope :list, -> {(where(ng_account: nil).or(User.where(ng_account: "OK")).where.not(switch: "").where.not(appeal: "")).includes([:event, :prefecture, :tags, :reviews])}
   scope :where_pref, -> (prefecture_id){where(prefecture_id: prefecture_id).or(User.where(prefecture_sub_id: prefecture_id)).or(User.where(prefecture_id: 50))}
   scope :where_city, -> (city){where(id: city.users.ids).or(User.where(prefecture_id: 50))}
   scope :sort_1, -> {order(switch: :asc, last_post: :desc)}
@@ -154,7 +153,7 @@ class User < ApplicationRecord
 
 
 	# User用
-	scope :ng_account, -> {(where(ng_account: nil).or(User.where(ng_account: "OK"))).includes([:event, :prefecture, :prefecture_sub, :tags, :reviews, :upcoming_schedules])}
+  scope :ng_account, -> {(where(ng_account: nil).or(User.where(ng_account: "OK"))).includes([:event, :prefecture, :tags, :reviews])}
   scope :user_sort_1, -> {ng_account.order(switch: :asc, last_post: :desc).where.not(switch: "") }
   scope :user_sort_2, -> {ng_account.order(switch: :asc, cb_point: :desc, last_post: :desc).where.not(switch: "") }
   scope :user_sort_3, -> {ng_account.order(switch: :asc, created_at: :desc).where.not(switch: "") }

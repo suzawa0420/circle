@@ -1,10 +1,7 @@
-- schedules = @schedules.includes(:name_schedules)
-- past_schedules = @past_schedules.includes(:name_schedules)
-- if schedules.where.not(id: @schedule.id).present? && params[:page] == nil
+- if @schedules.where.not(id: @schedule.id).present? && params[:page] == nil
   .schedule_list_wrap
-    - schedules.each do |schedule|
+    - @schedules.each do |schedule|
       - if schedule.present? && @schedule.id != schedule.id
-        - accepted_count = schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
         - if @schedule_month != Time.parse(schedule.day).strftime("%-m")
           %h2.schedule_m
             %i.fa.fa-calendar
@@ -26,7 +23,7 @@
               - else
                 - if schedule.recruitment_numbers == 0 || schedule.recruitment_numbers.blank?
                   .schedule_mark.mark_green 募集中
-                - elsif accepted_count >= schedule.recruitment_numbers
+                - elsif schedule.name_schedules.where(answer: 1).count >= schedule.recruitment_numbers
                   .schedule_mark.mark_red 満員御礼
                 - else
                   .schedule_mark.mark_green 募集中
@@ -38,33 +35,32 @@
                 - if schedule.recruitment_numbers == 0
                   %i.fa.fa-users
                   募集人数：制限なし
-                - elsif accepted_count == 0
+                - elsif schedule.name_schedules.where(answer: 1).count == 0
                   %i.fa.fa-users
                   募集人数：#{schedule.recruitment_numbers}名
                 - elsif schedule.recruitment_numbers >= 1
                   %i.fa.fa-users
-                  参加人数：#{accepted_count}
+                  参加人数：#{schedule.name_schedules.where(answer: 1).count}
                   %span.small_font
                     \/#{schedule.recruitment_numbers}名
                 - else
                   %i.fa.fa-users
-                  参加人数：#{accepted_count}名
-              - elsif accepted_count == 0
+                  参加人数：#{schedule.name_schedules.where(answer: 1).count}名
+              - elsif schedule.name_schedules.where(answer: 1).count == 0
               - else
                 %i.fa.fa-users
-                参加人数：#{accepted_count}名
+                参加人数：#{schedule.name_schedules.where(answer: 1).count}名
             - if schedule.title.present?
               .schedule_title_list
                 = schedule.title
 - if params[:page] == nil
   = render "/layouts/ad_square"
   .ad_space
-- if past_schedules.where.not(id: @schedule.id).present?
+- if @past_schedules.where.not(id: @schedule.id).present?
   %h2.past_schedule 開催が終了したスケジュール
   .schedule_list_wrap
-    - past_schedules.each do |past_schedule|
+    - @past_schedules.each do |past_schedule|
       - if past_schedule.present? && @schedule.id != past_schedule.id
-        - accepted_count = past_schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
         - if @past_schedule_month != Time.parse(past_schedule.day).strftime("%-m")
           %h3.schedule_m
             %i.fa.fa-calendar
@@ -86,24 +82,24 @@
                 - if past_schedule.recruitment_numbers == 0
                   %i.fa.fa-users
                   募集人数：制限なし
-                - elsif accepted_count == 0
+                - elsif past_schedule.name_schedules.where(answer: 1).count == 0
                   %i.fa.fa-users
                   募集人数：#{past_schedule.recruitment_numbers}名
                 - elsif past_schedule.recruitment_numbers >= 1
                   %i.fa.fa-users
-                  参加人数：#{accepted_count}
+                  参加人数：#{past_schedule.name_schedules.where(answer: 1).count}
                   %span.small_font
                     \/#{past_schedule.recruitment_numbers}名
                 - else
                   %i.fa.fa-users
-                  参加人数：#{accepted_count}名
-              - elsif accepted_count == 0
+                  参加人数：#{past_schedule.name_schedules.where(answer: 1).count}名
+              - elsif past_schedule.name_schedules.where(answer: 1).count == 0
               - else
                 %i.fa.fa-users
-                参加人数：#{accepted_count}名
+                参加人数：#{past_schedule.name_schedules.where(answer: 1).count}名
             - if past_schedule.title.present?
               .schedule_title_list
                 = past_schedule.title
   = render "/layouts/ad_square"
   .ad_space
-  = paginate past_schedules
+  = paginate @past_schedules

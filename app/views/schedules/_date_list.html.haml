@@ -6,8 +6,7 @@
       .post_link スケジュールを追加する！
 - if @schedules.present?
   %ul
-    - @schedules.includes(:name_schedules, user: [:event, :prefecture, :prefecture_sub, :tags]).each.with_index(1) do |schedule, i|
-      - accepted_count = schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
+    - @schedules.includes(user: [:event, :prefecture, :tags]).each.with_index(1) do |schedule, i|
       %li.schedule_item_wrap
         = link_to(user_schedule_path(schedule.user.id, schedule.id)) do
           .header_schedule_list.ribbon-wrapper
@@ -26,7 +25,7 @@
               - else
                 - if schedule.recruitment_numbers == 0 || schedule.recruitment_numbers.blank?
                   %span.ribbon.green 募集中
-                - elsif accepted_count >= schedule.recruitment_numbers
+                - elsif schedule.name_schedules.where(answer: 1).count >= schedule.recruitment_numbers
                   %span.ribbon.red 満員御礼
                 - else
                   %span.ribbon.green 募集中
@@ -46,28 +45,28 @@
                 %i.fa.fa-map-marker.icon_c
                 = schedule.user.prefecture.name
                 - if schedule.user.prefecture_sub_id.present?
-                  ・#{schedule.user.prefecture_sub.name}
+                  ・#{Prefecture.find(schedule.user.prefecture_sub_id).name}
                 ：#{schedule.venue}
               .user_schedule
                 - if schedule.recruitment_numbers.present?
                   - if schedule.recruitment_numbers == 0
                     %i.fa.fa-users>
                     募集人数：制限なし
-                  - elsif accepted_count == 0
+                  - elsif schedule.name_schedules.where(answer: 1).count == 0
                     %i.fa.fa-users>
                     募集人数：#{schedule.recruitment_numbers}名
                   - elsif schedule.recruitment_numbers >= 1
                     %i.fa.fa-users>
-                    参加人数：#{accepted_count}
+                    参加人数：#{schedule.name_schedules.where(answer: 1).count}
                     %span.small_font
                       \/#{schedule.recruitment_numbers}名
                   - else
                     %i.fa.fa-users>
-                    参加人数：#{accepted_count}名
-                - elsif accepted_count == 0
+                    参加人数：#{schedule.name_schedules.where(answer: 1).count}名
+                - elsif schedule.name_schedules.where(answer: 1).count == 0
                 - else
                   %i.fa.fa-users>
-                  参加人数：#{accepted_count}名
+                  参加人数：#{schedule.name_schedules.where(answer: 1).count}名
         %hr.hr_w/
         = link_to(circle_path(schedule.user.id)) do
           .schedule_user_wrap

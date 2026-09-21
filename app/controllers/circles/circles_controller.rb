@@ -2,7 +2,7 @@ class Circles::CirclesController < Circles::ApplicationController
   before_action :set_search, only: [:index, :search]
 
 	def index
-		users = User.list
+    users = User.list.includes(:schedules, :prefecture_sub)
     case params[:sort]
     when "1", nil
       @users = users.sort_1.page(params[:page])
