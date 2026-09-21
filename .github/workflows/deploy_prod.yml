@@ -119,11 +119,14 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
+            credentials_backup="$(mktemp)"
+            cp config/credentials.yml.enc "$credentials_backup"
             git fetch origin master
             if ! git diff --quiet || ! git diff --cached --quiet; then
-              echo "Tracked production files have uncommitted changes; refusing to overwrite them."
+              stash_name="pre-deploy-backup-$(date +%Y%m%d%H%M%S)"
+              echo "Saving tracked production changes as $stash_name"
               git status --short
-              exit 1
+              git stash push --include-untracked --message "$stash_name"
             fi
             if ! git merge-base --is-ancestor HEAD origin/master; then
               backup_branch="deploy-backup-$(date +%Y%m%d%H%M%S)"
@@ -131,6 +134,9 @@ jobs:
               echo "Saved divergent production commit as $backup_branch"
             fi
             git reset --hard origin/master
+            cp "$credentials_backup" config/credentials.yml.enc
+            rm -f "$credentials_backup"
+            git update-index --skip-worktree config/credentials.yml.enc
       - name: server2 - Install frontend dependencies
         uses: appleboy/ssh-action@master
         with:
