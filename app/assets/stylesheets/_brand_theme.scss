@@ -164,6 +164,34 @@ input[type="radio"] {
   background-color: $cb-action-hover;
 }
 
+// Listing cards use neutral text so the rating stars remain the clear signal.
+.user_item_wrap > a,
+.user_item_wrap .users-index-item,
+.user_item_wrap .user_name,
+.user_item_wrap .user_recruitment,
+.user_item_wrap .user_schedule,
+.user_item_wrap .user_area,
+.user_item_wrap .user_item_schedule,
+.user_item_wrap .review_score,
+.user_item_wrap .review_count,
+.user_item_wrap .reviews_count {
+  color: $cb-text;
+}
+
+.user_item_wrap .star .orange {
+  color: $cb-rating;
+}
+
+.user_item_wrap .star .gray {
+  color: $cb-rating-empty;
+}
+
+.user_item_wrap .user_schedule .fa,
+.user_item_wrap .user_area .fa,
+.user_item_wrap .review_count .fa {
+  color: $cb-muted;
+}
+
 .contact_link .btn_green.btn_cubic,
 .contact_link .btn_green.btn_cubic:hover {
   border-bottom-color: $cb-action-hover;
