@@ -1,3 +1,5 @@
+@import "brand_palette";
+
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "trix";
@@ -14,7 +16,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 
 
 
-$link-blue: #337ab7;
+$link-blue: $cb-teal;
 
 
 /* reset ================================ */
@@ -37,14 +39,14 @@ li {
 
 a {
   text-decoration: none;
-  color: #2d3133;
+  color: $cb-teal;
   font-size: 14px;
 }
 
 a:hover,
 a:focus {
   text-decoration: none;
-  color: #2d3133;
+  color: $cb-action-hover;
 }
 
 h1,
@@ -103,8 +105,8 @@ input,
 
 /* 共通レイアウト ================================ */
 body {
-  color: #1c1e22;
-  background-color: #e8e8e8;
+  color: $cb-text;
+  background-color: $cb-canvas;
   margin: 0;
   padding: 0;
   min-height: 1vh;
@@ -119,7 +121,7 @@ body {
   width: 100%;
   height: auto;
   min-height: 100%;
-  background-color: #e8e8e8;
+  background-color: $cb-canvas;
 }
 
 .user_main {
@@ -189,7 +191,7 @@ body {
 .header_wrap {
   height: 64px;
   position: fixed;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   z-index: 10;
   width: 100vw;
 }
@@ -269,7 +271,7 @@ body {
   height: auto;
   min-height: 100%;
   color: white;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   background-repeat: no-repeat;
   background-position: center 50%;
   background-size: cover;
@@ -318,7 +320,7 @@ body {
   // max-width: 600px;
   margin: 0 auto 20px;
   background-color: #fff;
-  // box-shadow: 0 2px 6px #c1ced7;
+  // box-shadow: 0 2px 6px $cb-shadow;
 }
 
 .form-body {
@@ -339,9 +341,9 @@ body {
 
 .form input {
   width: 100%;
-  border: 1px solid #d8dadf;
+  border: 1px solid $cb-border;
   padding: 10px;
-  color: #1c1e22;
+  color: $cb-text;
   font-size: 14px;
   letter-spacing: 2px;
   border-radius: 6px;
@@ -355,7 +357,7 @@ body {
 }
 
 .form input[type="submit"] {
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   color: white;
   cursor: pointer;
   font-weight: 300;
@@ -376,7 +378,7 @@ body {
 .flash {
   padding: 10px 0;
   color: white;
-  background: rgb(251, 170, 88);
+  background: $cb-orange-soft;
   text-align: center;
   position: absolute;
   top: 64px;
@@ -404,7 +406,7 @@ body {
   width: 50px;
   height: 50px;
   border-radius: 40%;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
   object-fit: cover;
 }
 
@@ -413,7 +415,7 @@ body {
 }
 
 .user-name a:hover {
-  color: #3ecdc6;
+  color: $cb-action;
 }
 
 .user-left {
@@ -442,7 +444,7 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 40%;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
   margin: 20px 0 10px;
   object-fit: cover;
 }
@@ -459,7 +461,7 @@ body {
 }
 
 .user a {
-  color: #8899a6;
+  color: $cb-muted;
   text-decoration: underline;
   font-weight: 200;
 }
@@ -474,7 +476,7 @@ body {
   margin-top: 40px;
   background-color: white;
   overflow: hidden;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
 }
 
 .user-tabs li {
@@ -482,11 +484,11 @@ body {
 }
 
 .user-tabs li.active {
-  border-bottom: 2px solid #3ecdc6;
+  border-bottom: 2px solid $cb-action;
 }
 
 .user-tabs li.active a {
-  color: #57575f;
+  color: $cb-muted;
 }
 
 .user-tabs a {
@@ -559,7 +561,7 @@ body {
   margin-right: 16px;
   padding: 5px 10px;
   border-radius: 7px;
-  background-color: #efb712;
+  background-color: $cb-orange-ink;
   font-weight: bold;
   font-size: 16px;
 }
@@ -639,13 +641,13 @@ body {
 .post_cta .mail,
 .cta_wrap .mail,
 .menu_btn {
-  background-color: #3ecdc6;
+  background-color: $cb-action;
 }
 
 .header-wrapper .qa,
 .footer_btn .qa,
 .post_cta .qa {
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
 }
 
 .header-wrapper .tw,
@@ -670,7 +672,7 @@ body {
 .profile-content .content_02,
 .profile-content .content_04,
 .profile-content .content_05 {
-  color: #1c1e22;
+  color: $cb-text;
   font-size: 14px;
 }
 
@@ -692,7 +694,7 @@ body {
 .profile-content .content_03,
 .profile-content .content_06,
 .profile-content .content_07 {
-  color: #1c1e22;
+  color: $cb-text;
   font-size: 14px;
 }
 
@@ -759,7 +761,7 @@ body {
   border-radius: 50%;
   margin-right: 16px;
   margin-bottom: 10px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   object-fit: cover;
 }
 
@@ -769,7 +771,7 @@ body {
   padding: 20px 30px;
   background-color: white;
   overflow: hidden;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
   display: table;
   width: 100%;
   margin-bottom: 20px;
@@ -779,7 +781,7 @@ body {
   width: 50px;
   height: 50px;
   border-radius: 40%;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
   object-fit: cover;
 }
 
@@ -788,7 +790,7 @@ body {
 }
 
 .post-name a:hover {
-  color: #3ecdc6;
+  color: $cb-action;
 }
 
 .post-left {
@@ -817,7 +819,7 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 40%;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
   margin: 20px 0 10px;
   object-fit: cover;
 }
@@ -834,7 +836,7 @@ body {
 }
 
 .post a {
-  color: #8899a6;
+  color: $cb-muted;
   text-decoration: underline;
   font-weight: 200;
 }
@@ -849,7 +851,7 @@ body {
   margin-top: 40px;
   background-color: white;
   overflow: hidden;
-  box-shadow: 0 2px 6px #c1ced7;
+  box-shadow: 0 2px 6px $cb-shadow;
 }
 
 .post-tabs li {
@@ -857,11 +859,11 @@ body {
 }
 
 .post-tabs li.active {
-  border-bottom: 2px solid #3ecdc6;
+  border-bottom: 2px solid $cb-action;
 }
 
 .post-tabs li.active a {
-  color: #57575f;
+  color: $cb-muted;
 }
 
 .post-tabs a {
@@ -893,7 +895,7 @@ body {
 }
 
 .post-bottom {
-  color: #909090;
+  color: $cb-muted;
   font-size: 0.7rem;
 }
 
@@ -902,7 +904,7 @@ body {
   display: inline-block;
   padding: 5px 10px;
   border-radius: 7px;
-  background-color: #efb712;
+  background-color: $cb-orange-ink;
   font-weight: bold;
   font-size: 16px;
 }
@@ -953,7 +955,7 @@ body {
   display: inline-block;
   float: right;
   margin: 4px 2px 0px;
-  color: #969696;
+  color: $cb-muted;
 }
 
 .post-edit_btn {
@@ -967,17 +969,17 @@ body {
 }
 
 .post-edit_btn a {
-  color: #969696;
+  color: $cb-muted;
 }
 
 .place_edit {
   text-align: right;
-  color: #969696;
+  color: $cb-muted;
 }
 
 
 .post_time {
-  color: #909090;
+  color: $cb-muted;
   font-size: 0.7rem;
   padding-top: 4px;
 }
@@ -988,14 +990,14 @@ body {
   clear: both;
   width: 96%;
   margin: 12px auto;
-  border-bottom: solid 1px #ECECEC;
+  border-bottom: solid 1px $cb-border;
 }
 
 .content_icon {
   width: 45px;
   height: 45px;
   border-radius: 45px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   float: left;
   object-fit: cover;
 }
@@ -1036,7 +1038,7 @@ body {
   text-align: center;
   line-height: 1.8rem;
   font-size: 18px;
-  color: #696969;
+  color: $cb-text;
   position: relative;
 }
 
@@ -1083,7 +1085,7 @@ body {
 
 .ribbon-content .blue {
   position: absolute;
-  background: #3997bd;
+  background: $cb-teal;
 }
 
 .ribbon-content .yellow {
@@ -1098,7 +1100,7 @@ body {
   align-items: center;
   padding: 6px 8px;
   background: #fff;
-  border: 1px solid #519851;
+  border: 1px solid $cb-teal;
   border-radius: 4px;
   &:not(:last-child) {
     margin-right: 10px;
@@ -1106,7 +1108,7 @@ body {
 }
 
 .tag-color {
-  color: #519851;
+  color: $cb-teal;
   padding-right: 4px;
   font-size: 15px;
 }
@@ -1135,7 +1137,7 @@ body {
 }
 
 .check_boxes label:hover:after {
-  border-color: #0171bd;
+  border-color: $cb-action;
   /* ボックスの境界線を実線で指定する */
 }
 
@@ -1175,9 +1177,9 @@ body {
   /* ボックスの横幅を指定する */
   height: 9px;
   /* ボックスの高さを指定する */
-  border-right: 3px solid #0171bd;
+  border-right: 3px solid $cb-action;
   /* 境界線（右）のスタイルを指定する */
-  border-bottom: 3px solid #0171bd;
+  border-bottom: 3px solid $cb-action;
   /* 境界線（下）のスタイルを指定する */
   transform: rotate(45deg);
   /* 要素を回転させる */
@@ -1201,7 +1203,7 @@ body {
   display: inline-block;
   font-size: 30px;
   text-decoration: none;
-  background: #3ecdc6;
+  background: $cb-action;
   color: #FFF;
   width: 70px;
   height: 70px;
@@ -1236,7 +1238,7 @@ body {
 .fixed_btn_b {
   display: block;
   text-decoration: none;
-  background: #3ecdc6;
+  background: $cb-action;
   color: #FFF;
   width: 96%;
   text-align: center;
@@ -1290,14 +1292,14 @@ body {
 
   .fixed_btn_txt {
     display: block;
-    color: #545454;
+    color: $cb-text;
     font-weight: 700;
     margin-top: 2px;
     font-size: 10px;
   }
 
   .orange {
-    color: #e09a1b;
+    color: $cb-orange-ink;
   }
 }
 
@@ -1334,12 +1336,12 @@ body {
 .profile-content .content_08 a,
 .qa_answer a,
 .matching_url a {
-  color: #337ab7;
+  color: $cb-teal;
 }
 
 .profile-content .content_08,
 .place_list .content_08 {
-  color: #777;
+  color: $cb-muted;
 }
 
 select {
@@ -1368,7 +1370,7 @@ a.line_id {
 .prefectures-title {
   font-size: 20px;
   margin-bottom: 12px;
-  color: #1c1e22;
+  color: $cb-text;
 }
 
 .prefectures-sub-title {
@@ -1466,7 +1468,7 @@ a.line_id {
   width: 90%;
   font-size: 16px;
   font-weight: bold;
-  color: #4a4949;
+  color: $cb-text;
   margin: 0 auto 46px;
   text-align: center;
   position: relative;
@@ -1486,7 +1488,7 @@ a.line_id {
   text-align: center;
   line-height: 2rem;
   font-size: 20px;
-  color: #696969;
+  color: $cb-text;
 }
 
 .imege_sorry {
@@ -1523,7 +1525,7 @@ a.line_id {
   padding: 0 0 0 2.4em;
   cursor: pointer;
   margin: 0 0 1px 0;
-  background: #61cec7;
+  background: $cb-action;
 }
 
 .cp_actab .cp_actab-content {
@@ -1531,7 +1533,7 @@ a.line_id {
   max-height: 0;
   -webkit-transition: max-height 0.35s;
   transition: max-height 0.35s;
-  color: #333333;
+  color: $cb-text;
   background: #ffffff;
 }
 
@@ -1571,7 +1573,7 @@ a.line_id {
 .user_schedule .fa,
 .user_area .fa {
   width: 24px;
-  color: #777;
+  color: $cb-muted;
   margin: auto;
   text-align: center;
 }
@@ -1606,7 +1608,7 @@ a.line_id {
 }
 
 .article_item table tr {
-  border-bottom: 1px solid #ECECEC;
+  border-bottom: 1px solid $cb-border;
   align-items: baseline;
 }
 
@@ -1632,7 +1634,7 @@ a.line_id {
 .article_item table th {
   width: 22%;
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   text-align: center;
 }
 
@@ -1709,7 +1711,7 @@ a.line_business {
   height: 50px;
   object-fit: cover;
   border-radius: 4px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
 }
 
 .catch_image {
@@ -1822,7 +1824,7 @@ a.line_business {
   height: 100%;
   background: #fff;
   /*背景色*/
-  color: #1c1e22;
+  color: $cb-text;
   transition: .3s ease-in-out;
   /*滑らかに表示*/
   -webkit-transform: translateX(-105%);
@@ -1848,20 +1850,20 @@ a.line_business {
 #nav-content .logo_txt {
   display: block;
   font-size: 18px;
-  color: #696969;
+  color: $cb-text;
   font-weight: bold;
   margin-top: 22px;
 }
 
 #nav-content .logo_txt a {
-  color: #696969;
+  color: $cb-text;
   font-size: 18px;
 }
 
 #nav-content ul,
 #nav-content li,
 #nav-content a {
-  color: #1c1e22;
+  color: $cb-text;
   font-size: 16px;
 }
 
@@ -1956,7 +1958,7 @@ a.line_business {
   font-size: 16px;
   top: -12px;
   right: 15px;
-  color: #6d6d6d;
+  color: $cb-muted;
 }
 
 .home_icon {
@@ -1964,7 +1966,7 @@ a.line_business {
 }
 
 .breadcrumbs a {
-  color: #6d6d6d;
+  color: $cb-muted;
   text-decoration: none;
   font-size: 10px;
 }
@@ -1975,7 +1977,7 @@ a.line_business {
   margin: 10px 0;
   padding: 16px 16px 20px;
   background-color: #fff;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   border-radius: 4px;
   font-size: 16px;
   padding-top: 16px;
@@ -1988,7 +1990,7 @@ a.line_business {
 .users-txt a {
   font-size: 16px;
   font-weight: bold;
-  color: #4a4949;
+  color: $cb-text;
   border-bottom: 1px solid;
 }
 
@@ -2019,7 +2021,7 @@ a.line_business {
   table-layout: fixed;
   text-align: center;
   // position: fixed;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
 }
 
 .header-menus_sp li {
@@ -2058,7 +2060,7 @@ a.line_business {
   width: 100%;
   display: table;
   text-align: center;
-  background: #3ecdc6;
+  background: $cb-action;
   // border-bottom: 1px solid #bbb;
   height: 50px;
 
@@ -2096,7 +2098,7 @@ a.line_business {
   font-size: 20px;
 
   a {
-    color: #505050;
+    color: $cb-text;
     display: block;
     font-size: 20px;
     text-decoration: none;
@@ -2110,15 +2112,15 @@ a.line_business {
 }
 
 li.current_page {
-  border-bottom: 4px solid #337ab7;
+  border-bottom: 4px solid $cb-teal;
 
   a {
-    color: #337ab7;
+    color: $cb-teal;
   }
 
   .header_count,
   .header_count a {
-    color: #337ab7;
+    color: $cb-teal;
   }
 }
 
@@ -2145,7 +2147,7 @@ li.current_page {
   height: 40px;
   border-radius: 50%;
   margin-right: 16px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   object-fit: cover;
 }
 
@@ -2153,10 +2155,10 @@ li.current_page {
   padding: 8px 20px;
   margin: 2px 0px 10px 56px;
   font-size: 12px;
-  color: #4e4e4e;
+  color: $cb-text;
   width: 70%;
   border-radius: 18px;
-  border: 1.4px solid #e6e6e6;
+  border: 1.4px solid $cb-border;
 }
 
 
@@ -2177,17 +2179,17 @@ li.current_page {
 }
 
 .page_wrap a {
-  border-bottom: 1px solid #2d3133;
+  border-bottom: 1px solid $cb-text;
 }
 
 .rules_link {
   margin-bottom: 12px;
-  color: #5f5f5f;
+  color: $cb-muted;
   font-size: 11px;
 }
 
 .rules_link a {
-  color: #2d3133;
+  color: $cb-text;
   border-bottom: 1px solid;
   font-size: 11px;
 }
@@ -2298,7 +2300,7 @@ li.current_page {
     padding: 20px;
     margin: 10px 0;
     a{
-      color: #337ab7;
+      color: $cb-teal;
       font-weight: 700;
     }
   }
@@ -2423,7 +2425,7 @@ li.current_page {
 .popupModal1 .modalTitle {
   padding-bottom: .5em;
   margin: .5em 0;
-  color: #5f5f5f;
+  color: $cb-muted;
   border-bottom: 1px solid #ccc;
   font-weight: bold;
   text-align: center;
@@ -2460,7 +2462,7 @@ li.current_page {
 
 .flash_social {
   padding: 10px 0;
-  background: #f3f3f3;
+  background: $cb-canvas;
   color: #131313;
   text-align: center;
   position: absolute;
@@ -2546,7 +2548,7 @@ li.current_page {
   font-size: 20px;
   font-weight: 700;
   margin: 20px 0 20px;
-  color: #545454;
+  color: $cb-text;
   text-align: center;
 }
 
@@ -2562,9 +2564,9 @@ li.current_page {
 
 .schedule_input input {
   height: 36px;
-  border: 1px solid #d8dadf;
+  border: 1px solid $cb-border;
   padding: 10px;
-  color: #1c1e22;
+  color: $cb-text;
   font-size: 12px;
   letter-spacing: 2px;
   border-radius: 2px;
@@ -2587,7 +2589,7 @@ li.current_page {
 
 .btn_submit {
   width: 10%;
-  color: #3ecdc6;
+  color: $cb-action;
   font-size: 26px;
   border: none;
   border-style: none;
@@ -2613,7 +2615,7 @@ li.current_page {
 .search_select {
   display: flex;
   margin-top: 14px;
-  border: solid 1px #b4ced6;
+  border: solid 1px $cb-border;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -2624,7 +2626,7 @@ li.current_page {
   height: 36px;
   background: #fff;
   background-color: #ffffff;
-  color: #4a4a4a;
+  color: $cb-text;
   border: none;
   margin: 0;
   -webkit-appearance: none;
@@ -2638,7 +2640,7 @@ li.current_page {
 }
 
 .search_select select:first-child {
-  border-right: 1px solid #cecece;
+  border-right: 1px solid $cb-border;
   border-radius: 6px 0px 0px 6px !important;
 }
 
@@ -2649,7 +2651,7 @@ li.current_page {
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.428571429;
-  color: #555555;
+  color: $cb-text;
   background-color: #fff;
   background-image: none;
   border: 1px solid #ccc;
@@ -2662,7 +2664,7 @@ li.current_page {
 }
 
 .search_submit {
-  background: #61cec7;
+  background: $cb-action;
   border-color: #fff;
   border-style: none;
   color: #fff;
@@ -2678,7 +2680,7 @@ li.current_page {
 }
 
 .search_icon {
-  background: #61cec7;
+  background: $cb-action;
   border-color: #fff;
   border-style: none;
   color: #fff;
@@ -2725,7 +2727,7 @@ li.current_page {
   text-align: center;
   line-height: 1.4rem;
   font-size: 14px;
-  color: #545454;
+  color: $cb-text;
   background: #fff;
   padding: 12px 0px;
 }
@@ -2763,7 +2765,7 @@ li.current_page {
 
 .blog-list-wrap,
 .user-list-wrap {
-  background: #f7f9f9;
+  background: $cb-canvas;
   padding: 20px 20px;
 }
 
@@ -2786,7 +2788,7 @@ li.current_page {
   width: 30px;
   height: 30px;
   border-radius: 30px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   float: left;
   object-fit: cover;
 }
@@ -2802,7 +2804,7 @@ li.current_page {
   margin: 10px 2px 10px;
   text-align: left;
   font-weight: 700;
-  color: #494949;
+  color: $cb-text;
 }
 
 
@@ -2831,9 +2833,9 @@ li.current_page {
   padding: 0.25em 0.5em;
   margin-bottom: 8px;
   font-size: 20px;
-  color: #494949;
+  color: $cb-text;
   background: transparent;
-  border-left: solid 5px #61cec7;
+  border-left: solid 5px $cb-action;
 }
 
 .place_d {
@@ -2847,7 +2849,7 @@ li.current_page {
   padding: 8px 10px;
   border-radius: 7px;
   margin: 20px auto 0;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   color: #fff !important;
   font-size: 1rem;
   font-weight: bold;
@@ -2855,13 +2857,13 @@ li.current_page {
 }
 
 .google_map {
-  color: #61cec7;
+  color: $cb-action;
   padding: 15px 0;
 }
 
 .google_map_wrap {
   background: #fff;
-  border: 2px solid #61cec7;
+  border: 2px solid $cb-action;
   width: 50%;
   text-align: center;
   margin: 10px auto 10px;
@@ -2916,7 +2918,7 @@ li.current_page {
   padding: 0 0 0 2.4em;
   cursor: pointer;
   margin: 0 0 1px 0;
-  background: #61cec7;
+  background: $cb-action;
   color: #fff;
 }
 
@@ -3137,8 +3139,8 @@ li.current_page {
   margin-bottom: 14px;
   background: #fff;
   background-color: #ffffff;
-  color: #4a4a4a;
-  border: 1px solid #d8dadf;
+  color: $cb-text;
+  border: 1px solid $cb-border;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -3188,7 +3190,7 @@ li.current_page {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  background-color: #e6e6e6;
+  background-color: $cb-border;
   overflow: hidden;
   box-sizing: border-box;
   transition: 0.3s ease-out;
@@ -3231,7 +3233,7 @@ li.current_page {
 #img_field_03:hover,
 #img_field_04:hover,
 #img_field_icon:hover {
-  background-color: #6dd8d3;
+  background-color: $cb-action;
   transition: 0.3s ease-out;
   opacity: 0.9;
 }
@@ -3305,7 +3307,7 @@ li.current_page {
 
 #img_field_header:hover,
 #img_field_profile:hover {
-  background-color: #6dd8d3;
+  background-color: $cb-action;
 }
 
 #img_field_header:hover i,
@@ -3334,13 +3336,13 @@ li.current_page {
 
 .profile_list_t {
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   padding: 4px 10px 2px;
 }
 
 .profile_list_frame,
 .profile_list_a {
-  border: 1px solid #d8dadf;
+  border: 1px solid $cb-border;
   margin: 0px 10px 2px;
   border-radius: 4px;
 }
@@ -3385,7 +3387,7 @@ li.current_page {
 }
 
 .profile_list_p a {
-  color: #337ab7;
+  color: $cb-teal;
 }
 
 .schedule_list_wrap {
@@ -3394,9 +3396,9 @@ li.current_page {
 
 .schedule_list {
   position: relative;
-  border: 1px solid #d8dadf;
-  border-bottom: 4px solid #d8dadf;
-  border-bottom: 4px solid #d8dadf;
+  border: 1px solid $cb-border;
+  border-bottom: 4px solid $cb-border;
+  border-bottom: 4px solid $cb-border;
   margin: 10px 0 20px;
   padding: 10px 10px;
   border-radius: 6px;
@@ -3412,7 +3414,7 @@ li.current_page {
 }
 
 .schedule_add_wrap {
-  // border: 1px solid #d8dadf;
+  // border: 1px solid $cb-border;
   // padding: 10px 10px;
 }
 
@@ -3426,7 +3428,7 @@ li.current_page {
 }
 
 .schedule_input input[type="submit"] {
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   color: white;
   cursor: pointer;
   font-weight: 300;
@@ -3446,7 +3448,7 @@ li.current_page {
   text-align: center;
   border-radius: 6px;
   color: #fff;
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -3459,7 +3461,7 @@ li.current_page {
   text-align: center;
   border-radius: 6px;
   color: #fff;
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -3502,7 +3504,7 @@ li.current_page {
   font-size: 18px;
   margin-left: 2px;
   margin-top: 20px;
-  color: #545454;
+  color: $cb-text;
 }
 
 
@@ -3530,9 +3532,9 @@ li.current_page {
   height: 60px;
   overflow-y: scroll;
   padding: 6px 10px;
-  background: #f9f9f9;
+  background: $cb-canvas;
   border: solid 1px #ccc;
-  color: #5d5c5c;
+  color: $cb-text;
   border-radius: 2px;
   margin: 24px auto 0px;
   font-size: 12px;
@@ -3546,7 +3548,7 @@ li.current_page {
   background: #fff;
   border: none;
   border-radius: 10px;
-  box-shadow: inset 0 0 2px #777;
+  box-shadow: inset 0 0 2px $cb-muted;
 }
 
 .schedule_list_copy::-webkit-scrollbar-thumb {
@@ -3558,18 +3560,18 @@ li.current_page {
 
 
 .p_t {
-  border: 2px solid #61cdc7;
+  border: 2px solid $cb-action;
   border-radius: 4px;
   font-size: 16px;
   text-align: center;
   display: block;
   padding: 6px 10px;
   margin: 0 auto 14px;
-  color: #4a4a4a;
+  color: $cb-text;
 }
 
 .analytics_wrap {
-  border: 1px solid #d8dadf;
+  border: 1px solid $cb-border;
   margin: 0px 0px 26px;
   border-radius: 4px;
   padding: 10px 10px;
@@ -3588,7 +3590,7 @@ li.current_page {
 
 .analytics_title {
   position: relative;
-  color: #383838;
+  color: $cb-text;
   font-size: 16px;
   width: 100%;
 
@@ -3606,7 +3608,7 @@ li.current_page {
   th a,
   th a .fa {
     text-decoration: underline;
-    color: #337ab7;
+    color: $cb-teal;
     font-weight: 700;
   }
 
@@ -3660,7 +3662,7 @@ li.current_page {
 }
 
 .analytics_blog {
-  color: #4e4e4e;
+  color: $cb-text;
   margin-left: 10px;
 }
 
@@ -3678,7 +3680,7 @@ li.current_page {
 .contact_wrap .pickup {
   display: block;
   text-decoration: none;
-  background: #3ecdc6;
+  background: $cb-action;
   color: #FFF;
   width: 96%;
   text-align: center;
@@ -3693,7 +3695,7 @@ li.current_page {
 }
 
 .contact_wrap .mail {
-  background: #3ecdc6;
+  background: $cb-action;
 }
 
 .contact_wrap .line {
@@ -3701,22 +3703,22 @@ li.current_page {
 }
 
 .contact_wrap .qa {
-  background: #e09a1b;
+  background: $cb-orange-ink;
 }
 
 .contact_wrap .pickup,
 .header-wrapper .pickup,
 .footer_btn .pickup,
 .post_cta .pickup {
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
 }
 
 .contact_sample_wrap {
   margin: 10px auto 0;
   display: block;
   font-size: 12px;
-  color: #464646;
-  border: 5px solid #e09a1b;
+  color: $cb-text;
+  border: 5px solid $cb-orange-ink;
   border-radius: 10px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -3730,14 +3732,14 @@ li.current_page {
 .contact_sample_wrap .contact_t_wrap {
   padding: 10px 14px 10px;
   display: block;
-  border-bottom: 5px solid #e09a1b;
-  background: #faf6e6;
+  border-bottom: 5px solid $cb-orange-ink;
+  background: $cb-orange-soft;
   letter-spacing: 0.2em;
 }
 
 .contact_sample_wrap .contact_s_t {
   padding: 0 10px 0 0;
-  color: #e09a1b;
+  color: $cb-orange-ink;
   font-weight: normal;
 }
 
@@ -3773,7 +3775,7 @@ li.current_page {
 }
 
 .analytics_contents tr {
-  border-bottom: 1px solid #dedede;
+  border-bottom: 1px solid $cb-border;
 }
 
 .no_hit_wrap {
@@ -3801,11 +3803,11 @@ li.current_page {
 }
 
 .no_hit_top {
-  background-color: #3ecdc6;
+  background-color: $cb-action;
 }
 
 .no_hit_new {
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
 }
 
 .link_to_user_btm {
@@ -3821,7 +3823,7 @@ li.current_page {
 
 .link_to_user_btn {
   color: #fff;
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   justify-content: center;
   align-items: center;
   width: 96%;
@@ -3843,11 +3845,11 @@ li.current_page {
   text-decoration: none;
   letter-spacing: 0.1em;
   border-radius: 0.5rem;
-  border-bottom: 5px solid #9c7e47;
+  border-bottom: 5px solid $cb-orange-ink;
 
   &:hover {
     margin-top: 3px;
-    border-bottom: 2px solid #9c7e47;
+    border-bottom: 2px solid $cb-orange-ink;
   }
 }
 
@@ -3859,7 +3861,7 @@ li.current_page {
 
 .others_place_list {
   background-color: #fff;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   border-radius: 4px;
 }
 
@@ -3946,7 +3948,7 @@ li.current_page {
   -webkit-overflow-scrolling: touch;
   overflow-scrolling: touch;
   white-space: nowrap;
-  color: #2d3133;
+  color: $cb-text;
 }
 
 .header_user_list,
@@ -4018,7 +4020,7 @@ li.current_page {
   height: 40px;
   margin: 14px auto 50px;
   border-radius: 7px;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   color: #fff;
   text-align: center;
   font-size: 16px;
@@ -4075,12 +4077,12 @@ li.current_page {
 }
 
 .qa_card_warp {
-  // border-top: 20px solid #e8e8e8;
+  // border-top: 20px solid $cb-canvas;
 }
 
 .qa_card_warp li {
-  border-bottom: 10px solid #e8e8e8;
-  background-color: #e8e8e8;
+  border-bottom: 10px solid $cb-canvas;
+  background-color: $cb-canvas;
 }
 
 .qa_answer_form .submit_btn {
@@ -4090,7 +4092,7 @@ li.current_page {
   padding: 0px 10px;
   border-radius: 6px;
   color: #fff;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4136,14 +4138,14 @@ li.current_page {
   top: -10px;
   right: -0px;
   font-size: 10px;
-  color: #eaa62b;
+  color: $cb-orange-ink;
 }
 
 .analytics_contents .notice_icon::after {
   top: -7px;
   right: -6px;
   font-size: 12px;
-  color: #f7aa30;
+  color: $cb-orange-ink;
 }
 
 
@@ -4163,7 +4165,7 @@ li.current_page {
   font-size: 14px;
   margin-left: 8px;
   margin: 0 0 4px 8px;
-  color: #4e4e4e;
+  color: $cb-text;
 }
 
 .qa_card_img img {
@@ -4203,7 +4205,7 @@ li.current_page {
 }
 
 .schedule_post_btn {
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   color: #fff;
   font-size: 14px;
   padding: 6px 36px;
@@ -4217,7 +4219,7 @@ li.current_page {
 }
 
 .copy_txt {
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
 }
 
 .sns_link {
@@ -4302,7 +4304,7 @@ li.current_page {
   color: #fff;
   padding: 8px 10px;
   border-radius: 7px;
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   margin: 22px auto 0;
   text-align: center;
   display: block;
@@ -4316,7 +4318,7 @@ li.current_page {
 }
 
 .qa_answer_form p {
-  color: #545454;
+  color: $cb-text;
 }
 
 .search_qa {
@@ -4330,14 +4332,14 @@ li.current_page {
   width: 80%;
   float: left;
   height: 36px;
-  border: solid 1px #b4ced6;
+  border: solid 1px $cb-border;
   justify-content: center;
   align-items: center;
   background: #fff;
   background-color: #ffffff;
-  color: #4a4a4a;
+  color: $cb-text;
   margin: 0;
-  border-right: 1px solid #cecece;
+  border-right: 1px solid $cb-border;
   border-radius: 6px 0px 0px 6px;
   padding-left: 8px;
 }
@@ -4350,7 +4352,7 @@ li.current_page {
 .search_qa .search_icon button {
   border: none;
   color: #fff;
-  background: #61cec7;
+  background: $cb-action;
 }
 
 .event_qa_profile .user_name {
@@ -4458,7 +4460,7 @@ li.current_page {
 }
 
 .qa_wrap .center {
-  color: #525252;
+  color: $cb-text;
   font-size: 12px;
 }
 
@@ -4467,9 +4469,9 @@ li.current_page {
   position: relative;
   margin: 50px auto 10px;
   padding: 1.2em;
-  color: #555555;
+  color: $cb-text;
   background-color: #fff;
-  border: 2px solid #e09a1b;
+  border: 2px solid $cb-orange-ink;
   width: 90%;
   text-align: left;
 }
@@ -4481,7 +4483,7 @@ li.current_page {
   top: -15px;
   font-weight: bold;
   background-color: #fff;
-  color: #e49300;
+  color: $cb-orange-ink;
   font-size: 16px;
 }
 
@@ -4494,7 +4496,7 @@ li.current_page {
 }
 
 .difference_new input[type="submit"] {
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   color: #fff;
   cursor: pointer;
   font-weight: 300;
@@ -4562,7 +4564,7 @@ li.current_page {
 }
 
 .breadcrumbs_city a {
-  color: #6d6d6d;
+  color: $cb-muted;
   text-decoration: none;
   font-size: 10px;
 }
@@ -4571,14 +4573,14 @@ li.current_page {
 .new_user p {
   margin-top: 14px;
   font-size: 14px;
-  color: #00157d;
+  color: $cb-teal;
 }
 
 .edit01_warp {
   position: relative;
   margin: 30px auto 10px;
   padding: 16px 0px 6px 4px;
-  color: #555555;
+  color: $cb-text;
   background-color: #fff;
   border: 2px solid #d6d6d6;
   width: 100%;
@@ -4603,9 +4605,9 @@ li.current_page {
   position: relative;
   margin: 50px auto 10px;
   padding: 1.2em;
-  color: #555555;
+  color: $cb-text;
   background-color: #fff;
-  border: 2px solid #61cdc7;
+  border: 2px solid $cb-action;
   width: 100%;
   text-align: left;
 }
@@ -4617,7 +4619,7 @@ li.current_page {
   top: -15px;
   font-weight: bold;
   background-color: #fff;
-  color: #4a4a4a;
+  color: $cb-text;
   font-size: 16px;
 }
 
@@ -4625,7 +4627,7 @@ li.current_page {
   position: relative;
   margin: 30px auto 30px;
   padding: 1.2em;
-  color: #555555;
+  color: $cb-text;
   background-color: #fff;
   border: 1px solid #d0d0d0;
   width: 100%;
@@ -4638,7 +4640,7 @@ li.current_page {
   left: 20px;
   top: -15px;
   background-color: #fff;
-  color: #4a4a4a;
+  color: $cb-text;
   font-size: 16px;
 }
 
@@ -4663,7 +4665,7 @@ li.current_page {
 .search_select .search_select_3 select {
   width: 30%;
   font-size: 12px;
-  border-right: 1px solid #cecece;
+  border-right: 1px solid $cb-border;
 }
 
 .tag_btn_list {
@@ -4740,7 +4742,7 @@ li.current_page {
 .collection_table .checked,
 .collection_table .check {
   font-size: 22px;
-  color: #e09a1b;
+  color: $cb-orange-ink;
 }
 
 .collection_table .text_r {
@@ -4816,13 +4818,13 @@ li.current_page {
   content: '';
   border-width: 0 1px 1px 1px;
   border-style: solid;
-  border-color: #00b9b0;
+  border-color: $cb-action;
 }
 
 
 .collection_form form input[type="submit"] {
   position: absolute;
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   color: white;
   cursor: pointer;
   font-weight: 300;
@@ -4889,16 +4891,16 @@ li.current_page {
 
 .collection_add input {
   height: 36px;
-  border: 1px solid #d8dadf;
+  border: 1px solid $cb-border;
   padding: 10px;
-  color: #1c1e22;
+  color: $cb-text;
   font-size: 12px;
   letter-spacing: 2px;
   border-radius: 2px;
 }
 
 .collection_add input[type="submit"] {
-  background-color: #3ecdc6;
+  background-color: $cb-action;
   color: white;
   cursor: pointer;
   font-weight: 300;
@@ -4922,8 +4924,8 @@ li.current_page {
 
 
 .collection_list {
-  border: 1px solid #d8dadf;
-  border-bottom: 4px solid #d8dadf;
+  border: 1px solid $cb-border;
+  border-bottom: 4px solid $cb-border;
   margin: 2px 0 12px;
   padding: 10px 10px;
   border-radius: 6px;
@@ -4961,7 +4963,7 @@ li.current_page {
   display: block;
   padding: 6px 10px;
   margin: 20px auto 14px;
-  color: #4a4a4a;
+  color: $cb-text;
 }
 
 
@@ -4978,7 +4980,7 @@ li.current_page {
   height: 0;
   border-style: solid;
   border-width: 30px 30px 0 0;
-  border-color: #e6a124 transparent transparent transparent;
+  border-color: $cb-orange-ink transparent transparent transparent;
 }
 
 .mark-box:after {
@@ -5011,7 +5013,7 @@ li.current_page {
     text-align: center;
     margin: 30px auto 12px;
     font-size: 20px;
-    color: #545454;
+    color: $cb-text;
   }
 
   .login_img {
@@ -5029,7 +5031,7 @@ li.current_page {
     padding: 10px 0px;
     border-radius: 7px;
     text-align: center;
-    background-color: #3ecdc6;
+    background-color: $cb-action;
     color: #fff;
     font-size: 16px;
     font-weight: bold;
@@ -5062,7 +5064,7 @@ li.current_page {
 .icon_txt {
   font-size: 10px;
   padding-top: 4px;
-  color: #5f5f5f;
+  color: $cb-muted;
 }
 
 .mark-cont {
@@ -5078,7 +5080,7 @@ li.current_page {
   height: 0;
   border-style: solid;
   border-width: 40px 40px 0 0;
-  border-color: #e6a124 transparent transparent transparent;
+  border-color: $cb-orange-ink transparent transparent transparent;
 }
 
 .mark-cont:after {
@@ -5101,7 +5103,7 @@ li.current_page {
   top: -10px;
   right: -3px;
   font-size: 14px;
-  color: #f7aa30;
+  color: $cb-orange-ink;
 }
 
 
@@ -5150,7 +5152,7 @@ li.current_page {
 .icon-close_header,
 .icon-close_profile,
 .modal_close {
-  background: #3ecdc6;
+  background: $cb-action;
   color: #fff;
   font-size: 30px;
   padding: 0 10px;
@@ -5165,7 +5167,7 @@ li.current_page {
 .btn-close_04,
 .btn-close_header,
 .btn-close_profile {
-  background: #3ecdc6;
+  background: $cb-action;
   border-radius: 10px;
   color: #fff;
   cursor: pointer;
@@ -5247,7 +5249,7 @@ li.current_page {
 .vs_wrap {
   text-align: center;
   font-size: 50px;
-  color: #6d6d6d;
+  color: $cb-muted;
   letter-spacing: 0.16em;
   margin-bottom: 20px;
 }
@@ -5258,7 +5260,7 @@ li.current_page {
   border-radius: 6px;
   margin-bottom: 30px;
   color: #fff;
-  background-color: #e09a1b;
+  background-color: $cb-orange-ink;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -5275,7 +5277,7 @@ li.current_page {
 .your_name_txt {
   text-align: left;
   padding: 0;
-  color: #444;
+  color: $cb-text;
 }
 
 .border_none {
@@ -5329,7 +5331,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   position: relative;
   margin: 2em 0;
   padding: 1.5em 1em;
-  border: solid 2px #f7aa30;
+  border: solid 2px $cb-orange-ink;
   border-radius: 8px;
 }
 
@@ -5342,7 +5344,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   line-height: 1;
   font-size: 16px;
   background: #FFF;
-  color: #f7aa30;
+  color: $cb-orange-ink;
   font-weight: bold;
 }
 
@@ -5350,7 +5352,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin: 0;
   padding: 0 0 4px 0;
   font-size: 14px;
-  color: #525252;
+  color: $cb-text;
   line-height: 1.8;
 }
 
@@ -5361,7 +5363,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .marker_orange {
-  background: linear-gradient(transparent 60%, #f7aa30a1 60%);
+  background: linear-gradient(transparent 60%, rgba($cb-orange, .32) 60%);
 }
 
 .marker {
@@ -5383,8 +5385,8 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     height: 36px;
     background: #fff;
     background-color: #ffffff;
-    color: #4a4a4a;
-    border: solid 1px #4a4a4a;
+    color: $cb-text;
+    border: solid 1px $cb-text;
     border-radius: 4px;
     margin: 0;
     padding-left: 10px;
@@ -5426,7 +5428,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     justify-content: center;
     align-items: center;
     height: 40px;
-    background-color: #e09a1b;
+    background-color: $cb-orange-ink;
     padding: 8px 10px;
     border-radius: 7px;
   }
@@ -5439,7 +5441,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   .sort_btn {
     padding: 6px 10px;
     margin-right: 10px;
-    border: solid 1px #b4ced6;
+    border: solid 1px $cb-border;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -5447,7 +5449,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .selected {
-    background: #61cec7;
+    background: $cb-action;
     color: #fff;
   }
 }
@@ -5473,7 +5475,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
       margin-top: 12px;
       margin-right: 16px;
       margin-bottom: 10px;
-      border: 1px solid #e6e6e6;
+      border: 1px solid $cb-border;
       object-fit: cover;
     }
 
@@ -5485,7 +5487,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     .speech_bubble {
       position: relative;
       line-height: 1.6;
-      background-color: #effbfc;
+      background-color: $cb-sky-soft;
       padding: 10px;
       border-radius: 6px;
 
@@ -5496,7 +5498,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         left: -26px;
         margin-top: -15px;
         border: 15px solid transparent;
-        border-right: 15px solid #effbfc;
+        border-right: 15px solid $cb-sky-soft;
       }
     }
   }
@@ -5512,7 +5514,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .bad {
-    color: #137bd6;
+    color: $cb-teal;
   }
 
   .random_id {
@@ -5532,7 +5534,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .sample_review img {
   width: 94%;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   text-align: center;
   margin: 0 auto 30px;
   display: block;
@@ -5541,7 +5543,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .sample_review_img img {
   width: 80%;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $cb-border;
   text-align: center;
   margin: auto;
   display: block;
@@ -5552,13 +5554,13 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .sample_review_txt {
   text-align: center;
-  color: #5d5c5c;
+  color: $cb-text;
   margin-bottom: 10px;
 }
 
 .review_cta {
   text-align: center;
-  color: #5d5c5c;
+  color: $cb-text;
   margin-top: 10px;
 }
 
@@ -5584,8 +5586,8 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .btn_b {
-    box-shadow: 0px 0px 0px 2px #3ecdc6;
-    background: #3ecdc6;
+    box-shadow: 0px 0px 0px 2px $cb-action;
+    background: $cb-action;
   }
 }
 
@@ -5598,7 +5600,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .login_info_txt a {
-  color: #3ecdc6;
+  color: $cb-action;
   font-weight: 700;
 }
 
@@ -5621,7 +5623,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 
 .member_profile {
-  border: 1px solid #d8dadf;
+  border: 1px solid $cb-border;
   margin: 10px 0px 20px;
   border-radius: 4px;
   clear: both;
@@ -5642,7 +5644,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .orange {
-    color: #e09a1b;
+    color: $cb-orange-ink;
   }
 
   .gray {
@@ -5725,7 +5727,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   .contact {
     float: left;
     margin-top: 10px;
-    color: #525252;
+    color: $cb-text;
 
     a {
       color: $link_blue;
@@ -5740,7 +5742,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     border-style: none;
     margin: 10px auto 10px;
     font-size: 13px;
-    background-color: #3ecdc6;
+    background-color: $cb-action;
     border-radius: 6px;
   }
 
@@ -5835,11 +5837,11 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .mail {
-    border-bottom: 5px solid #2e908b;
+    border-bottom: 5px solid $cb-mint;
 
     &:hover {
       margin-top: 3px;
-      border-bottom: 2px solid #2e908b;
+      border-bottom: 2px solid $cb-mint;
     }
   }
 
@@ -5946,7 +5948,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 
 .review_score {
-  color: #6b6b6b;
+  color: $cb-muted;
   font-weight: 700;
   margin-left: 10px;
   font-size: 16px;
@@ -5966,7 +5968,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .review_index {
-  color: #6b6b6b;
+  color: $cb-muted;
 }
 
 .user_list_review {
@@ -5995,7 +5997,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .review_count {
     font-size: 14px;
-    color: #6b6b6b;
+    color: $cb-muted;
     display: inline-block;
     vertical-align: middle;
     *zoom: 1;
@@ -6071,7 +6073,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   th {
-    color: #005ab3;
+    color: $cb-teal;
   }
 
   td {
@@ -6080,7 +6082,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   th,
   tr:last-child td {
-    border-bottom: 2px solid #005ab3;
+    border-bottom: 2px solid $cb-teal;
   }
 
   td,
@@ -6099,7 +6101,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .user_sub_title {
   font-size: 14px;
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   padding: 4px 10px 6px;
 }
 
@@ -6107,7 +6109,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin-top: 14px;
   font-size: 14px;
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   padding: 4px 10px 6px;
 }
 
@@ -6119,14 +6121,14 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     width: 80%;
     float: left;
     height: 36px;
-    border: solid 1px #b4ced6;
+    border: solid 1px $cb-border;
     justify-content: center;
     align-items: center;
     background: #fff;
     background-color: #ffffff;
-    color: #4a4a4a;
+    color: $cb-text;
     margin: 0;
-    border-right: 1px solid #cecece;
+    border-right: 1px solid $cb-border;
     border-radius: 6px 0px 0px 6px;
     padding-left: 8px;
   }
@@ -6146,7 +6148,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .speech_bubble_a {
   position: relative;
   line-height: 1.6;
-  background-color: #effbfc;
+  background-color: $cb-sky-soft;
   padding: 10px;
   border-radius: 6px;
   margin-top: 10px;
@@ -6158,7 +6160,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     left: 21px;
     margin-left: -15px;
     border: 15px solid transparent;
-    border-bottom: 15px solid #effbfc;
+    border-bottom: 15px solid $cb-sky-soft;
   }
 
   p:last-child {
@@ -6167,7 +6169,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .schedule_show {
-  background: #9ceae7;
+  background: $cb-mint-soft;
   margin: 0 auto;
   padding: 10px 20px;
   text-align: center;
@@ -6204,7 +6206,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    border: 1px solid #e6e6e6;
+    border: 1px solid $cb-border;
     object-fit: cover;
     margin: 0 auto 0;
     text-align: center;
@@ -6281,8 +6283,8 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     display: inline-block;
     width: 30px;
     height: 2px;
-    border-top: solid 1px #545454;
-    border-bottom: solid 1px #545454;
+    border-top: solid 1px $cb-text;
+    border-bottom: solid 1px $cb-text;
   }
 
   &:before {
@@ -6302,7 +6304,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .bookmark_icon {
-  color: #e09a1b;
+  color: $cb-orange-ink;
   font-size: 30px;
   text-align: center;
   margin: -6px auto 0;
@@ -6320,7 +6322,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .content {
     margin-top: 14px;
-    color: #545454;
+    color: $cb-text;
     font-size: 12px;
   }
 }
@@ -6346,7 +6348,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     margin-right: 20px;
     padding: 12px;
     background-color: #fff;
-    border: 1px solid #e6e6e6;
+    border: 1px solid $cb-border;
     border-radius: 4px;
     font-size: 16px;
   }
@@ -6386,7 +6388,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .booknark_txt {
     font-size: 12px;
-    color: #6d6d6d;
+    color: $cb-muted;
     margin-top: -8px;
     text-align: center;
   }
@@ -6408,7 +6410,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   input[type="submit"] {
-    background-color: #3ecdc6;
+    background-color: $cb-action;
     color: white;
     cursor: pointer;
     font-weight: 300;
@@ -6533,7 +6535,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .sorry_message {
   text-align: center;
-  color: #777;
+  color: $cb-muted;
   font-weight: 700;
   font-size: 16px;
   padding-top: 20px;
@@ -6552,7 +6554,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     margin: 20px auto 0;
     padding: 14px 20px;
     border-radius: 6px;
-    background-color: #3ecdc6;
+    background-color: $cb-action;
     color: #fff;
     font-size: 16px;
   }
@@ -6661,11 +6663,11 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   a {
     font-size: 18px;
     font-weight: 700;
-    color: #777777;
+    color: $cb-muted;
   }
 
   .fa {
-    color: #2196F3;
+    color: $cb-teal;
     font-size: 20px;
   }
 
@@ -6686,7 +6688,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   padding-left: 10px;
 
   a {
-    color: #337ab7;
+    color: $cb-teal;
   }
 }
 
@@ -6708,12 +6710,12 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .more_link {
-  color: #337ab7;
+  color: $cb-teal;
   text-decoration: underline;
   font-weight: 700;
 
   a {
-    color: #337ab7;
+    color: $cb-teal;
     text-decoration: underline;
     font-weight: 700;
   }
@@ -6734,7 +6736,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .sample_link_child {
     margin: 0 10px 16px;
-    border: 1px solid #d8dadf;
+    border: 1px solid $cb-border;
     border-radius: 6px;
 
     .link_profile .link_img_header .header_link_imege {
@@ -6770,7 +6772,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         margin: 10px auto 0;
         padding: 10px 0;
         border-radius: 6px;
-        background-color: #3ecdc6;
+        background-color: $cb-action;
         color: #fff;
         font-size: 12px;
       }
@@ -6793,7 +6795,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .links_sub_title {
   font-size: 16px;
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   padding: 4px 10px 8px;
   margin-top: 30px;
 }
@@ -6801,7 +6803,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .links_form_sub_title {
   font-size: 16px;
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   padding: 4px 0 4px;
   margin-top: 30px;
 }
@@ -6830,7 +6832,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     content: '';
     width: 100%;
     height: 3px;
-    background: #3ecdc6;
+    background: $cb-action;
     display: block;
     order: -1;
   }
@@ -6864,7 +6866,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   /* アクティブなタブ */
   .tab-switch:checked+.tab-label {
-    background: #3ecdc6;
+    background: $cb-action;
   }
 
   .tab-switch:checked+.tab-label+.tab-content {
@@ -6897,7 +6899,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .warning_txt {
   text-align: right;
   font-size: 12px;
-  color: #777777;
+  color: $cb-muted;
 }
 
 .thanks_txt {
@@ -6930,7 +6932,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   a {
     text-decoration: underline;
-    color: #337ab7;
+    color: $cb-teal;
   }
 }
 
@@ -6965,7 +6967,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     border-radius: 50%;
     bottom: -50px;
     left: 10px;
-    border: 1px solid #e2e2e2;
+    border: 1px solid $cb-border;
     object-fit: cover;
     background-color: #fff;
     margin-right: 4px;
@@ -6974,7 +6976,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .question_notes_wrap {
   margin: 0px auto 12px;
-  color: #464646;
+  color: $cb-text;
 }
 
 .review_share_wrap {
@@ -6984,12 +6986,12 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .flex_list {
   .reviews_count {
     border-bottom: 1px solid;
-    color: #337ab7;
+    color: $cb-teal;
     font-weight: 700;
     font-size: 16px;
 
     a {
-      color: #337ab7;
+      color: $cb-teal;
     }
   }
 
@@ -7004,7 +7006,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .footer_wrap {
   margin: 30px auto 0;
   // padding: 0px 0px 80px;
-  background: #f6f9f9;
+  background: $cb-canvas;
 
   .breadcrumbs_wrapper {
     width: 100%;
@@ -7017,7 +7019,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
       padding: 0 14px;
 
       a {
-        color: #4e4e4e;
+        color: $cb-text;
         font-size: 12px;
       }
     }
@@ -7036,7 +7038,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
       a {
         font-size: 12px;
-        color: #337ab7;
+        color: $cb-teal;
         font-weight: 700;
       }
     }
@@ -7051,7 +7053,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
     .footer_copyright_address,
     .footer_copyright_address a {
-      color: #949499;
+      color: $cb-muted;
       text-align: right;
     }
 
@@ -7077,7 +7079,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .header_count a {
   display: block;
   font-size: 12px;
-  color: #656565;
+  color: $cb-muted;
 }
 
 
@@ -7210,7 +7212,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   max-width: 900px;
 
   .gallery_comment a {
-    color: #337ab7;
+    color: $cb-teal;
     text-decoration: underline;
   }
 
@@ -7225,14 +7227,14 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .top_title {
-  border: 2px solid #61cdc7;
+  border: 2px solid $cb-action;
   border-radius: 4px;
   font-size: 16px;
   text-align: center;
   display: block;
   padding: 6px 10px;
   margin: 0 auto 14px;
-  color: #4a4a4a;
+  color: $cb-text;
 }
 
 .user_profile_wrap {
@@ -7260,7 +7262,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   .user_about {
     .fa {
       width: 24px;
-      color: #777;
+      color: $cb-muted;
       margin: auto;
       text-align: center;
     }
@@ -7280,7 +7282,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   text-align: left;
 
   .attention_title {
-    color: #313131;
+    color: $cb-text;
     font-size: 14px;
   }
 
@@ -7294,20 +7296,20 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin: 0 0 20px;
 
   .cp_actab label {
-    background: #fdb243;
+    background: $cb-orange;
     border-radius: 2px;
   }
 
   .cp_actab input:checked~.cp_actab-content {
-    background: #ffefd9;
+    background: $cb-orange-soft;
     padding: 10px;
-    color: #383838;
+    color: $cb-text;
   }
 }
 
 .search_word_announce {
   font-size: 12px;
-  color: #383737;
+  color: $cb-text;
   padding-top: 2px;
   padding-left: 2px;
 }
@@ -7332,24 +7334,24 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     align-items: center;
     padding: 6px 8px;
     background: #fff;
-    border: 1px solid #519851;
+    border: 1px solid $cb-teal;
     border-radius: 4px;
     margin-right: 18px;
 
     a {
-      color: #545454;
+      color: $cb-text;
     }
   }
 
   .hash_tag {
-    color: #519851;
+    color: $cb-teal;
     font-weight: bold;
     padding-right: 4px;
   }
 
   .click_tag {
     color: #fff;
-    background: #629e62;
+    background: $cb-action;
 
     a,
     .hash_tag {
@@ -7388,7 +7390,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .blue {
-    color: #204ccc;
+    color: $cb-teal;
     font-weight: bold;
   }
 }
@@ -7436,7 +7438,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin-bottom: 6px;
 
   .fa {
-    color: #4a4a4a;
+    color: $cb-text;
   }
 }
 
@@ -7444,13 +7446,13 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   .top_contents {
     margin: 0.8rem auto;
     padding: 18px 14px 60px;
-    border-top: 1px solid #eeece4;
-    border-bottom: 1px solid #eeece4;
+    border-top: 1px solid $cb-border;
+    border-bottom: 1px solid $cb-border;
 
     .top_heading {
       display: flex;
       margin-bottom: 16px;
-      color: #13131e;
+      color: $cb-text;
       align-items: baseline;
       justify-content: space-between;
 
@@ -7459,7 +7461,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         font-weight: 700;
 
         .fa {
-          color: #4a4a4a;
+          color: $cb-text;
         }
       }
     }
@@ -7509,7 +7511,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
       z-index: 2;
       padding: 0 10px;
       border-radius: 10px;
-      color: #686a6a;
+      color: $cb-muted;
     }
 
     .readmore-label:before {
@@ -7559,15 +7561,15 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 
   .bg_blue {
-    background-color: #f2fbff;
+    background-color: $cb-sky-soft;
   }
 
   .bg_green {
-    background-color: #f2fff2;
+    background-color: $cb-mint-soft;
   }
 
   .bg_yellow {
-    background-color: #fffcf2;
+    background-color: $cb-orange-soft;
   }
 
 }
@@ -7631,16 +7633,16 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   input {
     height: 36px;
-    border: 1px solid #d8dadf;
+    border: 1px solid $cb-border;
     padding: 10px;
-    color: #1c1e22;
+    color: $cb-text;
     font-size: 12px;
     letter-spacing: 2px;
     border-radius: 2px;
   }
 
   input[type="submit"] {
-    background-color: #3ecdc6;
+    background-color: $cb-action;
     color: white;
     cursor: pointer;
     font-weight: 300;
@@ -7668,7 +7670,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .place_sub_title {
   font-size: 14px;
   font-weight: bold;
-  color: #444;
+  color: $cb-text;
   padding: 10px 0px 8px;
 }
 
@@ -7688,7 +7690,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .analytics_txt {
   font-size: 12px;
   line-height: 1.6;
-  color: #525252;
+  color: $cb-text;
 }
 
 .contact_list {
@@ -7703,7 +7705,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .update_wrap {
     button {
-      background-color: #3ecdc6;
+      background-color: $cb-action;
       text-decoration: none;
       color: white;
       cursor: pointer;
@@ -7722,20 +7724,20 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     max-height: 0;
     -webkit-transition: max-height 0.35s;
     transition: max-height 0.35s;
-    color: #333333;
+    color: $cb-text;
     padding: 4px 10px 0;
-    background-color: #f1fffe;
+    background-color: $cb-mint-soft;
   }
 
   .cp_actab input:checked~.cp_contact-content {
     max-height: 140em;
     padding: 4px 10px 0;
-    background-color: #f1fffe;
+    background-color: $cb-mint-soft;
   }
 
   .time_contact {
     text-align: right;
-    color: #696969;
+    color: $cb-text;
     font-size: 12px;
   }
 
@@ -7744,12 +7746,12 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     align-items: center;
 
     .fa {
-      color: #61cec7;
+      color: $cb-action;
       font-size: 16px;
     }
 
     a {
-      color: #61cec7;
+      color: $cb-action;
       font-weight: 700;
       text-decoration: revert;
     }
@@ -7779,7 +7781,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     }
 
     .fa {
-      color: #61cec7;
+      color: $cb-action;
       font-size: 16px;
     }
 
@@ -7792,12 +7794,12 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         clear: both;
         margin-top: 10px;
         font-size: 12px;
-        color: #696969;
+        color: $cb-text;
         padding-bottom: 0px;
 
         .fa {
           font-size: 12px;
-          color: #696969;
+          color: $cb-text;
         }
       }
 
@@ -7809,7 +7811,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .cp_actab_alert {
     label {
-      background: #e09a1b;
+      background: $cb-orange-ink;
     }
 
     input:checked~.cp_contact-content {
@@ -7845,14 +7847,14 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin: 10px 0;
   padding: 12px;
   border: 1px solid #aaa;
-  color: #696969;
+  color: $cb-text;
   font-size: 12px;
   line-height: 1.6;
   border-radius: 4px;
 
   a {
     text-decoration: underline;
-    color: #337ab7;
+    color: $cb-teal;
     font-size: 12px;
   }
 }
@@ -7893,9 +7895,9 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .selected {
     font-weight: 700;
-    background-color: #e8e8e8;
+    background-color: $cb-canvas;
     border: 1px solid #989898;
-    border-bottom-color: #e8e8e8;
+    border-bottom-color: $cb-canvas;
   }
 
   a {
@@ -7932,7 +7934,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     -ms-flex-pack: justify;
     justify-content: space-between;
     word-break: break-all;
-    background-color: #f3f3f3;
+    background-color: $cb-canvas;
     height: 40px;
 
     .tag_list_content {
@@ -7958,7 +7960,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         background: #fff;
         border: 1px solid #fff;
         border-radius: 21px;
-        color: #1a1a1a;
+        color: $cb-text;
       }
     }
   }
@@ -8008,7 +8010,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         background: #fff;
         border: 1px solid #fff;
         border-radius: 21px;
-        color: #1a1a1a;
+        color: $cb-text;
       }
     }
   }
@@ -8029,7 +8031,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin-bottom: 5px;
   margin-top: 10px;
   font-weight: 700;
-  color: #555555;
+  color: $cb-text;
 
   .label {
     display: inline;
@@ -8082,7 +8084,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   th,
   td {
-    border: solid 1px #e0e0e0;
+    border: solid 1px $cb-border;
     white-space: nowrap;
   }
 
@@ -8099,10 +8101,10 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     }
 
     .blue {
-      color: #2196F3;
+      color: $cb-teal;
 
       a {
-        color: #2196F3;
+        color: $cb-teal;
       }
     }
 
@@ -8174,7 +8176,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .attendance_comment {
     font-size: 10px;
-    color: #696969;
+    color: $cb-text;
     overflow-x: scroll;
     width: 100px;
     padding-bottom: 6px;
@@ -8185,10 +8187,10 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .day {
-    background: #f7f7f7;
+    background: $cb-canvas;
 
     a {
-      color: #337ab7;
+      color: $cb-teal;
 
       .schedule_day_link {
         text-decoration: underline;
@@ -8197,7 +8199,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
       .recruitment_numbers_wrap {
         padding-top: 4px;
         font-size: 18px;
-        color: #2d3133;
+        color: $cb-text;
       }
 
       .small_font {
@@ -8215,7 +8217,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .day_title,
   .status_title {
-    color: #505050;
+    color: $cb-text;
   }
 
   .status_title {
@@ -8230,7 +8232,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     width: 88%;
     margin: auto;
     color: #fff;
-    background-color: #e09a1b;
+    background-color: $cb-orange-ink;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8342,8 +8344,8 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .add_schedule_btn {
     color: #fff;
-    background-color: #e09a1b;
-    border-bottom: 5px solid #9e690a;
+    background-color: $cb-orange-ink;
+    border-bottom: 5px solid $cb-orange-ink;
     font-size: 16px;
     font-weight: 700;
     line-height: 1.5;
@@ -8367,16 +8369,16 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
     &:hover {
       margin-top: 3px;
-      border-bottom: 2px solid #9e690a;
+      border-bottom: 2px solid $cb-orange-ink;
       color: #fff;
-      background: #e09a1b;
+      background: $cb-orange-ink;
     }
   }
 }
 
 .join_txt {
   padding-bottom: 4px;
-  color: #5f5f5f;
+  color: $cb-muted;
   text-align: center;
 }
 
@@ -8394,7 +8396,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   position: relative;
   margin: 40px auto 24px;
   padding: 18px 10px 10px;
-  color: #555555;
+  color: $cb-text;
   background-color: #fff;
   border: 2px solid #d6d6d6;
   width: 100%;
@@ -8424,9 +8426,9 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .attendance_url_copy {
   padding: 6px 10px;
-  background: #f9f9f9;
+  background: $cb-canvas;
   border: solid 1px #ccc;
-  color: #5d5c5c;
+  color: $cb-text;
   border-radius: 2px;
   font-size: 10px;
   width: 100%;
@@ -8469,7 +8471,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   .fa {
     width: 20px;
     text-align: center;
-    color: #777;
+    color: $cb-muted;
   }
 }
 
@@ -8493,7 +8495,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   margin-bottom: 30px;
 
   a {
-    color: #337ab7;
+    color: $cb-teal;
     text-decoration: underline;
   }
 }
@@ -8502,7 +8504,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   width: 100%;
   margin: 10px auto 30px;
   border-radius: 8px;
-  border: solid 1px #e0e0e0;
+  border: solid 1px $cb-border;
 }
 
 .speech_title {
@@ -8540,7 +8542,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     border-radius: 15px;
     -webkit-border-radius: 15px;
     -moz-border-radius: 15px;
-    background: #e2fffe;
+    background: $cb-mint-soft;
     color: #222;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -8557,7 +8559,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
   .title {
     height: 80px;
-    color: #353535;
+    color: $cb-text;
     font-size: 20px;
     font-weight: bold;
     display: flex;
@@ -8573,7 +8575,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     font-size: 24px;
     width: 2px;
     height: 0.75em;
-    background-color: #3e3b3b;
+    background-color: $cb-text;
     transition: all 0.3s;
   }
 
@@ -8591,7 +8593,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     margin: 0;
     padding-bottom: 50px;
     font-size: 18px;
-    color: #5f5f5f;
+    color: $cb-muted;
     line-height: 1.5;
   }
 
@@ -8628,7 +8630,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   text-align: right;
 
   a {
-    color: #337ab7;
+    color: $cb-teal;
     text-decoration: underline;
   }
 }
@@ -8683,7 +8685,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   letter-spacing: 0.05em;
   color: #ffffff;
   border-radius: 20px;
-  background-color: #3dcdc6;
+  background-color: $cb-action;
 }
 
 .cp_box input {
@@ -8761,7 +8763,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .blog_profile {
   a {
     text-decoration: none;
-    color: #4b5356;
+    color: $cb-text;
   }
 }
 
@@ -8789,7 +8791,7 @@ trix-toolbar .button_group button.icon {
 
   a {
     font-size: 16px;
-    color: #337ab7;
+    color: $cb-teal;
     text-decoration: none;
   }
 
@@ -8803,7 +8805,7 @@ trix-toolbar .button_group button.icon {
     display: block;
     word-break: break-all;
     word-wrap: break-word;
-    background-color: #f5f5f5;
+    background-color: $cb-canvas;
     border-radius: 4px;
     font-size: 16px;
     white-space: unset;
@@ -8885,13 +8887,13 @@ trix-toolbar .button_group button.icon {
   background: #fff;
   margin: 0.8rem auto;
   padding: 18px 14px 60px;
-  border-top: 1px solid #eeece4;
-  border-bottom: 1px solid #eeece4;
+  border-top: 1px solid $cb-border;
+  border-bottom: 1px solid $cb-border;
 
   .top_heading {
     display: flex;
     margin-bottom: 16px;
-    color: #13131e;
+    color: $cb-text;
     align-items: baseline;
     justify-content: space-between;
 
@@ -8908,10 +8910,10 @@ trix-toolbar .button_group button.icon {
       margin: 6px 4px;
       padding: 6px 16px;
       background: #fff;
-      border: 1px solid #d9d9d9;
-      box-shadow: 1px 1px 2px #d1d1d1;
+      border: 1px solid $cb-border;
+      box-shadow: 1px 1px 2px $cb-border;
       border-radius: 21px;
-      color: #1a1a1a;
+      color: $cb-text;
     }
   }
 }
@@ -9026,7 +9028,7 @@ trix-toolbar .button_group button.icon {
       background: #fff;
       border: 1px solid #aaa;
       border-radius: 10px;
-      color: #1a1a1a;
+      color: $cb-text;
     }
 
     .c_selected {
@@ -9036,8 +9038,8 @@ trix-toolbar .button_group button.icon {
     }
 
     .c_sat {
-      border: 1px solid #1b1bc4;
-      color: #1b1bc4;
+      border: 1px solid $cb-teal;
+      color: $cb-teal;
     }
 
     .c_sun {
@@ -9096,7 +9098,7 @@ trix-toolbar .button_group button.icon {
   }
 
   .cautions a {
-    color: #337ab7;
+    color: $cb-teal;
     text-decoration: underline;
     font-size: 12px;
   }
@@ -9125,7 +9127,7 @@ trix-toolbar .button_group button.icon {
     margin-bottom: 5px;
     margin-top: 10px;
     font-weight: 700;
-    color: #555555;
+    color: $cb-text;
   }
 
   select {
@@ -9183,7 +9185,7 @@ trix-toolbar .button_group button.icon {
     font-size: 12px;
     text-align: center;
     border-radius: 50%;
-    background-color: #F5F5F5;
+    background-color: $cb-canvas;
     content: counter(steps);
   }
 
@@ -9195,7 +9197,7 @@ trix-toolbar .button_group button.icon {
     width: 100%;
     height: 2px;
     content: '';
-    background-color: #F5F5F5;
+    background-color: $cb-canvas;
   }
 
   .progressbar li:first-child:after {
@@ -9204,18 +9206,18 @@ trix-toolbar .button_group button.icon {
 
   .progressbar li.active,
   .progressbar li.complete {
-    color: #337ab7;
+    color: $cb-teal;
   }
 
   .progressbar li.active:before,
   .progressbar li.complete:before {
-    background-color: #337ab7;
+    background-color: $cb-teal;
     color: #FFF;
   }
 
   .progressbar li.active:after,
   .progressbar li.complete:after {
-    background-color: #337ab7;
+    background-color: $cb-teal;
   }
 
 }
@@ -9246,7 +9248,7 @@ trix-toolbar .button_group button.icon {
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        border: 1px solid #e6e6e6;
+        border: 1px solid $cb-border;
         object-fit: cover;
       }
     }
@@ -9271,7 +9273,7 @@ trix-toolbar .button_group button.icon {
   .admin_user_txt {
     clear: both;
     display: block;
-    border: 1px solid #d8dadf;
+    border: 1px solid $cb-border;
     margin: 0px 10px 20px;
     padding: 10px 10px;
     border-radius: 4px;
@@ -9284,7 +9286,7 @@ trix-toolbar .button_group button.icon {
 
     a {
       font-size: 14px;
-      color: #337ab7;
+      color: $cb-teal;
       text-decoration: none;
     }
   }
@@ -9329,7 +9331,7 @@ trix-toolbar .button_group button.icon {
     padding: 0px 20px;
     border-radius: 6px;
     color: #fff;
-    background-color: #3ecdc6;
+    background-color: $cb-action;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9379,7 +9381,7 @@ trix-toolbar .button_group button.icon {
 .user_slide_qa_wrap{
   width: 220px;
   height: 116px;
-  background:#3ecdc6;
+  background:$cb-action;
   border-radius: 6px;
   padding: 5%;
 }
@@ -9403,7 +9405,7 @@ trix-toolbar .button_group button.icon {
     transform:translate(-50%,-50%);
     width:90%;
     font-size: 12px;
-    color: #1c1e22;
+    color: $cb-text;
     font-weight: normal;
     line-height: 1.2;
   }
@@ -9617,3 +9619,6 @@ trix-toolbar .button_group button.icon {
 }
 
 // ▼SP
+// Shared brand assets and header placement.
+@import "branding";
+@import "brand_theme";

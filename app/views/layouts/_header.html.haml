@@ -1,4 +1,7 @@
 .header_wrap
+  .site-brand
+    = link_to root_path, class: 'site-brand__link' do
+      = image_tag '/images/logo.png?v=20260921-green-clean', alt: 'サークルブック', width: 960, height: 251, class: 'site-brand__image'
   %ul.header-menus_sp
     / ログイン時の処理
     - if member_signed_in?
@@ -52,7 +55,7 @@
           %i.fa.fa-book
           .link_txt 活動ブログ
       %li
-        = link_to(new_admin_user_registration_path) do
+        = link_to(new_admin_user_registration_path, class: 'site-registration-link') do
           %i.fa.fa-user-plus
           .link_txt サークル登録
     = render "/layouts/menu"

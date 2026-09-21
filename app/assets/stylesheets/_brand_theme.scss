@@ -1,0 +1,167 @@
+// Shared interaction states and surfaces, loaded after legacy page styles.
+.site-brand {
+  background: $cb-surface;
+  border-bottom: 1px solid $cb-border;
+}
+
+.header-menus_sp > li {
+  border-right-color: $cb-border;
+}
+
+.header-menus_sp > li > a:hover,
+.header-menus_sp > li > a:focus-visible {
+  color: $cb-action;
+  background: $cb-mint-soft;
+}
+
+.header-menus_sp .site-registration-link {
+  color: $cb-action;
+  background: $cb-surface;
+}
+
+.header-menus_sp .site-registration-link:hover,
+.header-menus_sp .site-registration-link:focus-visible {
+  color: $cb-action;
+  background: $cb-mint-soft;
+}
+
+.header-menus_sp > li > a {
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header_wrap .header-menus_sp {
+  color: $cb-muted;
+  background: $cb-surface;
+  border-bottom: 1px solid $cb-border;
+}
+
+.header_wrap .header-menus_sp > li {
+  color: $cb-muted;
+}
+
+.header_wrap .header-menus_sp > li > a {
+  color: $cb-muted;
+}
+
+.header_wrap .header-menus_sp > li > a.is-active {
+  color: $cb-action;
+  background: $cb-mint-soft;
+}
+
+.header_wrap .header-menus_sp .site-registration-link {
+  color: $cb-action;
+}
+
+.header_menue_btm {
+  background: $cb-surface;
+  border-bottom: 1px solid $cb-border;
+}
+
+li.current_page {
+  background: $cb-mint-soft;
+}
+
+.top_page .top_contents .top_heading,
+.top_page .top_contents .top_heading .sub_title .fa,
+.users-heading,
+.schedule_title {
+  color: $cb-teal;
+}
+
+.top_page .top_contents {
+  border-color: $cb-border;
+}
+
+.top_page .readmore-label {
+  color: $cb-teal;
+}
+
+.search_wrap,
+.sort_wrap,
+.user_list,
+.blog_list,
+.footer_copyright {
+  background-color: $cb-surface;
+}
+
+.search_submit:hover,
+.search_icon:hover,
+.menu_btn:hover,
+.qa_answer_form .submit_btn:hover {
+  background-color: $cb-action-hover;
+}
+
+.search_wrap .search-text,
+.search_select,
+.schedule_input input,
+.form-control {
+  border-color: $cb-input-border;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: $cb-muted;
+  opacity: 1;
+}
+
+.btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+label[for]:focus-visible {
+  outline: 3px solid $cb-action;
+  outline-offset: 3px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: $cb-action;
+}
+
+::selection {
+  background: $cb-mint-soft;
+  color: $cb-teal;
+}
+
+// Calendar day meanings remain recognizable; selection uses the brand palette.
+.ui-datepicker .ui-state-active {
+  background: $cb-action;
+  border-color: $cb-action;
+  color: $cb-surface;
+}
+
+.ui-datepicker .ui-state-highlight {
+  background: $cb-mint-soft;
+  border-color: $cb-action;
+  color: $cb-action-hover;
+}
+
+.tab_wrap .tab-label {
+  background: $cb-mint-soft;
+  color: $cb-teal;
+  text-shadow: none;
+}
+
+.tab_wrap .tab-switch:checked + .tab-label {
+  background: $cb-action;
+  color: $cb-surface;
+}
+
+.contact_link .btn_green {
+  background-color: $cb-action;
+  color: $cb-surface;
+}
+
+.contact_link .btn_green:hover {
+  background-color: $cb-action-hover;
+}
+
+.contact_link .btn_green.btn_cubic,
+.contact_link .btn_green.btn_cubic:hover {
+  border-bottom-color: $cb-action-hover;
+}

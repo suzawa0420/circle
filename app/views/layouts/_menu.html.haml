@@ -7,7 +7,7 @@
     #nav-content
       .logo_txt
         = link_to root_path do
-          %img.img_logo_memu{:alt => "サークルブック", :src => "/images/logo.png"}/
+          %img.img_logo_memu{:alt => "サークルブック", :src => "/images/logo.png?v=20260921-green-clean", :width => 960, :height => 251}/
       - if member_signed_in?
         .menu_btn= link_to 'マイページ', member_path(current_member)
       - elsif admin_user_signed_in?

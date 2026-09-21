@@ -1,0 +1,38 @@
+// Circlebook app palette: neutral surfaces with one green accent.
+$cb-teal: #16835d;
+$cb-action: #16835d;
+$cb-action-hover: #0f6849;
+$cb-mint: #16835d;
+$cb-sky: #16835d;
+$cb-orange: #16835d;
+$cb-orange-ink: #0f6849;
+$cb-canvas: #f5f6f7;
+$cb-surface: #ffffff;
+$cb-mint-soft: #edf7f2;
+$cb-sky-soft: #f5f6f7;
+$cb-orange-soft: #f5f6f7;
+$cb-text: #202124;
+$cb-muted: #656b73;
+$cb-border: #e3e6e8;
+$cb-input-border: #b6bcc1;
+$cb-shadow: #d9dcde;
+
+// Bootstrap is compiled with the same palette as application components.
+$brand-primary: $cb-action;
+$brand-info: $cb-action;
+$brand-success: $cb-action;
+$brand-warning: $cb-action;
+$brand-danger: #b83e46;
+$body-bg: $cb-canvas;
+$text-color: $cb-text;
+$link-color: $cb-teal;
+$link-hover-color: $cb-action-hover;
+$input-border: $cb-input-border;
+$input-border-focus: $cb-action;
+$input-color-placeholder: $cb-muted;
+$state-info-text: $cb-teal;
+$state-info-bg: $cb-sky-soft;
+$state-info-border: $cb-border;
+$state-warning-text: $cb-action-hover;
+$state-warning-bg: $cb-mint-soft;
+$state-warning-border: $cb-border;

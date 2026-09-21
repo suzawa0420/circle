@@ -10,8 +10,9 @@ module ApplicationHelper
         keywords: "サークル,チーム,団体,スポーツ,趣味,社会人,学生",
         separator: "|",
         icon: [
-          { href: image_url("https://circle-book.com/images/favicon.ico")},
-          { href: image_url("https://circle-book.com/images/apple-touch-icon.png"), rel: "apple-touch-icon", sizes: "180x180", type: "image/jpg" },
+          { href: image_url("/images/favicon.ico?v=20260921-green-clean"), type: "image/x-icon", sizes: "16x16 32x32 48x48" },
+          { href: image_url("/images/favicon-48.png?v=20260921-green-clean"), type: "image/png", sizes: "48x48" },
+          { href: image_url("/images/apple-touch-icon.png?v=20260921-green-clean"), rel: "apple-touch-icon", sizes: "180x180", type: "image/png" },
         ],
         og: {
           site_name: :site,
@@ -19,7 +20,7 @@ module ApplicationHelper
           description: :description,
           type: "website",
           url: request.original_url,
-          image: image_url("/images/ogp.png"),
+          image: image_url("/images/ogp.png?v=20260921-green-clean"),
           locale: "ja_JP"
         },
         twitter: {

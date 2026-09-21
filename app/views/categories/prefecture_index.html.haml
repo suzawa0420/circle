@@ -4,7 +4,7 @@
   .container.top_page
     %img.imege_title{:src => "/images/top.png"}/
     %h1.users-heading
-      %img.img_logo_title{:alt => "サークルブック", :src => "/images/logo.png"}/
+      %img.img_logo_title{:alt => "サークルブック", :src => "/images/logo.png?v=20260921-green-clean", :width => 960, :height => 251}/
     .users-txt
       - if admin_user_signed_in?
         = link_to("活動ブログ", new_circle_blog_path(@user) )
