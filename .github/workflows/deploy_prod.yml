@@ -79,7 +79,18 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
-            git pull --ff-only origin master
+            git fetch origin master
+            if ! git diff --quiet || ! git diff --cached --quiet; then
+              echo "Tracked production files have uncommitted changes; refusing to overwrite them."
+              git status --short
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor HEAD origin/master; then
+              backup_branch="deploy-backup-$(date +%Y%m%d%H%M%S)"
+              git branch "$backup_branch" HEAD
+              echo "Saved divergent production commit as $backup_branch"
+            fi
+            git reset --hard origin/master
       - name: server2 - Install frontend dependencies
         uses: appleboy/ssh-action@master
         with:
@@ -114,3 +125,16 @@ jobs:
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
             kill -USR2 $(cat tmp/pids/unicorn.pid)
+      - name: Verify production HTTP responses
+        run: |
+          set -eu
+          for path in / /categories/ball-sports; do
+            for attempt in 1 2 3 4 5; do
+              url="https://circle-book.com${path}?deploy_check=${GITHUB_SHA}-${attempt}"
+              status="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' "$url")"
+              if [ "$status" != "200" ]; then
+                echo "Health check failed: $url returned HTTP $status"
+                exit 1
+              fi
+            done
+          done
