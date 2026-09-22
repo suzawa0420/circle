@@ -8,7 +8,7 @@ class ReviewMailer < ApplicationMailer
 
   def bad_review(user)
     @user = user
-    mail to:      "circlebook.mailer@gmail.com",
+    mail to:      "circlebook26@gmail.com",
         subject: "【サークルブック】『#{user.name}』宛に低評価の口コミが投稿されました！"
   end
 
