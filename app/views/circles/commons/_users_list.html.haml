@@ -5,12 +5,13 @@
     = link_to(new_circle_blog_path(current_admin_user.first_user)) do
       .post_link サークル活動をつぶやく！
 
-- is_moderator = admin_user_signed_in? && current_admin_user.moderator?
-- cache [users, is_moderator] do
+- is_master_account = admin_user_signed_in? && current_admin_user.master_account?
+- cache [users, is_master_account] do
   %ul
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
-        - if is_moderator
+        - if is_master_account
+          = link_to "編集", edit_user_path(user), data: { "turbolinks" => false }, class: "moderator-edit-btn"
           = link_to "削除", user_path(user), method: :delete, data: { confirm: "「#{user.name}」を削除しますか？" }, class: "moderator-delete-btn"
         = link_to(circle_path(user.id)) do
           .header_user_list.ribbon-wrapper

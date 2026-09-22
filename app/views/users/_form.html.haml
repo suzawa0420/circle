@@ -7,7 +7,7 @@
   - @user.errors.full_messages.each do |message|
     .form-error_message
       ・#{message}
-  - if current_admin_user.id == 1
+  - if current_admin_user.master_account?
     .form
       = form_for @admin_user, url:"/users/#{@user.id}/admin_user_update" do |f|
         .label_item
@@ -44,7 +44,7 @@
           %li
             = f.check_box :remove_pic_header
             背景画像の削除
-    - if current_admin_user.id == 1
+    - if current_admin_user.master_account?
       .label_item
         %span.label.label_danger> 管理権限
         NGアカウント判定

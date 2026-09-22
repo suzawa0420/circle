@@ -1,5 +1,5 @@
 - if admin_user_signed_in?
-  - if @user.admin_user_id == current_admin_user.id || current_admin_user.id == 1
+  - if @user.admin_user_id == current_admin_user.id || current_admin_user.master_account?
     - if @respond_check_count > 0
       .attention_content
         %span.attention_count>

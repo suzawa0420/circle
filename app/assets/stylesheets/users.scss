@@ -1815,10 +1815,10 @@ border-bottom: 1px solid;
   }
 
 }
+.moderator-edit-btn,
 .moderator-delete-btn {
   display: inline-block;
   float: right;
-  background-color: #e74c3c;
   color: #fff;
   font-size: 12px;
   padding: 4px 10px;
@@ -1828,7 +1828,16 @@ border-bottom: 1px solid;
   z-index: 10;
   position: relative;
   &:hover {
-    background-color: #c0392b;
     color: #fff;
   }
+}
+
+.moderator-edit-btn {
+  background-color: $cb-action;
+  &:hover { background-color: $cb-action-hover; }
+}
+
+.moderator-delete-btn {
+  background-color: #e74c3c;
+  &:hover { background-color: #c0392b; }
 }

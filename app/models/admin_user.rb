@@ -49,15 +49,19 @@ class AdminUser < ApplicationRecord
 
   scope :ng_account, -> {where(check: nil)}
 
-  SUPER_ADMIN_EMAIL = "n.shibazaki@bugs.co.jp"
+  MASTER_ACCOUNT_ID = 1
+  MASTER_ACCOUNT_EMAIL = "circlebook26@gmail.com"
+
+  def master_account?
+    id == MASTER_ACCOUNT_ID && email.to_s.casecmp?(MASTER_ACCOUNT_EMAIL)
+  end
 
   def super_admin?
-    email == SUPER_ADMIN_EMAIL
+    master_account?
   end
 
   def moderator?
-    return true if super_admin?
-    self.class.column_names.include?("moderator") && self[:moderator] == true
+    master_account?
   end
 
 end

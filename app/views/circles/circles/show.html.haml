@@ -114,10 +114,10 @@
 
 
         - if admin_user_signed_in?
-          - if current_admin_user.id == 1
+          - if current_admin_user.master_account?
             .admin_area
-              .admin_edit= link_to("編集", edit_user_path, data: {"turbolinks" => false})
-              .admin_delete= link_to( "削除", user_path, method: :delete, data: {confirm: "このサークルを削除しますか？"})
+              .admin_edit= link_to("編集", edit_user_path(@user), data: {"turbolinks" => false})
+              .admin_delete= link_to("削除", user_path(@user), method: :delete, data: {confirm: "このサークルを削除しますか？"})
             - if @admin_user.users.count > 1
               .admin_user_list
                 - @admin_user.users.each do |user|

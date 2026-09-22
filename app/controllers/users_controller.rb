@@ -3,7 +3,7 @@ include ApplicationHelper
 include Circlebook
 
 before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del]
-before_action :require_moderator_for_destroy, only: [:destroy]
+before_action :require_master_account_for_destroy, only: [:destroy]
 before_action :set_users, except: [:show, :new, :create]
 
 helper_method :link_count
@@ -193,7 +193,7 @@ helper_method :link_count
     @admin_user = @user.admin_user
 
 		if admin_user_signed_in?
-			if current_admin_user.id == 1
+			if current_admin_user.master_account?
         @admin_user.update(admin_user_params)
         @admin_user.users.map{|user|
           user.last_post = Time.zone.now.ago(5.years)
@@ -211,7 +211,7 @@ helper_method :link_count
 
 	def update
 		@user = User.find(params[:id])
-		@user.user_time = Time.zone.now if current_admin_user.id != 1
+		@user.user_time = Time.zone.now unless current_admin_user.master_account?
     if @user.switch.nil?
       @user.switch = "募集中"
     end
@@ -682,7 +682,7 @@ private
 
 			if current_admin_user.id == @user.admin_user_id
 				# OK
-			elsif current_admin_user.id == 1
+			elsif current_admin_user.master_account?
 				#OK
 			else
         flash[:notice] = "権限がありません"
@@ -692,8 +692,8 @@ private
 		end
 	end
 
-  def require_moderator_for_destroy
-    unless admin_user_signed_in? && current_admin_user.moderator?
+  def require_master_account_for_destroy
+    unless admin_user_signed_in? && current_admin_user.master_account?
       flash[:notice] = "権限がありません"
       redirect_to circles_path
     end
