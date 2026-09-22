@@ -37,12 +37,13 @@
 
 .header_wrap .header-menus_sp {
   color: $cb-muted;
-  background: $cb-surface;
+  background: $cb-canvas;
   border-bottom: 1px solid $cb-border;
 }
 
 .header_wrap .header-menus_sp > li {
   color: $cb-muted;
+  background: $cb-canvas;
 }
 
 .header_wrap .header-menus_sp > li > a {
@@ -56,6 +57,7 @@
 
 .header_wrap .header-menus_sp .site-registration-link {
   color: $cb-action;
+  background: $cb-canvas;
 }
 
 .header_menue_btm {
@@ -190,6 +192,57 @@ input[type="radio"] {
 .user_item_wrap .user_area .fa,
 .user_item_wrap .review_count .fa {
   color: $cb-muted;
+}
+
+// Text links remain neutral. Green is reserved for actions and selected states.
+a {
+  color: $cb-text;
+}
+
+a:hover,
+a:focus {
+  color: $cb-action-hover;
+}
+
+.blog-body > a,
+.blog-body .blog_title,
+.blog-body .rich_text_main,
+.blog_tag .tag_btn,
+.blog_tag .tag-color,
+.blog_link,
+.blog_link .post_title,
+.matching_wrap > a,
+.matching_card,
+.matching_name,
+.matching_card .article_item,
+.post-body a,
+.flex_contents a,
+.place_list .content_08 a,
+.profile-content .content_08 a,
+.qa_answer a,
+.matching_url a,
+.more_link,
+.more_link a,
+.more_link_txt a,
+.footer_wrap .footer_links a {
+  color: $cb-text;
+}
+
+.blog-body > a:hover,
+.blog-body > a:focus,
+.blog_tag .tag_btn:hover,
+.blog_tag .tag_btn:focus,
+.matching_wrap > a:hover,
+.matching_wrap > a:focus,
+.more_link:hover,
+.more_link:focus,
+.more_link a:hover,
+.more_link a:focus,
+.more_link_txt a:hover,
+.more_link_txt a:focus,
+.footer_wrap .footer_links a:hover,
+.footer_wrap .footer_links a:focus {
+  color: $cb-action-hover;
 }
 
 .contact_link .btn_green.btn_cubic,
