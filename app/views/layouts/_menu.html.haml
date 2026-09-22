@@ -48,7 +48,8 @@
 
       .menu_contact
         %p 主催者/参加者のアカウント問わず、X（旧Twitter）のDMからお問い合わせください。
-        = link_to 'https://x.com/circlebook03', target: '_blank', rel: 'noopener' do
+        = link_to 'https://x.com/circlebook03', class: 'menu_contact_x', target: '_blank', rel: 'noopener noreferrer', aria: { label: 'サークルブックのX（旧Twitter）を開く' } do
           %i.fab.fa-x-twitter
+          %span X（旧Twitter）で問い合わせる
 
   .link_txt メニュー

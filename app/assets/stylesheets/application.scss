@@ -1896,9 +1896,32 @@ a.line_business {
     margin-bottom: 10px;
     line-height: 1.6;
   }
-  .fa-instagram {
-    font-size: 32px;
-    color: #C13584;
+  .menu_contact_x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+    padding: 11px 14px;
+    border-radius: 7px;
+    background: #111;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color .2s ease;
+
+    &:hover,
+    &:focus {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .fa-x-twitter {
+      font-size: 18px;
+    }
   }
 }
 
