@@ -2,10 +2,6 @@
 @import "brand_palette";
 
 // Shared interaction states and surfaces, loaded after legacy page styles.
-.site-brand {
-  background: $cb-surface;
-  border-bottom: 1px solid $cb-border;
-}
 
 .header-menus_sp > li {
   border-right-color: $cb-border;
@@ -58,6 +54,12 @@
 .header_wrap .header-menus_sp .site-registration-link {
   color: $cb-action;
   background: $cb-canvas;
+}
+
+.header_wrap #nav-open span,
+.header_wrap #nav-open span::before,
+.header_wrap #nav-open span::after {
+  background: $cb-muted;
 }
 
 .header_menue_btm {

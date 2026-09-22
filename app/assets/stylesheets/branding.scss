@@ -1,32 +1,11 @@
-// Reserve the added brand row while preserving existing navigation offsets.
+// Keep the fixed navigation to a single, compact row.
 body {
   padding-top: 60px;
 }
 
 .header_wrap {
   top: 0;
-  height: 124px;
-}
-
-.site-brand {
   height: 60px;
-  padding: 4px 16px;
-  display: flex;
-  align-items: center;
-  background: #fff;
-}
-
-.site-brand__link {
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-}
-
-.site-brand__image {
-  display: block;
-  width: 200px;
-  max-width: 100%;
-  height: auto;
 }
 
 .header_wrap .header-menus_sp {
@@ -41,6 +20,5 @@ body {
 }
 
 @media only screen and (max-width: 767px) {
-  .header_wrap { height: 120px; }
-  .site-brand { padding-left: 12px; }
+  .header_wrap { height: 60px; }
 }
