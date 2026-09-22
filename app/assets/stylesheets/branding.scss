@@ -21,4 +21,11 @@ body {
 
 @media only screen and (max-width: 767px) {
   .header_wrap { height: 60px; }
+
+  // body already reserves space for the fixed header. Avoid a second offset
+  // before page content on phones.
+  .main,
+  .user_main {
+    padding-top: 0;
+  }
 }
