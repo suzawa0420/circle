@@ -6,7 +6,9 @@
       .post_link サークル活動をつぶやく！
 
 - is_master_account = admin_user_signed_in? && current_admin_user.master_account?
-- cache [users, is_master_account] do
+- listing_data = CircleListingData.new(users)
+- users = listing_data.users
+- cache [users, is_master_account, 'bounded-list-v1'] do
   %ul
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
@@ -40,8 +42,8 @@
                   %span.user_recruitment= user.recruitment.truncate(110)
 
 
-                - if user.reviews.present?
-                  = render "layouts/review_score", review_score: user.review_score.to_f, reviews_count: user.reviews.size
+                - if listing_data.review_count(user).positive?
+                  = render "layouts/review_score", review_score: user.review_score.to_f, reviews_count: listing_data.review_count(user)
 
 
 
@@ -62,7 +64,7 @@
                     %i.fa.fa-calendar.icon_c
                     = user.schedule
                   - if user.switch == "募集中"
-                    - user.schedules.where("day > ?", DateTime.yesterday).order(:day => :asc).first(2).each do |schedule|
+                    - listing_data.schedules_for(user).each do |schedule|
                       .text_slide.user_item_schedule
                         ・#{Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")}
                         - if schedule.time_s.present?
@@ -83,8 +85,8 @@
               %li
                 = link_to prefecture_path(user.prefecture_sub.kana) do
                   = user.prefecture_sub.name
-            - if user.tags.present?
-              - user.tags.order(:order => :asc).each do |tag|
+            - if user.listing_tags.present?
+              - user.listing_tags.each do |tag|
                 %li
                   = link_to tag_path(tag.id) do
                     = tag.name

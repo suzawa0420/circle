@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Run from the deployed application directory. Do not advance to the other
+# instance until the replacement master is running and Rails answers locally.
+set -eu
+
+pid_file=tmp/pids/unicorn.pid
+old_pid="$(cat "$pid_file")"
+case "$old_pid" in
+  ''|*[!0-9]*|0|1) echo 'Invalid Unicorn PID'; exit 1 ;;
+esac
+kill -0 "$old_pid"
+kill -USR2 "$old_pid"
+
+deadline=$((SECONDS + 240))
+successes=0
+while [ "$SECONDS" -lt "$deadline" ]; do
+  new_pid="$(cat "$pid_file" 2>/dev/null || true)"
+  case "$new_pid" in
+    ''|*[!0-9]*|0|1) sleep 3; continue ;;
+  esac
+  if [ "$new_pid" != "$old_pid" ] && kill -0 "$new_pid" 2>/dev/null && ! kill -0 "$old_pid" 2>/dev/null; then
+    status="$(curl --silent --connect-timeout 3 --max-time 15 --output /dev/null --write-out '%{http_code}' http://127.0.0.1/ || true)"
+    if [ "$status" = '200' ]; then
+      successes=$((successes + 1))
+      if [ "$successes" -ge 3 ]; then
+        echo 'Replacement Unicorn master and Rails HTTP readiness verified'
+        exit 0
+      fi
+    else
+      successes=0
+    fi
+  else
+    successes=0
+  fi
+  sleep 3
+done
+echo 'Unicorn readiness timed out; deployment stopped before advancing'
+exit 1

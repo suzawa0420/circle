@@ -78,7 +78,7 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
-            kill -USR2 $(cat tmp/pids/unicorn.pid)
+            bash bin/restart_unicorn_safely
       - name: server2 - Check SSH connection
         uses: appleboy/ssh-action@master
         with:
@@ -153,7 +153,7 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
-            kill -USR2 $(cat tmp/pids/unicorn.pid)
+            bash bin/restart_unicorn_safely
       - name: Verify production HTTP responses
         run: |
           set -eu

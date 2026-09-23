@@ -86,6 +86,7 @@ class User < ApplicationRecord
   has_many :cities, through: :users_cities
 	has_many :user_tags, dependent: :destroy
   has_many :tags, through: :user_tags
+  has_many :listing_tags, -> { order(:order) }, through: :user_tags, source: :tag
   has_many :bookmarks, dependent: :destroy
 	has_many :user_contacts, dependent: :destroy
 
