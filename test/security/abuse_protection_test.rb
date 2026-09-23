@@ -114,6 +114,26 @@ class AbuseProtectionTest < Minitest::Test
     assert_equal 200, RegistrationController.action(:update).call(env)[0]
   end
 
+  def test_production_initializers_load_on_installed_rails_and_log_only_slow_timings
+    Object.const_set(:Rails, Module.new) unless defined?(Rails)
+    output = StringIO.new
+    root = Pathname.new(File.expand_path('../..', __dir__))
+    Rails.define_singleton_method(:root) { root }
+    Rails.define_singleton_method(:logger) { Logger.new(output) }
+    load root.join('config/initializers/rack_attack.rb')
+    load root.join('config/initializers/slow_request_logging.rb')
+    assert_instance_of AbuseCounterStore, Rack::Attack.cache.store
+    payload = { controller: 'HomeController', action: 'index', status: 200, db_runtime: 12,
+                params: { password: 'do-not-log' }, path: '/?private=yes' }
+    ActiveSupport::Notifications.publish('process_action.action_controller', Time.at(0), Time.at(1), 'test', payload)
+    assert_empty output.string
+    ActiveSupport::Notifications.publish('process_action.action_controller', Time.at(0), Time.at(3), 'test', payload)
+    assert_includes output.string, 'duration=3000.0ms'
+    assert_includes output.string, 'db=12.0ms'
+    refute_includes output.string, 'do-not-log'
+    refute_includes output.string, 'private=yes'
+  end
+
   class GuardHarness
     def self.prepend_before_action(*); end
     include RegistrationBotGuard
