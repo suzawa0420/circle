@@ -1,5 +1,6 @@
 # Standalone integration test against an isolated, disposable PostgreSQL cluster.
-# Usage: bundle exec ruby test/performance/circle_listing_data_test.rb /private/tmp/circle-list-pg.XXXXXX
+# Usage: bundle exec ruby test/performance/circle_listing_data_check.rb /private/tmp/circle-list-pg.XXXXXX
+# Named *_check.rb so the normal Rails test runner never resets these tables.
 # Does not boot Rails, read credentials, or connect to the application database.
 require 'bundler/setup'
 require 'minitest/autorun'
