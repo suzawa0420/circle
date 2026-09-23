@@ -1,0 +1,4 @@
+-# Honeypot: excluded from keyboard navigation and assistive technology.
+%div{hidden: true, 'aria-hidden' => 'true'}
+  = label_tag :registration_website, 'この欄は空欄のままにしてください'
+  = text_field_tag :registration_website, nil, tabindex: -1, autocomplete: 'off'

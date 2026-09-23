@@ -1,7 +1,9 @@
 # サークルブック
 
 ## 本番環境
+
 ### デプロイの仕組み
+
 1. それぞれのサーバーにSSH接続
 2. git pull origin masterを実行
 
@@ -45,6 +47,6 @@ $ tail /var/www/circle/log/unicorn.stdout.log
 $ tail /var/www/circle/log/unicorn.stderr.log
 ```
 
-### 注意書き
+### 不正登録対策
 
-- 原則本番上でgit add/commit/pushはしない
+追加契約なしの回数制限・Bot対策と検証手順は [運用メモ](doc/abuse_protection.md) を参照してください。

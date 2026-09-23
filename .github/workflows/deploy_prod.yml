@@ -119,24 +119,7 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
-            credentials_backup="$(mktemp)"
-            cp config/credentials.yml.enc "$credentials_backup"
-            git fetch origin master
-            if ! git diff --quiet || ! git diff --cached --quiet; then
-              stash_name="pre-deploy-backup-$(date +%Y%m%d%H%M%S)"
-              echo "Saving tracked production changes as $stash_name"
-              git status --short
-              git stash push --include-untracked --message "$stash_name"
-            fi
-            if ! git merge-base --is-ancestor HEAD origin/master; then
-              backup_branch="deploy-backup-$(date +%Y%m%d%H%M%S)"
-              git branch "$backup_branch" HEAD
-              echo "Saved divergent production commit as $backup_branch"
-            fi
-            git reset --hard origin/master
-            cp "$credentials_backup" config/credentials.yml.enc
-            rm -f "$credentials_backup"
-            git update-index --skip-worktree config/credentials.yml.enc
+            git pull --ff-only origin master
       - name: server2 - Install frontend dependencies
         uses: appleboy/ssh-action@master
         with:
@@ -177,7 +160,7 @@ jobs:
           for path in / /categories/ball-sports; do
             for attempt in 1 2 3 4 5; do
               url="https://circle-book.com${path}?deploy_check=${GITHUB_SHA}-${attempt}"
-              status="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' "$url")"
+              status="$(curl --location --silent --show-error --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{http_code}' "$url")"
               if [ "$status" != "200" ]; then
                 echo "Health check failed: $url returned HTTP $status"
                 exit 1

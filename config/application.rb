@@ -18,7 +18,6 @@ module Circle
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-    # security
-    # config.middleware.use Rack::Attack
+    # Rack::Attack is installed by its Railtie; rules live in rack_attack.rb.
   end
 end
