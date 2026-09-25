@@ -168,6 +168,25 @@ input[type="radio"] {
   background-color: $cb-action-hover;
 }
 
+// iOS Safari zooms the page when a focused form control uses text smaller than 16px.
+@media screen and (max-width: 767px) {
+  input:not([type]),
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 // Listing cards use neutral text so the rating stars remain the clear signal.
 .user_item_wrap > a,
 .user_item_wrap .users-index-item,
