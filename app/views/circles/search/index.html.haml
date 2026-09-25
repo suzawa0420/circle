@@ -15,9 +15,9 @@
           %br
           = "サークル検索結果"
 
-    - if @users&.size.to_i != 0
+    - if @users && @users.load.any?
       = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path
-      = render "/circles/commons/users_list", users: @users
+      = render "/circles/commons/users_list", users: @users, listing_data: @listing_data
 
     - else
       .search_wrap

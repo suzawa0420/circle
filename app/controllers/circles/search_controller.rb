@@ -86,6 +86,13 @@ private
       when "3"
         @users = users.sort_3.page(params[:page])
       end
+
+      # The empty-state check and partial must share this bounded relation.
+      # Calling size first would run the expensive search again as COUNT.
+      if @users
+        @listing_data = CircleListingData.new(@users)
+        @users = @listing_data.users
+      end
   end
 
 end

@@ -6,7 +6,7 @@
       .post_link サークル活動をつぶやく！
 
 - is_master_account = admin_user_signed_in? && current_admin_user.master_account?
-- listing_data = CircleListingData.new(users)
+- listing_data = local_assigns[:listing_data] || CircleListingData.new(users)
 - users = listing_data.users
 - cache [users, is_master_account, 'bounded-list-v1'] do
   %ul

@@ -186,4 +186,69 @@ class SearchQueriesTest < Minitest::Test
     assert_equal '参加', controller.instance_variable_get(:@user_contact).entry
     assert_operator sql.length, :<=, 2
   end
+
+  def test_search_render_reuses_loaded_page_and_eliminates_redundant_count
+    controller = Circles::SearchController.new
+    controller.params = ActionController::Parameters.new(q: '東京', sort: '1', page: 1)
+    controller.send(:set_keyword_search)
+    relation = controller.instance_variable_get(:@users)
+    queries = nil
+    ActiveRecord::Base.connection.unprepared_statement do
+      queries, = capture do
+        if relation.size != 0
+          data = CircleListingData.new(relation)
+          data.users.to_a
+          data.users.total_pages
+        end
+      end
+    end
+    searches = queries.select { |sql| sql.include?('LOWER(name)') }
+    assert_equal 3, searches.length
+    searches.each do |sql|
+      plan = JSON.parse(ActiveRecord::Base.connection.select_value("EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) #{sql}")).first
+      puts "Synthetic plan: #{plan['Plan']['Node Type']}, execution=#{plan['Execution Time']}ms"
+    end
+    controller.send(:set_keyword_search)
+    data = controller.instance_variable_get(:@listing_data)
+    relation = controller.instance_variable_get(:@users)
+    assert_same data.users, relation
+    after, records = capture do
+      assert relation.load.any?
+      assert_equal @users.reverse.first(20).map(&:id), data.users.map(&:id)
+      assert_equal 3, data.users.total_pages
+    end
+    search_count = after.count { |sql| sql.include?('LOWER(name)') }
+    assert_equal 2, search_count
+    assert_equal 20, records['User']
+    assert_equal 0, records['Review']
+    puts "Search render: #{searches.length} search SQLs before, #{search_count} after"
+  end
+
+  def test_search_templates_compile_and_share_listing_data
+    %w[index show].each do |action|
+      source = File.read(File.expand_path("../../app/views/circles/search/#{action}.html.haml", __dir__))
+      RubyVM::InstructionSequence.compile(Haml::Engine.new.call(source))
+      assert_includes source, '@users.load.any?'
+      assert_includes source, 'listing_data: @listing_data'
+      refute_match(/@users.*\.size/, source)
+    end
+  end
+
+  def test_last_and_empty_pages_use_loaded_results_without_extra_empty_state_queries
+    [3, 4].each do |page|
+      controller = Circles::SearchController.new
+      controller.params = ActionController::Parameters.new(q: '東京', sort: '1', page: page)
+      controller.send(:set_keyword_search)
+      data = controller.instance_variable_get(:@listing_data)
+      relation = controller.instance_variable_get(:@users)
+      queries, = capture do
+        present = relation.load.any?
+        assert_equal(page == 3, present)
+        assert_equal(page == 3 ? 5 : 0, relation.size)
+        assert_same relation, data.users
+        assert_equal 3, data.users.total_pages if present
+      end
+      assert_equal 1, queries.count { |sql| sql.include?('LOWER(name)') }
+    end
+  end
 end
