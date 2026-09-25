@@ -208,17 +208,17 @@ def day
 
   if params[:event].present? && params[:pref].present?
     @users = User.event(@event.id).prefecture(@prefecture.id)
-    @user_ids = @users.map{|u| u.id}
+    @user_ids = @users.select(:id)
     @schedules = Schedule.joins(:user).includes(:user).where(day: @date, user_id: @user_ids).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
 
   elsif params[:event].present?
     @users = User.event(@event.id)
-    @user_ids = @users.map{|u| u.id}
+    @user_ids = @users.select(:id)
     @schedules = Schedule.joins(:user).includes(:user).where(day: @date, user_id: @user_ids).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
 
   elsif params[:pref].present?
     @users = User.prefecture(@prefecture.id)
-    @user_ids = @users.map{|u| u.id}
+    @user_ids = @users.select(:id)
     @schedules = Schedule.joins(:user).includes(:user).where(day: @date, user_id: @user_ids).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
 
   else
