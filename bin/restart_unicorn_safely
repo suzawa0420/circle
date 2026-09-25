@@ -11,20 +11,19 @@ esac
 kill -0 "$old_pid"
 kill -USR2 "$old_pid"
 
-deadline=$((SECONDS + 240))
+deadline=$((SECONDS + 180))
 successes=0
 while [ "$SECONDS" -lt "$deadline" ]; do
   new_pid="$(cat "$pid_file" 2>/dev/null || true)"
   case "$new_pid" in
     ''|*[!0-9]*|0|1) sleep 3; continue ;;
   esac
-  if [ "$new_pid" != "$old_pid" ] && kill -0 "$new_pid" 2>/dev/null && ! kill -0 "$old_pid" 2>/dev/null; then
+  if [ "$new_pid" != "$old_pid" ] && kill -0 "$new_pid" 2>/dev/null; then
     status="$(curl --silent --connect-timeout 3 --max-time 15 --output /dev/null --write-out '%{http_code}' http://127.0.0.1/ || true)"
     if [ "$status" = '200' ]; then
       successes=$((successes + 1))
       if [ "$successes" -ge 3 ]; then
-        echo 'Replacement Unicorn master and Rails HTTP readiness verified'
-        exit 0
+        break
       fi
     else
       successes=0
@@ -34,5 +33,24 @@ while [ "$SECONDS" -lt "$deadline" ]; do
   fi
   sleep 3
 done
-echo 'Unicorn readiness timed out; deployment stopped before advancing'
-exit 1
+
+if [ "$successes" -lt 3 ]; then
+  echo 'Replacement Unicorn master readiness timed out; deployment stopped before advancing'
+  exit 1
+fi
+
+# Once the replacement is serving traffic, politely stop the previous master.
+if kill -0 "$old_pid" 2>/dev/null; then
+  kill -QUIT "$old_pid"
+  shutdown_deadline=$((SECONDS + 45))
+  while kill -0 "$old_pid" 2>/dev/null && [ "$SECONDS" -lt "$shutdown_deadline" ]; do
+    sleep 1
+  done
+fi
+
+if kill -0 "$old_pid" 2>/dev/null; then
+  echo 'Previous Unicorn master did not stop after replacement readiness; deployment stopped before advancing'
+  exit 1
+fi
+
+echo 'Replacement Unicorn master and Rails HTTP readiness verified; previous master stopped'
