@@ -172,7 +172,14 @@ class User < ApplicationRecord
 
   # 検索用
 	scope :search_word, ->(keyword) do
-    where("LOWER(name) LIKE ?", "%#{keyword.downcase}%").
+    # These explicit Japanese ranges have no letter case. Avoid converting every
+    # long description for such literals; retain the old path for all other
+    # input, including Latin/Greek letters, LIKE wildcards and escape characters.
+    uncased_japanese = keyword.match?(/\A[ぁ-んァ-ヶ一-龥ー]+\z/)
+    name_expression = uncased_japanese ? 'name' : 'LOWER(name)'
+    appeal_expression = uncased_japanese ? 'appeal' : 'LOWER(appeal)'
+    folded_pattern = "%#{keyword.downcase}%"
+    where("#{name_expression} LIKE ?", folded_pattern).
 		or(where("schedule LIKE ?", "%#{keyword}%")).
 		or(where("area LIKE ?", "%#{keyword}%")).
 		or(where("recruitment LIKE ?", "%#{keyword}%")).
@@ -181,7 +188,7 @@ class User < ApplicationRecord
 		or(where("goal LIKE ?", "%#{keyword}%")).
 		or(where("grouping LIKE ?", "%#{keyword}%")).
 		or(where("average_age LIKE ?", "%#{keyword}%")).
-		or(where("LOWER(appeal) LIKE ?", "%#{keyword.downcase}%"))
+		or(where("#{appeal_expression} LIKE ?", folded_pattern))
 	end
 
 	# Tag用

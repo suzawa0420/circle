@@ -150,9 +150,18 @@ class SearchQueriesTest < Minitest::Test
       prefs = Prefecture.where('name LIKE ?', "%#{keyword}%").pluck(:id)
       cities = UsersCity.where(city_id: City.where('name LIKE ?', "%#{keyword}%").pluck(:id)).pluck(:user_id)
       tags = UserTag.where(tag_id: Tag.where('name LIKE ?', "%#{keyword}%").pluck(:id)).pluck(:user_id)
-      users = users.search_word(keyword).or(users.where(event_id: events)).or(users.where(prefecture_id: prefs)).or(users.where(prefecture_sub_id: prefs)).or(users.where(id: cities)).or(users.where(id: tags))
+      users = legacy_text_search(users, keyword).or(users.where(event_id: events)).or(users.where(prefecture_id: prefs)).or(users.where(prefecture_sub_id: prefs)).or(users.where(id: cities)).or(users.where(id: tags))
     end
     users.list
+  end
+
+  # Freeze the old text predicates independently of the production scope.
+  def legacy_text_search(users, keyword)
+    text = users.where('LOWER(name) LIKE ?', "%#{keyword.downcase}%")
+    %w[schedule area recruitment member cost goal grouping average_age].each do |field|
+      text = text.or(users.where("#{field} LIKE ?", "%#{keyword}%"))
+    end
+    text.or(users.where('LOWER(appeal) LIKE ?', "%#{keyword.downcase}%"))
   end
 
   def test_search_matches_legacy_for_all_sorts_pages_multiword_and_wildcards
@@ -191,6 +200,58 @@ class SearchQueriesTest < Minitest::Test
     assert_operator sql.length, :<=, 2
   end
 
+  def test_search_preserves_each_text_and_association_branch
+    fields = %i[name schedule area recruitment member cost goal grouping average_age appeal]
+    fields.each do |field|
+      User.create!({ name: nil, appeal: '活動', switch: '募集中' }.merge(field => 'NeedleAbC'))
+    end
+    # Match each association independently; other searchable fields stay NULL.
+    event = Event.create!(name: 'RelationHit')
+    pref = Prefecture.create!(name: 'RelationHit')
+    city = City.create!(name: 'RelationHit')
+    tag = Tag.create!(name: 'RelationHit')
+    attrs = { appeal: '活動', switch: '募集中' }
+    User.create!(attrs.merge(event_id: event.id))
+    User.create!(attrs.merge(prefecture_id: pref.id))
+    User.create!(attrs.merge(prefecture_sub_id: pref.id))
+    city_user = User.create!(attrs)
+    UsersCity.create!(user_id: city_user.id, city_id: city.id)
+    tag_user = User.create!(attrs.merge(name: 'NeedleAbC'))
+    2.times { UserTag.create!(user_id: tag_user.id, tag_id: tag.id) }
+    [nil, '', 'NG'].each do |value|
+      User.create!(attrs.merge(name: 'NeedleAbC', appeal: value, ng_account: 'NG'))
+    end
+
+    ['NeedleAbC', 'needleabc', 'RelationHit', 'RelationHit NeedleAbC',
+     'NeedleAbC RelationHit', 'Needle%', 'Needle_bC', "'", '', '該当なし'].each do |word|
+      SearchResultCountCache::STORE.clear
+      actual = search_page(word).except(:includes, :preload, :order, :limit, :offset)
+      expected = legacy_search(word).except(:includes, :order)
+      assert_equal expected.order(:id).pluck(:id), actual.order(:id).pluck(:id), word
+      assert_equal expected.count, actual.count, word
+    end
+  end
+
+  def test_japanese_literals_skip_lower_but_preserve_unicode_and_like_semantics
+    samples = ['東京ABC', 'abc東京', 'とうきょう', 'バスケ', 'サークル',
+      'ＡＢＣ東京', 'İ東京Σ', '東京初心者', '初心者', 'École', 'Σίσυφος',
+      '東京_ABC', '東京%ABC', "東京\\ABC", nil, '']
+    samples.each { |text| User.create!(name: text, appeal: text, switch: '募集中') }
+    ['東京', 'とうきょう', 'バスケ', 'サークル', '初心者', '漢字',
+     'ABC', 'abc', 'ＡＢＣ', 'İ', 'Σ', 'É', '東京ABC', '東京_', '東京%',
+     "東京\\", '', '東京 初心者'].each do |word|
+      expected = legacy_text_search(User.all, word).order(:id).pluck(:id)
+      assert_equal expected, User.search_word(word).order(:id).pluck(:id), word
+      sql = User.search_word(word).to_sql
+      if word.match?(/\A[ぁ-んァ-ヶ一-龥ー]+\z/)
+        refute_includes sql, 'LOWER('
+      else
+        assert_includes sql, 'LOWER(name)'
+        assert_includes sql, 'LOWER(appeal)'
+      end
+    end
+  end
+
   def test_search_render_reuses_loaded_page_and_eliminates_redundant_count
     controller = Circles::SearchController.new
     controller.params = ActionController::Parameters.new(q: '東京', sort: '1', page: 1)
@@ -207,7 +268,7 @@ class SearchQueriesTest < Minitest::Test
         end
       end
     end
-    searches = queries.select { |sql| sql.include?('LOWER(name)') }
+    searches = queries.select { |sql| sql.include?('FROM "users_cities"') }
     assert_equal 3, searches.length
     searches.each do |sql|
       plan = JSON.parse(ActiveRecord::Base.connection.select_value("EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) #{sql}")).first
@@ -222,7 +283,7 @@ class SearchQueriesTest < Minitest::Test
       assert_equal @users.reverse.first(20).map(&:id), data.users.map(&:id)
       assert_equal 3, data.users.total_pages
     end
-    search_count = after.count { |sql| sql.include?('LOWER(name)') }
+    search_count = after.count { |sql| sql.include?('FROM "users_cities"') }
     assert_equal 2, search_count
     assert_equal 20, records['User']
     assert_equal 0, records['Review']
@@ -253,7 +314,7 @@ class SearchQueriesTest < Minitest::Test
         assert_same relation, data.users
         assert_equal 3, data.users.total_pages if present
       end
-      assert_equal 1, queries.count { |sql| sql.include?('LOWER(name)') }
+      assert_equal 1, queries.count { |sql| sql.include?('FROM "users_cities"') }
     end
   end
 
