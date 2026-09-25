@@ -107,6 +107,7 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/bundle exec ruby test/uploaders/image_uploader_url_check.rb
             bash bin/restart_unicorn_safely
             ~/.rbenv/shims/bundle exec ruby bin/verify_turnstile_readiness
       - name: server2 - Check SSH connection
@@ -200,6 +201,7 @@ jobs:
           script: |
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/bundle exec ruby test/uploaders/image_uploader_url_check.rb
             bash bin/restart_unicorn_safely
             ~/.rbenv/shims/bundle exec ruby bin/verify_turnstile_readiness
       - name: Verify production HTTP responses

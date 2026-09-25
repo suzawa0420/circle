@@ -29,7 +29,7 @@ class ImageUploader < CarrierWave::Uploader::Base
     "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
-  def default_url
+  def default_url(*_args)
     "/images/" + [version_name, "default.png"].compact.join('_')
   end
 
@@ -77,7 +77,8 @@ class ImageUploader < CarrierWave::Uploader::Base
   end
 
   # Keep long-lived S3 caching, but make a changed record resolve to a fresh URL.
-  def url(options = {})
+  # Preserve CarrierWave's no-argument, options and version call signatures.
+  def url(*args)
     image_url = super
     return image_url if image_url.blank? || file.blank? || model&.updated_at.blank?
 
