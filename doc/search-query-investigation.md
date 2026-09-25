@@ -15,7 +15,23 @@
 
 隔離PostgreSQL16・合成データ・Rails6.0.5.1で画面処理を再現し、実際に発行されたSQLへEXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)を実行。
 変更前はAggregate（ページ分の件数）、Limit（一覧）、Aggregate（全件数）の3回。変更後は一覧とページ数の2回。最終ページ・空ページは一覧の1回。
-小規模合成データの時間を本番速度の根拠に使わない。本番SQLの実行計画はまだ未取得。
+小規模合成データの時間を本番速度の根拠に使わない。
+
+## 本番での読み取り専用確認（2026-09-25）
+
+ChromeのLightsail SSHで両ホストに接続して確認した。データ行・認証情報・SQL全文は出力していない。
+
+- Server3: 09:55:03 UTCからvmstat 1 10。初回を除く9サンプルはst=0%、id=78〜92%、r=0〜2、wa=0%。
+- Server2: 09:56:11 UTCから同じ計測。初回を除く9サンプルはst=0〜2%、id=50〜94%、r=0〜3、wa=0%。
+- 同時刻ではなく約1分差の短い標本。以前のServer3の高いstealは今回再現しなかったが、解消・原因除去を意味しない。
+- 両ホストから実際の検索コントローラーのprivateなrelation構築処理のみを呼び出し、「東京」/sort=1/page=1について一覧・総件数のEXPLAIN (FORMAT JSON)を取得。検索アクション自体は呼ばず、検索履歴の書込みを避けた。
+- READ ONLYトランザクション、statement_timeout=5000ms、lock_timeout=1000ms、プロセス上限60秒。ANALYZEは付けず、終了時rollback。両方とも取得成功。
+- 両ホストで同じ計画。一覧: Limit(20) → Gather Merge → Sort → usersの並列Seq Scan。LimitのTotal Cost=11237.53、ScanのPlan Rows=26157、Total Cost=9539.15。
+- 総件数: Aggregate → Gather → Aggregate → usersの並列Seq Scan。最上位Total Cost=10604.77。
+- users_cities/user_tagsはBitmap Index Scanを利用。関連表すべてが無索引という状態ではない。
+- 推定行数は総登録数ではなく、costもミリ秒ではない。実行時間・バッファ・DB側CPU・実際のループ回数は今回未計測。
+
+したがって、重複COUNTを除く修正は同じ検索条件の再評価を減らすが、残る一覧と総件数の走査自体は解消しない。追加インデックスや検索仕様変更は別途、実測と検索一致性の検証が必要。
 
 ## 本番で次に必要な読み取り専用確認
 
@@ -25,6 +41,6 @@
 4. statement_timeoutとlock_timeout、読み取り専用トランザクションを設定する。必要なら承認を得て閑散時に単発のEXPLAIN ANALYZEを行う。
 5. 広範な部分一致のSeq Scan、ソート、繰り返しSubPlan、COUNTの費用を確認してからインデックスや検索構造変更を判断する。
 
-現時点で本番DDL、CPUプラン変更、ワーカー変更、再起動、コミット、push、デプロイは行わない。
-本番反映には今回分の承認が必要。反映する場合はServer3→Server2の既存Actions、追加migrationなし、アセット生成とUnicorn順次再起動あり。
+今回の計測・master反映・デプロイはユーザー承認済み。本番DDL、CPUプラン変更、ワーカー数変更は行わない。
+反映はServer3→Server2の既存Actions、追加migrationなし、アセット生成とUnicorn順次再起動あり。
 ロールバックは今回追加するコミットのみrevertして再展開する。
