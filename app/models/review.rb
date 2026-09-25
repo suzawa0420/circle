@@ -32,6 +32,8 @@ class Review < ApplicationRecord
 	NGWORD_REGEX = %r(#{NGWORD.join('|')})
   validates :comment,
     format: { without: NGWORD_REGEX },
-    length: { minimum: 6 }
+    length: { minimum: 6, maximum: 2000 }
+  validates :review, inclusion: { in: [0, 1] }
+  validates :comment, format: { without: %r{https?://|www\.}i }
 
 end

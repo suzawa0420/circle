@@ -2,8 +2,9 @@ class ReviewsController < ApplicationController
 
   include Circlebook
 
-	before_action :ensure_correct_member, {only: [:edit, :update]}
-	before_action :set_member, {except: [:all_reviews]}
+  before_action :set_member, except: [:all_reviews]
+  before_action :ensure_correct_member, only: [:edit, :update, :destroy]
+  before_action :protect_submission, only: :create
 
 	def index
 		@review = @user.reviews.build
@@ -16,95 +17,63 @@ class ReviewsController < ApplicationController
 	def new
 	end
 
-	def create
-		@user.reviews.create(review_params)
-		@review = @user.reviews.last
-    if InvalidEmail.find_by(email: @user.admin_user.email)
-      @invalid = "無効"
-    else
-      @invalid = "有効"
+  def create
+    @review = @user.reviews.build(review_params)
+    @review.ip = request.remote_ip
+    @review.member_id = current_member.id if member_signed_in?
+    saved = false
+    @user.with_lock do
+      duplicate = @user.reviews.exists?(ip: request.remote_ip)
+      duplicate ||= member_signed_in? && @user.reviews.exists?(member_id: current_member.id)
+      if duplicate
+        render plain: 'このサークルにはすでに投稿済みです。', status: :conflict
+        return
+      end
+      if @review.save
+        refresh_review_score
+        saved = true
+      end
     end
 
-    if member_signed_in?
-      @review.member_id = @member.id
-    else
-      @review.ip = request.remote_ip
-    end
-
-		# レビュースコア
-		star_sum = @user.reviews.sum{|review| review[:review]}
-		star_count = @user.reviews.count
-		if star_count == 0 && star_sum == 0
-			@user.review_score =  0
-      cb_point(@user)
-      @user.save
-		else
-			@user.review_score =  (star_sum / star_count.to_f)*5
-      cb_point(@user)
-      @user.save
-		end
-
-		if @review.save
-			# レビュー高評価
-
-      if @review.review == 1 && @user.switch == "募集中" && @invalid == "有効"
-				@user.last_post = Time.zone.now
-				@user.save
-				ReviewMailer.send_review(@user).deliver
-
-      # 主催者に通知なし
-      elsif @review.review == 1
-
+    if saved
+      invalid_email = InvalidEmail.exists?(email: @user.admin_user.email)
+      if @review.review == 1 && @user.switch == '募集中' && !invalid_email
+        @user.update!(last_post: Time.zone.now)
+        ReviewMailer.send_review(@user).deliver
       elsif @review.review == 0
-				ReviewMailer.bad_review(@user).deliver
-      else
-			end
-			flash[:notice] = "投稿が完了しました！"
-			redirect_to user_reviews_path
+        ReviewMailer.bad_review(@user).deliver
+      end
+      flash[:notice] = '投稿が完了しました！'
+    else
+      flash[:notice] = 'コメントは6〜2000文字で入力してください。URLやNGワードは投稿できません。'
+    end
+    redirect_to user_reviews_path(@user)
+  end
 
-		else
+  def update
+    saved = false
+    @user.with_lock do
+      if @review.update(review_params)
+        refresh_review_score
+        saved = true
+      end
+    end
+    if saved
+      redirect_to user_reviews_path(@user), notice: '編集が完了しました！'
+    else
+      render 'edit', status: :unprocessable_entity
+    end
+  end
 
-			flash[:notice] = "6文字未満かNGワードが含まれています"
-			redirect_to user_reviews_path
-		end
+  def edit; end
 
-	end
-
-	def update
-		@review = Review.find(params[:id])
-
-		if @review.update(review_params)
-			flash[:notice] = "編集が完了しました！"
-			redirect_to user_reviews_path
-		else
-			render "edit"
-		end
-	end
-
-	def edit
-		@review = Review.find(params[:id])
-	end
-
-	def destroy
-		@review = Review.find(params[:id])
-		@review.destroy
-
-		# レビュースコア
-		star_sum = @user.reviews.sum{|review| review[:review]}
-		star_count = @user.reviews.count
-		if star_count == 0 && star_sum == 0
-			@user.review_score =  0
-      cb_point(@user)
-      @user.save
-		else
-			@user.review_score =  (star_sum / star_count.to_f)*5
-      cb_point(@user)
-      @user.save
-		end
-
-		flash[:notice] = "削除しました"
-		redirect_to user_reviews_path
-	end
+  def destroy
+    @user.with_lock do
+      @review.destroy!
+      refresh_review_score
+    end
+    redirect_to user_reviews_path(@user), notice: '削除しました'
+  end
 
   def all_reviews
     @reviews = Review.all.order(updated_at: "ASC")
@@ -116,7 +85,7 @@ class ReviewsController < ApplicationController
 
   private
 	def set_member
-    @user = User.find_by(id: params[:user_id])
+    @user = User.find(params[:user_id])
     @prefectures = Prefecture.all
 
 		if member_signed_in?
@@ -138,30 +107,26 @@ class ReviewsController < ApplicationController
 
 
   def review_params
-    params.require(:review).permit(:review, :comment, :ip, :age, :gender, :nickname)
+    params.require(:review).permit(:review, :comment, :age, :gender, :nickname)
   end
 
-	def ensure_correct_member
-		@review = Review.find(params[:id])
+  def ensure_correct_member
+    @review = @user.reviews.find(params[:id])
+    owner = member_signed_in? && @review.member_id == current_member.id
+    master = admin_user_signed_in? && current_admin_user.master_account?
+    render plain: '権限がありません。', status: :forbidden unless owner || master
+  end
 
-		if member_signed_in?
-      if current_member.id.to_i == @review.member_id.to_i
-			# OK
-			else
-        flash[:notice] = "権限がありません"
-        redirect_to user_reviews_path
-			end
-		end
+  def protect_submission
+    return unless verify_spam_form!("review:#{@user.id}")
+    if @user.review_permit == false || AccountBlock.exists?(ip_address: request.remote_ip)
+      render plain: '現在、口コミを投稿できません。', status: :forbidden
+    end
+  end
 
-		if admin_user_signed_in?
-      if current_admin_user.id == 1
-      # OK
-      else
-        flash[:notice] = "権限がありません"
-        redirect_to user_reviews_path
-      end
-		end
-	end
-
-
+  def refresh_review_score
+    @user.review_score = @user.reviews.average(:review).to_f * 5
+    cb_point(@user)
+    @user.save!
+  end
 end

@@ -6,7 +6,7 @@ module AbuseProtection
   ACCOUNTS = %w[admin_users members exhibition_groups].freeze
 
   def self.endpoint(request)
-    path = Rack::Utils.unescape_path(request.path).sub(/\.[a-z0-9]+\z/i, '').sub(%r{/\z}, '')
+    path = Rack::Utils.unescape_path(request.path).squeeze('/').sub(%r{/\z}, '').sub(%r{\.[^/]+\z}, '')
     return unless request.post?
 
     return :signup if ACCOUNTS.any? { |account| path == "/#{account}" }

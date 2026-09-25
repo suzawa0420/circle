@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include SpamProtection
 	before_action :set_current_user
 	before_action :set_imperfect_current_user
 	before_action :request_path

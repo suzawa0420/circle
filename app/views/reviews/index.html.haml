@@ -53,6 +53,7 @@
                   %h2.top_title 口コミ投稿
                   .schedule_input
                     = form_for ([@user, @review]) do |f|
+                      = render "shared/spam_protection", scope: "review:#{@user.id}"
                       %p 口コミ・評価
                       .radio_button_review
                         = f.radio_button :review, 1, {:checked => true }
@@ -92,6 +93,7 @@
                 %h2.top_title 口コミ投稿
                 .schedule_input
                   = form_for ([@user, @review]) do |f|
+                    = render "shared/spam_protection", scope: "review:#{@user.id}"
                     %p ニックネーム
                     = f.text_field :nickname, class: 'form-control', placeholder: "サークルブック"
                     %br/

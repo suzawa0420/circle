@@ -3,6 +3,7 @@
 class AdminUsers::RegistrationsController < Devise::RegistrationsController
   include RegistrationBotGuard
   include RegistrationTurnstileGuard
+  before_action :verify_registration_form, only: :create
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 

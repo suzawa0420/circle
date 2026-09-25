@@ -6,6 +6,7 @@
     .form.users-form
       .form-body.cont-body
         = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+          = render "shared/spam_protection", scope: "registration:#{resource_name}"
           = render "devise/shared/error_messages", resource: resource
           = render "devise/shared/registration_bot_guard"
           .field

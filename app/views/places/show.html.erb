@@ -158,6 +158,9 @@
               <%= review.updated_at.to_time.strftime("%Y年%-m月%-d日") %>にレビュー済み
             </div>
             <%= simple_format review.comment %>
+            <% if admin_user_signed_in? && current_admin_user.master_account? %>
+              <%= link_to '口コミを削除', place_place_review_path(@place, review), method: :delete, data: { confirm: 'この口コミを削除しますか？' } %>
+            <% end %>
           </div>
         <% end %>
       <hr>
@@ -170,6 +173,7 @@
         <div class="place_review_form">
         <h2 class="place_sub_title">感想を投稿する</h2>
           <%= form_for ([@place, @place_review]) do |f| %>
+            <%= render "shared/spam_protection", scope: "place_review:#{@place.id}" %>
             <%= f.hidden_field :event_id, value: @event.id %>
 
             <table>

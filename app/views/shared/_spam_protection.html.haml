@@ -1,0 +1,4 @@
+= hidden_field_tag :spam_form_token, spam_form_token(scope), id: nil
+%div{hidden: true, 'aria-hidden' => 'true'}
+  = label_tag :contact_website, 'この欄は入力しないでください'
+  = text_field_tag :contact_website, nil, tabindex: -1, autocomplete: 'off', id: nil

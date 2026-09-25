@@ -10,6 +10,7 @@
     ・#{message}
 
 = form_with model: [@user, @blog], url: url_path, method: method, local: true do |f|
+  = render "shared/spam_protection", scope: "blog:#{@user.id}"
 
   .label_item
     %span.label.label_danger> 必須

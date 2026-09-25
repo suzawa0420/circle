@@ -25,6 +25,9 @@
 #
 class PlaceReview < ApplicationRecord
   belongs_to :place
+  validates :facility, :reservation, :price, :access, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }
+  validates :comment, length: { minimum: 6, maximum: 2000 }
+  validates :comment, format: { without: %r{https?://|www\.}i }
 
 	with_options presence: true do
     validates :price
