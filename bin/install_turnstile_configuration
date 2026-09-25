@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# Only invoked by deployment. Never print values, environment, or exception details.
+require_relative '../lib/turnstile_configuration_writer'
+
+begin
+  # Configuration is per Unix user; never silently configure the wrong account.
+  pid = File.read(File.expand_path('../tmp/pids/unicorn.pid', __dir__)).strip
+  raise 'Invalid process' unless pid.match?(/\A[1-9][0-9]+\z/)
+  Process.kill(0, Integer(pid, 10))
+  raise 'Different runtime user' unless File.stat("/proc/#{pid}").uid == Process.uid
+  TurnstileConfigurationWriter.write(directory: File.expand_path('~/.config/circle'))
+  puts 'Turnstile configuration installed'
+rescue StandardError
+  warn 'Turnstile configuration installation failed; deployment stopped'
+  exit 1
+end

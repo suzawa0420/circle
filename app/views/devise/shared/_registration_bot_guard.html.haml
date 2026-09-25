@@ -2,3 +2,4 @@
 %div{hidden: true, 'aria-hidden' => 'true'}
   = label_tag :registration_website, 'この欄は空欄のままにしてください'
   = text_field_tag :registration_website, nil, tabindex: -1, autocomplete: 'off'
+= render 'devise/shared/registration_turnstile'

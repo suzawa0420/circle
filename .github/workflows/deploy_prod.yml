@@ -18,6 +18,17 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
+      - name: Check required Turnstile settings without displaying values
+        env:
+          TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+        shell: bash
+        run: |
+          set +x
+          if [[ ! "$TURNSTILE_SITE_KEY" =~ ^[A-Za-z0-9_-]{10,256}$ ]] || [[ ! "$TURNSTILE_SECRET_KEY" =~ ^[A-Za-z0-9_-]{10,256}$ ]]; then
+            echo 'Required Turnstile settings are missing or invalid; no servers changed'
+            exit 1
+          fi
       - name: server3 - Update code
         if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
@@ -30,6 +41,24 @@ jobs:
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
             git pull --ff-only origin master
+      - name: server3 - Install Turnstile configuration
+        if: inputs.target != 'server2'
+        uses: appleboy/ssh-action@master
+        env:
+          TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST1 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          envs: TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY
+          debug: false
+          script: |
+            set +x
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/ruby bin/install_turnstile_configuration
       - name: server3 - Install frontend dependencies
         if: inputs.target != 'server2'
         uses: appleboy/ssh-action@master
@@ -79,6 +108,7 @@ jobs:
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
             bash bin/restart_unicorn_safely
+            ~/.rbenv/shims/bundle exec ruby bin/verify_turnstile_readiness
       - name: server2 - Check SSH connection
         uses: appleboy/ssh-action@master
         with:
@@ -120,6 +150,23 @@ jobs:
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
             git pull --ff-only origin master
+      - name: server2 - Install Turnstile configuration
+        uses: appleboy/ssh-action@master
+        env:
+          TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST2 }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          envs: TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY
+          debug: false
+          script: |
+            set +x
+            set -eu
+            cd ${{ secrets.DEPLOY_DIR }}
+            ~/.rbenv/shims/ruby bin/install_turnstile_configuration
       - name: server2 - Install frontend dependencies
         uses: appleboy/ssh-action@master
         with:
@@ -154,10 +201,11 @@ jobs:
             set -eu
             cd ${{ secrets.DEPLOY_DIR }}
             bash bin/restart_unicorn_safely
+            ~/.rbenv/shims/bundle exec ruby bin/verify_turnstile_readiness
       - name: Verify production HTTP responses
         run: |
           set -eu
-          for path in / /categories/ball-sports; do
+          for path in / /categories/ball-sports /admin_users/sign_up /members/sign_up /exhibition_groups/sign_up; do
             for attempt in 1 2 3 4 5; do
               url="https://circle-book.com${path}?deploy_check=${GITHUB_SHA}-${attempt}"
               status="$(curl --location --silent --show-error --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{http_code}' "$url")"

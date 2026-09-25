@@ -1,0 +1,8 @@
+- if RegistrationTurnstile.required?
+  - if RegistrationTurnstile.configured?
+    .registration-turnstile{data: {sitekey: RegistrationTurnstile.site_key}}
+    %p.registration-turnstile-status{role: 'status', 'aria-live' => 'polite'}
+      登録前に認証を行います。認証欄が表示されない場合はページを再読み込みしてください。
+    %noscript 登録にはJavaScriptを有効にしてください。
+  - else
+    %p{role: 'alert'} 現在、新規登録の認証を準備中です。時間をおいてお試しください。
