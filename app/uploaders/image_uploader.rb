@@ -76,6 +76,15 @@ class ImageUploader < CarrierWave::Uploader::Base
     "#{secure_token}.#{file.extension}" if original_filename.present?
   end
 
+  # Keep long-lived S3 caching, but make a changed record resolve to a fresh URL.
+  def url(options = {})
+    image_url = super
+    return image_url if image_url.blank? || file.blank? || model&.updated_at.blank?
+
+    separator = image_url.include?("?") ? "&" : "?"
+    "#{image_url}#{separator}v=#{model.updated_at.utc.to_i}"
+  end
+
   protected
   def secure_token
     var = :"@#{mounted_as}_secure_token"
