@@ -3,7 +3,7 @@ class Circles::SearchController < Circles::ApplicationController
 
 
 	def index
-    params[:q] = params[:q].gsub("　"," ")
+    params[:q] = params[:q].to_s.gsub("　"," ")
 
     if params[:q] == nil || params[:q] == ""
       redirect_to circles_path
@@ -23,7 +23,7 @@ class Circles::SearchController < Circles::ApplicationController
           @sort_kw = "#{@sort_kw}" + " #{kw}"
         end
       }
-      if DbKeyword.find_by(keyword: @sort_kw) || params[:q].count("^ ") <= 1 || @users.count == 0
+      if DbKeyword.find_by(keyword: @sort_kw) || params[:q].count("^ ") <= 1 || !@users.exists?
       else
         @db_keyword = DbKeyword.new
         @db_keyword.keyword = @sort_kw
@@ -60,14 +60,14 @@ private
 
       # 検索ワードの数だけand検索を行う
       @keywords.each do |keyword|
-        event_ids = Event.where("name LIKE ?", "%#{keyword}%").pluck(:id)
-        prefecture_ids = Prefecture.where("name LIKE ?", "%#{keyword}%").pluck(:id)
+        event_ids = Event.where("name LIKE ?", "%#{keyword}%").select(:id)
+        prefecture_ids = Prefecture.where("name LIKE ?", "%#{keyword}%").select(:id)
 
-        city_ids = City.where("name LIKE ?", "%#{keyword}%").pluck(:id)
-        city_user_ids = UsersCity.where(city_id: city_ids).pluck(:user_id)
+        city_ids = City.where("name LIKE ?", "%#{keyword}%").select(:id)
+        city_user_ids = UsersCity.where(city_id: city_ids).select(:user_id)
 
-        tag_ids = Tag.where("name LIKE ?", "%#{keyword}%").pluck(:id)
-        tag_user_ids = UserTag.where(tag_id: tag_ids).pluck(:user_id)
+        tag_ids = Tag.where("name LIKE ?", "%#{keyword}%").select(:id)
+        tag_user_ids = UserTag.where(tag_id: tag_ids).select(:user_id)
 
         users = users.search_word(keyword).
         or(users.where(event_id: event_ids)).

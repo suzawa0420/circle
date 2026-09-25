@@ -76,7 +76,7 @@ before_action :set_tags
 		@prefecture =  Prefecture.find_by(id: @city.prefecture_id)
     @cities = City.where(prefecture_id: @prefecture.id).order(:id => :asc)
 		@prefecture_judge = Prefecture.find_by(kana: params[:kana])
-		@city_users = @city.users_cities.map{|c| c.user.id}
+		@city_users = @city.users_cities.select(:user_id)
 
     # ソート機能
     if params[:sort] == "1" || params[:sort] == nil
@@ -138,7 +138,7 @@ before_action :set_tags
 		@prefecture =  Prefecture.find_by(id: @city.prefecture_id)
 		@cities = City.where(prefecture_id: @prefecture.id).order(:id => :asc)
 		@prefecture_judge = Prefecture.find_by(kana: params[:kana])
-		@city_users = @city.users_cities.map{|c| c.user.id}
+		@city_users = @city.users_cities.select(:user_id)
 
     # ソート機能
     if params[:sort] == "1" || params[:sort] == nil
@@ -179,7 +179,8 @@ private
 		@groups = Group.all.order(:id => :asc)
 		@schedules = Schedule.where("day > ?", DateTime.yesterday).order(:day => :asc)
     @tags = Tag.all.order(:order => :asc)
-    @tag_users = @tag.user_tags.map{|t| t.user.id}
+    # Keep membership filtering in SQL; loading each associated User is N+1.
+    @tag_users = @tag.user_tags.select(:user_id)
 
     @search_word = "例）バスケ　東京"
 
