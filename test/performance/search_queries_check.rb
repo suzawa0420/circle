@@ -2,6 +2,8 @@
 # Run separately from match_queries_check.rb because both extend the test schema.
 require_relative 'circle_listing_data_check'
 require 'action_controller'
+require 'active_support/testing/time_helpers'
+require_relative '../../app/services/search_result_count_cache'
 # Existing Rails 6.0 scope deprecations are unrelated to this regression check.
 ActiveSupport::Deprecation.silenced = true
 
@@ -66,7 +68,9 @@ require_relative '../../app/controllers/tags_controller'
 require_relative '../../app/controllers/user_contacts_controller'
 
 class SearchQueriesTest < Minitest::Test
+  include ActiveSupport::Testing::TimeHelpers
   def setup
+    SearchResultCountCache::STORE.clear
     [UserContact, AdminUser, UsersCity, UserTag, Review, Schedule, User, Tag, City, Event, Prefecture].each(&:delete_all)
     @event = Event.create!(name: 'バスケ', ruby: 'basketball')
     @pref = Prefecture.create!(name: '東京', kana: 'tokyo')
@@ -192,6 +196,7 @@ class SearchQueriesTest < Minitest::Test
     controller.params = ActionController::Parameters.new(q: '東京', sort: '1', page: 1)
     controller.send(:set_keyword_search)
     relation = controller.instance_variable_get(:@users)
+    relation = User.where(relation.where_clause.ast).order(switch: :asc, last_post: :desc).page(1)
     queries = nil
     ActiveRecord::Base.connection.unprepared_statement do
       queries, = capture do
@@ -250,5 +255,39 @@ class SearchQueriesTest < Minitest::Test
       end
       assert_equal 1, queries.count { |sql| sql.include?('LOWER(name)') }
     end
+  end
+
+  def search_page(word = '東京', page = 1, sort = '1')
+    controller = Circles::SearchController.new
+    controller.params = ActionController::Parameters.new(q: word, sort: sort, page: page)
+    controller.send(:set_keyword_search)
+    controller.instance_variable_get(:@users)
+  end
+
+  def test_count_cache_reuses_only_counts_and_expires_after_thirty_seconds
+    travel_to(Time.utc(2026, 9, 25, 12)) do
+      first = search_page
+      assert_equal 45, first.total_count
+      @users.first.update!(ng_account: 'NG')
+      current = search_page('東京', 1, '2')
+      sql, = capture do
+        refute_includes current.to_a.map(&:id), @users.first.id
+        assert_equal 45, current.total_count
+      end
+      refute sql.any? { |q| q.include?('COUNT(*)') }
+      assert_equal 45, search_page('東京', 2).total_count
+      travel 31.seconds
+      assert_equal 44, search_page.total_count
+    end
+  end
+
+  def test_count_cache_keeps_search_conditions_separate
+    assert_equal 45, search_page.total_count
+    assert_equal 0, search_page('存在しないキーワード').total_count
+    assert_equal 1, search_page('circle 44').total_count
+    sql, = capture { assert_equal 45, search_page.total_count }
+    assert_empty sql
+    # A fresh plain relation (used by all other listings) is not opted in.
+    refute User.list.is_a?(SearchResultCountCache::RelationMethods)
   end
 end

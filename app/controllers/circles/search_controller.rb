@@ -92,6 +92,7 @@ private
       if @users
         @listing_data = CircleListingData.new(@users)
         @users = @listing_data.users
+        @users.extend(SearchResultCountCache::RelationMethods)
       end
   end
 

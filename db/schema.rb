@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_06_03_144104) do
+ActiveRecord::Schema.define(version: 2026_09_25_103000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -635,6 +635,7 @@ ActiveRecord::Schema.define(version: 2026_06_03_144104) do
     t.index ["prefecture_id"], name: "index_users_on_prefecture_id"
     t.index ["prefecture_sub_id"], name: "index_users_on_prefecture_sub_id"
     t.index ["switch"], name: "index_users_on_switch"
+    t.index ["switch", "last_post"], name: "index_users_on_switch_and_last_post_desc", order: { last_post: :desc }
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
