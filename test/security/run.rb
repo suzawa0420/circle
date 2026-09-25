@@ -18,6 +18,7 @@ class SecurityTestApp < Rails::Application
   config.hosts.clear
 end
 Rails.application = SecurityTestApp.new
+require_relative '../../config/initializers/cloudflare_proxy'
 require_relative '../../app/controllers/concerns/spam_protection'
 require_relative '../../lib/abuse_counter_store'
 require_relative '../../lib/abuse_protection'
@@ -132,7 +133,8 @@ class AntiSpamRateTest < Minitest::Test
     Rack::Attack.clear_configuration
     AbuseProtection.configure(store: AbuseCounterStore.new(@dir), logger: Logger.new(File::NULL))
     load File.expand_path('../../config/initializers/posting_spam_protection.rb', __dir__)
-    @app = ActionDispatch::RemoteIp.new(Rack::Attack.new(->(_env) { [200, {}, ['ok']] }))
+    @app = ActionDispatch::RemoteIp.new(Rack::Attack.new(->(_env) { [200, {}, ['ok']] }),
+                                      true, Rails.application.config.action_dispatch.trusted_proxies)
     travel_to Time.at((Time.now.to_i / 3600) * 3600 + 10)
   end
   def teardown
@@ -191,6 +193,38 @@ class AntiSpamRateTest < Minitest::Test
     end
     workers.each { |pid| Process.wait(pid); assert_predicate $?, :success? }
     assert_equal 101, Rack::Attack.cache.store.increment('parallel', 1, expires_in: 60)
+  end
+
+  def test_cloudflare_visitors_do_not_share_a_signup_counter
+    10.times do
+      assert_equal 200, request('/members', ip: '127.0.0.1',
+                               forwarded: '198.51.100.7, 172.64.1.2, 10.0.0.5').first
+    end
+    assert_equal 429, request('/members', ip: '127.0.0.1',
+                             forwarded: '203.0.113.100, 198.51.100.7, 172.64.1.3, 10.0.0.5').first
+    assert_equal 200, request('/members', ip: '127.0.0.1',
+                             forwarded: '198.51.100.8, 172.64.1.2, 10.0.0.5').first
+  end
+
+  def test_cloudflare_ipv6_visitors_have_separate_post_counters
+    5.times do
+      assert_equal 200, request('/users/1/reviews', ip: '127.0.0.1',
+                               forwarded: '2001:db8::1, 2606:4700::1, 10.0.0.5').first
+    end
+    assert_equal 429, request('/users/1/reviews', ip: '127.0.0.1',
+                             forwarded: '2001:db8::1, 2606:4700::2, 10.0.0.5').first
+    assert_equal 200, request('/users/1/reviews', ip: '127.0.0.1',
+                             forwarded: '2001:db8::2, 2606:4700::1, 10.0.0.5').first
+  end
+
+  def test_untrusted_cf_headers_do_not_change_the_visitor_identity
+    env = Rack::MockRequest.env_for('/members', method: 'POST')
+    env['REMOTE_ADDR'] = '127.0.0.1'
+    env['HTTP_X_FORWARDED_FOR'] = '203.0.113.5, 198.51.100.7, 10.0.0.5'
+    10.times do |i|
+      assert_equal 200, @app.call(env.merge('HTTP_CF_CONNECTING_IP' => "203.0.113.#{i}")).first
+    end
+    assert_equal 429, @app.call(env.merge('HTTP_CF_CONNECTING_IP' => '203.0.113.200')).first
   end
 end
 
