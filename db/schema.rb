@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_25_120000) do
+ActiveRecord::Schema.define(version: 2026_09_25_130000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,6 +134,7 @@ ActiveRecord::Schema.define(version: 2026_09_25_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "search_count", default: 0, null: false
+    t.index ["keyword"], name: "index_db_keywords_on_keyword_hash", using: :hash
   end
 
   create_table "db_searches", force: :cascade do |t|
