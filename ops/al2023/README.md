@@ -33,6 +33,28 @@ Official download SHA256 values verified before extraction:
 
 ## Verification and cutover gates
 
+Production configuration was transferred directly from server3 to server4 into
+`/home/ec2-user/circle-production-config`, with byte integrity and private file
+permissions verified. The source-IP-limited, forced-command SSH grant was removed;
+an authentication attempt after removal was rejected. A separate probe loaded these
+settings and verified Rails boot, signing configuration, Turnstile configuration,
+and a read-only production DB connection. No production traffic has been moved.
+
+The templates in this directory are for server4 only:
+
+- `nginx.conf`: port 80, 20 MB uploads, Unix socket upstream, health routed to Rails.
+- `origin-guard.conf`: private LB + final Cloudflare XFF hop + exact site hostname;
+  exact GET/HEAD `/health` without XFF is allowed for private LB health probes.
+- `circle-unicorn.service`: the installed Ruby/Node paths, graceful stop, nginx group socket access.
+- `test_origin_guard.py`: real Nginx, loopback-only synthetic listener, 14 request
+  cases covering spoofed headers, host checks, IPv4/IPv6 and health exceptions.
+  Its test-only real-IP header is never part of the production template.
+
+Keep the existing master deployment workflow unchanged during preparation: it
+still targets AL2. Do not merge this branch until its targets and the remaining
+AL2 server are reconciled. Existing scheduled tasks stay on the old server until
+their role is reviewed, preventing duplicate execution on server4.
+
 The runtime workflow uses disposable PostgreSQL 17 and synthetic accounts; it never connects to production. It checks eager loading, permissions, public pages, password login/logout, date validation, image processing and extension rejection, spam/Turnstile regressions, assets and the Unicorn readiness script.
 
 Before production traffic:

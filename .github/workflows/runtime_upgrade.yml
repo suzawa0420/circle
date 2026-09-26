@@ -34,7 +34,8 @@ jobs:
       DISABLE_SPRING: '1'
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y imagemagick libpq-dev
+      - run: sudo apt-get update && sudo apt-get install -y imagemagick libpq-dev nginx
+      - run: python3 ops/al2023/test_origin_guard.py
       - uses: ruby/setup-ruby@v1
         with:
           bundler: '2.5.23'
