@@ -7,8 +7,8 @@ class Circles::Prefectures::CitiesController < Circles::Prefectures::Application
 
 
   def show
-		@prefecture = Prefecture.find_by(kana: params[:prefecture_kana])
-    @city = City.find_by(city_kana: params[:kana])
+		@prefecture = Prefecture.find_by!(kana: params[:prefecture_kana])
+    @city = @prefecture.cities.find_by!(city_kana: params[:kana])
 
     users = User.where_city(@city).list.order("prefectures.sort asc")
 

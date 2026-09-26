@@ -205,3 +205,20 @@ Never restart the incompatible Unicorn service with the new Rails runtime.
 
 References: [Rack 3 header changes](https://github.com/rack/rack/blob/main/UPGRADE-GUIDE.md),
 [Puma deployment](https://github.com/puma/puma/blob/main/docs/deployment.md).
+
+### Live-data edge cases found in the Puma canary
+
+The `b17799b5c` Puma canary passed its initial checks but the saved 40-minute
+monitor reported five HTTP 500 responses. After a usage-limit interruption,
+server4 was detached again rather than retiring server3. The later Puma journal
+identified null recruitment text in listings, anonymous visits to management
+pages, invalid city/prefecture URLs, and an existing typo in schedule deletion.
+
+The follow-up patch makes legacy nullable listing text safe, requires admin
+sign-in before management callbacks (and owner checks before schedule writes),
+handles missing region records before rendering, and saves the actual User after
+schedule deletion. Synthetic integration tests cover all four cases without
+using production accounts or modifying production data. Redeploy on detached
+server4, rerun private page/origin/asset checks, and restart the full 15-minute
+canary before removing server3. The user authorized subsequent deploy/fix/rollback
+steps for this chat on 2026-09-26; no repeated deploy approval is required.

@@ -94,4 +94,69 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_not schedule.valid?
     assert schedule.errors.added?(:day, :invalid)
   end
+
+  test 'legacy circle with empty recruitment still renders in listings' do
+    circle = runtime_circle
+    circle.update_column(:recruitment, nil)
+    get '/circles'
+    assert_response :success
+    assert_includes response.body, circle.name
+  end
+
+  test 'anonymous management requests require admin sign in without changing schedules' do
+    circle = runtime_circle
+    schedule = circle.schedules.create!(day: Date.tomorrow.to_s, title: '検証予定', venue: '検証会場')
+    %W[/users/#{circle.id}/edit /users/#{circle.id}/contact_list
+       /users/#{circle.id}/schedules/new /users/#{circle.id}/schedules/#{schedule.id}/edit].each do |path|
+      get path
+      assert_redirected_to new_admin_user_session_path
+    end
+    assert_no_difference('Schedule.count') do
+      post "/users/#{circle.id}/schedules", params: { schedule: { title: '無認証', day: Date.tomorrow.to_s, venue: '検証会場' } }
+      assert_redirected_to new_admin_user_session_path
+      delete "/users/#{circle.id}/schedules/#{schedule.id}"
+      assert_redirected_to new_admin_user_session_path
+    end
+  end
+
+  test 'owner can delete a schedule and persist recalculated points' do
+    circle = runtime_circle
+    circle.update!(user_time: Time.current.to_s, cb_point: 10)
+    schedule = circle.schedules.create!(day: Date.tomorrow.to_s, title: '検証予定', venue: '検証会場')
+    post '/admin_users/sign_in', params: { admin_user: { email: circle.admin_user.email, password: 'test-password-123' } }
+    assert_response :redirect
+    assert_difference('Schedule.count', -1) do
+      delete "/users/#{circle.id}/schedules/#{schedule.id}"
+      assert_redirected_to user_schedules_path(circle)
+    end
+    assert_equal 0, circle.reload.cb_point
+  end
+
+  test 'invalid city and prefecture URLs do not render nil records' do
+    circle = runtime_circle
+    previous_show_exceptions = Rails.application.env_config['action_dispatch.show_exceptions']
+    Rails.application.env_config['action_dispatch.show_exceptions'] = :rescuable
+    get "/prefectures/#{circle.prefecture.kana}/cities/runtime-missing-city"
+    assert_response :not_found
+    get '/prefectures/runtime-missing-prefecture/cities/runtime-missing-city'
+    assert_response :not_found
+    city = circle.prefecture.cities.create!(name: '検証市', city_kana: 'runtime-valid-city')
+    get "/events/#{circle.event.ruby}/prefectures/runtime-missing-prefecture/cities/#{city.city_kana}"
+    assert_redirected_to circles_path
+  ensure
+    Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
+  end
+
+  private
+
+  def runtime_circle
+    category = Category.create!(name: '検証分類', kana: 'runtime-safety-category', order: '1')
+    event = Event.create!(name: '検証競技', ruby: 'runtime-safety-event', category: category, order: '1')
+    prefecture = Prefecture.create!(name: '検証県', kana: 'runtime-safety-prefecture', order: '1', sort: 1)
+    owner = AdminUser.create!(email: 'runtime-safety-owner@example.test', password: 'test-password-123')
+    User.create!(name: '実データ条件検証サークル', appeal: '活動のご案内', event: event,
+                 prefecture: prefecture, category: category, admin_user: owner,
+                 switch: '募集中', recruitment: '初心者歓迎', last_post: Time.current.to_s)
+  end
+
 end

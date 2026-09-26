@@ -1,6 +1,7 @@
 class UserContactsController < ApplicationController
   include Circlebook
 
+  before_action :authenticate_admin_user!, only: [:contact_list, :update_contact]
   before_action :set_users, {except: [:contact_block, :contact_list, :check_thanks]}
 
   def new
