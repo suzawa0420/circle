@@ -158,6 +158,16 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
   end
 
+  test 'empty facility searches return to the listing without recording a search' do
+    circle = runtime_circle
+    [nil, '', '   ', { invalid: 'value' }].each do |keyword|
+      assert_no_difference('DbSearch.count') do
+        get "/places/#{circle.event.ruby}/search", params: { kw: keyword }
+        assert_redirected_to "/places/#{circle.event.ruby}"
+      end
+    end
+  end
+
   test 'facility URLs return 404 for unknown or mismatched regions' do
     circle = runtime_circle
     city = circle.prefecture.cities.create!(name: '施設検証市', city_kana: 'facility-valid-city')

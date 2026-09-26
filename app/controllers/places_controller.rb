@@ -13,7 +13,9 @@ class PlacesController < ApplicationController
 
 	def search
 		# キーワード分割
-		keywords = params[:kw].split(/[[:blank:]]+/).select(&:present?)
+		keyword_text = params[:kw].is_a?(String) ? params[:kw] : ''
+    keywords = keyword_text.split(/[[:blank:]]+/).select(&:present?)
+    return redirect_to("/places/#{@event.ruby}") if keywords.empty?
 
     # 検索ワードの保存
     last_search = DbSearch.last
