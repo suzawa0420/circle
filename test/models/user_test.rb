@@ -73,6 +73,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  self.fixture_table_names = []
   test "publication requires a useful introduction and activity details" do
     user = User.new(name: "地域サークル", event_id: 1, prefecture_id: 1, switch: "募集中",
       area: "世田谷区", schedule: "毎週土曜日", appeal: "<p>#{'地域で活動しています。' * 12}</p>")

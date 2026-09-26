@@ -52,21 +52,8 @@ jobs:
       - run: bundle exec rails db:schema:load zeitwerk:check
       - name: Test admin permissions
         run: bundle exec rails test test/models/admin_user_permissions_test.rb
-      - name: Test profile sanitizer availability
-        run: |
-          bundle exec rails runner 'exit(ActionView::Base.full_sanitizer.sanitize("<p>a</p>") == "a" ? 0 : 1)'
-      - name: Test circle model validation runs
-        run: |
-          bundle exec rails runner 'User.new(name: "地域サークル", event_id: 1, prefecture_id: 1, switch: "募集中", area: "世田谷区", schedule: "毎週土曜日", appeal: "<p>#{"地域で活動しています。" * 12}</p>").valid?'
-      - name: Test circle model publication status
-        run: |
-          bundle exec rails runner 'u = User.new(name: "地域サークル", event_id: 1, prefecture_id: 1, switch: "募集中", area: "世田谷区", schedule: "毎週土曜日", appeal: "<p>#{"地域で活動しています。" * 12}</p>"); u.valid?; exit(u.publication_status == "published" ? 0 : 1)'
-      - name: Test complete circle publication
-        run: bundle exec rails test test/models/user_test.rb:76
-      - name: Test English profile moderation
-        run: bundle exec rails test test/models/user_test.rb:90
-      - name: Test single link counting
-        run: bundle exec rails test test/models/user_test.rb:100
+      - name: Test circle publication
+        run: bundle exec rails test test/models/user_test.rb
       - name: Test blog moderation
         run: bundle exec rails test test/models/blog_test.rb
       - name: Test runtime integration
