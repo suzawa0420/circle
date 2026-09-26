@@ -55,6 +55,36 @@ still targets AL2. Do not merge this branch until its targets and the remaining
 AL2 server are reconciled. Existing scheduled tasks stay on the old server until
 their role is reviewed, preventing duplicate execution on server4.
 
+Prepared on server4 (services are still stopped):
+
+- Application: `/var/www/circle`; the previous check directory is a symlink here.
+- Eight configuration links point to the private transferred files, outside Git.
+- `/etc/nginx/nginx.conf` and `/etc/nginx/circle-origin-guard.conf` installed;
+  the packaged default is backed up as `/etc/nginx/nginx.conf.before-circle`.
+- `/etc/systemd/system/circle-unicorn.service` installed and unit syntax checked.
+- Nginx syntax and the 14 guard cases pass. All nine read-only production page
+  probes return 200. S3 HeadBucket and SES GetSendQuota succeed; no image or email
+  was submitted by these checks.
+
+### Proposed activation (requires specific production approval)
+
+Use the exact reviewed commit on `codex/al2023-runtime-upgrade`, on server4 only.
+Compile and verify production assets as `ec2-user` with group `nginx` and umask
+0007. Keep asset directories group-readable. Do not run a database migration.
+Start `circle-unicorn` and Nginx; require local HTTP checks, a healthy private
+`/health`, working static assets, and rejection of untrusted forwarded headers.
+Only after these checks attach server4 to `LoadBalancer-1`. Keep server2 and
+server3 attached while observing errors and latency for at least 15 minutes.
+Detach server3 only after this canary check succeeds. Its scheduled jobs and
+instance remain running until separately reviewed; server2 remains unchanged.
+
+Rollback on health failure, repeated new 5xx responses, broken account pages,
+or failed origin protection: detach server4, reattach server3 if necessary,
+verify both old targets healthy, and stop the new services. The database schema
+and existing targets are unchanged, so rollback does not require data restoration.
+Do not move the static IP, change DNS, merge master, or delete any old instance
+as part of this activation.
+
 The runtime workflow uses disposable PostgreSQL 17 and synthetic accounts; it never connects to production. It checks eager loading, permissions, public pages, password login/logout, date validation, image processing and extension rejection, spam/Turnstile regressions, assets and the Unicorn readiness script.
 
 Before production traffic:
