@@ -24,10 +24,10 @@ jobs:
         include:
           - server: server4
             host: 13.112.50.106
-            fingerprint: SHA256:l59RwMs26VCmMrRxph932PhV2vuAzCjqFN+7CalbnJw
+            fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
           - server: server5
             host: 54.238.207.76
-            fingerprint: SHA256:rEMlXlk8xguuP0A5v1vWg4HfH3M8WhzDJSF/kJho5mI
+            fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
     steps:
       - name: Check new server connection without changing it
         uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
