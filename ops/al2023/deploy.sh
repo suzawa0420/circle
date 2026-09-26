@@ -30,6 +30,7 @@ case "$mode" in
     # Puma hot restart retains the listening socket and drains active requests.
     sudo -n systemctl kill --kill-whom=main --signal=USR2 circle-puma
     python3 ops/al2023/warm_public_pages.py
+    CIRCLE_PUMA_SOCKET=/var/www/circle/tmp/sockets/unicorn.sock bundle exec ruby bin/verify_turnstile_readiness
     systemctl is-active circle-puma nginx
     ;;
   *) exit 2 ;;

@@ -307,19 +307,20 @@ class RegistrationTurnstileTest < Minitest::Test
     assert_includes File.read(File.join(ROOT, 'app/views/devise/shared/_registration_bot_guard.html.haml')), 'devise/shared/registration_turnstile'
   end
 
-  def test_deploy_configures_both_hosts_before_restart_without_inline_secret_values
+  def test_deploy_verifies_registration_on_both_new_hosts_without_inline_secrets
     workflow = YAML.load_file(File.join(ROOT, '.github/workflows/deploy_prod.yml'))
-    steps = workflow.fetch('jobs').fetch('build').fetch('steps')
-    %w[server2 server3].each do |server|
-      install = steps.index { |step| step['name'] == "#{server} - Install Turnstile configuration" }
-      restart = steps.index { |step| step['name'] == "#{server} - Restart Unicorn" }
-      assert_operator install, :<, restart
-      assert_equal false, steps[install]['with']['debug']
-      assert_equal 'TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY', steps[install]['with']['envs']
-      refute_includes steps[install]['with']['script'], 'secrets.TURNSTILE'
-      assert_includes steps[restart]['with']['script'], 'bin/verify_turnstile_readiness'
+    jobs = workflow.fetch('jobs')
+    assert_equal 'prepare', jobs.fetch('activate').fetch('needs')
+    %w[prepare activate].each do |phase|
+      job = jobs.fetch(phase)
+      assert_equal %w[server4 server5], job.fetch('strategy').fetch('matrix').fetch('include').map { |host| host.fetch('server') }
+      assert_equal 1, job.fetch('strategy').fetch('max-parallel')
+      refute_includes job.to_s, 'secrets.TURNSTILE'
     end
-    assert_includes steps.first['name'], 'Check required Turnstile'
+    script = File.read(File.join(ROOT, 'ops/al2023/deploy.sh'))
+    assert_includes script, 'CIRCLE_PUMA_SOCKET='
+    assert_includes script, 'bundle exec ruby bin/verify_turnstile_readiness'
+    refute_includes script, 'turnstile.json'
   end
 
   def test_readiness_requires_a_real_widget_inside_a_successful_form
