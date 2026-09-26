@@ -53,7 +53,8 @@ jobs:
       - name: Test admin permissions
         run: bundle exec rails test test/models/admin_user_permissions_test.rb
       - name: Test profile sanitizer availability
-        run: bundle exec rails runner 'exit(ActionView::Base.respond_to?(:full_sanitizer) ? 0 : 1)'
+        run: |
+          bundle exec rails runner 'exit(ActionView::Base.respond_to?(:full_sanitizer) ? 0 : 1)'
       - name: Test complete circle publication
         run: bundle exec rails test test/models/user_test.rb:76
       - name: Test English profile moderation
