@@ -147,6 +147,30 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
   end
 
+  test 'facility URLs return 404 for unknown or mismatched regions' do
+    circle = runtime_circle
+    city = circle.prefecture.cities.create!(name: '施設検証市', city_kana: 'facility-valid-city')
+    other_prefecture = Prefecture.create!(name: '別県', kana: 'facility-other-prefecture', sort: 2)
+    place = Place.create!(name: '施設検証体育館', prefecture: circle.prefecture, city: city,
+                          events: [circle.event], tag: '体育館', address: '検証住所')
+    previous_show_exceptions = Rails.application.env_config['action_dispatch.show_exceptions']
+    Rails.application.env_config['action_dispatch.show_exceptions'] = :rescuable
+    %W[/places/missing-facility-event
+       /places/#{circle.event.ruby}/missing-facility-prefecture
+       /places/#{circle.event.ruby}/#{circle.prefecture.kana}/missing-facility-city
+       /places/#{circle.event.ruby}/missing-facility-prefecture/#{city.city_kana}/#{place.id}
+       /places/#{circle.event.ruby}/#{circle.prefecture.kana}/missing-facility-city/#{place.id}
+       /places/#{circle.event.ruby}/#{other_prefecture.kana}/#{city.city_kana}/#{place.id}
+       /places/all/missing-facility-prefecture/#{city.city_kana}/#{place.id}].each do |path|
+      get path
+      assert_response :not_found, "#{path}: #{response.status}"
+    end
+    get "/places/#{circle.event.ruby}/#{circle.prefecture.kana}/#{city.city_kana}/#{place.id}"
+    assert_response :success
+  ensure
+    Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
+  end
+
   private
 
   def runtime_circle
