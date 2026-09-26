@@ -29,12 +29,10 @@
 
 one:
   user: one
-  sent_count: 1
   mail: MyString
   message: MyText
 
 two:
   user: two
-  sent_count: 1
   mail: MyString
   message: MyText

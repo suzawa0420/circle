@@ -1,3 +1,7 @@
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
 # == Schema Information
 #
 # Table name: admin_users
@@ -27,12 +31,8 @@
 #  index_admin_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
+one:
+  email: admin-one@example.com
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+two:
+  email: admin-two@example.com

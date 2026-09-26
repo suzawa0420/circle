@@ -13,10 +13,10 @@
 
 one:
   prefecture_id: MyString
-  city: MyString
+  name: MyString
   city_kana: MyString
 
 two:
   prefecture_id: MyString
-  city: MyString
+  name: MyString
   city_kana: MyString

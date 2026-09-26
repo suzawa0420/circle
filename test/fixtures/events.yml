@@ -20,8 +20,8 @@
 
 one:
   name: MyString
-  kana: MyString
+  ruby: MyString
 
 two:
   name: MyString
-  kana: MyString
+  ruby: MyString

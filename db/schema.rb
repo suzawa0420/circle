@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_27_010000) do
+ActiveRecord::Schema.define(version: 2026_09_27_120000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -357,6 +357,8 @@ ActiveRecord::Schema.define(version: 2026_09_27_010000) do
     t.string "recruit"
     t.text "comment"
     t.bigint "user_id"
+    t.index ["recruit", "updated_at"], name: "index_matches_on_recruit_and_updated_at"
+    t.index ["user_id", "updated_at"], name: "index_matches_on_user_id_and_updated_at"
     t.index ["user_id"], name: "index_matches_on_user_id"
   end
 

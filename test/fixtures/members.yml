@@ -1,27 +1,31 @@
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
 # == Schema Information
 #
 # Table name: members
 #
-#  id                     :bigint           not null, primary key
-#  age                    :string
-#  email                  :string           default(""), not null
-#  encrypted_password     :string           default(""), not null
-#  gender                 :string
-#  image_profile          :string
-#  last_get_point_at      :datetime
-#  living_address         :string
-#  living_city            :string
-#  nickname               :string
-#  points                 :integer          default(0), not null
-#  profile                :text
-#  remember_created_at    :datetime
-#  reset_password_sent_at :datetime
-#  reset_password_token   :string
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  living_prefecture_id   :integer
-#  prefecture_id          :bigint
-#  random_id              :string
+#  id                                     :bigint           not null, primary key
+#  age                                    :string
+#  email                                  :string           default(""), not null
+#  encrypted_password                     :string           default(""), not null
+#  gender                                 :string
+#  image_profile                          :string
+#  last_get_point_at                      :datetime
+#  living_address(現住所: 以下住所)       :string
+#  living_city(現住所: 市区町村)          :string
+#  nickname                               :string
+#  points                                 :integer          default(0), not null
+#  profile                                :text
+#  remember_created_at                    :datetime
+#  reset_password_sent_at                 :datetime
+#  reset_password_token                   :string
+#  created_at                             :datetime         not null
+#  updated_at                             :datetime         not null
+#  living_prefecture_id(現住所: 都道府県) :integer
+#  prefecture_id                          :bigint
+#  random_id                              :string
 #
 # Indexes
 #
@@ -30,12 +34,8 @@
 #  index_members_on_reset_password_token  (reset_password_token) UNIQUE
 #
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
+one:
+  email: member-one@example.com
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+two:
+  email: member-two@example.com

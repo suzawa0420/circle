@@ -2,69 +2,80 @@
 #
 # Table name: users
 #
-#  id                :bigint           not null, primary key
-#  age               :string
-#  appeal            :text
-#  area              :string
-#  average_age       :string
-#  cb_point          :float            default(0.0), not null
-#  contact           :string
-#  cost              :string
-#  decade_age        :integer
-#  email             :string
-#  failed_attempts   :integer          default(0), not null
-#  foundation        :string
-#  gallery_01        :string
-#  gallery_02        :string
-#  gallery_03        :string
-#  gallery_04        :string
-#  goal              :string
-#  grouping          :string
-#  header_image      :string
-#  image_name        :string
-#  impressions_count :integer          default(0)
-#  instagram         :string
-#  item              :string
-#  last_post         :string
-#  line_count        :integer          default(0)
-#  locked_at         :datetime
-#  mail_count        :integer          default(0)
-#  member            :string
-#  name              :string
-#  ng_account        :string
-#  password          :string
-#  pic_header        :string
-#  pic_profile       :string
-#  point             :string
-#  prefecture        :string
-#  recruitment       :string
-#  requirement       :text
-#  review_permit     :boolean          default(TRUE)
-#  review_score      :string
-#  schedule          :string
-#  sent_count        :integer
-#  switch            :string
-#  template          :text
-#  twitter           :string
-#  unlock_token      :string
-#  user_time         :string
-#  web               :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  admin_user_id     :bigint
-#  category_id       :string
-#  event_id          :integer
-#  line_id           :string
-#  prefecture_id     :bigint
-#  prefecture_sub_id :integer
-#  unique_id         :string
-#  user_id           :string
+#  id                 :bigint           not null, primary key
+#  age                :string
+#  appeal             :text
+#  area               :string
+#  average_age        :string
+#  cb_point           :float            default(0.0), not null
+#  contact            :string
+#  cost               :string
+#  decade_age         :integer
+#  email              :string
+#  failed_attempts    :integer          default(0), not null
+#  foundation         :string
+#  gallery_01         :string
+#  gallery_02         :string
+#  gallery_03         :string
+#  gallery_04         :string
+#  goal               :string
+#  grouping           :string
+#  header_image       :string
+#  image_name         :string
+#  impressions_count  :integer          default(0)
+#  instagram          :string
+#  item               :string
+#  last_post          :string
+#  line_count         :integer          default(0)
+#  locked_at          :datetime
+#  mail_count         :integer          default(0)
+#  member             :string
+#  moderation_status  :string           default("clear"), not null
+#  name               :string
+#  ng_account         :string
+#  password           :string
+#  pic_header         :string
+#  pic_profile        :string
+#  point              :string
+#  prefecture         :string
+#  publication_status :string           default("draft"), not null
+#  recruitment        :string
+#  requirement        :text
+#  review_permit      :boolean          default(TRUE)
+#  review_score       :string
+#  schedule           :string
+#  sent_count         :integer
+#  switch             :string
+#  template           :text
+#  twitter            :string
+#  unlock_token       :string
+#  user_time          :string
+#  web                :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  admin_user_id      :bigint
+#  category_id        :string
+#  event_id           :integer
+#  line_id            :string
+#  prefecture_id      :bigint
+#  prefecture_sub_id  :integer
+#  unique_id          :string
+#  user_id            :string
 #
 # Indexes
 #
-#  index_users_on_admin_user_id  (admin_user_id)
-#  index_users_on_prefecture_id  (prefecture_id)
-#  index_users_on_unlock_token   (unlock_token) UNIQUE
+#  index_users_on_admin_user_id                             (admin_user_id)
+#  index_users_on_event_id                                  (event_id)
+#  index_users_on_last_post                                 (last_post)
+#  index_users_on_ng_account                                (ng_account)
+#  index_users_on_prefecture_id                             (prefecture_id)
+#  index_users_on_prefecture_sub_id                         (prefecture_sub_id)
+#  index_users_on_publication_status_and_moderation_status  (publication_status,moderation_status)
+#  index_users_on_switch                                    (switch)
+#  index_users_on_switch_and_created_at_desc                (switch,created_at DESC)
+#  index_users_on_switch_and_last_post_desc                 (switch,last_post DESC)
+#  index_users_on_switch_popularity_and_last_post           (switch,cb_point DESC,last_post DESC)
+#  index_users_on_unlock_token                              (unlock_token) UNIQUE
 #
 # Foreign Keys
 #
@@ -74,7 +85,9 @@
 one:
   name: MyString
   email: MyString
+  admin_user: one
 
 two:
   name: MyString
   email: MyString
+  admin_user: two

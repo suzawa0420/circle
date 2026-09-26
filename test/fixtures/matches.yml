@@ -1,3 +1,7 @@
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
 # == Schema Information
 #
 # Table name: matches
@@ -14,17 +18,15 @@
 #
 # Indexes
 #
-#  index_matches_on_user_id  (user_id)
+#  index_matches_on_recruit_and_updated_at  (recruit,updated_at)
+#  index_matches_on_user_id                 (user_id)
+#  index_matches_on_user_id_and_updated_at  (user_id,updated_at)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (user_id => users.id)
 #
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
 one: {}
 # column: value
 #

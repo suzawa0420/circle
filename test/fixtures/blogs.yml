@@ -10,6 +10,7 @@
 #  image_03           :string
 #  image_04           :string
 #  impressions_count  :integer          default(0)
+#  moderation_status  :string           default("clear"), not null
 #  photo              :string
 #  photo_content_type :string
 #  photo_file_name    :string
@@ -22,7 +23,8 @@
 #
 # Indexes
 #
-#  index_blogs_on_user_id  (user_id)
+#  index_blogs_on_moderation_status  (moderation_status)
+#  index_blogs_on_user_id            (user_id)
 #
 # Foreign Keys
 #

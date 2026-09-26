@@ -10,6 +10,12 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'footer does not show the contact mail link' do
+    get '/'
+    assert_response :success
+    assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
+  end
+
   test 'populated circle listings and profile render' do
     category = Category.create!(name: '球技', kana: 'ball-sports', order: '1')
     event = Event.create!(name: 'バスケ', ruby: 'basketball', category: category, order: '1')

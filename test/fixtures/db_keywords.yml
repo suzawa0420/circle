@@ -8,9 +8,13 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
+# Indexes
+#
+#  index_db_keywords_on_keyword_hash  (keyword) USING hash
+#
 
 one:
-  Keyword: MyString
+  keyword: MyString
 
 two:
-  Keyword: MyString
+  keyword: MyString

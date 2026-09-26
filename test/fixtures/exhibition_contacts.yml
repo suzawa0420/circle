@@ -1,3 +1,7 @@
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
 # == Schema Information
 #
 # Table name: exhibition_contacts
@@ -20,12 +24,14 @@
 #  fk_rails_...  (exhibition_id => exhibitions.id)
 #
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
+one:
+  exhibition: one
+  name: Contact One
+  email: one@example.com
+  content: Test contact one
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+two:
+  exhibition: two
+  name: Contact Two
+  email: two@example.com
+  content: Test contact two
