@@ -48,6 +48,17 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
   end
 
+  test 'anonymous member profile requests require sign in before accessing the member' do
+    %w[/members/987654321 /members/987654321/edit].each do |path|
+      get path
+      assert_redirected_to new_member_session_path
+    end
+    assert_no_difference('Member.count') do
+      patch '/members/987654321', params: { member: { nickname: 'unauthorized' } }
+      assert_redirected_to new_member_session_path
+    end
+  end
+
   test 'member can sign in and sign out with the existing password format' do
     member = Member.create!(email: 'runtime-member@example.test', password: 'test-password-123', nickname: '検証会員')
     assert member.valid_password?('test-password-123')
