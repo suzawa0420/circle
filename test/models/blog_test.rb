@@ -37,4 +37,10 @@ class BlogTest < ActiveSupport::TestCase
     blog.valid?
     assert_equal "review", blog.moderation_status
   end
+
+  test "Chinese characters alone do not clear a link-heavy post" do
+    blog = Blog.new(title: "火箭 网站", content: "বাংলা স্পোর্টস https://first.example https://second.example 火箭 网站")
+    blog.valid?
+    assert_equal "review", blog.moderation_status
+  end
 end

@@ -72,6 +72,7 @@
 #
 require 'test_helper'
 require_relative '../../db/migrate/20260926010000_review_non_japanese_circle_profiles'
+require_relative '../../db/migrate/20260927000000_review_circle_profiles_without_japanese_kana'
 
 class UserTest < ActiveSupport::TestCase
   self.fixture_table_names = []
@@ -100,6 +101,36 @@ class UserTest < ActiveSupport::TestCase
     user = User.new(name: "International Basketball", appeal: "初心者も歓迎します。 We meet every weekend.")
     user.valid?
     assert_equal "clear", user.moderation_status
+  end
+
+  test "Chinese characters without Japanese kana do not clear a circle profile" do
+    user = User.new(name: "bd333", appeal: "বাংলা স্পোর্টস এবং 火箭 网站 https://bd333-bd.fun " * 5)
+    user.valid?
+    assert_equal "review", user.moderation_status
+  end
+
+  test "backfill hides published circles with Chinese characters but no Japanese kana" do
+    category = Category.create!(name: "球技", kana: "ball-sports", order: "1")
+    event = Event.create!(name: "バスケ", ruby: "basketball", category: category, order: "1")
+    prefecture = Prefecture.create!(name: "東京都", kana: "tokyo", order: "1", sort: 1)
+    owner = AdminUser.create!(email: "chinese-profile-owner@example.test", password: "test-password-123")
+    attributes = { event: event, prefecture: prefecture, category: category, admin_user: owner,
+      switch: "募集中", area: "オンライン", schedule: "毎週土曜日" }
+    spam = User.create!(**attributes, name: "bd333", appeal: "বাংলা স্পোর্টস এবং 火箭 网站 https://bd333-bd.fun " * 5)
+    japanese = User.create!(**attributes, name: "地域バスケサークル", appeal: "地域で楽しく活動しています。" * 10)
+    blog = Blog.create!(user: spam, title: "活動記録", content: "地域で活動しました。" * 15)
+    spam.update_column(:moderation_status, "clear") # Simulate a circle screened under the old rule.
+    assert_includes User.publicly_visible, spam
+    assert_includes Blog.publicly_visible, blog
+
+    ReviewCircleProfilesWithoutJapaneseKana.new.up
+
+    assert_equal "review", spam.reload.moderation_status
+    assert_equal "clear", japanese.reload.moderation_status
+    assert_not spam.publicly_visible?
+    assert_not_includes User.publicly_visible, spam
+    assert_not_includes Blog.publicly_visible, blog
+    assert_includes User.publicly_visible, japanese
   end
 
   test "backfill hides previously published English-only circles" do

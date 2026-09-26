@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
 	MINIMUM_APPEAL_LENGTH = 100
-	JAPANESE_TEXT = /[ぁ-んァ-ヶ一-龠々]/
+	JAPANESE_TEXT = /[ぁ-んァ-ヶ]/
 	LINK_TEXT = %r{https?://[^\s<]+|(?<![\w/])www\.[^\s<]+}i
 
 	before_validation :refresh_publication_status

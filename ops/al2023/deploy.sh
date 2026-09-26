@@ -22,8 +22,9 @@ case "$mode" in
       bundle exec rails assets:precompile
     fi
     bundle exec ruby bin/verify_brand_assets
-    # Apply the approved moderation backfill before either server restarts.
+    # Apply moderation backfills before either server restarts.
     bundle exec rails db:migrate:up VERSION=20260926010000
+    bundle exec rails db:migrate:up VERSION=20260927000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;
