@@ -1,33 +1,70 @@
 # AL2023 runtime migration
 
-**Current migration state (2026-09-26, in progress):** server4 and server5
-run AL2023 with Puma. Both are in the production canary alongside server2 and
-server3. Do not delete the old instances until the final two-server observation,
-scheduled-job migration and deployment-path checks have completed.
+## Current production topology (2026-09-26)
 
-The active application fix is `1aac65cc6`: CarrierWave 3's Fog `empty?` performs
-an S3 HEAD request. Rendering an image URL or checking stored-image presence must
-not call it. Local/cached upload presence validation is preserved. The focused
-regression suite has 9 tests / 17 assertions; both runtime CI jobs passed.
+LoadBalancer-1 now serves **server4 + server5**. Both AL2023 targets pass
+`/health`. Server2 and server3 have been detached; instance deletion remains
+pending final observation and action-time confirmation.
 
-Each new server passed 64 local GET checks. The last eight requests averaged
-0.126 s on server4 and 0.110 s on server5. These are bounded warm-up measurements,
-not a guarantee of production capacity. Observe real request errors, latency and
-CPU steal/burst reserves after reducing production to two targets.
+| Instance | Zone | Static public IP | Private IP | Application |
+| --- | --- | --- | --- | --- |
+| circle-book-web-server4 | Tokyo A | 18.176.169.209 | 172.26.15.224 | circle-puma + nginx |
+| circle-book-web-server5 | Tokyo C | 54.95.19.169 | 172.26.21.101 | circle-puma + nginx |
 
-`public/uploads` plus `storage` contain the same 281 files on all four servers,
-verified by a combined SHA256 digest. The production DB is outside server2/3.
-The old instances both run sitemap refresh at 15:00 UTC daily; replace this with
-`circle-sitemap.timer` **on server4 only** after the service succeeds. Back up
-and disable the old sitemap cron entries before enabling the timer. Do not
-enable the timer on server5. The old Unicorn log-maintenance cron is not used by
-Puma, which logs through systemd/journald.
+Both retain the approved 8 GB / 2 vCPU / 160 GB plan. The existing static IPs
+were transferred from server3/server2 with explicit user approval. Cloudflare
+still points to the load balancer. Public HTTP IPv4/IPv6 is closed on both
+instances; the private LB/Cloudflare origin guard remains enabled. HTTPS requests
+directly to the LB, including spoofed forwarding headers, return 403.
 
-The following sections are historical migration notes. Their earlier rollback
-states and approval requests are superseded by this section and the live AWS
+### Performance and data checks
+
+CarrierWave 3 Fog `empty?` performs an S3 HEAD request. Image URL generation and
+stored-image presence checks now avoid it, while local/cached upload validation
+retains its prior behavior. The regression suite has 9 tests / 17 assertions.
+Each new server passed 64 GET checks; the last eight averaged 0.126 s on server4
+and 0.110 s on server5. These bounded measurements are not a capacity guarantee.
+Continue observing real request errors, latency and CPU after the final deploy.
+
+`public/uploads` and `storage` contain the same 281 files on all four instances
+(combined SHA256 cdf34902bb454f9098cb2c8b59b5eb02e20a03d5e9ecbedde8fe0fc379aad045).
+The DB is outside the retiring instances and uploaded images use S3.
+No production test writes, outbound test mail or DB migration were performed.
+
+### Scheduled work
+
+`circle-sitemap.service` completed successfully on server4. Only server4 has
+`circle-sitemap.timer` enabled, daily at 15:00 UTC (00:00 JST). Both old sitemap
+cron entries were disabled after saving a private crontab backup on each old
+instance. Do not enable the timer on server5. The old Unicorn log-maintenance
+cron is unnecessary for Puma, which logs via journald.
+
+### Deployment and recovery
+
+The updated `deploy_prod.yml` targets only the two static IPs above, with pinned
+SSH host fingerprints. Existing GitHub deployment credentials are reused.
+Runtime tests must pass; both instances prepare the exact tested commit and
+retain old asset digests before one-at-a-time Puma hot restarts and public GET /
+Turnstile readiness checks. Missing DB migrations stop deployment rather than
+running automatically. Existing private production/Turnstile configuration is
+preserved and is not copied into workflow logs.
+
+Manual `check-al2023` verifies SSH and service state without changing production.
+Manual `all` performs the complete verified deployment. Pushes to master use
+the same path once this branch is merged. Do not dispatch an older workflow
+revision that still targets server2/server3.
+
+For an application regression, revert the offending change with a new commit
+and deploy it through the same checks; do not reset production Git history or
+clobber assets. If one instance fails, detach that instance and keep the healthy
+one serving while fixing it. The approved server4 snapshot used to create
+server5 predates later application fixes; restoration requires applying the
+current tested Git revision and rechecking configuration, origin guard, assets,
+health and the singleton sitemap timer before attachment.
+
+The remaining sections are **historical migration notes**. Earlier topology,
+rollback state and approval requests are superseded by this section and live AWS
 state. Never start the obsolete `circle-unicorn` service on the new runtime.
-The current master deployment workflow still targets AL2 until reconciled;
-do not merge this branch while that remains true.
 
 ## Versions and compatibility
 
