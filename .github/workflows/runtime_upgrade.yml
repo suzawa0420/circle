@@ -9,6 +9,7 @@ on:
       - .ruby-version
       - .node-version
       - .github/workflows/runtime_upgrade.yml
+      - ops/al2023/**
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,6 +37,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y imagemagick libpq-dev nginx
       - run: python3 ops/al2023/test_origin_guard.py
+      - run: python3 -m unittest discover -s ops/al2023 -p test_sync_assets.py
+      - run: python3 -m unittest discover -s ops/al2023 -p test_asset_compatibility.py
       - uses: ruby/setup-ruby@v1
         with:
           bundler: '2.5.23'
