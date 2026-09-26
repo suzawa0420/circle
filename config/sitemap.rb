@@ -1,3 +1,5 @@
+require 'aws-sdk-s3'
+
 # Set the host name for URL creation
 SitemapGenerator::Sitemap.default_host = 'https://circle-book.com'
 SitemapGenerator::Sitemap.sitemaps_host = "https://s3-ap-northeast-1.amazonaws.com/#{ENV['AWS_S3_BUCKET']}"
