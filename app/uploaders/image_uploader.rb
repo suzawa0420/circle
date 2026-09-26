@@ -57,7 +57,7 @@ class ImageUploader < CarrierWave::Uploader::Base
   # For images you might use something like this:
 
   # jpg, jpeg, gif, png のみ許可する
-  def extension_white_list
+  def extension_allowlist
     %w(jpg jpeg gif png HEIC HEIF heic heif)
   end
 
@@ -68,12 +68,10 @@ class ImageUploader < CarrierWave::Uploader::Base
     1..20.megabytes
   end
 
+  # CarrierWave 3 may clear original_filename after storing. The processor
+  # always writes JPEG, so keep the stored identifier stable and explicit.
   def filename
-    super.chomp(File.extname(super)) + '.jpg' if original_filename.present?
-  end
-
-  def filename
-    "#{secure_token}.#{file.extension}" if original_filename.present?
+    "#{secure_token}.jpg" if file.present?
   end
 
   # Keep long-lived S3 caching, but make a changed record resolve to a fresh URL.

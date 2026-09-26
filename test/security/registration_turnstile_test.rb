@@ -1,6 +1,7 @@
 # Standalone: no Rails application boot, real credentials, DB or network.
 require 'bundler/setup'
 require 'minitest/autorun'
+require 'minitest/mock'
 require 'active_support/all'
 require 'action_controller'
 require 'active_model'
@@ -237,7 +238,7 @@ class RegistrationTurnstileTest < Minitest::Test
       load File.join(ROOT, 'config/initializers/registration_turnstile.rb')
     end
     load File.join(ROOT, 'config/initializers/filter_parameter_logging.rb')
-    filter = ActionDispatch::Http::ParameterFilter.new(configuration.filter_parameters)
+    filter = ActiveSupport::ParameterFilter.new(configuration.filter_parameters)
     filtered = filter.filter('cf-turnstile-response' => 'dummy-token', 'turnstile_secret_key' => DUMMY_SECRET)
     assert_equal '[FILTERED]', filtered['cf-turnstile-response']
     assert_equal '[FILTERED]', filtered['turnstile_secret_key']

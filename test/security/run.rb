@@ -13,6 +13,7 @@ require 'active_support/testing/time_helpers'
 
 class SecurityTestApp < Rails::Application
   config.eager_load = false
+  config.action_dispatch.show_exceptions = :none
   config.secret_key_base = 'test-only-key-never-used-outside-this-suite'
   config.logger = Logger.new(File::NULL)
   config.hosts.clear
@@ -57,7 +58,12 @@ require_relative '../../app/models/place_review'
 module Circlebook; end
 class ApplicationController < ActionController::Base
   include SpamProtection
-  attr_accessor :current_member, :current_admin_user
+  # Rails recycles controller instance variables between requests. Keep the
+  # test identity in the session, as the real authentication layer does.
+  %i[current_member current_admin_user].each do |identity|
+    define_method(identity) { session[identity] }
+    define_method("#{identity}=") { |value| session[identity] = value }
+  end
   def member_signed_in?; current_member.present?; end
   def admin_user_signed_in?; current_admin_user.present?; end
   def authenticate_admin_user!; head :unauthorized unless admin_user_signed_in?; end

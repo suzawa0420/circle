@@ -4,7 +4,7 @@ class DateValidator < ActiveModel::EachValidator
     begin
       Date.parse value if value.present?
     rescue ArgumentError
-      record.errors[attribute] << I18n.t('errors.messages.invalid')
+      record.errors.add(attribute, :invalid)
     end
   end
 end
