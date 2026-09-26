@@ -103,3 +103,43 @@ Before production traffic:
 - https://www.ruby-lang.org/en/news/2026/07/16/ruby-3-3-12-released/
 - https://guides.rubyonrails.org/maintenance_policy.html
 - https://nodejs.org/en/about/previous-releases
+
+### 2026-09-26 canary rollback: mixed-version assets
+
+Commit `f3ef41ffd` was started on server4 and briefly attached to LoadBalancer-1.
+Health, principal pages, local assets, origin rejection and both CI runs passed.
+The canary was rolled back before retiring server3: the old page referenced five
+local assets; server4 returned 301 for three and 404 for two. Conversely, all five
+new page assets returned 404 on server3. Per-server smoke checks alone do not
+establish compatibility when the load balancer can send HTML and assets to
+different runtime versions. A 301 is not accepted as proof of a valid static asset.
+
+Before another canary, distribute the union of fingerprinted public assets from
+all participating versions to **server2, server3 and server4**. This is an
+additional production scope beyond the prior server4-only approval. It changes
+only public compiled files, not application code, manifests, secrets, database,
+cron, origin guards, or old-server services. No new paid service is needed.
+
+1. Create private staging directories containing only each server's public
+   fingerprinted assets. Transfer these via an operator-approved existing secure
+   channel. Never expose a temporary HTTP file server or include app configuration.
+2. Run `python3 sync_assets.py STAGED_ASSETS /var/www/circle/public/assets` on each
+   destination. This previews additions and fails before writing if a digest path
+   exists with different contents or any symlink/unfingerprinted file is present.
+3. Once the added scope is approved, repeat with `--apply` for each staged version
+   on each server. Existing bytes and each server's Sprockets manifest stay intact.
+   New files publish atomically and can be served without restarting old services.
+   Verify nginx traversal/read access if staging created new directories.
+4. While server4 is still detached, run `verify_asset_compatibility.py` on a
+   private instance with all three `--target LABEL=PRIVATE_IP` arguments. It checks
+   six pages and same-origin CSS/JS plus CSS dependencies against every target.
+   Require **every asset to return 200**, and verify representative public pages.
+5. Repeat health/origin checks, then attach server4. Observe at least 15 minutes;
+   detach server3 only if all compatibility and runtime checks stay healthy.
+   On failure detach server4 and keep server2/server3 serving; the extra immutable
+   files can remain for cached pages, so no destructive cleanup is required.
+
+`test_sync_assets.py` verifies dry-run behavior, idempotency, manifest preservation,
+collision refusal before any write, symlink refusal, and non-asset rejection.
+Do not run assets:clobber, cleanup old digests, overwrite a manifest, or merge this
+branch into the existing AL2 deployment workflow during this transition.
