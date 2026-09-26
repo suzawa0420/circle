@@ -57,6 +57,27 @@ class ImageUploaderUrlTest < Minitest::Test
     assert_match(/\A[0-9a-f-]+\.jpg\z/, uploader('/uploads/example.jpg').filename)
   end
 
+  def test_stored_fog_file_presence_does_not_access_s3
+    instance = uploader
+    remote_file = CarrierWave::Storage::Fog::File.new(instance, Object.new, 'uploads/example.jpg')
+    def remote_file.empty?
+      raise 'Stored image presence must not access S3'
+    end
+    instance.instance_variable_set(:@file, remote_file)
+    assert instance.present?
+    refute instance.blank?
+    assert uploader.blank?
+  end
+
+  def test_local_file_presence_keeps_empty_file_semantics
+    instance = uploader
+    local_file = Struct.new(:empty) { def empty? = empty }.new(true)
+    instance.instance_variable_set(:@file, local_file)
+    assert instance.blank?
+    local_file.empty = false
+    assert instance.present?
+  end
+
   def test_missing_timestamp_keeps_original_url
     assert_equal '/uploads/example.jpg', uploader('/uploads/example.jpg', nil).url
   end

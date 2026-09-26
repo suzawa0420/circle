@@ -33,6 +33,15 @@ class ImageUploader < CarrierWave::Uploader::Base
     "/images/" + [version_name, "default.png"].compact.join('_')
   end
 
+  # A retrieved S3 file represents the identifier already stored in the DB.
+  # CarrierWave 3's Fog file presence check performs HEAD; never do that while
+  # rendering a page. Keep local/cached upload validation semantics unchanged.
+  def blank?
+    return false if file.is_a?(CarrierWave::Storage::Fog::File)
+
+    super
+  end
+
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url(*args)
   #   # For Rails 3.1+ asset pipeline compatibility:
