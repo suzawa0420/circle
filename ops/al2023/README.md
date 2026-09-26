@@ -1,10 +1,33 @@
 # AL2023 runtime migration
 
-**Current state:** the `b12008232` canary was rolled back. Production uses
-server2 + server3; server4 is detached with Nginx/Unicorn stopped. See the
-latest section below before following the historical preparation steps.
+**Current migration state (2026-09-26, in progress):** server4 and server5
+run AL2023 with Puma. Both are in the production canary alongside server2 and
+server3. Do not delete the old instances until the final two-server observation,
+scheduled-job migration and deployment-path checks have completed.
 
-This branch is based on production commit `72e201611` and must **not** be pushed to master until the new server is ready. The existing master workflow deploys to AL2 servers that still run Ruby 2.7.
+The active application fix is `1aac65cc6`: CarrierWave 3's Fog `empty?` performs
+an S3 HEAD request. Rendering an image URL or checking stored-image presence must
+not call it. Local/cached upload presence validation is preserved. The focused
+regression suite has 9 tests / 17 assertions; both runtime CI jobs passed.
+
+Each new server passed 64 local GET checks. The last eight requests averaged
+0.126 s on server4 and 0.110 s on server5. These are bounded warm-up measurements,
+not a guarantee of production capacity. Observe real request errors, latency and
+CPU steal/burst reserves after reducing production to two targets.
+
+`public/uploads` plus `storage` contain the same 281 files on all four servers,
+verified by a combined SHA256 digest. The production DB is outside server2/3.
+The old instances both run sitemap refresh at 15:00 UTC daily; replace this with
+`circle-sitemap.timer` **on server4 only** after the service succeeds. Back up
+and disable the old sitemap cron entries before enabling the timer. Do not
+enable the timer on server5. The old Unicorn log-maintenance cron is not used by
+Puma, which logs through systemd/journald.
+
+The following sections are historical migration notes. Their earlier rollback
+states and approval requests are superseded by this section and the live AWS
+state. Never start the obsolete `circle-unicorn` service on the new runtime.
+The current master deployment workflow still targets AL2 until reconciled;
+do not merge this branch while that remains true.
 
 ## Versions and compatibility
 

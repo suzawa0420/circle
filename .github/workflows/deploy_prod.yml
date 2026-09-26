@@ -7,7 +7,7 @@ on:
     inputs:
       target:
         type: choice
-        options: [all, server2]
+        options: [all, server2, check-al2023]
         default: all
 
 concurrency:
@@ -15,7 +15,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  verify-al2023:
+    if: inputs.target == 'check-al2023'
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - server: server4
+            host: 13.112.50.106
+            fingerprint: SHA256:l59RwMs26VCmMrRxph932PhV2vuAzCjqFN+7CalbnJw
+          - server: server5
+            host: 54.238.207.76
+            fingerprint: SHA256:rEMlXlk8xguuP0A5v1vWg4HfH3M8WhzDJSF/kJho5mI
+    steps:
+      - name: Check new server connection without changing it
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd /var/www/circle
+            /opt/circle/ruby-3.3.12/bin/ruby --version
+            /opt/circle/node-v24.21.0-linux-x64/bin/node --version
+            systemctl is-active circle-puma nginx
+            git rev-parse --short HEAD
   build:
+    if: inputs.target != 'check-al2023'
     runs-on: ubuntu-22.04
     steps:
       - name: Check required Turnstile settings without displaying values
