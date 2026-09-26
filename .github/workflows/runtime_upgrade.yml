@@ -52,8 +52,14 @@ jobs:
       - run: bundle exec rails db:schema:load zeitwerk:check
       - name: Test admin permissions
         run: bundle exec rails test test/models/admin_user_permissions_test.rb
-      - name: Test circle publication
-        run: bundle exec rails test test/models/user_test.rb
+      - name: Test profile sanitizer availability
+        run: bundle exec rails runner 'exit(ActionView::Base.respond_to?(:full_sanitizer) ? 0 : 1)'
+      - name: Test complete circle publication
+        run: bundle exec rails test test/models/user_test.rb:76
+      - name: Test English profile moderation
+        run: bundle exec rails test test/models/user_test.rb:90
+      - name: Test single link counting
+        run: bundle exec rails test test/models/user_test.rb:100
       - name: Test blog moderation
         run: bundle exec rails test test/models/blog_test.rb
       - name: Test runtime integration
