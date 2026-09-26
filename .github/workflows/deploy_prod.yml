@@ -21,10 +21,10 @@ jobs:
       matrix:
         include:
           - server: server4
-            host: 13.112.50.106
+            host: 18.176.169.209
             fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
           - server: server5
-            host: 54.238.207.76
+            host: 54.95.19.169
             fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
     steps:
       - name: Check new server connection without changing it
@@ -54,10 +54,10 @@ jobs:
       matrix:
         include:
           - server: server4
-            host: 13.112.50.106
+            host: 18.176.169.209
             fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
           - server: server5
-            host: 54.238.207.76
+            host: 54.95.19.169
             fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
     steps:
       - name: Prepare the exact tested commit and retain old assets
@@ -86,10 +86,10 @@ jobs:
       matrix:
         include:
           - server: server4
-            host: 13.112.50.106
+            host: 18.176.169.209
             fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
           - server: server5
-            host: 54.238.207.76
+            host: 54.95.19.169
             fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
     steps:
       - name: Restart and warm one server after both asset sets are ready
