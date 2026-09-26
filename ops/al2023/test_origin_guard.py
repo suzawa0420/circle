@@ -2,6 +2,7 @@
 import http.client
 import pathlib
 import re
+import socket
 import subprocess
 import tempfile
 import time
@@ -36,6 +37,11 @@ error_log {d}/error.log;
 events {{ worker_connections 32; }}
 http {{
  access_log off;
+ client_body_temp_path {d}/client_body;
+ proxy_temp_path {d}/proxy;
+ fastcgi_temp_path {d}/fastcgi;
+ uwsgi_temp_path {d}/uwsgi;
+ scgi_temp_path {d}/scgi;
  include {guard};
  server {{
   listen 127.0.0.1:35441;
@@ -45,12 +51,18 @@ http {{
  }}
 }}
 ''')
-    subprocess.run(['nginx', '-t', '-p', str(d), '-c', str(config)], check=True, capture_output=True)
-    process = subprocess.Popen(['nginx', '-p', str(d), '-c', str(config), '-g', 'daemon off;'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    command = ['nginx', '-e', str(d / 'error.log'), '-p', str(d), '-c', str(config)]
+    result = subprocess.run(command + ['-t'], capture_output=True)
+    assert result.returncode == 0, result.stderr.decode()
+    process = subprocess.Popen(command + ['-g', 'daemon off;'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         for _ in range(30):
-            if (d / 'nginx.pid').exists():
-                break
+            assert process.poll() is None, (d / 'error.log').read_text()
+            try:
+                with socket.create_connection(('127.0.0.1', 35441), timeout=.2):
+                    break
+            except OSError:
+                pass
             time.sleep(.1)
         for name, peer, path, method, xff, host, expected in cases:
             headers = {'Host': host, 'X-Circle-Test-Peer': peer}
