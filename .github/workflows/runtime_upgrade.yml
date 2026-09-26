@@ -50,7 +50,14 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: bundle exec rails db:schema:load zeitwerk:check
-      - run: bundle exec rails test test/models/admin_user_permissions_test.rb test/models/user_test.rb test/models/blog_test.rb test/integration/runtime_upgrade_test.rb
+      - name: Test admin permissions
+        run: bundle exec rails test test/models/admin_user_permissions_test.rb
+      - name: Test circle publication
+        run: bundle exec rails test test/models/user_test.rb
+      - name: Test blog moderation
+        run: bundle exec rails test test/models/blog_test.rb
+      - name: Test runtime integration
+        run: bundle exec rails test test/integration/runtime_upgrade_test.rb
       - run: bundle exec ruby test/security/run.rb
       - run: bundle exec ruby test/security/registration_turnstile_test.rb
       - run: node test/security/registration_turnstile_js_test.js
