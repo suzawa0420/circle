@@ -81,6 +81,52 @@ class User < ApplicationRecord
     []
   end
 
+	MINIMUM_APPEAL_LENGTH = 100
+	JAPANESE_TEXT = /[ぁ-んァ-ヶ一-龠々]/
+	LINK_TEXT = %r{https?://[^\s<]+|(?<![\w/])www\.[^\s<]+}i
+
+	before_validation :refresh_publication_status
+	before_validation :flag_suspicious_profile
+
+	scope :publicly_visible, -> {
+		where(publication_status: "published", moderation_status: "clear")
+			.where(ng_account: [nil, "OK"])
+			.where(admin_user_id: AdminUser.ng_account.select(:id))
+	}
+
+	def missing_publication_fields
+		missing = []
+		missing << "サークル名" if name.blank?
+		missing << "サークル種目" if event_id.blank?
+		missing << "都道府県" if prefecture_id.blank?
+		missing << "募集状況" if switch.blank?
+		missing << "活動場所" if area.blank?
+		missing << "活動時間" if schedule.blank?
+		body = ActionView::Base.full_sanitizer.sanitize(appeal.to_s).gsub(/[[:space:]]/, "")
+		missing << "サークルの詳細情報（#{MINIMUM_APPEAL_LENGTH}文字以上）" if body.length < MINIMUM_APPEAL_LENGTH
+		missing
+	end
+
+	def publicly_visible?
+		publication_status == "published" && moderation_status == "clear" &&
+			[ nil, "OK" ].include?(ng_account) && admin_user.present? && admin_user.check.nil?
+	end
+
+	private
+
+	def refresh_publication_status
+		self.publication_status = missing_publication_fields.empty? ? "published" : "draft"
+	end
+
+	def flag_suspicious_profile
+		return if moderation_status == "blocked"
+		return unless new_record? || will_save_change_to_appeal?
+
+		body = ActionView::Base.full_sanitizer.sanitize(appeal.to_s)
+		self.moderation_status = "review" if body !~ JAPANESE_TEXT && body.scan(LINK_TEXT).length >= 2
+	end
+
+	public
 	has_many :blogs, dependent: :destroy
 	has_many :schedules, dependent: :destroy
 	has_many :places
@@ -154,17 +200,17 @@ class User < ApplicationRecord
 	mount_uploader :gallery_04, ImageUploader
 
   # 新User用
-  scope :list, -> {(where(ng_account: nil).or(User.where(ng_account: "OK")).where.not(switch: "").where.not(appeal: "")).includes([:event, :prefecture, :tags, :reviews])}
+	scope :list, -> { publicly_visible.includes([:event, :prefecture, :tags, :reviews]) }
   scope :where_pref, -> (prefecture_id){where(prefecture_id: prefecture_id).or(User.where(prefecture_sub_id: prefecture_id)).or(User.where(prefecture_id: 50))}
   scope :where_city, -> (city){where(id: city.users.ids).or(User.where(prefecture_id: 50))}
   scope :sort_1, -> {order(switch: :asc, last_post: :desc)}
   scope :sort_2, -> {order(switch: :asc, cb_point: :desc, last_post: :desc)}
   scope :sort_3, -> {order(switch: :asc, created_at: :desc)}
-  scope :users_list, -> {(where(ng_account: nil).or(User.where(ng_account: "OK")).where.not(switch: "").where.not(appeal: ""))}
+  scope :users_list, -> { publicly_visible }
 
 
 	# User用
-  scope :ng_account, -> {(where(ng_account: nil).or(User.where(ng_account: "OK"))).includes([:event, :prefecture, :tags, :reviews])}
+	scope :ng_account, -> { publicly_visible.includes([:event, :prefecture, :tags, :reviews]) }
   scope :user_sort_1, -> {ng_account.order(switch: :asc, last_post: :desc).where.not(switch: "") }
   scope :user_sort_2, -> {ng_account.order(switch: :asc, cb_point: :desc, last_post: :desc).where.not(switch: "") }
   scope :user_sort_3, -> {ng_account.order(switch: :asc, created_at: :desc).where.not(switch: "") }
@@ -178,7 +224,7 @@ class User < ApplicationRecord
   scope :tag, -> (tag_id){ where(id: tag_id) }
 
   # Blog用
-  scope :user_hide, -> { ng_account.where.not(switch: "") }
+  scope :user_hide, -> { ng_account }
 
   # 検索用
 	scope :search_word, ->(keyword) do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_25_130000) do
+ActiveRecord::Schema.define(version: 2026_09_26_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,8 @@ ActiveRecord::Schema.define(version: 2026_09_25_130000) do
     t.string "photo_updated_at"
     t.string "photo"
     t.integer "impressions_count", default: 0
+    t.string "moderation_status", default: "clear", null: false
+    t.index ["moderation_status"], name: "index_blogs_on_moderation_status"
     t.index ["user_id"], name: "index_blogs_on_user_id"
   end
 
@@ -629,12 +631,15 @@ ActiveRecord::Schema.define(version: 2026_09_25_130000) do
     t.string "point"
     t.float "cb_point", default: 0.0, null: false
     t.boolean "review_permit", default: true
+    t.string "publication_status", default: "draft", null: false
+    t.string "moderation_status", default: "clear", null: false
     t.index ["admin_user_id"], name: "index_users_on_admin_user_id"
     t.index ["event_id"], name: "index_users_on_event_id"
     t.index ["last_post"], name: "index_users_on_last_post"
     t.index ["ng_account"], name: "index_users_on_ng_account"
     t.index ["prefecture_id"], name: "index_users_on_prefecture_id"
     t.index ["prefecture_sub_id"], name: "index_users_on_prefecture_sub_id"
+    t.index ["publication_status", "moderation_status"], name: "index_users_on_publication_status_and_moderation_status"
     t.index ["switch"], name: "index_users_on_switch"
     t.index ["switch", "created_at"], name: "index_users_on_switch_and_created_at_desc", order: { created_at: :desc }
     t.index ["switch", "last_post"], name: "index_users_on_switch_and_last_post_desc", order: { last_post: :desc }

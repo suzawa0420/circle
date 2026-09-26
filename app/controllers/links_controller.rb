@@ -6,12 +6,12 @@ class LinksController < ApplicationController
 
 
 	def index
-		@links = Link.where.not(link03_title: "").order("RANDOM()").limit(5)
+		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").limit(5)
 	end
 
 	def new
 		@user = User.find(params[:user_id])
-		@links = Link.where.not(link03_title: "").order("RANDOM()").limit(5)
+		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").limit(5)
 
 		if admin_user_signed_in?
 			if current_admin_user.id == @user.admin_user_id.to_i
@@ -67,7 +67,8 @@ class LinksController < ApplicationController
 
 	def show
 		@link = Link.find(params[:id])
-		@user = User.find(params[:id])
+		@user = @link.user
+		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
 		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
 
 	end
@@ -82,6 +83,7 @@ class LinksController < ApplicationController
 
 		else
 			@user = @link.user
+			raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
 			@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
 
 			# パンくず

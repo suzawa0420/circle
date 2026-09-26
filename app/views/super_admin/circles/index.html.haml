@@ -2,6 +2,28 @@
 .main.users-index
   .container
     %h2 サークル管理（SuperAdmin）
+    %h3 確認待ちのサークル
+    - @review_circles.each do |circle|
+      %p
+        = link_to circle.name, circle_path(circle)
+        = button_to "確認済みにする", super_admin_circle_moderation_path(circle), method: :patch, params: { moderation_status: "clear" }
+        = button_to "停止", super_admin_circle_moderation_path(circle), method: :patch, params: { moderation_status: "blocked" }
+    %h3 確認待ちのブログ
+    - @review_blogs.each do |blog|
+      %p
+        = link_to blog.title, circle_blog_path(blog.user, blog)
+        = button_to "確認済みにする", super_admin_blog_moderation_path(blog), method: :patch, params: { moderation_status: "clear" }
+        = button_to "停止", super_admin_blog_moderation_path(blog), method: :patch, params: { moderation_status: "blocked" }
+    %h3 公開停止中のサークル
+    - @blocked_circles.each do |circle|
+      %p
+        = link_to circle.name, circle_path(circle)
+        = button_to "停止を解除", super_admin_circle_moderation_path(circle), method: :patch, params: { moderation_status: "clear" }
+    %h3 公開停止中のブログ
+    - @blocked_blogs.each do |blog|
+      %p
+        = link_to blog.title, circle_blog_path(blog.user, blog)
+        = button_to "停止を解除", super_admin_blog_moderation_path(blog), method: :patch, params: { moderation_status: "clear" }
     .table_list
       %table.table.table-bordered
         %tr

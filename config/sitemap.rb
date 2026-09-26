@@ -21,18 +21,18 @@ SitemapGenerator::Sitemap.create do
   current_time = Time.now
   add root_path, :lastmod => current_time, changefreq: 'weekly', priority: 0.3
 
-  # User.find_each do |user|
-  #   add circle_path(user), :lastmod => user.updated_at, :priority => 0.3, :changefreq => 'weekly'
+  User.publicly_visible.find_each do |user|
+    add circle_path(user), :lastmod => user.updated_at, :priority => 0.3, :changefreq => 'weekly'
     # add "/users/#{user.id}/schedules", :lastmod => current_time, :priority => 0.3, :changefreq => 'weekly'
     # add "/users/#{user.id}/reviews", :lastmod => current_time, :priority => 0.3, :changefreq => 'weekly'
     # add "/users/#{user.id}/questions", :lastmod => current_time, :priority => 0.3, :changefreq => 'weekly'
-  # end
+  end
 
   DbKeyword.find_each do |keyword|
     add "/users/kw/#{keyword.keyword}", :lastmod => current_time, :priority => 0.8, :changefreq => 'daily'
   end
 
-  # Blog.find_each do |blog|
+  # Blog.publicly_visible.find_each do |blog|
   #   add circle_blog_path(blog.user, blog), :lastmod => blog.updated_at, :priority => 0.3, :changefreq => 'weekly'
   # end
 

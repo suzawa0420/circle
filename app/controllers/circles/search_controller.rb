@@ -53,7 +53,7 @@ class Circles::SearchController < Circles::ApplicationController
 private
   def set_keyword_search
       # Userモデルオブジェクト作成
-      users = User
+      users = User.publicly_visible
 
       # キーワード分割
       @keywords = params[:q].split(/[[:blank:]]+/).select(&:present?)

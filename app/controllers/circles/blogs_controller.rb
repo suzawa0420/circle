@@ -9,7 +9,9 @@ class Circles::BlogsController < Circles::ApplicationController
   include Circlebook
 
   def index
-    @blogs = @user.blogs.order(created_at: "DESC").page(params[:page])
+    owner = admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+    set_meta_tags noindex: true unless @user.publicly_visible?
+    @blogs = (owner ? @user.blogs : @user.blogs.publicly_visible).order(created_at: "DESC").page(params[:page])
   end
 
 
@@ -37,7 +39,11 @@ class Circles::BlogsController < Circles::ApplicationController
 
 	def show
 		@blog = Blog.find(params[:id])
-    @blogs = @user.blogs.where.not(id: params[:id])
+    unless @blog.publicly_visible?
+      raise ActiveRecord::RecordNotFound unless admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+      set_meta_tags noindex: true
+    end
+    @blogs = @user.blogs.publicly_visible.where.not(id: params[:id])
 
     if @user.blogs.exists?(id: @blog.id)
 
@@ -97,6 +103,10 @@ class Circles::BlogsController < Circles::ApplicationController
 
   def set_blog
     @user = User.find(params[:circle_id])
+    return if @user.publicly_visible?
+    return if admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+
+    raise ActiveRecord::RecordNotFound
   end
 
 

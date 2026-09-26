@@ -1,4 +1,12 @@
 .form-body.cont-body
+  - if @user.persisted? && @user.publication_status == "draft"
+    .attention_content
+      公開準備中です。以下を入力するとサークルとブログが公開対象になります：
+      = @user.missing_publication_fields.join("、")
+  - if @user.persisted? && @user.moderation_status == "review"
+    .attention_content 内容を確認中のため、サークルとブログは一時的に非公開です。
+  - if @user.persisted? && @user.moderation_status == "blocked"
+    .attention_content このサークルは公開停止中です。
   - if @user.errors.any?
     .form-error
       以下の項目でエラーが発生いたしました。

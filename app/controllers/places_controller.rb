@@ -73,7 +73,7 @@ class PlacesController < ApplicationController
 		@city = @prefecture.cities.find_by!(city_kana: params[:city_kana])
 
     @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id)
-    @users = User.where(event_id: @event.id, prefecture_id: @prefecture.id, switch: "募集中").order(switch: :asc, last_post: :desc)
+    @users = User.publicly_visible.where(event_id: @event.id, prefecture_id: @prefecture.id, switch: "募集中").order(switch: :asc, last_post: :desc)
     @place_events = @place.places_events.map{|e| e.event}
 
     @place_events.each do |event|

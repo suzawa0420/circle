@@ -2,6 +2,15 @@
 .user_main.users-index
   .container
     .mypage_wrap
+      - if @user.publication_status == "draft"
+        .attention_content
+          サークルは公開準備中です。不足項目：
+          = @user.missing_publication_fields.join("、")
+          = link_to "サークルを編集", edit_user_path(@user)
+      - if @user.moderation_status == "review"
+        .attention_content 内容を確認中のため、サークルとブログは一時的に非公開です。
+      - elsif @user.moderation_status == "blocked"
+        .attention_content このサークルは公開停止中です。
       = render "/users/alert"
       - if @admin_user.users.count > 1
         .user_select_wrap

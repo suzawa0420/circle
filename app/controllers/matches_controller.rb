@@ -55,6 +55,7 @@ before_action :set_matches
 
 	def show
 		@user = User.includes(:event, :prefecture, :prefecture_sub).find(params[:id])
+		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
 		@match = Match.find_by(user_id: @user.id)
 		@event = @user.event
 		@prefecture = @user.prefecture
@@ -130,7 +131,7 @@ before_action :set_matches
 
 private
 	def matches_with_user_details
-		Match.includes(user: [:event, :prefecture])
+		Match.includes(user: [:event, :prefecture]).where(user_id: User.publicly_visible.select(:id))
 	end
 
 	def match_params

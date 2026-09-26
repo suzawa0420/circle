@@ -15,6 +15,8 @@
       %div
         - if @blogs.any?
           - @blogs.each do |blog|
+            - if !blog.publicly_visible?
+              .attention_content このブログは現在、一般には公開されていません。
             = link_to(circle_blog_path(blog.user_id, blog.id)) do
               .form.users-form
                 .form-body

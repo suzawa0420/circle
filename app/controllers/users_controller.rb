@@ -12,7 +12,7 @@ helper_method :link_count
 
 	def search
     # Userモデルオブジェクト作成
-		@users = User
+		@users = User.publicly_visible
 
 		# キーワード分割
     keywords = params[:q].split(/[[:blank:]]+/).select(&:present?)
@@ -310,7 +310,7 @@ helper_method :link_count
 
 	def mypage
 		@user = User.find(params[:id])
-    @users = User.where.not(id: @user.id).where("cb_point > ?", 0).prefecture(@user.prefecture.id).event(@user.event.id).user_sort_2
+    @users = User.publicly_visible.where.not(id: @user.id).where("cb_point > ?", 0).prefecture(@user.prefecture.id).event(@user.event.id).user_sort_2
     @questions_current = Question.where(user_id: @user.id)
     @questions_current_nil = Question.where(user_id: @user.id).where(answer: nil)
     @schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday)
@@ -632,7 +632,7 @@ end
 
 private
 	def set_users
-		@search = User.ransack(params[:q])
+		@search = User.publicly_visible.ransack(params[:q])
 
 		# ソート機能
     if params[:sort] == "1" || params[:sort] == nil
@@ -665,12 +665,14 @@ private
 	end
 
 	def user_params
-		params.require(:user).permit(
-			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :last_post, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :review_score, :ng_account, :unique_id,
+		permitted = params.require(:user).permit(
+			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :last_post, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :review_score, :unique_id,
       :remove_pic_profile, :remove_pic_header, :remove_gallery_01, :remove_gallery_02, :remove_gallery_03, :remove_gallery_04, :review_permit,
 			decade_age:[], average_age:[] ,grouping:[], age_ids:[], group_ids:[], city_ids:[], tag_ids:[],
       link_attributes: [:id, :unique_id]
     )
+		permitted[:ng_account] = params[:user][:ng_account] if current_admin_user&.master_account? && params[:user].key?(:ng_account)
+		permitted
 	end
 
 	def admin_user_params

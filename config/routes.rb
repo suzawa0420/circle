@@ -159,6 +159,8 @@ Rails.application.routes.draw do
   # 管理画面（SuperAdmin）
   namespace :super_admin do
     resources :circles, only: [:index, :destroy]
+    patch 'circles/:id/moderation', to: 'moderation#circle', as: :circle_moderation
+    patch 'blogs/:id/moderation', to: 'moderation#blog', as: :blog_moderation
   end
 
   # 退会処理

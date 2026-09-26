@@ -4,6 +4,18 @@
 = render "users/parts/local_business_show", user: @user
 .user_main.user-show
   .container
+    - if !@user.publicly_visible?
+      .attention_content
+        - if @user.publication_status == "draft"
+          公開準備中です。不足項目：
+          = @user.missing_publication_fields.join("、")
+          = link_to "サークルを編集", edit_user_path(@user)
+        - if @user.moderation_status == "review"
+          内容を確認中のため、サークルとブログは一時的に非公開です。
+        - elsif @user.moderation_status == "blocked"
+          このサークルは公開停止中です。
+        - elsif @user.publication_status != "draft"
+          このサークルは一般には公開されていません。
     .breadcrumbs_wrapper.text_slide
       .breadcrumbs
         = breadcrumbs separator: "&rsaquo;"
@@ -431,8 +443,8 @@
     = render "/layouts/ad_square"
     .ad_space
 
-    - if @user.blogs.present?
-      - @user.blogs.order(created_at: "DESC").first(5).each do |blog|
+    - if @user.blogs.publicly_visible.exists?
+      - @user.blogs.publicly_visible.order(created_at: "DESC").first(5).each do |blog|
         = link_to(circle_blog_path(blog.user_id, blog.id)) do
           .form.users-form
             .form-body
@@ -492,7 +504,7 @@
             = link_to "/#{@user.event.ruby}/#{@user.prefecture.kana}" do
               \&gt;&gt; 他のサークルをもっと見る
 
-    - if @user.blogs.size >= 3 || @users.size >= 3
+    - if @user.blogs.publicly_visible.count >= 3 || @users.size >= 3
       = render "/layouts/ad_square"
       .ad_space
     .space_btm

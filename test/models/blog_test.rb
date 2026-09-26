@@ -31,7 +31,9 @@
 require 'test_helper'
 
 class BlogTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test "link-heavy non-Japanese posts wait for review" do
+    blog = Blog.new(title: "Weekly practice", content: "Read https://spam.example and https://other.example " * 4)
+    blog.valid?
+    assert_equal "review", blog.moderation_status
+  end
 end

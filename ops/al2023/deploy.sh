@@ -22,6 +22,8 @@ case "$mode" in
       bundle exec rails assets:precompile
     fi
     bundle exec ruby bin/verify_brand_assets
+    # Apply only the publication-status migration approved for this release.
+    bundle exec rails db:migrate:up VERSION=20260926000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

@@ -40,10 +40,10 @@ class MembersController < ApplicationController
         @events = Event.all
 
         @event_ids = @member.members_events.map { |e| e.event_id }
-        @r_users = User.where(prefecture_id: @member.prefecture_id).or(User.where(prefecture_sub_id: @member.prefecture_id)).where(event_id: @event_ids).order("RANDOM()").limit(5)
+        @r_users = User.where(prefecture_id: @member.prefecture_id).or(User.where(prefecture_sub_id: @member.prefecture_id)).publicly_visible.where(event_id: @event_ids).order("RANDOM()").limit(5)
 
         @bookmarks = Bookmark.where(member_id: @member.id).map { |m| m.user_id }
-        @b_users = User.where(id: @bookmarks)
+        @b_users = User.publicly_visible.where(id: @bookmarks)
 
         @event_questions = EventQuestion.all
 
