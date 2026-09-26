@@ -42,6 +42,7 @@ class User < ApplicationRecord
   has_many :reviews
   has_many :blogs
   def admin_user; Struct.new(:email).new('owner@example.test'); end
+  def publicly_visible?; true; end
 end
 class Place < ApplicationRecord; has_many :place_reviews; end
 class Member < ApplicationRecord; end
