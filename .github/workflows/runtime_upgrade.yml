@@ -57,4 +57,5 @@ jobs:
       - run: bundle exec ruby test/performance/unicorn_readiness_test.rb
       - run: bundle exec rails assets:precompile
       - run: bundle exec ruby bin/verify_brand_assets
+      - run: bundle exec ruby test/runtime/puma_http_test.rb
       - run: bundle exec ruby test/runtime/production_boot_check.rb

@@ -29,6 +29,25 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_empty User.ransackable_associations
   end
 
+  test 'tag routes return 404 for unknown event and prefecture slugs' do
+    previous_show_exceptions = Rails.application.env_config['action_dispatch.show_exceptions']
+    Rails.application.env_config['action_dispatch.show_exceptions'] = :rescuable
+    tag = Tag.create!(name: '検証タグ', order: '1')
+    category = Category.create!(name: '検証分類', kana: 'runtime-tag-category', order: '1')
+    event = Event.create!(name: '検証競技', ruby: 'runtime-valid-event', order: '1', category: category)
+    prefecture = Prefecture.create!(name: '検証県', kana: 'runtime-valid-prefecture', order: '1', sort: 1)
+    %W[/runtime-missing-event/#{prefecture.kana}/tag/#{tag.id}
+       /#{event.ruby}/runtime-missing-prefecture/tag/#{tag.id}
+       /prefectures/runtime-missing-prefecture/tag/#{tag.id}
+       /#{event.ruby}/#{prefecture.kana}/runtime-missing-city/tag/#{tag.id}
+       /prefectures/#{prefecture.kana}/runtime-missing-city/tag/#{tag.id}].each do |path|
+      get path
+      assert_response :not_found, "#{path}: #{response.status}"
+    end
+  ensure
+    Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
+  end
+
   test 'member can sign in and sign out with the existing password format' do
     member = Member.create!(email: 'runtime-member@example.test', password: 'test-password-123', nickname: '検証会員')
     assert member.valid_password?('test-password-123')

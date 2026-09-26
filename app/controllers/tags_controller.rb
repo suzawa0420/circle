@@ -22,7 +22,7 @@ before_action :set_tags
   # end
 
 	def event
-    @event = Event.find_by(ruby: params[:ruby])
+    @event = Event.find_by!(ruby: params[:ruby])
 
     # ソート機能
     if params[:sort] == "1" || params[:sort] == nil
@@ -42,8 +42,8 @@ before_action :set_tags
 	end
 
 	def event_prefecture
-		@event = Event.find_by(ruby: params[:ruby])
-		@prefecture = Prefecture.find_by(kana: params[:kana])
+		@event = Event.find_by!(ruby: params[:ruby])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
     @cities = City.where(prefecture_id: @prefecture.id).order(:id => :asc)
 
     # ソート機能
@@ -70,12 +70,11 @@ before_action :set_tags
 
 
 	def event_prefecture_city
-		@event = Event.find_by(ruby: params[:ruby])
-		@city = City.find_by(city_kana: params[:city_kana])
-    return redirect_to circles_path if @event.nil? || @city.nil?
-		@prefecture =  Prefecture.find_by(id: @city.prefecture_id)
+		@event = Event.find_by!(ruby: params[:ruby])
+		@city = City.find_by!(city_kana: params[:city_kana])
+		@prefecture =  Prefecture.find_by!(id: @city.prefecture_id)
     @cities = City.where(prefecture_id: @prefecture.id).order(:id => :asc)
-		@prefecture_judge = Prefecture.find_by(kana: params[:kana])
+		@prefecture_judge = Prefecture.find_by!(kana: params[:kana])
 		@city_users = @city.users_cities.select(:user_id)
 
     # ソート機能
@@ -92,7 +91,7 @@ before_action :set_tags
 
 		if @city.prefecture_id.to_i != @prefecture_judge.id.to_i
       flash[:notice] = "URLが間違っています"
-      redirect_to circles_path
+      return redirect_to circles_path
 		end
 
 		# パンくず
@@ -109,7 +108,7 @@ before_action :set_tags
 
 
 	def prefecture
-		@prefecture = Prefecture.find_by(kana: params[:kana])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
     @cities = City.where(prefecture_id: @prefecture.id).order(:id => :asc)
 
     # ソート機能
@@ -134,10 +133,10 @@ before_action :set_tags
 
 
 	def prefecture_city
-		@city = City.find_by(city_kana: params[:city_kana])
-		@prefecture =  Prefecture.find_by(id: @city.prefecture_id)
+		@city = City.find_by!(city_kana: params[:city_kana])
+		@prefecture =  Prefecture.find_by!(id: @city.prefecture_id)
 		@cities = City.where(prefecture_id: @prefecture.id).order(:id => :asc)
-		@prefecture_judge = Prefecture.find_by(kana: params[:kana])
+		@prefecture_judge = Prefecture.find_by!(kana: params[:kana])
 		@city_users = @city.users_cities.select(:user_id)
 
     # ソート機能
@@ -154,7 +153,7 @@ before_action :set_tags
 
 		if @city.prefecture_id.to_i != @prefecture_judge.id.to_i
       flash[:notice] = "URLが間違っています"
-      redirect_to circles_path
+      return redirect_to circles_path
 		end
 
 		# パンくず

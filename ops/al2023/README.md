@@ -1,5 +1,9 @@
 # AL2023 runtime migration
 
+**Current state:** the `b12008232` canary was rolled back. Production uses
+server2 + server3; server4 is detached with Nginx/Unicorn stopped. See the
+latest section below before following the historical preparation steps.
+
 This branch is based on production commit `72e201611` and must **not** be pushed to master until the new server is ready. The existing master workflow deploys to AL2 servers that still run Ruby 2.7.
 
 ## Versions and compatibility
@@ -143,3 +147,61 @@ cron, origin guards, or old-server services. No new paid service is needed.
 collision refusal before any write, symlink refusal, and non-asset rejection.
 Do not run assets:clobber, cleanup old digests, overwrite a manifest, or merge this
 branch into the existing AL2 deployment workflow during this transition.
+
+### 2026-09-26 second canary: Rack 3 HTTP headers
+
+Public assets were synchronized at `b12008232`: 285 new files on each old
+server and 665 old files on server4. Existing bytes and manifests were preserved.
+All 171 cross-server asset probes returned 200. The old servers' 53 different
+gzip encodings were checked to decompress identically.
+
+After adding server4, the live monitor detected two HTTP 500 responses within
+210 seconds. The first corresponds to Unicorn 6.1.0 applying `=~` to an Array
+header value; Rack 3 uses arrays for multiple response headers (including cookies).
+Another NoMethodError came from an unknown event slug in TagsController.
+The canary was rolled back before detaching server3. No DB changes were made.
+
+The next candidate uses the already locked **Puma 7.2.1** on server4 only:
+
+- `puma.rb`: eight workers, one application thread per worker, matching the
+  existing concurrency without newly introducing concurrent application threads.
+  It preloads the app and reconnects Active Record in each worker.
+- Keep the existing private `tmp/sockets/unicorn.sock` name for Nginx compatibility,
+  with explicit `umask=0007`; no new TCP listener or public firewall opening.
+- `circle-puma.service`: the same ec2-user/nginx identity and runtime paths,
+  foreground operation, graceful SIGTERM, and restart-on-failure.
+- Invalid tag event/prefecture/city lookups return 404 rather than dereferencing
+  nil. Existing redirects for mismatched prefectures return immediately.
+- `test/runtime/puma_http_test.rb` exercises real local HTTP responses with
+  multiple cookies and redirects, plus the production configuration. Rails
+  integration tests cover unknown tag slugs. Both run in CI.
+
+#### Next deployment (new production approval required)
+
+Use the newly reviewed exact commit on `codex/al2023-runtime-upgrade`.
+Keep server2/server3 attached and serving throughout preparation; server4 must
+remain detached. Do not merge master or run a database migration.
+
+1. Pull the approved commit on server4, retain its private config links and all
+   existing compiled assets. No asset source or dependency change is needed for
+   this fix; verify the current manifest/assets without rebuilding them.
+2. With Unicorn and Nginx stopped, install `circle-puma.service`, daemon-reload,
+   disable `circle-unicorn`, and enable/start `circle-puma` and Nginx. Never run
+   both app servers on the shared socket. Verify service state, socket ownership
+   and permissions, health, account pages and the origin guard.
+3. Run the real HTTP cookie regression using synthetic data and no production
+   Rails boot; verify all-server asset compatibility again. No test accounts,
+   posts or email should be created in production.
+4. Attach server4 only after these checks pass. Start a fresh monitor of
+   `circle-puma` + `nginx`, counting 5xx, asset failures and health failures.
+   Observe at least 15 minutes after AWS marks server4 healthy. Inspect any 403
+   to distinguish origin rejection from failed legitimate asset requests.
+5. Detach server3 only after a successful canary. Preserve its instance/cron and
+   keep server2 attached. No DNS or plan changes and no planned site downtime.
+
+Rollback: detach server4, keep or reattach server3, require server2/server3 health
+and public-page success, then stop Puma/Nginx on server4. No DB restore is needed.
+Never restart the incompatible Unicorn service with the new Rails runtime.
+
+References: [Rack 3 header changes](https://github.com/rack/rack/blob/main/UPGRADE-GUIDE.md),
+[Puma deployment](https://github.com/puma/puma/blob/main/docs/deployment.md).
