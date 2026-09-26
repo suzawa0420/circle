@@ -1,4 +1,4 @@
-- cache @matches do
+- cache [@matches, 'stored-image-extension-v1'] do
   - @matches.each.with_index(1) do |matching, i|
     .user-profile.matching_wrap
       = link_to match_path(matching.id) do

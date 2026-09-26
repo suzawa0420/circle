@@ -5,7 +5,7 @@
     = link_to(new_circle_blog_path(current_admin_user.first_user)) do
       .post_link サークル活動をつぶやく！
 
-- cache blogs do
+- cache [blogs, 'stored-image-extension-v1'] do
   - blogs.each.with_index(1) do |blog, i|
     .form.users-form
       .blog-body

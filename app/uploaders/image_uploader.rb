@@ -71,6 +71,9 @@ class ImageUploader < CarrierWave::Uploader::Base
   end
 
   process :convert => 'jpg'
+  # CarrierWave 3 otherwise rewrites retrieved legacy .png/.jpeg keys to .jpg.
+  # New uploads already receive a .jpg filename below; preserve stored keys.
+  force_extension false
 
   # 20MB以下
   def size_range

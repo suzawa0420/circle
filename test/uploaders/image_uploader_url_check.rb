@@ -78,6 +78,52 @@ class ImageUploaderUrlTest < Minitest::Test
     assert instance.present?
   end
 
+  def test_retrieved_s3_images_preserve_the_stored_extension
+    fog_uploader = Class.new(ImageUploader) do
+      storage :fog
+      fog_credentials(provider: 'AWS', region: 'ap-northeast-1')
+      fog_directory 'circle-image-regression'
+      fog_public true
+    end
+
+    %i[pic_profile pic_header].each do |mount|
+      %w[profile.png photo.jpeg photo.JPG photo.gif photo.jpg].each do |identifier|
+        instance = fog_uploader.new(Model.new(1, Time.utc(2026, 9, 25)), mount)
+        instance.retrieve_from_store!(identifier)
+        stored_file = instance.file
+        def stored_file.connection
+          raise 'Retrieving a stored image URL must not access S3'
+        end
+        assert_equal identifier, instance.identifier
+        assert_equal "#{instance.store_dir}/#{identifier}", instance.file.path
+        assert instance.url.end_with?("/#{identifier}?v=1790294400"), instance.url
+        assert instance.present?
+      end
+    end
+  end
+
+  def test_new_upload_still_stores_jpeg_and_can_be_retrieved
+    require 'base64'
+    require 'tmpdir'
+    Dir.mktmpdir('circle-image-regression') do |root|
+      source = File.join(root, 'source.gif')
+      File.binwrite(source, Base64.decode64('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'))
+      local_uploader = Class.new(ImageUploader)
+      local_uploader.root = root
+      local_uploader.cache_dir = 'cache'
+      instance = local_uploader.new(Model.new(1, Time.utc(2026, 9, 25)), :pic_profile)
+      File.open(source) { |file| instance.store!(file) }
+      assert_match(/\A[0-9a-f-]+\.jpg\z/, instance.identifier)
+      assert_equal 'JPEG', MiniMagick::Image.open(instance.path).type
+      assert_equal [1, 1], MiniMagick::Image.open(instance.path).dimensions
+      retrieved = local_uploader.new(instance.model, :pic_profile)
+      retrieved.retrieve_from_store!(instance.identifier)
+      assert_equal instance.path, retrieved.path
+      assert_equal instance.url, retrieved.url
+      assert retrieved.present?
+    end
+  end
+
   def test_missing_timestamp_keeps_original_url
     assert_equal '/uploads/example.jpg', uploader('/uploads/example.jpg', nil).url
   end
