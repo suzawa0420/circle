@@ -83,7 +83,7 @@ class PlacesController < ApplicationController
 		end
 
     @place_review = @place.place_reviews.build
-    @place_reviews = PlaceReview.where(place_id: @place.id)
+    @place_reviews = @place.public_place_reviews
     @ip = PlaceReview.where(place_id: @place.id, ip_address: request.remote_ip)
 
 

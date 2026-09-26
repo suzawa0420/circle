@@ -10,7 +10,7 @@ class PlaceReviewsController < ApplicationController
   def destroy
     @place.with_lock do
       @place.place_reviews.find(params[:id]).destroy!
-      refresh_place_scores
+      @place.refresh_review_scores!
     end
     redirect_back(fallback_location: root_path, notice: '口コミを削除しました。')
   end
@@ -26,15 +26,26 @@ class PlaceReviewsController < ApplicationController
         render plain: 'この施設にはすでに投稿済みです。', status: :conflict
         return
       end
+      if PlaceReview.where(ip_address: request.remote_ip).where("created_at >= ?", 1.hour.ago).count >= 3
+        render plain: '短時間に投稿できる件数を超えました。', status: :too_many_requests
+        return
+      end
+      if PlaceReview.where(comment: @place_review.comment).limit(2).count >= 2
+        @place_review.moderation_status = "review"
+      end
       if @place_review.valid?
         @place_review.average_score = %i[facility reservation price access].sum { |key| @place_review.public_send(key) } / 4.0
         @place_review.save!
-        refresh_place_scores
+        @place.refresh_review_scores! if @place_review.moderation_status == "clear"
         saved = true
       end
     end
 
-    flash[:notice] = saved ? '投稿ありがとうございます！' : '評価は0〜5、コメントは6〜2000文字で入力してください。URLは投稿できません。'
+    flash[:notice] = if saved
+      @place_review.moderation_status == "clear" ? '投稿ありがとうございます！' : '投稿を受け付けました。確認後に公開されます。'
+    else
+      '評価は0〜5、コメントは6〜2000文字で入力してください。URLは投稿できません。'
+    end
     redirect_back(fallback_location: root_path)
   end
 
@@ -44,14 +55,6 @@ class PlaceReviewsController < ApplicationController
     unless admin_user_signed_in? && current_admin_user.master_account?
       render plain: '権限がありません。', status: :forbidden
     end
-  end
-
-  def refresh_place_scores
-    averages = %i[facility reservation price access].to_h do |key|
-      ["average_#{key}", @place.place_reviews.average(key)&.to_f]
-    end
-    score = averages.values.all? ? averages.values.sum / 4.0 : nil
-    @place.update_columns(averages.merge('average_score' => score))
   end
 
   def protect_submission

@@ -24,7 +24,12 @@
 #  fk_rails_...  (place_id => places.id)
 #
 class PlaceReview < ApplicationRecord
+  JAPANESE_KANA = /[ぁ-んァ-ヶ]/
+  SQL_PROBE = /(?:\bunion\s+select\b|\bselect\b.{0,80}\bfrom\b|\b(?:pg_sleep|sleep|benchmark)\s*\(|\bwaitfor\s+delay\b)/i
+
   belongs_to :place
+  scope :publicly_visible, -> { where(moderation_status: "clear") }
+  before_validation :queue_suspicious_comment
   validates :facility, :reservation, :price, :access, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }
   validates :comment, length: { minimum: 6, maximum: 2000 }
   validates :comment, format: { without: %r{https?://|www\.}i }
@@ -41,5 +46,14 @@ class PlaceReview < ApplicationRecord
 	NGWORD_REGEX = %r(#{NGWORD.join('|')})
 	validates :comment, format: { without: NGWORD_REGEX }
 
+
+  private
+
+  def queue_suspicious_comment
+    return if moderation_status == "blocked"
+    return unless new_record? || will_save_change_to_comment?
+
+    self.moderation_status = "review" if comment.to_s !~ JAPANESE_KANA || comment.to_s.match?(SQL_PROBE)
+  end
 
 end

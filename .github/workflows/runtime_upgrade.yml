@@ -56,6 +56,8 @@ jobs:
         run: bundle exec rails test test/models/user_test.rb
       - name: Test blog moderation
         run: bundle exec rails test test/models/blog_test.rb
+      - name: Test facility reviews
+        run: bundle exec rails test test/models/place_review_test.rb
       - name: Test runtime integration
         run: bundle exec rails test test/integration/runtime_upgrade_test.rb
       - run: bundle exec ruby test/security/run.rb

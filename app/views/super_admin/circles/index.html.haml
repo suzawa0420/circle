@@ -14,6 +14,14 @@
         = link_to blog.title, circle_blog_path(blog.user, blog)
         = button_to "確認済みにする", super_admin_blog_moderation_path(blog), method: :patch, params: { moderation_status: "clear" }
         = button_to "停止", super_admin_blog_moderation_path(blog), method: :patch, params: { moderation_status: "blocked" }
+    %h3 確認待ちの施設口コミ
+    - @review_place_reviews.each do |review|
+      %p
+        %strong= review.place.name
+        = simple_format review.comment
+        = button_to "確認済みにする", super_admin_place_review_moderation_path(review), method: :patch, params: { moderation_status: "clear" }
+        = button_to "削除", place_place_review_path(review.place, review), method: :delete, data: { confirm: "この口コミを削除しますか？" }
+    = paginate @review_place_reviews, param_name: :review_page
     %h3 公開停止中のサークル
     - @blocked_circles.each do |circle|
       %p

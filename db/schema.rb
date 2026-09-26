@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_27_000000) do
+ActiveRecord::Schema.define(version: 2026_09_27_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -432,6 +432,8 @@ ActiveRecord::Schema.define(version: 2026_09_27_000000) do
     t.float "reservation"
     t.float "price"
     t.float "access"
+    t.string "moderation_status", default: "clear", null: false
+    t.index ["place_id", "moderation_status"], name: "index_place_reviews_on_place_id_and_moderation_status"
     t.index ["place_id"], name: "index_place_reviews_on_place_id"
   end
 

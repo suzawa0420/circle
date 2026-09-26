@@ -38,6 +38,7 @@ class Place < ApplicationRecord
 	belongs_to :user, optional: true
 
   has_many :place_reviews, dependent: :destroy
+  has_many :public_place_reviews, -> { where(moderation_status: "clear") }, class_name: "PlaceReview"
   has_many :places_events, dependent: :destroy
   has_many :events, through: :places_events
 
@@ -50,6 +51,14 @@ class Place < ApplicationRecord
   validates :address, presence: true
 
   paginates_per 10
+
+  def refresh_review_scores!
+    averages = %i[facility reservation price access].to_h do |key|
+      ["average_#{key}", public_place_reviews.average(key)&.to_f]
+    end
+    score = averages.values.all? ? averages.values.sum / 4.0 : nil
+    update_columns(averages.merge("average_score" => score, "updated_at" => Time.current))
+  end
 
   # Place_検索用
 	scope :place_search_word, ->(keyword) do

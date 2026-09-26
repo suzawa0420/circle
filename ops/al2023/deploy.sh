@@ -25,6 +25,7 @@ case "$mode" in
     # Apply moderation backfills before either server restarts.
     bundle exec rails db:migrate:up VERSION=20260926010000
     bundle exec rails db:migrate:up VERSION=20260927000000
+    bundle exec rails db:migrate:up VERSION=20260927010000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

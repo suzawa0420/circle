@@ -6,6 +6,7 @@ class SuperAdmin::CirclesController < ApplicationController
     @admin_users = AdminUser.order(created_at: :desc).includes(:users).page(params[:page]).per(50)
     @review_circles = User.where(moderation_status: "review").order(updated_at: :desc).limit(50)
     @review_blogs = Blog.where(moderation_status: "review").includes(:user).order(updated_at: :desc).limit(50)
+    @review_place_reviews = PlaceReview.where(moderation_status: "review").includes(:place).order(created_at: :desc).page(params[:review_page]).per(30)
     @blocked_circles = User.where(moderation_status: "blocked").order(updated_at: :desc).limit(50)
     @blocked_blogs = Blog.where(moderation_status: "blocked").includes(:user).order(updated_at: :desc).limit(50)
   end

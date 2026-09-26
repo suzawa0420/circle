@@ -108,7 +108,7 @@
               <td class="flex_list"><a href="<%= @place.url %>" ><%= @place.url %></a></td>
             </tr>
 
-            <% if @place.place_reviews.present? %>
+            <% if @place.public_place_reviews.exists? %>
               <tr class="flex_contents">
                 <th class="flex_list">コスパの良さ</th>
                 <td class="flex_list"><%= render "place_reviews/review_score", review_score: @place.average_price.to_f %></td>

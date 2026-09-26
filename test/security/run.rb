@@ -30,8 +30,8 @@ ActiveRecord::Schema.verbose = false
 ActiveRecord::Schema.define do
   create_table(:users) { |t| t.float :review_score; t.boolean :review_permit; t.string :switch; t.integer :admin_user_id; t.string :ng_account }
   create_table(:reviews) { |t| t.integer :user_id; t.integer :member_id; t.integer :review; t.string :ip; t.text :comment; t.string :nickname; t.string :age; t.string :gender; t.timestamps }
-  create_table(:places) { |t| %i[facility price access reservation score].each { |k| t.float "average_#{k}" } }
-  create_table(:place_reviews) { |t| t.integer :place_id; t.integer :event_id; t.string :ip_address; t.text :comment; %i[facility price access reservation average_score].each { |k| t.float k }; t.timestamps }
+  create_table(:places) { |t| %i[facility price access reservation score].each { |k| t.float "average_#{k}" }; t.timestamps }
+  create_table(:place_reviews) { |t| t.integer :place_id; t.integer :event_id; t.string :ip_address; t.text :comment; t.string :moderation_status, default: 'clear', null: false; %i[facility price access reservation average_score].each { |k| t.float k }; t.timestamps }
   create_table(:account_blocks) { |t| t.string :ip_address }
   create_table(:prefectures) { |t| t.string :name }
   create_table(:invalid_emails) { |t| t.string :email }
@@ -44,7 +44,15 @@ class User < ApplicationRecord
   def admin_user; Struct.new(:email).new('owner@example.test'); end
   def publicly_visible?; true; end
 end
-class Place < ApplicationRecord; has_many :place_reviews; end
+class Place < ApplicationRecord
+  has_many :place_reviews
+  has_many :public_place_reviews, -> { where(moderation_status: 'clear') }, class_name: 'PlaceReview'
+  def refresh_review_scores!
+    averages = %i[facility reservation price access].to_h { |key| ["average_#{key}", public_place_reviews.average(key)&.to_f] }
+    score = averages.values.all? ? averages.values.sum / 4.0 : nil
+    update_columns(averages.merge('average_score' => score, 'updated_at' => Time.current))
+  end
+end
 class Member < ApplicationRecord; end
 class AccountBlock < ApplicationRecord; end
 class Prefecture < ApplicationRecord; end
@@ -361,6 +369,26 @@ class PlaceReviewSubmissionTest < ActionController::TestCase
     AccountBlock.create!(ip_address: '198.51.100.1')
     assert_no_difference('PlaceReview.count') { post :create, params: submission }
     assert_response :forbidden
+  end
+  test 'non-Japanese comments wait for review and do not affect ratings' do
+    assert_difference('PlaceReview.count', 1) do
+      post :create, params: submission(comment: 'Automated facility comment in English')
+    end
+    assert_equal 'review', PlaceReview.last.moderation_status
+    assert_nil @place.reload.average_score
+    assert_empty @place.public_place_reviews
+  end
+  test 'rapid submissions across facilities are limited' do
+    3.times do |index|
+      @place = Place.create!
+      @token = @controller.send(:spam_form_token, "place_review:#{@place.id}")
+      post :create, params: submission(comment: "設備がきれいで使いやすいです。#{index}")
+      assert_response :redirect
+    end
+    @place = Place.create!
+    @token = @controller.send(:spam_form_token, "place_review:#{@place.id}")
+    assert_no_difference('PlaceReview.count') { post :create, params: submission(comment: '設備がきれいで使いやすいです。') }
+    assert_response :too_many_requests
   end
 end
 

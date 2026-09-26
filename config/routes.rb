@@ -161,6 +161,7 @@ Rails.application.routes.draw do
     resources :circles, only: [:index, :destroy]
     patch 'circles/:id/moderation', to: 'moderation#circle', as: :circle_moderation
     patch 'blogs/:id/moderation', to: 'moderation#blog', as: :blog_moderation
+    patch 'place_reviews/:id/moderation', to: 'moderation#place_review', as: :place_review_moderation
   end
 
   # 退会処理

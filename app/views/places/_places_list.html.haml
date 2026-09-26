@@ -40,7 +40,7 @@
                   %td.flex_list= raw Rinku.auto_link(simple_format place.price)
                 %tr.flex_contents
                   %th.flex_list 口コミ
-                  %td.flex_list= render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: place.place_reviews.count
+                  %td.flex_list= render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: place.public_place_reviews.count
           = link_to "詳細を確認する", "/places/#{@event.ruby}/#{place.prefecture.kana}/#{place.city.city_kana}/#{place.id}", class: "place_more"
         - if i == 5
           .list_ad

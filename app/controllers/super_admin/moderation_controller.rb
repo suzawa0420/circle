@@ -14,6 +14,15 @@ class SuperAdmin::ModerationController < ApplicationController
     redirect_to super_admin_circles_path, notice: "ブログの確認状態を更新しました"
   end
 
+  def place_review
+    review = PlaceReview.find(params[:id])
+    review.place.with_lock do
+      review.update_column(:moderation_status, moderation_status)
+      review.place.refresh_review_scores!
+    end
+    redirect_to super_admin_circles_path, notice: "施設口コミの確認状態を更新しました"
+  end
+
   private
 
   def moderation_status

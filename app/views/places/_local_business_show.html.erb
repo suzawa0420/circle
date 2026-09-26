@@ -10,11 +10,11 @@
   ],
   <% if place.tel.present? %>"telephone": "<%= place.tel %>",<% end %>
   <% if place.price.present? %>"priceRange": "<%= place.price %>",<% end %>
-  <% if place.place_reviews.count.to_f > 0 %>
+  <% if place.public_place_reviews.exists? %>
     "aggregateRating": {
       "@type":"AggregateRating",
       "ratingValue":<%= place.average_score.to_f %>,
-      "reviewCount":<%= place.place_reviews.count.to_f %>
+      "reviewCount":<%= place.public_place_reviews.count %>
     },
   <% end %>
   "address": {
