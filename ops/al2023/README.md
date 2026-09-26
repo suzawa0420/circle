@@ -3,8 +3,9 @@
 ## Current production topology (2026-09-26)
 
 LoadBalancer-1 now serves **server4 + server5**. Both AL2023 targets pass
-`/health`. Server2 and server3 have been detached; instance deletion remains
-pending final observation and action-time confirmation.
+`/health`. Server2 and server3 were permanently deleted on 2026-09-26 after
+explicit action-time approval, including server2 automatic snapshots. Existing
+manual snapshots, transferred static IPs, the external DB and S3 were retained.
 
 | Instance | Zone | Static public IP | Private IP | Application |
 | --- | --- | --- | --- | --- |
@@ -24,9 +25,13 @@ stored-image presence checks now avoid it, while local/cached upload validation
 retains its prior behavior. The regression suite has 9 tests / 17 assertions.
 Each new server passed 64 GET checks; the last eight averaged 0.126 s on server4
 and 0.110 s on server5. These bounded measurements are not a capacity guarantee.
-Continue observing real request errors, latency and CPU after the final deploy.
+The final master deployment (f3fcb7485, Actions run 36237085166) passed all jobs.
+The following 901-second observation covered 5,786 requests with zero 5xx errors,
+90 successful health checks and zero unexpected service restarts. Request p95
+was 0.635 s on server4 and 0.748 s on server5. After deleting the old instances,
+public home/health returned 200 and direct LB HTTPS returned 403.
 
-`public/uploads` and `storage` contain the same 281 files on all four instances
+Before deletion, `public/uploads` and `storage` contained the same 281 files on all four instances
 (combined SHA256 cdf34902bb454f9098cb2c8b59b5eb02e20a03d5e9ecbedde8fe0fc379aad045).
 The DB is outside the retiring instances and uploaded images use S3.
 No production test writes, outbound test mail or DB migration were performed.
@@ -51,7 +56,7 @@ preserved and is not copied into workflow logs.
 
 Manual `check-al2023` verifies SSH and service state without changing production.
 Manual `all` performs the complete verified deployment. Pushes to master use
-the same path once this branch is merged. Do not dispatch an older workflow
+the same path. Do not dispatch an older workflow
 revision that still targets server2/server3.
 
 For an application regression, revert the offending change with a new commit
