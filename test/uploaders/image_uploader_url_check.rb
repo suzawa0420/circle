@@ -16,6 +16,10 @@ require_relative '../../app/uploaders/image_uploader'
 class ImageUploaderUrlTest < Minitest::Test
   Model = Struct.new(:id, :updated_at)
   FakeFile = Struct.new(:location, :received_options) do
+    def empty?
+      raise 'URL generation must not check remote file existence'
+    end
+
     def url(options = {})
       self.received_options = options
       location
@@ -47,6 +51,10 @@ class ImageUploaderUrlTest < Minitest::Test
     instance = uploader('/uploads/example.jpg')
     instance.url(expires: 60)
     assert_equal({ expires: 60 }, instance.file.received_options)
+  end
+
+  def test_filename_does_not_check_remote_file_existence
+    assert_match(/\A[0-9a-f-]+\.jpg\z/, uploader('/uploads/example.jpg').filename)
   end
 
   def test_missing_timestamp_keeps_original_url

@@ -71,14 +71,16 @@ class ImageUploader < CarrierWave::Uploader::Base
   # CarrierWave 3 may clear original_filename after storing. The processor
   # always writes JPEG, so keep the stored identifier stable and explicit.
   def filename
-    "#{secure_token}.jpg" if file.present?
+    "#{secure_token}.jpg" if file
   end
 
   # Keep long-lived S3 caching, but make a changed record resolve to a fresh URL.
   # Preserve CarrierWave's no-argument, options and version call signatures.
   def url(*args)
     image_url = super
-    return image_url if image_url.blank? || file.blank? || model&.updated_at.blank?
+    # Fog::File#empty? performs a remote HEAD request. URL generation only
+    # needs the mounted file reference, not a network existence check.
+    return image_url if image_url.blank? || file.nil? || model&.updated_at.blank?
 
     separator = image_url.include?("?") ? "&" : "?"
     "#{image_url}#{separator}v=#{model.updated_at.utc.to_i}"
