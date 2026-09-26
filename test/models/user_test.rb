@@ -71,6 +71,7 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 require 'test_helper'
+require_relative '../../db/migrate/20260926010000_review_non_japanese_circle_profiles'
 
 class UserTest < ActiveSupport::TestCase
   self.fixture_table_names = []
@@ -88,19 +89,45 @@ class UserTest < ActiveSupport::TestCase
     assert_includes user.missing_publication_fields, "活動場所"
   end
 
-  test "English alone is not treated as spam without links" do
-    user = User.new(appeal: "We meet each weekend to play basketball and welcome beginners.")
-    user.valid?
-    assert_equal "clear", user.moderation_status
-
-    user.appeal = "Join https://spam.example and https://other.example"
+  test "English-only circle profiles wait for review even without links" do
+    user = User.new(name: "Reddy Anna Book", area: "India", schedule: "6am to 8pm",
+      appeal: "We meet each weekend to play basketball and welcome beginners." * 3)
     user.valid?
     assert_equal "review", user.moderation_status
   end
 
-  test "one link with www is counted once" do
-    user = User.new(appeal: "Visit https://www.example.com for practice details")
+  test "English text with a Japanese introduction remains clear" do
+    user = User.new(name: "International Basketball", appeal: "初心者も歓迎します。 We meet every weekend.")
     user.valid?
     assert_equal "clear", user.moderation_status
+  end
+
+  test "backfill hides previously published English-only circles" do
+    category = Category.create!(name: "球技", kana: "ball-sports", order: "1")
+    event = Event.create!(name: "バスケ", ruby: "basketball", category: category, order: "1")
+    prefecture = Prefecture.create!(name: "東京都", kana: "tokyo", order: "1", sort: 1)
+    owner = AdminUser.create!(email: "moderation-owner@example.test", password: "test-password-123")
+    attributes = { event: event, prefecture: prefecture, category: category, admin_user: owner,
+      switch: "募集中", area: "オンライン", schedule: "毎週土曜日" }
+    spam = User.create!(**attributes, name: "Five88", appeal: "Visit our site for sports and offers. " * 5)
+    japanese = User.create!(**attributes, name: "地域バスケサークル", appeal: "地域で楽しく活動しています。" * 10)
+    blog = Blog.create!(user: spam, title: "活動記録", content: "地域で活動しました。" * 15)
+    spam.update_column(:moderation_status, "clear") # Simulate a record screened under the old rule.
+    assert_includes User.publicly_visible, spam
+    assert_includes Blog.publicly_visible, blog
+
+    ReviewNonJapaneseCircleProfiles.new.up
+
+    assert_equal "review", spam.reload.moderation_status
+    assert_equal "clear", japanese.reload.moderation_status
+    assert_not spam.publicly_visible?
+    assert_not_includes User.publicly_visible, spam
+    assert_not_includes Blog.publicly_visible, blog
+    assert_includes User.publicly_visible, japanese
+
+    japanese.update!(appeal: "We meet each weekend to play basketball. " * 4)
+    assert_equal "clear", japanese.moderation_status
+    japanese.update!(name: "Five88")
+    assert_equal "review", japanese.moderation_status
   end
 end

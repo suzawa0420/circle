@@ -120,10 +120,12 @@ class User < ApplicationRecord
 
 	def flag_suspicious_profile
 		return if moderation_status == "blocked"
-		return unless new_record? || will_save_change_to_appeal?
+		return unless new_record? || will_save_change_to_name? || will_save_change_to_appeal? || will_save_change_to_publication_status?
 
-		body = ActionView::Base.full_sanitizer.sanitize(appeal.to_s)
-		self.moderation_status = "review" if body !~ JAPANESE_TEXT && body.scan(LINK_TEXT).length >= 2
+		# Category and location labels are supplied by the site; only owner-written
+		# name and introduction count toward the Japanese-language check.
+		body = ActionView::Base.full_sanitizer.sanitize([name, appeal].join(" "))
+		self.moderation_status = "review" if body !~ JAPANESE_TEXT
 	end
 
 	public
