@@ -2,7 +2,8 @@ class SchedulesController < ApplicationController
 
 include Circlebook
 
-before_action :ensure_correct_user, {only: [:edit, :update, :new]}
+before_action :authenticate_admin_user!, only: [:new, :create, :edit, :update, :destroy]
+before_action :ensure_correct_user, only: [:new, :create, :edit, :update, :destroy]
 before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :year, :month]}
 before_action :set_dates, {only: [:dates, :day]}
 
@@ -173,7 +174,7 @@ before_action :set_dates, {only: [:dates, :day]}
 		@schedule.destroy
 
     cb_point(@user)
-    ≈.save
+    @user.save
 
     flash[:notice] = "削除しました"
 		redirect_to user_schedules_path

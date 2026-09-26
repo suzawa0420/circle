@@ -4,8 +4,6 @@ require_relative 'circle_listing_data_check'
 require 'action_controller'
 require 'active_support/testing/time_helpers'
 require_relative '../../app/services/search_result_count_cache'
-# Existing Rails 6.0 scope deprecations are unrelated to this regression check.
-ActiveSupport::Deprecation.silenced = true
 
 ActiveRecord::Schema.define do
   add_column :events, :ruby, :string

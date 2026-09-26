@@ -71,6 +71,16 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  # Ransack 4+ requires an explicit public search surface. Never expose
+  # account/contact fields or allow searches through the owner association.
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[name appeal area event_id prefecture_id prefecture_sub_id category_id switch last_post created_at updated_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    []
+  end
+
 	has_many :blogs, dependent: :destroy
 	has_many :schedules, dependent: :destroy
 	has_many :places

@@ -1,18 +1,29 @@
 #!/usr/bin/env ruby
 # Only GET public forms. Never print HTML, cookies, CSRF tokens or keys.
 require 'net/http'
+require 'open3'
 require_relative '../lib/turnstile_form_readiness'
 
 begin
   %w[admin_users members exhibition_groups].each do |account|
-    http = Net::HTTP.new('127.0.0.1', 80, nil)
-    http.open_timeout = 3
-    http.read_timeout = 10
-    http.max_retries = 0
-    request = Net::HTTP::Get.new("/#{account}/sign_up")
-    request['Host'] = 'circle-book.com'
-    response = http.request(request)
-    unless TurnstileFormReadiness.ready?(status: response.code, body: response.body)
+    if ENV['CIRCLE_PUMA_SOCKET']
+      output, process = Open3.capture2('curl', '--unix-socket', ENV.fetch('CIRCLE_PUMA_SOCKET'),
+        '-s', '--max-time', '15', '-w', "\n%{http_code}",
+        '-H', 'Host: circle-book.com', '-H', 'X-Forwarded-Proto: https',
+        "http://localhost/#{account}/sign_up")
+      raise 'Local form unavailable' unless process.success?
+      body, _, status = output.rpartition("\n")
+    else
+      http = Net::HTTP.new('127.0.0.1', 80, nil)
+      http.open_timeout = 3
+      http.read_timeout = 10
+      http.max_retries = 0
+      request = Net::HTTP::Get.new("/#{account}/sign_up")
+      request['Host'] = 'circle-book.com'
+      response = http.request(request)
+      body, status = response.body, response.code
+    end
+    unless TurnstileFormReadiness.ready?(status: status, body: body)
       warn "Turnstile form readiness failed: #{account}"
       exit 1
     end

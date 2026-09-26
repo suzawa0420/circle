@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.6'
+ruby '3.3.12'
 
-gem 'rails', '~> 6.0.5.1'
-gem 'puma', '~> 3.11'
-gem 'sass-rails', '~> 5.0'
+gem 'rails', '~> 8.1.4'
+gem 'puma', '~> 7.0'
+gem 'sprockets-rails'
 gem 'sassc-rails'
 gem 'terser'
 
@@ -25,7 +25,6 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'seed-fu'
-gem 'paperclip'
 
 gem 'rails-i18n'
 
@@ -54,7 +53,8 @@ gem 'fog-aws'
 gem 'meta-tags'
 gem 'sitemap_generator'
 
-gem 'aws-sdk'
+# Load only the AWS services used for uploads and transactional mail.
+gem 'aws-actionmailer-ses', '~> 1.2'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-rails'
 
@@ -67,11 +67,11 @@ gem 'ransack'
 
 gem 'counter_culture'
 gem 'cocoon'
-gem 'trix'
+# Trix is supplied by Rails Action Text; avoid loading a second legacy copy.
 
 gem 'hirb'         # 出力結果を表として出力するgem
 gem 'hirb-unicode'  # マルチバイト文字の表示を補正するgem
-gem 'uri', '0.10.0'
+gem 'uri'
 
 gem 'haml-rails'
 gem 'erb2haml'
@@ -79,19 +79,17 @@ gem 'erb2haml'
 gem 'active_decorator'
 gem 'active_model_serializers'
 
-gem 'annotate'
+gem 'annotaterb', group: :development, require: false
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'sqlite3'
+  gem 'sqlite3', '>= 2.1'
   gem 'bullet' #N+1問題
 end
 
 group :development do
   gem 'web-console', '>= 3.3.0'
-  gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'listen', '~> 3.9'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'derailed_benchmarks' #メモリ容量チェック
@@ -100,14 +98,14 @@ group :development do
 end
 
 group :test do
+  gem 'minitest-mock', require: false
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
 end
 
 group :production do
   gem 'pg'
-  gem 'rails_12factor'
-  gem 'heroku-deflater'
+  gem 'rack', '>= 3.1'
   gem 'unicorn'
   gem 'net-http'
 end

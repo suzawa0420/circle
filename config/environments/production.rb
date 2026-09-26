@@ -27,6 +27,8 @@ Rails.application.configure do
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
+
+  config.middleware.use Rack::Deflater
   # config.action_controller.asset_host = 'd2vaopj9xwgout.cloudfront.net'
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
@@ -107,11 +109,10 @@ Rails.application.configure do
   # }
 
   credentials = Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'])
-  Aws::Rails.add_action_mailer_delivery_method(
-    :ses,
+  config.action_mailer.ses_settings = {
     credentials: credentials,
     region: 'ap-northeast-1'
-  )
+  }
 
   config.action_mailer.default_url_options = { host: 'https://circle-book.com' }
   config.action_mailer.delivery_method = :ses

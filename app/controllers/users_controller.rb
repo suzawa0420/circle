@@ -2,6 +2,7 @@ class UsersController < ApplicationController
 include ApplicationHelper
 include Circlebook
 
+before_action :authenticate_admin_user!, only: [:new, :create, :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del]
 before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del]
 before_action :require_master_account_for_destroy, only: [:destroy]
 before_action :set_users, except: [:show, :new, :create]

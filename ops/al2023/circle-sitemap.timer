@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily sitemap at the existing 15:00 UTC schedule (server4 only)
+
+[Timer]
+OnCalendar=*-*-* 15:00:00 UTC
+Persistent=true
+Unit=circle-sitemap.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,62 @@
+name: Runtime upgrade checks
+on:
+  push:
+    branches: [codex/al2023-runtime-upgrade]
+  pull_request:
+    paths:
+      - Gemfile
+      - Gemfile.lock
+      - .ruby-version
+      - .node-version
+      - .github/workflows/runtime_upgrade.yml
+      - ops/al2023/**
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: circle_test
+          POSTGRES_PASSWORD: circle_test_only
+          POSTGRES_DB: circle_runtime_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://circle_test:circle_test_only@127.0.0.1:5432/circle_runtime_test
+      SECRET_KEY_BASE: ci-test-only-not-a-production-secret-0123456789012345678901234567890123456789
+      AWS_EC2_METADATA_DISABLED: 'true'
+      DISABLE_SPRING: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y imagemagick libpq-dev nginx
+      - run: python3 ops/al2023/test_origin_guard.py
+      - run: python3 -m unittest discover -s ops/al2023 -p test_sync_assets.py
+      - run: python3 -m unittest discover -s ops/al2023 -p test_asset_compatibility.py
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler: '2.5.23'
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: bundle exec rails db:schema:load zeitwerk:check
+      - run: bundle exec rails test test/models/admin_user_permissions_test.rb test/integration/runtime_upgrade_test.rb
+      - run: bundle exec ruby test/security/run.rb
+      - run: bundle exec ruby test/security/registration_turnstile_test.rb
+      - run: node test/security/registration_turnstile_js_test.js
+      - run: bundle exec ruby test/uploaders/image_uploader_url_check.rb
+      - run: bundle exec ruby test/performance/unicorn_readiness_test.rb
+      - run: bundle exec rails assets:precompile
+      - run: bundle exec ruby bin/verify_brand_assets
+      - run: bundle exec ruby test/runtime/puma_http_test.rb
+      - run: bundle exec ruby test/runtime/production_boot_check.rb

@@ -16,6 +16,10 @@ require_relative '../../app/uploaders/image_uploader'
 class ImageUploaderUrlTest < Minitest::Test
   Model = Struct.new(:id, :updated_at)
   FakeFile = Struct.new(:location, :received_options) do
+    def empty?
+      raise 'URL generation must not check remote file existence'
+    end
+
     def url(options = {})
       self.received_options = options
       location
@@ -47,6 +51,31 @@ class ImageUploaderUrlTest < Minitest::Test
     instance = uploader('/uploads/example.jpg')
     instance.url(expires: 60)
     assert_equal({ expires: 60 }, instance.file.received_options)
+  end
+
+  def test_filename_does_not_check_remote_file_existence
+    assert_match(/\A[0-9a-f-]+\.jpg\z/, uploader('/uploads/example.jpg').filename)
+  end
+
+  def test_stored_fog_file_presence_does_not_access_s3
+    instance = uploader
+    remote_file = CarrierWave::Storage::Fog::File.new(instance, Object.new, 'uploads/example.jpg')
+    def remote_file.empty?
+      raise 'Stored image presence must not access S3'
+    end
+    instance.instance_variable_set(:@file, remote_file)
+    assert instance.present?
+    refute instance.blank?
+    assert uploader.blank?
+  end
+
+  def test_local_file_presence_keeps_empty_file_semantics
+    instance = uploader
+    local_file = Struct.new(:empty) { def empty? = empty }.new(true)
+    instance.instance_variable_set(:@file, local_file)
+    assert instance.blank?
+    local_file.empty = false
+    assert instance.present?
   end
 
   def test_missing_timestamp_keeps_original_url

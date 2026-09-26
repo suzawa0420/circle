@@ -36,10 +36,10 @@
             .user-content
               .user_list_wrapper
                 .list_01
-                  %h2.user_name= user.name.truncate(24)
+                  %h2.user_name= user.name.to_s.truncate(24)
               .list_cnts
                 .list_04.recruitment_txt
-                  %span.user_recruitment= user.recruitment.truncate(110)
+                  %span.user_recruitment= user.recruitment.to_s.truncate(110)
 
 
                 - if listing_data.review_count(user).positive?

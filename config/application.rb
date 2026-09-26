@@ -8,7 +8,9 @@ Bundler.require(*Rails.groups)
 
 module Circle
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
+    # Preserve existing cookies, serialization and database behavior during
+    # the runtime migration. Adopt newer Rails defaults in separate, tested
+    # changes so the old and new servers can coexist during rollback.
     config.load_defaults 6.0
     config.time_zone = 'Tokyo'
 

@@ -1,5 +1,4 @@
 name: deploy_prod
-
 on:
   push:
     branches: [master]
@@ -7,213 +6,104 @@ on:
     inputs:
       target:
         type: choice
-        options: [all, server2]
-        default: all
-
+        options: [all, check-al2023]
+        default: check-al2023
+permissions:
+  contents: read
 concurrency:
   group: circle-production
   cancel-in-progress: false
-
 jobs:
-  build:
+  verify-al2023:
     runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - server: server4
+            host: 18.176.169.209
+            fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
+          - server: server5
+            host: 54.95.19.169
+            fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
     steps:
-      - name: Check required Turnstile settings without displaying values
+      - name: Check new server connection without changing it
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd /var/www/circle
+            /opt/circle/ruby-3.3.12/bin/ruby --version
+            /opt/circle/node-v24.21.0-linux-x64/bin/node --version
+            systemctl is-active circle-puma nginx
+            git rev-parse --short HEAD
+  checks:
+    if: inputs.target != 'check-al2023'
+    uses: ./.github/workflows/runtime_upgrade.yml
+  prepare:
+    if: inputs.target != 'check-al2023'
+    needs: [verify-al2023, checks]
+    runs-on: ubuntu-22.04
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - server: server4
+            host: 18.176.169.209
+            fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
+          - server: server5
+            host: 54.95.19.169
+            fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
+    steps:
+      - name: Prepare the exact tested commit and retain old assets
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
         env:
-          TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
-          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
-        shell: bash
-        run: |
-          set +x
-          if [[ ! "$TURNSTILE_SITE_KEY" =~ ^[A-Za-z0-9_-]{10,256}$ ]] || [[ ! "$TURNSTILE_SECRET_KEY" =~ ^[A-Za-z0-9_-]{10,256}$ ]]; then
-            echo 'Required Turnstile settings are missing or invalid; no servers changed'
-            exit 1
-          fi
-      - name: server3 - Update code
-        if: inputs.target != 'server2'
-        uses: appleboy/ssh-action@master
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_REF: ${{ github.ref_name }}
         with:
-          host: ${{ secrets.DEPLOY_HOST1 }}
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
           username: ${{ secrets.DEPLOY_USER }}
           port: ${{ secrets.DEPLOY_PORT }}
           key: ${{ secrets.DEPLOY_KEY }}
+          envs: DEPLOY_SHA,DEPLOY_REF
+          command_timeout: 30m
           script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            git pull --ff-only origin master
-      - name: server3 - Install Turnstile configuration
-        if: inputs.target != 'server2'
-        uses: appleboy/ssh-action@master
+            set -euo pipefail
+            cd /var/www/circle
+            git fetch --no-tags origin "$DEPLOY_REF"
+            git show "$DEPLOY_SHA:ops/al2023/deploy.sh" | sudo -n runuser -u ec2-user -g nginx -- bash -s -- prepare "$DEPLOY_SHA"
+  activate:
+    needs: prepare
+    runs-on: ubuntu-22.04
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - server: server4
+            host: 18.176.169.209
+            fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
+          - server: server5
+            host: 54.95.19.169
+            fingerprint: SHA256:+2zG0Qh8IdEVAmECUc2ZM1+X4vS1Con2Iv3UOJ1CGTI
+    steps:
+      - name: Restart and warm one server after both asset sets are ready
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
         env:
-          TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
-          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          DEPLOY_SHA: ${{ github.sha }}
         with:
-          host: ${{ secrets.DEPLOY_HOST1 }}
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
           username: ${{ secrets.DEPLOY_USER }}
           port: ${{ secrets.DEPLOY_PORT }}
           key: ${{ secrets.DEPLOY_KEY }}
-          envs: TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY
-          debug: false
-          script: |
-            set +x
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/ruby bin/install_turnstile_configuration
-      - name: server3 - Install frontend dependencies
-        if: inputs.target != 'server2'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST1 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
+          envs: DEPLOY_SHA
+          command_timeout: 10m
           script: |
             set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            npm ci --ignore-scripts --no-audit --no-fund
-      - name: server3 - Check migrations
-        if: inputs.target != 'server2'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST1 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/bundle exec rake db:migrate RAILS_ENV=production
-      - name: server3 - Compile and verify assets
-        if: inputs.target != 'server2'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST1 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
-            ~/.rbenv/shims/ruby bin/verify_brand_assets
-      - name: server3 - Restart Unicorn
-        if: inputs.target != 'server2'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST1 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/bundle exec ruby test/uploaders/image_uploader_url_check.rb
-            bash bin/restart_unicorn_safely
-            ~/.rbenv/shims/bundle exec ruby bin/verify_turnstile_readiness
-      - name: server2 - Check SSH connection
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: 'true'
-      - name: server2 - Check repository directory
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            git rev-parse --is-inside-work-tree >/dev/null
-      - name: server2 - Fetch master
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            git fetch origin master
-      - name: server2 - Update code
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            git pull --ff-only origin master
-      - name: server2 - Install Turnstile configuration
-        uses: appleboy/ssh-action@master
-        env:
-          TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
-          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          envs: TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY
-          debug: false
-          script: |
-            set +x
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/ruby bin/install_turnstile_configuration
-      - name: server2 - Install frontend dependencies
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            npm ci --ignore-scripts --no-audit --no-fund
-      - name: server2 - Compile and verify assets
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/bundle exec rake assets:precompile RAILS_ENV=production
-            ~/.rbenv/shims/ruby bin/verify_brand_assets
-      - name: server2 - Restart Unicorn
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST2 }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -eu
-            cd ${{ secrets.DEPLOY_DIR }}
-            ~/.rbenv/shims/bundle exec ruby test/uploaders/image_uploader_url_check.rb
-            bash bin/restart_unicorn_safely
-            ~/.rbenv/shims/bundle exec ruby bin/verify_turnstile_readiness
-      - name: Verify production HTTP responses
-        run: |
-          set -eu
-          for path in / /categories/ball-sports /admin_users/sign_up /members/sign_up /exhibition_groups/sign_up; do
-            for attempt in 1 2 3 4 5; do
-              url="https://circle-book.com${path}?deploy_check=${GITHUB_SHA}-${attempt}"
-              status="$(curl --location --silent --show-error --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{http_code}' "$url")"
-              if [ "$status" != "200" ]; then
-                echo "Health check failed: $url returned HTTP $status"
-                exit 1
-              fi
-            done
-          done
+            bash /var/www/circle/ops/al2023/deploy.sh activate "$DEPLOY_SHA"

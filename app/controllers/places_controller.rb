@@ -13,7 +13,9 @@ class PlacesController < ApplicationController
 
 	def search
 		# キーワード分割
-		keywords = params[:kw].split(/[[:blank:]]+/).select(&:present?)
+		keyword_text = params[:kw].is_a?(String) ? params[:kw] : ''
+    keywords = keyword_text.split(/[[:blank:]]+/).select(&:present?)
+    return redirect_to("/places/#{@event.ruby}") if keywords.empty?
 
     # 検索ワードの保存
     last_search = DbSearch.last
@@ -67,8 +69,8 @@ class PlacesController < ApplicationController
 
 	def show
 		@place = Place.find(params[:id])
-		@prefecture = Prefecture.find_by(kana: params[:kana])
-		@city = City.find_by(city_kana: params[:city_kana])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
+		@city = @prefecture.cities.find_by!(city_kana: params[:city_kana])
 
     @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id)
     @users = User.where(event_id: @event.id, prefecture_id: @prefecture.id, switch: "募集中").order(switch: :asc, last_post: :desc)
@@ -108,8 +110,8 @@ class PlacesController < ApplicationController
 
 	def show_noindex
 		@place = Place.find(params[:id])
-		@prefecture = Prefecture.find_by(kana: params[:kana])
-		@city = City.find_by(city_kana: params[:city_kana])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
+		@city = @prefecture.cities.find_by!(city_kana: params[:city_kana])
 		@place_events = @place.places_events.map{|e| e.event}
 
     if admin_user_signed_in?
@@ -155,7 +157,7 @@ class PlacesController < ApplicationController
 	end
 
 	def prefecture
-		@prefecture = Prefecture.find_by(kana: params[:kana])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		@cities = City.where(prefecture_id: @prefecture.id).order(places_count: "DESC")
     @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).all.order(updated_at: "DESC").page(params[:page])
     @places_count = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).count
@@ -167,8 +169,8 @@ class PlacesController < ApplicationController
 	end
 
 	def city
-		@prefecture = Prefecture.find_by(kana: params[:kana])
-		@city = City.find_by(city_kana: params[:city_kana])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
+		@city = @prefecture.cities.find_by!(city_kana: params[:city_kana])
     @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id).all.order(updated_at: "DESC").page(params[:page])
     @places_count = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id).count
 		@b2_name = @event.name
@@ -203,7 +205,7 @@ class PlacesController < ApplicationController
 
   def set_place
     @events = Event.all
-    @event = Event.find_by(ruby: params[:ruby])
+    @event = Event.find_by!(ruby: params[:ruby])
     @prefectures = Prefecture.where.not(id: 50).order(:order => :asc)
     @event_ids = PlacesEvent.where(event_id: @event.id)
     @event_places = @event_ids.map { |e| e.place_id }
