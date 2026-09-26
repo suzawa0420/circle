@@ -15,7 +15,8 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     event = Event.create!(name: 'バスケ', ruby: 'basketball', category: category, order: '1')
     prefecture = Prefecture.create!(name: '東京都', kana: 'tokyo', order: '1', sort: 1)
     owner = AdminUser.create!(email: 'runtime-owner@example.test', password: 'test-password-123')
-    circle = User.create!(name: '更新検証サークル', appeal: '楽しく活動します', event: event,
+    circle = User.create!(name: '更新検証サークル', appeal: '地域で定期的に練習しています。初心者も経験者も歓迎します。' * 6, event: event,
+                          area: '世田谷区周辺', schedule: '毎週土曜日',
                           prefecture: prefecture, category: category, admin_user: owner,
                           switch: '募集中', recruitment: '初心者歓迎', last_post: Time.current.to_s)
     %W[/ /circles /circles/#{circle.id} /categories/ball-sports /circles/search/バスケ].each do |path|
@@ -199,7 +200,8 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     event = Event.create!(name: '検証競技', ruby: 'runtime-safety-event', category: category, order: '1')
     prefecture = Prefecture.create!(name: '検証県', kana: 'runtime-safety-prefecture', order: '1', sort: 1)
     owner = AdminUser.create!(email: 'runtime-safety-owner@example.test', password: 'test-password-123')
-    User.create!(name: '実データ条件検証サークル', appeal: '活動のご案内', event: event,
+    User.create!(name: '実データ条件検証サークル', appeal: '地域で定期的に活動しています。参加をご希望の方はご連絡ください。' * 6, event: event,
+                 area: '東京都内', schedule: '毎週日曜日',
                  prefecture: prefecture, category: category, admin_user: owner,
                  switch: '募集中', recruitment: '初心者歓迎', last_post: Time.current.to_s)
   end
