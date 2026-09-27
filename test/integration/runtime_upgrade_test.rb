@@ -16,6 +16,21 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
   end
 
+  test 'adsense resources are configured without duplicate or unused scripts' do
+    get '/'
+    assert_response :success
+    adsense_script = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5024401671855884'
+    assert_equal 1, response.body.scan(adsense_script).size
+    assert_includes response.body, 'data-ad-client="ca-pub-5024401671855884"'
+    assert_not_includes response.body, 'securepubads.g.doubleclick.net/tag/js/gpt.js'
+    assert_not_includes response.body, '/22839798161/test'
+
+    get '/ads.txt'
+    assert_response :success
+    assert_equal 'text/plain', response.media_type
+    assert_equal "google.com, pub-5024401671855884, DIRECT, f08c47fec0942fa0\n", response.body
+  end
+
   test 'populated circle listings and profile render' do
     category = Category.create!(name: '球技', kana: 'ball-sports', order: '1')
     event = Event.create!(name: 'バスケ', ruby: 'basketball', category: category, order: '1')
