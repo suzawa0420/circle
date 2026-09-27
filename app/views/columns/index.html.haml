@@ -1,7 +1,6 @@
 - set_meta_tags title: "コラム"
 .main.users-index
   .container
-    = render "/layouts/breadcrumb"
     %h1.users-heading コラム
     - if admin_user_signed_in?
       = link_to '投稿する', new_column_path if @current_user.id == 1

@@ -1,7 +1,6 @@
 - set_meta_tags title: "【#{@time.strftime("%Y")}年版】#{@event.txt}｜練習試合や対戦相手の募集サイト",description: "【完全無料】47都道府県のサークルやチーム、団体の練習試合や対戦相手の募集サイト！10代〜60代、社会人や学生、初心者、経験者など、誰でも参加可能！バスケや草野球、フットサルなど。簡単に対戦相手の募集ができます！",keywords: "#{@event.name},対戦相手,練習試合,サークル,チーム,団体",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
 .main.users-index
   .container
-    = render "/layouts/breadcrumb"
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/
       .link_txt

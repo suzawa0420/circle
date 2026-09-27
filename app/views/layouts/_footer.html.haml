@@ -1,8 +1,11 @@
 .footer_wrap
-  = render "/layouts/breadcrumb"
-  .breadcrumbs_wrapper.text_slide
-    .breadcrumbs
-      = breadcrumbs separator: "&rsaquo;"
+  - gretel_breadcrumbs = breadcrumbs separator: "&rsaquo;"
+  - if gretel_breadcrumbs.any?
+    .breadcrumbs_wrapper.text_slide
+      .breadcrumbs
+        = gretel_breadcrumbs
+  - else
+    = render "/layouts/breadcrumb"
   %ul.footer_links
     %li
       %a{:href => "/faq"} よくある質問

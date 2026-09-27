@@ -13,6 +13,8 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
   test 'footer does not show the contact mail link' do
     get '/'
     assert_response :success
+    assert_select '.breadcrumbs_wrapper', count: 1
+    assert_select 'footer .breadcrumbs_wrapper', count: 1
     assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
   end
 
@@ -45,6 +47,19 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
       follow_redirect! if response.redirect? && path.start_with?('/circles/search/')
       assert_response :success, "#{path}: #{response.status}"
     end
+
+    get circle_path(circle)
+    assert_response :success
+    assert_select '.breadcrumbs_wrapper', count: 1
+    assert_select 'footer .breadcrumbs_wrapper', count: 1
+    assert_select 'footer .breadcrumbs', text: /更新検証サークル/
+
+    get '/categories/ball-sports'
+    assert_response :success
+    assert_select '.breadcrumbs_wrapper', count: 1
+    assert_select 'footer .breadcrumbs_wrapper', count: 1
+    assert_select 'footer .breadcrumbs', text: /球技/
+
     assert_includes User.ransack(name_cont: '更新検証').result, circle
     assert_not_includes User.ransackable_attributes, 'password'
     assert_not_includes User.ransackable_attributes, 'email'

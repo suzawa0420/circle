@@ -1,7 +1,6 @@
 - set_meta_tags title: "「#{params[:kw].truncate(30)}」のコートや体育館の検索結果",og: {image:image_url("/images/events/#{@event.ruby}.jpg")},twitter: { card: 'summary'}
 .main.users-index
   .container
-    = render "/layouts/breadcrumb"
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/
       .link_txt

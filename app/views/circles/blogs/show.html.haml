@@ -5,9 +5,6 @@
   .container
     - if !@blog.publicly_visible?
       .attention_content このブログは現在、一般には公開されていません。
-    .breadcrumbs_wrapper.text_slide
-      .breadcrumbs
-        = breadcrumbs separator: "&rsaquo;"
 
     .form.users-form
       .form-body.blog_show

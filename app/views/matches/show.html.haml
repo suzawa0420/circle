@@ -1,7 +1,6 @@
 - set_meta_tags title: "#{@match.user.name}｜#{@match.user.prefecture.name}の#{@match.user.event.txt}",description: "#{@match.user.prefecture.name}で活動している#{@match.user.event.name}サークル【#{@match.user.name}】です！新しい対戦相手を募集中！#{@match.comment}｜サークルブックは、サークルやチームの対戦相手を募集するサイトです！",keywords: "#{@match.user.event.name},#{@match.user.prefecture.name},サークル,チーム,対戦相手募集",og: {title: "#{@match.user.name}｜サークルブック",description: "#{@match.user.prefecture.name}で活動している#{@match.user.event.name}サークル｜#{@match.user.name}",image: @match.user.pic_profile.url},twitter: { card: 'summary'}
 .main.user-show
   .container.bg_white
-    = render "/layouts/breadcrumb"
     .user-profile.matching_wrap
       .p_t.m_t 対戦相手の募集ページ
       .matching_card
