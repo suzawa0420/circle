@@ -76,6 +76,41 @@ require_relative '../../db/migrate/20260927000000_review_circle_profiles_without
 
 class UserTest < ActiveSupport::TestCase
   self.fixture_table_names = []
+
+  test "regional scopes preserve filters from parent listing levels" do
+    category = Category.create!(name: "球技", kana: "ball-sports", order: "1")
+    basketball = Event.create!(name: "バスケ", ruby: "basketball", category: category, order: "1")
+    tennis = Event.create!(name: "テニス", ruby: "tennis", category: category, order: "2")
+    kanagawa = Prefecture.create!(name: "神奈川県", kana: "kanagawa", order: "14", sort: 14)
+    tokyo = Prefecture.create!(name: "東京都", kana: "tokyo", order: "13", sort: 13)
+    nationwide = Prefecture.create!(id: 50, name: "全国", kana: "all", order: "50", sort: 50)
+    now = Time.current
+
+    records = [
+      { name: "神奈川バスケ", event_id: basketball.id, prefecture_id: kanagawa.id },
+      { name: "第2地域が神奈川のバスケ", event_id: basketball.id, prefecture_id: tokyo.id, prefecture_sub_id: kanagawa.id },
+      { name: "全国バスケ", event_id: basketball.id, prefecture_id: nationwide.id },
+      { name: "神奈川テニス", event_id: tennis.id, prefecture_id: kanagawa.id },
+      { name: "第2地域が神奈川のテニス", event_id: tennis.id, prefecture_id: tokyo.id, prefecture_sub_id: kanagawa.id },
+      { name: "全国テニス", event_id: tennis.id, prefecture_id: nationwide.id }
+    ].map do |attributes|
+      { prefecture_sub_id: nil, created_at: now, updated_at: now }.merge(attributes)
+    end
+    inserted = User.insert_all!(records, returning: %w[id name])
+    ids = inserted.rows.to_h { |id, name| [name, id] }
+
+    prefecture_results = User.where(event_id: basketball.id).where_pref(kanagawa.id).pluck(:id)
+    assert_equal ["神奈川バスケ", "第2地域が神奈川のバスケ", "全国バスケ"].map { |name| ids.fetch(name) }.sort,
+      prefecture_results.sort
+
+    city = City.create!(name: "横浜市", city_kana: "yokohama", prefecture: kanagawa)
+    UsersCity.create!(user_id: ids.fetch("神奈川バスケ"), city: city)
+    UsersCity.create!(user_id: ids.fetch("神奈川テニス"), city: city)
+
+    city_results = User.where(event_id: basketball.id).where_city(city).pluck(:id)
+    assert_equal ["神奈川バスケ", "全国バスケ"].map { |name| ids.fetch(name) }.sort, city_results.sort
+  end
+
   test "publication requires a useful introduction and activity details" do
     user = User.new(name: "地域サークル", event_id: 1, prefecture_id: 1, switch: "募集中",
       area: "世田谷区", schedule: "毎週土曜日", appeal: "<p>#{'地域で活動しています。' * 12}</p>")

@@ -203,8 +203,14 @@ class User < ApplicationRecord
 
   # 新User用
 	scope :list, -> { publicly_visible.includes([:event, :prefecture, :tags, :reviews]) }
-  scope :where_pref, -> (prefecture_id){where(prefecture_id: prefecture_id).or(User.where(prefecture_sub_id: prefecture_id)).or(User.where(prefecture_id: 50))}
-  scope :where_city, -> (city){where(id: city.users.ids).or(User.where(prefecture_id: 50))}
+  scope :where_pref, -> (prefecture_id) do
+    where(prefecture_id: prefecture_id)
+      .or(where(prefecture_sub_id: prefecture_id))
+      .or(where(prefecture_id: 50))
+  end
+  scope :where_city, -> (city) do
+    where(id: city.users.select(:id)).or(where(prefecture_id: 50))
+  end
   scope :sort_1, -> {order(switch: :asc, last_post: :desc)}
   scope :sort_2, -> {order(switch: :asc, cb_point: :desc, last_post: :desc)}
   scope :sort_3, -> {order(switch: :asc, created_at: :desc)}
@@ -221,7 +227,7 @@ class User < ApplicationRecord
   scope :event, -> (event_id){ where(event_id: event_id) }
   scope :prefecture, -> (prefecture_id){ where(prefecture_id: prefecture_id) }
   scope :prefecture_sub, -> (prefecture_sub_id){ where(prefecture_sub_id: prefecture_sub_id) }
-  scope :prefecture_50, -> { where(prefecture_id: 50).or(User.where(prefecture_sub_id: 50)) }
+  scope :prefecture_50, -> { where(prefecture_id: 50).or(where(prefecture_sub_id: 50)) }
   scope :city, -> (city_id){ where(id: city_id) }
   scope :tag, -> (tag_id){ where(id: tag_id) }
 
