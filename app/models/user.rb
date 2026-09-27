@@ -91,7 +91,7 @@ class User < ApplicationRecord
 	scope :publicly_visible, -> {
 		where(publication_status: "published", moderation_status: "clear")
 			.where(ng_account: [nil, "OK"])
-			.where(admin_user_id: AdminUser.ng_account.select(:id))
+			.where(admin_user_id: AdminUser.publicly_visible.select(:id))
 	}
 
 	def missing_publication_fields
@@ -109,7 +109,7 @@ class User < ApplicationRecord
 
 	def publicly_visible?
 		publication_status == "published" && moderation_status == "clear" &&
-			[ nil, "OK" ].include?(ng_account) && admin_user.present? && admin_user.check.nil?
+			[ nil, "OK" ].include?(ng_account) && admin_user.present? && admin_user.publicly_visible?
 	end
 
 	private

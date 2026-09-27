@@ -51,6 +51,48 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_empty User.ransackable_associations
   end
 
+  test 'suspected solicitation circles stay public with warnings while shadow banned circles stay hidden' do
+    category = Category.create!(name: '球技', kana: 'ball-sports', order: '1')
+    event = Event.create!(name: 'バスケ', ruby: 'basketball', category: category, order: '1')
+    prefecture = Prefecture.create!(name: '神奈川県', kana: 'kanagawa', order: '14', sort: 14)
+    owners = {
+      network_business: AdminUser.create!(email: 'network-warning@example.test', password: 'test-password-123', check: 1),
+      religion: AdminUser.create!(email: 'religion-warning@example.test', password: 'test-password-123', check: 2),
+      shadow_banned: AdminUser.create!(email: 'shadow-banned@example.test', password: 'test-password-123', check: 3)
+    }
+    common_attributes = {
+      event: event, prefecture: prefecture, category: category,
+      switch: '募集中', area: '横浜市内', schedule: '毎週土曜日',
+      appeal: '地域で楽しく活動しています。初心者も経験者も歓迎します。' * 6,
+      last_post: Time.current.to_s
+    }
+    circles = {
+      network_business: User.create!(**common_attributes, admin_user: owners[:network_business], name: 'ネットワーク注意サークル'),
+      religion: User.create!(**common_attributes, admin_user: owners[:religion], name: '宗教注意サークル'),
+      shadow_banned: User.create!(**common_attributes, admin_user: owners[:shadow_banned], name: '非表示サークル')
+    }
+
+    get '/events/basketball/prefectures/kanagawa'
+    assert_response :success
+    assert_includes response.body, circles[:network_business].name
+    assert_includes response.body, circles[:religion].name
+    assert_not_includes response.body, circles[:shadow_banned].name
+
+    get circle_path(circles[:network_business])
+    assert_response :success
+    assert_includes response.body, '【ネットワークビジネス（マルチ商法）】の勧誘を目的としたサークルの可能性があります。'
+    assert_not_includes response.body, 'このサークルは一般には公開されていません。'
+
+    get circle_path(circles[:religion])
+    assert_response :success
+    assert_includes response.body, '【宗教】の勧誘を目的としたサークルの可能性があります。'
+    assert_not_includes response.body, 'このサークルは一般には公開されていません。'
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      get circle_path(circles[:shadow_banned])
+    end
+  end
+
   test 'tag routes return 404 for unknown event and prefecture slugs' do
     previous_show_exceptions = Rails.application.env_config['action_dispatch.show_exceptions']
     Rails.application.env_config['action_dispatch.show_exceptions'] = :rescuable

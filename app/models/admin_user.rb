@@ -47,7 +47,13 @@ class AdminUser < ApplicationRecord
     true
   end
 
-  scope :ng_account, -> {where(check: nil)}
+  SHADOW_BANNED_CHECK = 3
+
+  scope :publicly_visible, -> { where(check: nil).or(where.not(check: SHADOW_BANNED_CHECK)) }
+
+  def publicly_visible?
+    check != SHADOW_BANNED_CHECK
+  end
 
   MASTER_ACCOUNT_ID = 1
   MASTER_ACCOUNT_EMAIL = "circlebook26@gmail.com"
