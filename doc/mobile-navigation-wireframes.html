@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>サークルブック｜スマホナビゲーション案</title>
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif; color: #172821; background: #f2f5f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button { font: inherit; cursor: pointer; }
+    .page { max-width: 1280px; margin: auto; padding: 28px 20px 48px; }
+    h1 { font-size: 25px; margin: 0 0 7px; }
+    .lead { margin: 0 0 20px; color: #4c6257; line-height: 1.65; }
+    .controls { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 24px; }
+    .controls button { border: 1px solid #a5b9ad; background: white; color: #214d37; border-radius: 9px; padding: 8px 15px; min-height: 40px; }
+    .controls button[aria-pressed="true"] { background: #176747; color: white; border-color: #176747; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+    .proposal { min-width: 0; border: 1px solid #cbd7ce; background: #fff; border-radius: 16px; padding: 17px; }
+    .proposal.recommended { border: 2px solid #176747; }
+    .proposal h2 { font-size: 18px; margin: 0 0 6px; }
+    .tag { display: inline-block; padding: 2px 7px; border-radius: 5px; background: #e1f0e7; color: #125535; font-size: 11px; vertical-align: 2px; }
+    .summary { color: #526258; font-size: 12px; line-height: 1.5; margin: 0 0 14px; min-height: 38px; }
+    .phone { width: min(100%, 320px); height: 600px; margin: 0 auto; border: 8px solid #26372d; border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; background: #f8faf8; box-shadow: 0 12px 27px #26372d24; }
+    .status { height: 26px; flex: none; background: #fff; text-align: center; font-size: 10px; padding-top: 7px; color: #344e3d; }
+    .screen { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .screenhead { flex: none; display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 14px; background: white; border-bottom: 1px solid #d6e1d8; font-weight: 700; font-size: 13px; }
+    .logo { color: #176747; letter-spacing: .01em; }
+    .plain { border: 0; background: none; font-size: 12px; color: #265e42; padding: 5px; }
+    .scroller { overflow: auto; flex: 1; min-height: 0; padding: 13px; scrollbar-width: thin; }
+    .eyebrow { color: #5b7564; font-size: 10px; font-weight: 700; margin: 0 0 6px; }
+    .title { font-size: 19px; margin: 0 0 10px; line-height: 1.35; }
+    .searchbox { border: 1px solid #90ab97; border-radius: 9px; padding: 12px; background: #fff; color: #607567; font-size: 12px; margin-bottom: 10px; }
+    .filters { display: flex; gap: 6px; margin-bottom: 12px; }
+    .filter { flex: 1; border: 1px solid #c9d7cc; background: white; border-radius: 7px; padding: 8px 4px; text-align: center; font-size: 11px; }
+    .action { background: #176747; color: white; border: 0; border-radius: 8px; min-height: 42px; width: 100%; font-weight: 700; font-size: 12px; }
+    .resultcount { font-size: 11px; color: #53685a; margin: 17px 0 8px; }
+    .result { display: flex; gap: 9px; border: 1px solid #d1dcd3; border-radius: 10px; background: white; padding: 9px; margin: 8px 0; font-size: 11px; line-height: 1.7; }
+    .photo { width: 54px; height: 54px; flex: none; border-radius: 8px; background: #e3ebe4; display: grid; place-items: center; color: #587260; font-size: 10px; }
+    .smallmuted { color: #5a705f; font-size: 10px; }
+    .circlehead { display: flex; align-items: center; gap: 9px; padding: 11px 13px 7px; background: white; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: #dceae0; border: 1px solid #acbdaf; display: grid; place-items: center; font-size: 10px; flex: none; color: #507359; }
+    .circlehead strong { display: block; font-size: 12px; line-height: 1.4; }
+    .statuspill { color: #176747; font-size: 10px; }
+    .metrics { display: flex; gap: 6px; background: white; padding: 5px 13px 10px; }
+    .metric { flex: 1; text-align: center; border: 1px solid #d0ddd3; border-radius: 7px; padding: 7px 0; color: #264a34; font-size: 11px; }
+    .metric b { display: block; font-size: 15px; }
+    .tabs { display: flex; overflow: auto; gap: 14px; white-space: nowrap; background: white; border-bottom: 1px solid #d4dfd6; padding: 0 13px; scrollbar-width: none; }
+    .tabs span { font-size: 11px; padding: 9px 0; color: #4f6856; }
+    .tabs .active { border-bottom: 2px solid #176747; color: #176747; font-weight: 700; }
+    .card { background: white; border: 1px solid #d4e0d7; border-radius: 9px; padding: 12px; margin: 9px 0; font-size: 11px; line-height: 1.7; }
+    .card strong { font-size: 12px; }
+    .card p { margin: 6px 0 0; }
+    .bottom { flex: none; display: flex; height: 61px; background: white; border-top: 1px solid #cbd9ce; padding-bottom: 6px; }
+    .bottom .navitem { border: 0; background: none; flex: 1; color: #476352; font-size: 10px; text-align: center; line-height: 1.5; }
+    .bottom .navitem.selected { color: #176747; font-weight: 700; }
+    .glyph { display: block; font-size: 19px; font-weight: 500; height: 26px; }
+    .bottom .navitem.primary { background: #e2f0e6; color: #0d5c39; border-radius: 8px; margin: 5px; }
+    .cta-row { display: flex; gap: 8px; padding: 8px 13px; background: white; border-top: 1px solid #d2ded4; }
+    .cta-row button { min-height: 38px; border-radius: 7px; font-size: 11px; font-weight: 700; }
+    .outline { flex: 1; border: 1px solid #176747; color: #176747; background: white; }
+    .solid { flex: 2; border: 1px solid #176747; background: #176747; color: white; }
+    .stickymini { padding: 8px 13px; background: white; border-bottom: 1px solid #d4dfd6; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+    .stickymini b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px; }
+    .floating-search { display: flex; align-items: center; justify-content: center; gap: 6px; background: #176747; color: white; border: 0; border-radius: 999px; font-size: 12px; font-weight: 700; height: 42px; width: 132px; box-shadow: 0 5px 13px #1c533555; position: absolute; right: 11px; bottom: 72px; }
+    .drawer { position: absolute; inset: 0; background: #16281ba8; display: flex; justify-content: flex-end; }
+    .drawerpanel { width: 83%; background: white; padding: 14px; overflow: auto; font-size: 12px; }
+    .drawerhead { display: flex; justify-content: space-between; align-items: center; font-weight: 700; padding-bottom: 13px; border-bottom: 1px solid #d7e1d8; }
+    .drawersection { color: #58725f; font-size: 10px; font-weight: 700; margin: 17px 0 6px; }
+    .drawerlink { border-bottom: 1px solid #e1e8e2; padding: 11px 0; }
+    .note { font-size: 11px; color: #536358; margin: 11px 0 0; line-height: 1.5; min-height: 48px; }
+    .legend { margin-top: 24px; padding: 18px; background: white; border: 1px solid #cbd7ce; border-radius: 12px; font-size: 13px; line-height: 1.65; }
+    .legend h2 { font-size: 16px; margin: 0 0 8px; }
+    .legend p { margin: 6px 0; }
+    @media(max-width: 970px) { .grid { grid-template-columns: 1fr; } .proposal { max-width: 460px; margin: auto; width: 100%; } .summary, .note { min-height: 0; } }
+  </style>
+</head>
+<body>
+<main class="page">
+  <h1>スマホナビゲーション ワイヤーフレーム</h1>
+  <p class="lead">検索を主導線に置き、サークル詳細ではブログ・口コミ・問い合わせを上部から探せる構成。下の切替で3案の画面を同時に比較できます。</p>
+  <div class="controls" role="group" aria-label="表示する画面">
+    <button type="button" data-view="search" aria-pressed="false">検索画面</button>
+    <button type="button" data-view="detail" aria-pressed="true">サークル詳細</button>
+    <button type="button" data-view="menu" aria-pressed="false">メニュー</button>
+    <button type="button" data-view="mypage" aria-pressed="false">マイページ</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <section class="legend">
+    <h2>共通のリンク設計</h2>
+    <p><b>検索：</b>下部の「サークルを探す」→ サークル検索。検索画面では地域・種目の指定を最初の画面に表示。</p>
+    <p><b>サークル詳細：</b>ブログ件数 → 当該サークルのブログ、口コミ件数 → 当該サークルの口コミ、問い合わせ → 当該サークルの問い合わせフォーム。活動日・Q&amp;Aは詳細内のタブまたは「その他」に配置。</p>
+    <p><b>メニュー：</b>活動ブログ検索、対戦相手募集、コート・体育館、ヘルプを掲載。<b>マイページ：</b>サークル管理と「アカウント設定」を分け、メールアドレス・パスワード変更を後者に配置。</p>
+    <p><b>状態別：</b>未ログインのマイページはログイン・登録へ。募集終了のサークルでは問い合わせボタンを出さず「募集終了」を表示。件数0は0件と表示し、公開中の投稿だけを数える設計。</p>
+  </section>
+</main>
+<script>
+const grid = document.getElementById('grid');
+const capture = new URLSearchParams(location.search).get('capture');
+if (capture) {
+  document.body.classList.add('capture');
+  const style = document.createElement('style');
+  style.textContent = '.capture .page{max-width:430px;padding:12px}.capture .lead,.capture .controls,.capture .legend{display:none}.capture .grid{display:block}.capture .proposal{max-width:400px;margin:auto}.capture .phone{width:320px}.capture .proposal h2{font-size:18px}';
+  document.head.appendChild(style);
+}
+const proposals = [
+  { id: 'a', title: 'A｜上下を役割分担', tag: '推奨', summary: '上部はサークル情報、下部は検索・マイページ・メニュー。常時固定は下部だけ。', note: '情報量と画面の広さのバランスがよく、最初の検証案に向いています。' },
+  { id: 'b', title: 'B｜問い合わせを常時表示', tag: '', summary: '詳細ページで小さなサークル見出しと問い合わせを固定。判断後すぐ行動できる。', note: '参加希望への導線は強い一方、本文の表示領域が狭くなります。' },
+  { id: 'c', title: 'C｜検索を最優先', tag: '', summary: '下部中央を検索の主ボタンに。サークル情報は本文上部にまとめる。', note: '検索の存在感は最大ですが、画面ごとの配置変化が少し増えます。' }
+];
+const resultCards = `<div class="result"><div class="photo">写真</div><div><b>青空バドミントン</b><br>東京都・バドミントン<br><span class="smallmuted">募集中　活動ブログ 12件</span></div></div><div class="result"><div class="photo">写真</div><div><b>週末スポーツクラブ</b><br>東京都・スポーツ<br><span class="smallmuted">募集中　口コミ 5件</span></div></div>`;
+function bottom(id, view) {
+  if (id === 'c') return `<div class="bottom"><button class="navitem" type="button"><span class="glyph">⌂</span>ホーム</button><button class="navitem primary ${view==='search'?'selected':''}" type="button"><span class="glyph">⌕</span>サークルを探す</button><button class="navitem" type="button"><span class="glyph">☰</span>メニュー</button></div>`;
+  return `<div class="bottom"><button class="navitem ${view==='search'?'selected':''}" type="button"><span class="glyph">⌕</span>サークルを探す</button><button class="navitem ${view==='mypage'?'selected':''}" type="button"><span class="glyph">＋</span>${view==='mypage'?'マイページ':'サークルを登録'}</button><button class="navitem ${view==='menu'?'selected':''}" type="button"><span class="glyph">☰</span>メニュー</button></div>`;
+}
+function search(id) {
+  return `<div class="screenhead"><span class="logo">サークルブック</span><span>メニュー ☰</span></div><div class="scroller"><div class="eyebrow">サークル検索</div><h3 class="title">自分に合うサークルを探す</h3><div class="searchbox">キーワード・サークル名</div><div class="filters"><div class="filter">地域を選ぶ ▾</div><div class="filter">種目を選ぶ ▾</div></div><button class="action">この条件で探す</button><div class="resultcount">検索結果　128件</div>${resultCards}</div>${bottom(id,'search')}`;
+}
+function circleIntro(id) {
+  const metrics = `<div class="metrics"><div class="metric"><b>12</b>ブログ</div><div class="metric"><b>8</b>口コミ</div><div class="metric"><b>24</b>活動日</div></div>`;
+  const intro = `<div class="circlehead"><div class="avatar">アイコン</div><div><strong>青空バドミントン</strong><span class="statuspill">募集中　東京都・バドミントン</span></div></div>`;
+  if (id === 'b') return `<div class="stickymini"><b>‹　青空バドミントン</b><span>共有</span></div>${intro}${metrics}`;
+  if (id === 'c') return `<div class="screenhead"><span>‹　検索へ戻る</span><span>共有</span></div>${intro}${metrics}`;
+  return `<div class="screenhead"><span>‹　検索へ戻る</span><span class="logo">サークルブック</span></div>${intro}${metrics}`;
+}
+function detail(id) {
+  const tabs = `<div class="tabs"><span class="active">サークル詳細</span><span>ブログ</span><span>口コミ</span><span>活動日</span><span>Q&amp;A</span></div>`;
+  const content = `<div class="scroller"><div class="card"><strong>活動について</strong><p>毎週土曜日に都内で活動しています。初心者の方も歓迎しています。</p></div><div class="card"><strong>基本情報</strong><p>活動場所　東京都内<br>会費　1回 500円<br>メンバー　約30人</p></div><div class="card"><strong>最近の活動ブログ</strong><p>9月の練習会を開催しました<br><span class="smallmuted">ブログ一覧を見る →</span></p></div><div class="card"><strong>口コミ・評価</strong><p>参加者の声を見る →</p></div></div>`;
+  if (id === 'a') return `${circleIntro(id)}<div class="cta-row"><button class="solid">このサークルに問い合わせる</button></div>${tabs}${content}${bottom(id,'detail')}`;
+  if (id === 'b') return `${circleIntro(id)}${tabs}${content}<div class="cta-row"><button class="outline">保存</button><button class="solid">問い合わせる</button></div>${bottom(id,'detail')}`;
+  return `${circleIntro(id)}${tabs}${content}<button class="floating-search">問い合わせる</button>${bottom(id,'detail')}`;
+}
+function menu(id) {
+  const host = id === 'c' ? `<div class="screenhead"><span class="logo">サークルブック</span><span>メニュー</span></div>` : `<div class="screenhead"><span class="logo">サークルブック</span><span>メニュー</span></div>`;
+  return `${host}<div class="scroller"><div class="eyebrow">サイトメニュー</div><div class="card"><strong>探す</strong><p>サークルを探す　→<br>活動ブログを探す　→<br>対戦相手を探す　→<br>コート・体育館を探す　→</p></div><div class="card"><strong>アカウント</strong><p>マイページ　→<br>ログイン・サークル登録　→</p></div><div class="card"><strong>サポート</strong><p>よくある質問　→<br>運営へのお問い合わせ　→</p></div></div>${bottom(id,'menu')}`;
+}
+function mypage(id) {
+  return `<div class="screenhead"><span class="logo">マイページ</span><span>メニュー ☰</span></div><div class="scroller"><div class="eyebrow">管理中のサークル</div><div class="card"><strong>青空バドミントン</strong><p>公開中　サークルページを見る →</p></div><div class="card"><strong>サークル管理</strong><p>プロフィール編集　→<br>ブログ管理　→<br>問い合わせ管理　→<br>活動日・Q&amp;A管理　→</p></div><div class="card"><strong>アカウント設定</strong><p>メールアドレス変更　→<br>パスワード変更　→</p></div></div>${bottom(id,'mypage')}`;
+}
+function render(view) {
+  grid.innerHTML = proposals.filter(p => !capture || p.id === capture).map(p => `<section class="proposal ${p.id==='a'?'recommended':''}"><h2>${p.title} ${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</h2><p class="summary">${p.summary}</p><div class="phone" aria-label="${p.title}の${view}画面"><div class="status">9:41</div><div class="screen">${({search,detail,menu,mypage})[view](p.id)}</div></div><p class="note">${p.note}</p></section>`).join('');
+  document.querySelectorAll('[data-view]').forEach(button => button.setAttribute('aria-pressed', button.dataset.view === view));
+}
+document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => render(button.dataset.view)));
+render(new URLSearchParams(location.search).get('view') || 'detail');
+</script>
+</body>
+</html>

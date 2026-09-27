@@ -12,6 +12,9 @@
       - elsif @user.moderation_status == "blocked"
         .attention_content このサークルは公開停止中です。
       = render "/users/alert"
+      .mypage-account-settings
+        %h2 アカウント設定
+        = link_to "メールアドレス・パスワードを変更する", edit_admin_user_registration_path
       - if @admin_user.users.count > 1
         .user_select_wrap
           現在のアカウント：

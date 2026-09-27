@@ -57,6 +57,10 @@
       <header>
         <%= render "/layouts/header" %>
       </header>
+      <%= render "/layouts/mobile_nav" %>
+      <% unless @path == 'circles/circles#show' %>
+        <div class="mobile-site-heading"><%= link_to "サークルブック", root_path %></div>
+      <% end %>
 
       <% if flash[:notice] %>
         <div class="flash time-limit">

@@ -1,0 +1,40 @@
+.mobile-circle-summary
+  .mobile-circle-summary__top
+    = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back"
+    %span サークル詳細
+  .mobile-circle-summary__identity
+    - if @user.pic_profile.present?
+      = image_tag @user.pic_profile.url, alt: "", class: "mobile-circle-summary__image"
+    - else
+      .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }
+    .mobile-circle-summary__heading
+      %h2= @user.name
+      %p
+        = @user.switch
+        %span ・
+        = @user.prefecture.name
+        %span ・
+        = @user.event.name
+  .mobile-circle-summary__counts
+    = link_to circle_blogs_path(@user), class: "mobile-circle-summary__count" do
+      %strong= @user.blogs.publicly_visible.count
+      %span ブログ
+    = link_to user_reviews_path(@user), class: "mobile-circle-summary__count" do
+      %strong= @user.reviews.count
+      %span 口コミ
+    = link_to user_schedules_path(@user), class: "mobile-circle-summary__count" do
+      %strong= @user.schedules.count
+      %span 活動日
+  - if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
+    = link_to "サークルを編集", edit_user_path(@user), class: "mobile-circle-summary__cta"
+  - elsif @user.switch == "募集中"
+    - contact_path = @user.admin_user.check == 1 ? new_user_user_contact_path(@user, check: "1") : new_user_user_contact_path(@user)
+    = link_to "このサークルに問い合わせる", contact_path, class: "mobile-circle-summary__cta"
+  - else
+    %span.mobile-circle-summary__cta.mobile-circle-summary__cta--disabled 募集終了
+  .mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
+    %span.is-current 詳細
+    = link_to "ブログ", circle_blogs_path(@user)
+    = link_to "口コミ", user_reviews_path(@user)
+    = link_to "活動日", user_schedules_path(@user)
+    = link_to "Q&A", user_questions_path(@user)
