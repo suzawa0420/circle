@@ -4,7 +4,6 @@
     .users-index-item
       %h1.top_title 口コミ・評価
       = render "/users/parts/user_switching", user: @user, url_path: "reviews"
-      = render "/users/parts/user_profile", user: @user
       = render "layouts/review_score", review_score: @user.review_score.to_f, reviews_count: @user.reviews.count
       .reset
       %hr/

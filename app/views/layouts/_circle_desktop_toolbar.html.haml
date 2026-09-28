@@ -1,0 +1,27 @@
+.circle-desktop-toolbar
+  = link_to root_path, class: "circle-desktop-toolbar__logo" do
+    %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
+  %nav{ "aria-label" => "サイトのメインメニュー" }
+    = link_to circles_path do
+      %i.fa.fa-search{ "aria-hidden" => "true" }
+      サークルを探す
+    - if admin_user_signed_in?
+      - circle = current_admin_user.users.first
+      = link_to "マイページ", circle ? "/users/#{circle.id}/mypage" : new_user_path
+    - else
+      = link_to "無料でサークル登録", new_admin_user_registration_path
+    %details.circle-desktop-menu
+      %summary
+        %i.fa.fa-bars{ "aria-hidden" => "true" }
+        メニュー
+      .circle-desktop-menu__links
+        = link_to "活動ブログを探す", blogs_path
+        = link_to "対戦相手を探す", matches_path
+        = link_to "コート・体育館", "/places"
+        - if member_signed_in?
+          = link_to "参加者マイページ", member_path(current_member)
+        - elsif exhibition_group_signed_in?
+          = link_to "マイページ", exhibitor_mypage_path
+        - elsif !admin_user_signed_in?
+          = link_to "ログイン", login_path
+        = link_to "よくある質問", faq_path

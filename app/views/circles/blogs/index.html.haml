@@ -7,7 +7,6 @@
     .users-index-item
       %h1.top_title 活動ブログ
       = render "/users/parts/user_switching", user: @user, url_path: "blogs"
-      = render "/users/parts/user_profile", user: @user
     .space_content
       %div
         - if @blogs.any?

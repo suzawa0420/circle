@@ -24,6 +24,9 @@
   }
 
   document.addEventListener('click', function (event) {
+    document.querySelectorAll('.circle-desktop-menu[open]').forEach(function (menu) {
+      if (!menu.contains(event.target)) menu.open = false;
+    });
     var trigger = event.target.closest('.mobile-menu-trigger');
     var dialog = document.getElementById('mobile-menu-dialog');
     if (!dialog) return;
@@ -45,6 +48,13 @@
     } else if (dialog.open && event.target.closest('#mobile-menu-dialog a')) {
       closeMenu(true);
     }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') document.querySelectorAll('.circle-desktop-menu[open]').forEach(function (menu) {
+      menu.open = false;
+      menu.querySelector('summary').focus();
+    });
   });
 
   // Keep Escape, page navigation and desktop resizing consistent with the close button.

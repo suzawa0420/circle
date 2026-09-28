@@ -47,18 +47,23 @@
 
     </head>
 
-    <body>
+    <% circle_tab = circle_navigation_tab %>
+    <body class="<%= "circle-context" if circle_tab %>">
 
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ5RS5L"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
 
-      <header>
-        <%= render "/layouts/header" %>
-      </header>
+      <% if circle_tab %>
+        <%= render "layouts/circle_desktop_toolbar" %>
+      <% else %>
+        <header>
+          <%= render "/layouts/header" %>
+        </header>
+        <%= render "/layouts/mobile_heading" %>
+      <% end %>
       <%= render "/layouts/mobile_nav" %>
-      <%= render "/layouts/mobile_heading" %>
 
       <% if flash[:notice] %>
         <div class="flash time-limit">
@@ -72,6 +77,9 @@
         </div>
       <% end %>
 
+      <% if circle_tab %>
+        <%= render "circles/circles/mobile_summary", active_tab: circle_tab %>
+      <% end %>
       <%= yield %>
 
       <footer>

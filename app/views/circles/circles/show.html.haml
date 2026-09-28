@@ -4,7 +4,6 @@
 = render "users/parts/local_business_show", user: @user
 .user_main.user-show.mobile-circle-page
   .container
-    = render "mobile_summary"
     - if !@user.publicly_visible?
       .attention_content
         - if @user.publication_status == "draft"

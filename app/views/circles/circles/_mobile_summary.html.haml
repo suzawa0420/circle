@@ -1,3 +1,4 @@
+- active_tab = local_assigns.fetch(:active_tab, :details)
 .mobile-circle-summary__top
   = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back"
   %span サークル詳細
@@ -16,23 +17,23 @@
         %span ・
         = @user.event.name
   %nav.mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
-    = link_to circle_path(@user), class: "is-current", "aria-current" => "page" do
+    = link_to circle_path(@user), class: ("is-current" if active_tab == :details), "aria-current" => ("page" if active_tab == :details) do
       %i.fa.fa-info-circle{ "aria-hidden" => "true" }
       %span 詳細
       %span.mobile-circle-summary__tab-count 概要
-    = link_to circle_blogs_path(@user) do
+    = link_to circle_blogs_path(@user), class: ("is-current" if active_tab == :blogs), "aria-current" => ("page" if active_tab == :blogs) do
       %i.fa.fa-book{ "aria-hidden" => "true" }
       %span ブログ
       %span.mobile-circle-summary__tab-count= "#{@user.blogs.publicly_visible.count}件"
-    = link_to user_reviews_path(@user) do
+    = link_to user_reviews_path(@user), class: ("is-current" if active_tab == :reviews), "aria-current" => ("page" if active_tab == :reviews) do
       %i.fa.fa-comment{ "aria-hidden" => "true" }
       %span 口コミ
       %span.mobile-circle-summary__tab-count= "#{@user.reviews.count}件"
-    = link_to user_schedules_path(@user) do
+    = link_to user_schedules_path(@user), class: ("is-current" if active_tab == :schedules), "aria-current" => ("page" if active_tab == :schedules) do
       %i.fa.fa-calendar{ "aria-hidden" => "true" }
       %span 活動日
       %span.mobile-circle-summary__tab-count= "#{@user.schedules.count}件"
-    = link_to user_questions_path(@user) do
+    = link_to user_questions_path(@user), class: ("is-current" if active_tab == :questions), "aria-current" => ("page" if active_tab == :questions) do
       %i.fa.fa-question-circle{ "aria-hidden" => "true" }
       %span Q&A
       %span.mobile-circle-summary__tab-count= "#{@user.questions.count}件"
