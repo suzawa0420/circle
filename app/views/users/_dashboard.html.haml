@@ -1,0 +1,130 @@
+- contact_count = @user_contacts.count
+- schedule_count = @schedules.count
+- unanswered_count = @questions_current_nil.count
+- can_add_circle = @ng_accounts.count == 0 && @admin_user.users.count < 5 && (@admin_user.check.blank? || @admin_user.check == 0)
+.dashboard-heading
+  %div
+    %p.dashboard-eyebrow サークル管理
+    %h1 マイページ
+  = link_to circle_path(@user), class: "dashboard-preview" do
+    公開ページ
+    %i.fa.fa-external-link{ "aria-hidden" => "true" }
+
+%section.dashboard-circle{ "aria-label" => "管理中のサークル" }
+  .dashboard-circle__identity
+    - if @user.pic_profile.present?
+      = image_tag @user.pic_profile.url, alt: "", class: "dashboard-circle__avatar"
+    - else
+      .dashboard-circle__avatar.dashboard-circle__avatar--empty
+        %i.fa.fa-users{ "aria-hidden" => "true" }
+    %div.dashboard-circle__name
+      %h2= @user.name
+      %p= [@user.prefecture&.name, @user.event&.name].compact.join(" · ")
+  .dashboard-circle__status
+    - if @user.moderation_status == "blocked"
+      %span.dashboard-status.dashboard-status--attention 公開停止中
+    - elsif @user.moderation_status == "review"
+      %span.dashboard-status.dashboard-status--attention 確認中
+    - elsif @user.publication_status == "draft"
+      %span.dashboard-status.dashboard-status--attention 公開準備中
+    - elsif @user.publicly_visible?
+      %span.dashboard-status 公開中
+    - else
+      %span.dashboard-status.dashboard-status--attention 非公開
+    - if @user.switch.present?
+      %span.dashboard-recruitment= @user.switch
+  - if @admin_user.users.count > 1
+    .dashboard-circle__switch
+      %label{ for: "dashboard-circle-select" } 管理するサークルを切り替え
+      %select#dashboard-circle-select{ name: "user_select", onchange: "location.href=value;" }
+        - @admin_user.users.each do |circle|
+          %option{ value: "/users/#{circle.id}/mypage", selected: circle.id == @user.id }= circle.name
+        - if can_add_circle
+          %option{ value: "/user/add" } ＋ サークルを新規追加
+  .dashboard-circle__actions
+    = link_to edit_user_path(@user), class: "dashboard-primary" do
+      %i.fa.fa-pencil{ "aria-hidden" => "true" }
+      サークルを編集
+    - if @user.link.present? && @user.link.unique_id.present?
+      %span.copyTarget.dashboard-copy-value= "https://circle-book.com/u/#{@user.link.unique_id}"
+      %button.copyBtn.dashboard-copy{ type: "button" }
+        %i.fa.fa-copy{ "aria-hidden" => "true" }
+        URLをコピー
+
+- if @user.publication_status == "draft"
+  .dashboard-notice
+    %strong 公開まで、あと少し
+    %p= "未入力の項目：#{@user.missing_publication_fields.join('、')}"
+    = link_to "不足項目を入力する →", edit_user_path(@user)
+- if @user.moderation_status == "review"
+  .dashboard-notice
+    %strong 内容を確認しています
+    %p サークルとブログは一時的に非公開です。
+- elsif @user.moderation_status == "blocked"
+  .dashboard-notice
+    %strong このサークルは公開停止中です
+- if @respond_check_count > 0
+  .dashboard-notice
+    %strong= "返信についての報告が#{@respond_check_count}件あります"
+    %p 応募者から返信が届いていないと報告されています。
+    = link_to "お問い合わせを確認する →", "/users/#{@user.id}/contact_list"
+= render "/users/alert"
+
+.dashboard-stats{ "aria-label" => "サークルの管理状況" }
+  .dashboard-stat
+    %span お問い合わせ
+    %strong
+      = contact_count
+      %small 件
+  .dashboard-stat
+    %span 今後の活動
+    %strong
+      = schedule_count
+      %small 件
+  .dashboard-stat
+    %span 未回答の質問
+    %strong
+      = unanswered_count
+      %small 件
+
+%section.dashboard-section
+  .dashboard-section__heading
+    %h2 活動を管理
+    %p 日々の更新はこちらから
+  .dashboard-action-grid
+    = render "dashboard_action", title: "ブログを書く", description: "活動の様子を投稿", icon: "pencil", path: new_circle_blog_path(@user)
+    = render "dashboard_action", title: "スケジュール", description: "活動日を登録・編集", icon: "calendar", path: user_schedules_path(@user)
+    - if @schedules.present?
+      = render "dashboard_action", title: "出欠管理", description: "メンバーの参加を確認", icon: "users", path: attendances_path(@user.unique_id)
+
+%section.dashboard-section
+  .dashboard-section__heading
+    %h2 参加者とのやりとり
+  .dashboard-action-list
+    - if @user.user_contacts.present?
+      = render "dashboard_action", title: "お問い合わせ管理", description: "応募・問い合わせを確認", icon: "envelope-o", path: "/users/#{@user.id}/contact_list", badge: (@respond_check_count > 0 ? "要確認 #{@respond_check_count}" : nil)
+    = render "dashboard_action", title: "質問コーナー", description: "質問の確認・回答", icon: "question-circle", path: user_questions_path(@user), badge: (unanswered_count > 0 ? "未回答 #{unanswered_count}" : nil)
+    = render "dashboard_action", title: "口コミ・評価", description: "参加者の声を確認", icon: "comment-o", path: user_reviews_path(@user)
+
+- if @user.event.matching != 0
+  %section.dashboard-section
+    .dashboard-section__heading
+      %h2 対戦相手を探す
+    .dashboard-action-list
+      - match_url = @user.match.present? ? match_path(@user) : new_user_match_path(@user)
+      = render "dashboard_action", title: "対戦相手の募集", description: "募集内容を作成・確認", icon: "flag-checkered", path: match_url
+      = render "dashboard_action", title: "対戦相手の一覧", description: "ほかのチームを探す", icon: "search", path: matches_path
+
+%section.dashboard-section
+  .dashboard-section__heading
+    %h2 サークルの設定
+  .dashboard-action-list
+    = render "dashboard_action", title: "リンク集", description: "SNSや関連リンクをまとめる", icon: "link", path: new_user_link_path(@user)
+    - if can_add_circle
+      = render "dashboard_action", title: "サークル新規追加", description: "別のサークルを管理する", icon: "plus-circle", path: "/user/add"
+
+%section.dashboard-section.dashboard-account-settings
+  .dashboard-section__heading
+    %h2 アカウント設定
+  .dashboard-action-list
+    = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock", path: edit_admin_user_registration_path

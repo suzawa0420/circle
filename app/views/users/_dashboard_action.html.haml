@@ -1,0 +1,10 @@
+= link_to path, class: "dashboard-action" do
+  %span.dashboard-action__icon
+    %i{ class: "fa fa-#{icon}", "aria-hidden" => "true" }
+  %span.dashboard-action__text
+    %strong= title
+    %small= description
+  - if local_assigns[:badge].present?
+    %span.dashboard-action__badge= badge
+  - else
+    %i.fa.fa-angle-right.dashboard-action__arrow{ "aria-hidden" => "true" }
