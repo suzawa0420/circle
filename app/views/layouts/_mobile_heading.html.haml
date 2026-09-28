@@ -1,0 +1,11 @@
+.mobile-site-heading
+  = link_to root_path, class: "mobile-site-heading__brand", "aria-label" => "サークルブック ホーム" do
+    %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
+  - if admin_user_signed_in?
+    - circle = current_admin_user.users.first
+    - if circle
+      = link_to "マイページ", "/users/#{circle.id}/mypage", class: "mobile-site-heading__cta"
+    - else
+      = link_to "登録を完了する", new_user_path, class: "mobile-site-heading__cta"
+  - else
+    = link_to "無料登録", new_admin_user_registration_path, class: "mobile-site-heading__cta"

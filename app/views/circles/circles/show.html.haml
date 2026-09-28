@@ -2,7 +2,7 @@
 - breadcrumb :circle_show, @user
 
 = render "users/parts/local_business_show", user: @user
-.user_main.user-show
+.user_main.user-show.mobile-circle-page
   .container
     = render "mobile_summary"
     - if !@user.publicly_visible?
@@ -121,6 +121,7 @@
         = render "users/parts/admin_user_check", admin_user: @user.admin_user
 
         %h1.user_name= @user.name
+        = render "mobile_contact"
 
 
         - if admin_user_signed_in?

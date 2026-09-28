@@ -26,34 +26,38 @@
       %i.fa.fa-user-plus{ "aria-hidden" => "true" }
       %span サークルを登録
 
-  %details.mobile-bottom-nav__menu
-    %summary.mobile-bottom-nav__item
-      %i.fa.fa-bars{ "aria-hidden" => "true" }
-      %span メニュー
-    .mobile-menu-panel
-      .mobile-menu-panel__title メニュー
-      .mobile-menu-panel__group
-        %strong 探す
-        = link_to "サークルを探す", circles_path
-        = link_to "活動ブログを探す", blogs_path
-        = link_to "対戦相手を探す", matches_path
-        = link_to "コート・体育館を探す", "/places"
-      .mobile-menu-panel__group
-        %strong アカウント
-        - if admin_user_signed_in? && current_admin_user.users.any?
-          = link_to "マイページ", "/users/#{current_admin_user.users.first.id}/mypage"
-        - elsif member_signed_in?
-          = link_to "マイページ", member_path(current_member)
-          = link_to "サークルを登録", new_admin_user_registration_path
-        - elsif exhibition_group_signed_in?
-          = link_to "マイページ", exhibitor_mypage_path
-          = link_to "サークルを登録", new_admin_user_registration_path
-        - elsif admin_user_signed_in?
-          = link_to "サークルを登録", new_user_path
-        - else
-          = link_to "サークルを登録", new_admin_user_registration_path
-          = link_to "ログイン", login_path
-      .mobile-menu-panel__group
-        %strong サポート
-        = link_to "よくある質問", faq_path
-        = link_to "運営へのお問い合わせ", "https://x.com/circlebook03", target: "_blank", rel: "noopener noreferrer"
+  %button.mobile-bottom-nav__item.mobile-menu-trigger{ type: "button", "aria-controls" => "mobile-menu-dialog", "aria-haspopup" => "dialog", "aria-expanded" => "false" }
+    %i.fa.fa-bars{ "aria-hidden" => "true" }
+    %span メニュー
+
+%dialog#mobile-menu-dialog.mobile-menu-dialog{ "aria-labelledby" => "mobile-menu-title" }
+  .mobile-menu-panel__header
+    %h2#mobile-menu-title メニュー
+    %button.mobile-menu-close{ type: "button", "aria-label" => "メニューを閉じる", autofocus: true }
+      %i.fa.fa-times{ "aria-hidden" => "true" }
+  .mobile-menu-panel__body
+    .mobile-menu-panel__group
+      %strong 探す
+      = link_to "サークルを探す", circles_path
+      = link_to "活動ブログを探す", blogs_path
+      = link_to "対戦相手を探す", matches_path
+      = link_to "コート・体育館", "/places"
+    .mobile-menu-panel__group
+      %strong アカウント
+      - if admin_user_signed_in? && current_admin_user.users.any?
+        = link_to "マイページ", "/users/#{current_admin_user.users.first.id}/mypage"
+      - elsif member_signed_in?
+        = link_to "マイページ", member_path(current_member)
+        = link_to "サークルを登録", new_admin_user_registration_path
+      - elsif exhibition_group_signed_in?
+        = link_to "マイページ", exhibitor_mypage_path
+        = link_to "サークルを登録", new_admin_user_registration_path
+      - elsif admin_user_signed_in?
+        = link_to "サークルを登録", new_user_path
+      - else
+        = link_to "サークルを登録", new_admin_user_registration_path
+        = link_to "ログイン", login_path
+    .mobile-menu-panel__group
+      %strong サポート
+      = link_to "よくある質問", faq_path
+      = link_to "運営に問い合わせ", "https://x.com/circlebook03", target: "_blank", rel: "noopener noreferrer"
