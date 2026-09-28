@@ -335,8 +335,6 @@ helper_method :link_count
       end
 
 			@blogs = Blog.where(user_id: @user.id).order(created_at: "DESC")
-			@opinion = @user.opinions.build
-
       @blogs_imp = 0
 
 			if @admin_user.users.any?
