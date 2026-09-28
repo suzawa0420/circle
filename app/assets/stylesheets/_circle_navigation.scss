@@ -5,7 +5,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 10px 14px 0;
+  padding: 6px 12px 0;
   background: $cb-surface;
 }
 
@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 14px;
+  padding: 5px 12px;
   background: $cb-surface;
   color: $cb-muted;
   font-size: 12px;
@@ -28,13 +28,13 @@
 .mobile-circle-summary__identity {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .mobile-circle-summary__image {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   flex: none;
   border-radius: 50%;
   object-fit: cover;
@@ -46,13 +46,13 @@
 }
 
 .mobile-circle-summary__heading h2 {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
 .mobile-circle-summary__heading p {
-  margin-top: 3px;
+  margin-top: 1px;
   color: $cb-muted;
   font-size: 11px;
   line-height: 1.4;
@@ -95,20 +95,21 @@
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 2px;
-  margin: 8px -14px 0;
-  padding: 0 6px;
+  margin: 5px -12px 0;
+  padding: 0 5px;
   border-bottom: 1px solid $cb-border;
 }
 
-.mobile-circle-summary__tabs > a {
+.mobile-circle-summary__tabs > a,
+.mobile-circle-summary__tabs > span {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: 68px;
-  gap: 3px;
-  padding: 7px 2px;
+  min-height: 46px;
+  gap: 2px;
+  padding: 4px 2px;
   border-bottom: 2px solid transparent;
   color: $cb-muted;
   font-size: 11px;
@@ -117,15 +118,16 @@
 }
 
 .mobile-circle-summary__tabs .fa {
-  font-size: 18px;
+  font-size: 16px;
 }
 
-.mobile-circle-summary__tab-count {
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
+.mobile-circle-summary__tabs .is-empty {
+  color: #aeb4ba;
+  background: #f7f8f9;
+  cursor: not-allowed;
 }
 
-.mobile-circle-summary__tabs .is-current {
+.mobile-circle-summary__tabs > a.is-current {
   color: $cb-action;
   border-bottom-color: $cb-action;
   background: $cb-mint-soft;
@@ -157,14 +159,13 @@
 @media (min-width: 768px) {
   .circle-context {
     padding-top: 72px;
-    .mobile-circle-summary { top: 72px; padding: 16px 24px 0; }
-    .mobile-circle-summary__top { padding: 16px 24px 10px; }
-    .mobile-circle-summary__image { width: 52px; height: 52px; }
-    .mobile-circle-summary__heading h2 { font-size: 20px; }
+    .mobile-circle-summary { top: 72px; padding: 10px 20px 0; }
+    .mobile-circle-summary__top { padding: 10px 20px 6px; }
+    .mobile-circle-summary__image { width: 44px; height: 44px; }
+    .mobile-circle-summary__heading h2 { font-size: 18px; }
     .mobile-circle-summary__heading p { font-size: 12px; }
-    .mobile-circle-summary__tabs { margin: 14px -24px 0; padding: 0 12px; }
-    .mobile-circle-summary__tabs > a { min-height: 76px; font-size: 13px; }
-    .mobile-circle-summary__tab-count { font-size: 12px; }
+    .mobile-circle-summary__tabs { margin: 8px -20px 0; padding: 0 12px; }
+    .mobile-circle-summary__tabs > a, .mobile-circle-summary__tabs > span { min-height: 52px; font-size: 12px; }
     .user_main > .container { border: 1px solid $cb-border; border-top: 0; }
     .users-index-item { padding: 28px 32px; }
     .top_title { font-size: 24px; }

@@ -1,0 +1,8 @@
+- if disabled
+  %span.is-empty{ "aria-disabled" => "true", "aria-current" => ("page" if current), title: "#{label}はまだありません" }
+    %i.fa{ class: "fa-#{icon}", "aria-hidden" => "true" }
+    %span= label
+- else
+  = link_to path, class: ("is-current" if current), "aria-current" => ("page" if current) do
+    %i.fa{ class: "fa-#{icon}", "aria-hidden" => "true" }
+    %span= label
