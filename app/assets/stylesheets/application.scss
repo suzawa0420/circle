@@ -3014,35 +3014,6 @@ li.current_page {
 }
 
 
-.openchat_wrap {
-  background: #fff;
-  padding: 10px 10px;
-  margin: auto;
-  display: block;
-  text-align: center;
-}
-
-.openchat_btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-  color: #FFF;
-  width: 96%;
-  text-align: center;
-  margin: auto;
-  font-size: 12px;
-  padding: 0;
-  height: 52px;
-  border-radius: 6px;
-  background: #45bd59;
-}
-
-.openchat_btn a {
-  color: #fff;
-}
-
-
 .icon_sns {
   height: 40px;
 }
@@ -8718,13 +8689,26 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   bottom: 20px;
   left: 50%;
   width: 16rem;
-  font-family: FontAwesome;
-  content: '\f13a'' 続きを読む';
+  font-family: inherit;
+  content: '続きを読む';
   transform: translate(-50%, 0);
   letter-spacing: 0.05em;
   color: #ffffff;
   border-radius: 20px;
   background-color: $cb-action;
+}
+
+.cp_box label:before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  bottom: 36px;
+  left: calc(50% - 5.3rem);
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
 }
 
 .cp_box input {
@@ -8743,8 +8727,11 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .cp_box input:checked+label:after {
-  font-family: FontAwesome;
-  content: '\f139'' 閉じる';
+  content: '閉じる';
+}
+
+.cp_box input:checked+label:before {
+  transform: rotate(225deg);
 }
 
 .cp_box input:checked~.cp_container {
