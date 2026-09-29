@@ -20,6 +20,13 @@
 <img src="/images/mascot/squirrel-404.png" alt="本を開いて困っているリス" width="240" height="240">
 ```
 
+## サイトでの使用箇所
+
+- `public/404.html`：`squirrel-404.png`
+- `public/422.html`：`squirrel-sad.png`
+- `public/500.html`：`squirrel-apology.png`
+- `app/views/users/login.html.haml`：主催者に `squirrel-organizer.png`、参加者に `squirrel-participant.png`
+
 ## 生成条件
 
 組み込み `image_gen` を使用。各画像の編集参照元は採用案の [`squirrel-base.png`](../public/images/mascot/squirrel-base.png)。共通プロンプトは、尖った耳、丸いクリーム色の頬、緑の小さな目、大きく一巻きするしっぽ、茶とクリームの体、深緑の太い輪郭、緑の本を維持し、全身を余白付きで中央に置くこと。真のアルファ透過、文字・背景・影・別キャラクター・光沢・3Dなしを指定した。
