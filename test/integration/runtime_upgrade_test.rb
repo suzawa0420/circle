@@ -18,15 +18,20 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
   end
 
-  test 'public pages load GTM without direct analytics or AdSense tags' do
-    get '/'
-    assert_response :success
-    assert_includes response.body, 'GTM-WZ5RS5L'
-    assert_not_includes response.body, '/gtag/js'
-    assert_not_includes response.body, "gtag('config'"
-    assert_not_includes response.body, 'adsbygoogle'
-    assert_not_includes response.body, 'googlesyndication.com'
-    assert_not_includes response.body, 'data-ad-client'
+  test 'public pages load only the new GTM container' do
+    %w[/ /privacypolicy].each do |path|
+      get path
+      assert_response :success
+      assert_equal 2, response.body.scan('GTM-MD88D9HB').size
+      assert_not_includes response.body, 'GTM-WZ5RS5L'
+      assert_match(/<head>\s*<!-- Google Tag Manager -->/, response.body)
+      assert_match(/<body[^>]*>\s*<!-- Google Tag Manager \(noscript\) -->/, response.body)
+      assert_not_includes response.body, '/gtag/js'
+      assert_not_includes response.body, "gtag('config'"
+      assert_not_includes response.body, 'adsbygoogle'
+      assert_not_includes response.body, 'googlesyndication.com'
+      assert_not_includes response.body, 'data-ad-client'
+    end
   end
 
   test 'populated circle listings and profile render' do
