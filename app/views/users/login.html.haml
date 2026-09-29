@@ -1,12 +1,24 @@
-- set_meta_tags title: "ログインページ"
-.main.users-index
-  .container
-    .login_wrap
-      %h1.p_t ログイン
-      %h2.login_title サークル主催者はこちら
-      %img.login_img{ src: "/images/mascot/squirrel-organizer.png", alt: "どんぐりマークのパソコンで活動予定を管理するリス", width: 140, height: 140 }
-      = link_to "ログイン", new_admin_user_session_path, class: "login_btn"
-      .border
-      %h2.login_title 参加者はこちら
-      %img.login_img{ src: "/images/mascot/squirrel-participant.png", alt: "本とラケットを持って活動するリス", width: 140, height: 140 }
-      = link_to "ログイン", new_member_session_path, class: "login_btn"
+- set_meta_tags title: "ログイン"
+.main.users-index.login-landing
+  .login-choice
+    .login-choice__intro
+      %p.login-choice__eyebrow サークルブックへようこそ
+      %h1 ログイン
+      %p ご利用方法に合わせて、ログイン先をお選びください。
+    .login-choice__cards
+      %section.login-choice__card{ "aria-labelledby" => "organizer-login-title" }
+        .login-choice__art
+          %img{ src: "/images/mascot/squirrel-organizer.png", alt: "どんぐりマークのパソコンで活動を管理するリス", width: 220, height: 220 }
+        .login-choice__content
+          %p.login-choice__role サークルを運営する方
+          %h2#organizer-login-title サークル主催者
+          %p.login-choice__description 活動予定の管理や、参加希望者とのやり取りはこちらから。
+          = link_to "主催者としてログイン", new_admin_user_session_path, class: "login-choice__button"
+      %section.login-choice__card{ "aria-labelledby" => "participant-login-title" }
+        .login-choice__art
+          %img{ src: "/images/mascot/squirrel-participant.png", alt: "本とラケットを持って活動するリス", width: 220, height: 220 }
+        .login-choice__content
+          %p.login-choice__role サークルに参加する方
+          %h2#participant-login-title サークル参加者
+          %p.login-choice__description 気になるサークルへの参加や、活動の確認はこちらから。
+          = link_to "参加者としてログイン", new_member_session_path, class: "login-choice__button"
