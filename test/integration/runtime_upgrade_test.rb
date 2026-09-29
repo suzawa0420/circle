@@ -18,7 +18,7 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
   end
 
-  test 'public pages load only the new GTM container' do
+  test 'public pages load the new GTM container and AdSense code' do
     %w[/ /privacypolicy].each do |path|
       get path
       assert_response :success
@@ -28,8 +28,8 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
       assert_match(/<body[^>]*>\s*<!-- Google Tag Manager \(noscript\) -->/, response.body)
       assert_not_includes response.body, '/gtag/js'
       assert_not_includes response.body, "gtag('config'"
-      assert_not_includes response.body, 'adsbygoogle'
-      assert_not_includes response.body, 'googlesyndication.com'
+      assert_select 'head script[src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449"]', count: 1
+      assert_includes response.body, 'crossorigin="anonymous"'
       assert_not_includes response.body, 'data-ad-client'
     end
   end
