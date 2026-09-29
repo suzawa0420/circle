@@ -4,9 +4,9 @@
     .login_wrap
       %h1.p_t ログイン
       %h2.login_title サークル主催者はこちら
-      %img.login_img{:src => "/images/admin_user.png"}/
+      %img.login_img{ src: "/images/mascot/squirrel-organizer.png", alt: "どんぐりマークのパソコンで活動予定を管理するリス", width: 140, height: 140 }
       = link_to "ログイン", new_admin_user_session_path, class: "login_btn"
       .border
       %h2.login_title 参加者はこちら
-      %img.login_img{:src => "/images/member.png"}/
+      %img.login_img{ src: "/images/mascot/squirrel-participant.png", alt: "本とラケットを持って活動するリス", width: 140, height: 140 }
       = link_to "ログイン", new_member_session_path, class: "login_btn"

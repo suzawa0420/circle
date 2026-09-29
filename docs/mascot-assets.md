@@ -1,0 +1,45 @@
+# サークルブックのリスマスコット素材
+
+採用案「リス 01 シンプル」を基準にした透過PNG。画像はすべて [`public/images/mascot/`](../public/images/mascot) に置き、ページから `/images/mascot/<ファイル名>` で参照できます。画像内に文字を入れていないため、見出しや説明文はページ側で追加できます。
+
+| ファイル | 用途 | 代替テキストの例 |
+| --- | --- | --- |
+| `squirrel-base.png` | 標準の案内役 | 本を開いているリス |
+| `squirrel-joy.png` | 喜び、参加決定、完了 | 本を掲げて喜ぶリス |
+| `squirrel-angry.png` | 怒り、不満の表現 | 本を持って怒るリス |
+| `squirrel-sad.png` | 悲しみ、残念な結果 | 本を抱えて悲しむリス |
+| `squirrel-fun.png` | 活動を楽しむ場面 | 本を持って楽しむリス |
+| `squirrel-apology.png` | お詫び、処理失敗 | お辞儀して謝るリス |
+| `squirrel-404.png` | 404など、ページが見つからない場面 | 本を開いて困っているリス |
+| `squirrel-organizer.png` | 主催者向けログイン・管理案内 | どんぐりマークのパソコンで活動予定を管理するリス |
+| `squirrel-participant.png` | 参加者向けログイン・スポーツ案内 | 本とラケットを持つリス |
+
+使用例：
+
+```html
+<img src="/images/mascot/squirrel-404.png" alt="本を開いて困っているリス" width="240" height="240">
+```
+
+## サイトでの使用箇所
+
+- `public/404.html`：`squirrel-404.png`
+- `public/422.html`：`squirrel-sad.png`
+- `public/500.html`：`squirrel-apology.png`
+- `app/views/users/login.html.haml`：主催者に `squirrel-organizer.png`、参加者に `squirrel-participant.png`
+
+## 生成条件
+
+組み込み `image_gen` を使用。各画像の編集参照元は採用案の [`squirrel-base.png`](../public/images/mascot/squirrel-base.png)。共通プロンプトは、尖った耳、丸いクリーム色の頬、緑の小さな目、大きく一巻きするしっぽ、茶とクリームの体、深緑の太い輪郭、緑の本を維持し、全身を余白付きで中央に置くこと。真のアルファ透過、文字・背景・影・別キャラクター・光沢・3Dなしを指定した。
+
+各画像の追加指定：
+
+- `joy`：本を頭上に掲げ、見つかった喜びを表す。
+- `angry`：眉を寄せて軽く怒り、本を片手に持つ。怖くしない。
+- `sad`：耳と視線を下げ、本を胸に抱える。涙は一つまで。
+- `fun`：本を持って軽くステップし、楽しさを表す。
+- `apology`：本を胸に抱え、体を前に曲げてお辞儀する。
+- `404`：座って開いた本を見ながら困る。数字は画像に入れない。
+- `organizer`：一台のノートPCで予定を管理し、本をそばに置く。こちら側には画面ではなく、どんぐりマークを付けた背面を見せる。
+- `participant`：バドミントンのラケットと本を持って活動に向かう。
+
+いずれもPNG（RGBA）です。正式なUI配置は使用するページのレイアウトに合わせて調整できます。
