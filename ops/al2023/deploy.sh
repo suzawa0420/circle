@@ -12,6 +12,27 @@ case "$mode" in
   prepare)
     previous=$(git rev-parse HEAD)
     git cat-file -e "$revision^{commit}"
+    # Older servers may have hand-edited error pages. Preserve only pages that
+    # this revision replaces, without exposing their contents in Actions logs.
+    dirty_pages=()
+    for page in public/404.html public/422.html public/500.html; do
+      if ! git diff --quiet "$previous" "$revision" -- "$page"; then
+        if ! git diff --quiet -- "$page" || ! git diff --cached --quiet -- "$page"; then
+          dirty_pages+=("$page")
+        fi
+      fi
+    done
+    if ((${#dirty_pages[@]})); then
+      backup_dir=$(mktemp -d "tmp/deploy-local-pages.${revision:0:12}.XXXXXX")
+      git diff --binary HEAD -- "${dirty_pages[@]}" > "$backup_dir/worktree.patch"
+      git diff --cached --binary HEAD -- "${dirty_pages[@]}" > "$backup_dir/index.patch"
+      for page in "${dirty_pages[@]}"; do
+        mkdir -p "$backup_dir/$(dirname "$page")"
+        cp -p -- "$page" "$backup_dir/$page"
+      done
+      git restore --source=HEAD --staged --worktree -- "${dirty_pages[@]}"
+      printf 'Preserved local error-page edits in %s\n' "$backup_dir"
+    fi
     git merge --ff-only "$revision"
     bundle check || bundle install --jobs 1 --retry 2
     if ! git diff --quiet "$previous" "$revision" -- package-lock.json package.json; then
