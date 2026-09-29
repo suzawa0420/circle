@@ -5014,42 +5014,6 @@ li.current_page {
   padding: 20px 10px;
 }
 
-.login_wrap {
-  background-color: #fff;
-  padding: 20px 10px;
-
-  .login_title {
-    display: block;
-    text-align: center;
-    margin: 30px auto 12px;
-    font-size: 20px;
-    color: $cb-text;
-  }
-
-  .login_img {
-    display: block;
-    text-align: center;
-    margin: 0 auto 0;
-    width: 140px;
-    opacity: 0.8;
-  }
-
-  .login_btn {
-    display: block;
-    width: 200px;
-    margin: 6px auto 40px;
-    padding: 10px 0px;
-    border-radius: 7px;
-    text-align: center;
-    background-color: $cb-action;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-}
-
-
 .icon_wrap {
   display: flex;
   flex-wrap: wrap;
@@ -9652,3 +9616,4 @@ trix-toolbar .button_group button.icon {
 @import "organizer_dashboard";
 
 @import "circle_navigation";
+@import "login_choice";
