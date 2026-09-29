@@ -18,19 +18,15 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
   end
 
-  test 'adsense resources are configured without duplicate or unused scripts' do
+  test 'public pages load GTM without direct analytics or AdSense tags' do
     get '/'
     assert_response :success
-    adsense_script = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5024401671855884'
-    assert_equal 1, response.body.scan(adsense_script).size
-    assert_includes response.body, 'data-ad-client="ca-pub-5024401671855884"'
-    assert_not_includes response.body, 'securepubads.g.doubleclick.net/tag/js/gpt.js'
-    assert_not_includes response.body, '/22839798161/test'
-
-    get '/ads.txt'
-    assert_response :success
-    assert_equal 'text/plain', response.media_type
-    assert_equal "google.com, pub-5024401671855884, DIRECT, f08c47fec0942fa0\n", response.body
+    assert_includes response.body, 'GTM-WZ5RS5L'
+    assert_not_includes response.body, '/gtag/js'
+    assert_not_includes response.body, "gtag('config'"
+    assert_not_includes response.body, 'adsbygoogle'
+    assert_not_includes response.body, 'googlesyndication.com'
+    assert_not_includes response.body, 'data-ad-client'
   end
 
   test 'populated circle listings and profile render' do
