@@ -111,12 +111,10 @@ class Circles::BlogsController < Circles::ApplicationController
 
 
   def authorize_blog_write
-    allowed = current_admin_user.master_account? || (
-      @user.admin_user_id == current_admin_user.id &&
-      [nil, 0].include?(current_admin_user.check) &&
-      !current_admin_user.users.exists?(ng_account: 'NG')
-    )
-    render plain: '現在、このサークルのブログは投稿・編集できません。', status: :forbidden unless allowed
+    allowed = current_admin_user.master_account? || @user.admin_user_id == current_admin_user.id
+    allowed &&= [nil, 0].include?(current_admin_user.check) &&
+      !current_admin_user.users.exists?(ng_account: 'NG') if action_name.in?(%w[new create]) && !current_admin_user.master_account?
+    render plain: '現在、このサークルのブログを操作できません。', status: :forbidden unless allowed
   end
 
   def security_blog

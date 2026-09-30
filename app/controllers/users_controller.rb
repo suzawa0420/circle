@@ -2,9 +2,8 @@ class UsersController < ApplicationController
 include ApplicationHelper
 include Circlebook
 
-before_action :authenticate_admin_user!, only: [:new, :create, :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del]
-before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del]
-before_action :require_master_account_for_destroy, only: [:destroy]
+before_action :authenticate_admin_user!, only: [:new, :create, :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
+before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
 before_action :set_users, except: [:show, :new, :create]
 
 helper_method :link_count
@@ -692,13 +691,6 @@ private
 
 		end
 	end
-
-  def require_master_account_for_destroy
-    unless admin_user_signed_in? && current_admin_user.master_account?
-      flash[:notice] = "権限がありません"
-      redirect_to circles_path
-    end
-  end
 
   def set_unique_id
     # id未設定、または、すでに同じunique_idのレコードが存在する場合はループに入る

@@ -2,6 +2,8 @@ class QuestionsController < ApplicationController
 
   include Circlebook
 	before_action :set_user
+	before_action :authenticate_admin_user!, only: [:update, :destroy]
+	before_action :authorize_question_owner, only: [:update, :destroy]
 
 
 	def index
@@ -94,7 +96,7 @@ class QuestionsController < ApplicationController
 	end
 
 	def update
-		@question = Question.find(params[:id])
+		@question = @user.questions.find(params[:id])
 
 		if @question.update(question_params)
 
@@ -109,13 +111,8 @@ class QuestionsController < ApplicationController
 	end
 
 	def show
-		@question = Question.find(params[:id])
+		@question = @user.questions.find(params[:id])
 		@questions = Question.where(user_id: @user.id).order(id: "DESC").page(params[:page])
-
-		if @user.id.to_i != @question.user_id.to_i
-			flash[:notice] = "存在しないURLです"
-			redirect_to "/users"
-		end
 
 		if @user.switch.present?
 		@b5_name = @question.content
@@ -142,8 +139,14 @@ class QuestionsController < ApplicationController
 
 
   private
+	def authorize_question_owner
+		unless current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id
+			render plain: '権限がありません。', status: :forbidden
+		end
+	end
+
 	def set_user
-    @user = User.find_by(id: params[:user_id])
+    @user = User.find(params[:user_id])
 
     @question_first = "活動頻度を教えてください！"
     @question_second = "１人でも参加しやすいですか？"
@@ -166,7 +169,7 @@ class QuestionsController < ApplicationController
     end
 
     def question_params
-      params.require(:question).permit(:id, :content, :answer, :ip_address)
+      params.require(:question).permit(:content, :answer)
     end
 
 
