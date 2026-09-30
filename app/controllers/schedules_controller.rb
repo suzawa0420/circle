@@ -199,13 +199,19 @@ def month
 end
 
 def day
-  @date = "#{params[:year]}-#{params[:month]}-#{params[:day]}"
+  # Reject malformed dates before Time.parse can raise a server error or normalize them.
+  parts = params.values_at(:year, :month, :day)
+  unless parts.all? { |part| part.to_s.match?(/\A[0-9]+\z/) } &&
+         Date.valid_date?(*parts.map(&:to_i))
+    raise ActiveRecord::RecordNotFound
+  end
+  @date = Date.new(*parts.map(&:to_i)).iso8601
   @day = Time.parse(@date).strftime("%Y年%-m月%-d日(#{@wdays[Time.parse(@date).wday]})")
   @categories = Category.all.order(:id => :asc)
   @events = Event.all.order(:order => :asc)
   @prefectures = Prefecture.all.order(:order => :asc)
-  @event = Event.find_by(ruby: params[:event])
-  @prefecture = Prefecture.find_by(kana: params[:pref])
+  @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
+  @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
 
   if params[:event].present? && params[:pref].present?
     @users = User.event(@event.id).prefecture(@prefecture.id)

@@ -27,7 +27,7 @@ class CategoriesController < ApplicationController
   #noindex
   def prefecture
     @categories = Category.all.order(:order => :asc)
-    @prefecture = Prefecture.find_by(kana: params[:kana])
+    @prefecture = Prefecture.find_by!(kana: params[:kana])
     @users = User.prefecture(@prefecture.id).or(User.prefecture_sub(@prefecture.id)).or(User.prefecture_50).publicly_visible.pref.user_sort_1.page(params[:page])
 
 		# パンくず
@@ -38,7 +38,7 @@ class CategoriesController < ApplicationController
   end
 
   def category
-    @category = Category.find_by(kana: params[:kana])
+    @category = Category.find_by!(kana: params[:kana])
     @events = Event.where(category_id: @category.id).order(:order => :asc)
     @prefectures = Prefecture.all.order(:order => :asc)
     @users = User.event(@events).publicly_visible.pref.user_sort_1.page(params[:page])
@@ -51,9 +51,9 @@ class CategoriesController < ApplicationController
   end
 
   def category_prefecture
-    @category = Category.find_by(kana: params[:kana])
+    @category = Category.find_by!(kana: params[:kana])
     @events = Event.where(category_id: @category.id).order(:order => :asc)
-    @prefecture = Prefecture.find_by(kana: params[:p_kana])
+    @prefecture = Prefecture.find_by!(kana: params[:p_kana])
     @users = User.prefecture(@prefecture.id).or(User.prefecture_sub(@prefecture.id)).or(User.prefecture_50).event(@events).publicly_visible.pref.user_sort_1.page(params[:page])
 
 		# パンくず

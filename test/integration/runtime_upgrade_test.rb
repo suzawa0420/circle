@@ -49,6 +49,11 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
       assert_response :success, "#{path}: #{response.status}"
     end
 
+    %W[/users/#{circle.id}/questions /users/#{circle.id}/question?sample=first].each do |path|
+      get path
+      assert_response :success
+    end
+
     get circle_path(circle)
     assert_response :success
     assert_select '.breadcrumbs_wrapper', count: 1

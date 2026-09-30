@@ -287,3 +287,33 @@ using production accounts or modifying production data. Redeploy on detached
 server4, rerun private page/origin/asset checks, and restart the full 15-minute
 canary before removing server3. The user authorized subsequent deploy/fix/rollback
 steps for this chat on 2026-09-26; no repeated deploy approval is required.
+
+### AdSense review diagnostics (2026-10-01)
+
+Access logs now use escaped JSON and retain the timestamp, path (without query),
+Host, status, upstream status, duration, User-Agent, CF-Ray, trusted CF client IP,
+and the origin guard decisions. Client IP is retained only for a request which
+passed the private-LB + Cloudflare-hop + Host checks. A User-Agent alone does not
+prove a Google crawler; verify crawler addresses by Google's reverse/forward DNS
+procedure or published crawler IP ranges. Do not paste full logs into tickets.
+
+The application returns 404 for unknown event/category/prefecture records and
+invalid calendar dates. Missing question owners were already changed to 404 in
+`80e7db99c`; the public page regression tests cover this as well.
+
+Nginx configuration is installed separately from the application deploy. On each
+server, after the tested revision has been deployed, back up `/etc/nginx/nginx.conf`,
+install `ops/al2023/nginx.conf` with root ownership and mode 0644, run `nginx -t`,
+and reload only if that check passes. Keep the origin guard include unchanged.
+If the check or reload fails, restore the backup and validate before reloading.
+The application can be reverted with a revert commit and the normal rolling
+workflow; do not undo the existing DB moderation migrations.
+
+On or after 2026-10-07, confirm the review restriction has expired and that the
+public homepage, robots.txt and AdSense snippet remain reachable, then request
+review once. Record its time in JST and UTC. Correlate both servers' JSON logs
+for `Google-Display-Ads-Bot` and `Mediapartners-Google`, paying attention to 403,
+5xx, origin_deny, upstream_status, and CF-Ray. Match failures to Cloudflare events
+and Puma's journal in the same time range. Existing logs without timestamps or
+User-Agent cannot identify the crawler retrospectively. A successful local UA
+probe is insufficient to establish Google's actual access.

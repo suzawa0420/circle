@@ -1,5 +1,6 @@
 """Exercise the production guard using a loopback-only, synthetic Nginx server."""
 import http.client
+import json
 import pathlib
 import re
 import socket
@@ -32,11 +33,16 @@ cases = [
 with tempfile.TemporaryDirectory(prefix='circle-nginx-test-') as directory:
     d = pathlib.Path(directory)
     config = d / 'nginx.conf'
+    production = (root / 'ops/al2023/nginx.conf').read_text()
+    log_format = production.split('    log_format circle escape=json', 1)[1].split(';', 1)[0]
+    log_format = 'log_format circle escape=json' + log_format + ';'
     config.write_text(f'''pid {d}/nginx.pid;
 error_log {d}/error.log;
 events {{ worker_connections 32; }}
 http {{
- access_log off;
+ {log_format}
+ access_log {d}/access.log circle;
+ map $circle_cf_allowed $circle_log_cf_client {{ default ""; 1 $http_cf_connecting_ip; }}
  client_body_temp_path {d}/client_body;
  proxy_temp_path {d}/proxy;
  fastcgi_temp_path {d}/fastcgi;
@@ -65,7 +71,7 @@ http {{
                 pass
             time.sleep(.1)
         for name, peer, path, method, xff, host, expected in cases:
-            headers = {'Host': host, 'X-Circle-Test-Peer': peer}
+            headers = {'Host': host, 'X-Circle-Test-Peer': peer, 'User-Agent': 'Google-Display-Ads-Bot \"test\"', 'CF-Ray': 'synthetic-ray', 'CF-Connecting-IP': '203.0.113.2'}
             if xff is not None:
                 headers['X-Forwarded-For'] = xff
             connection = http.client.HTTPConnection('127.0.0.1', 35441, timeout=3)
@@ -74,6 +80,17 @@ http {{
             assert response.status == expected, f'{name}: {response.status} != {expected}'
             response.read()
             connection.close()
+        records = [json.loads(line) for line in (d / 'access.log').read_text().splitlines()]
+        assert len(records) == len(cases)
+        for record, case in zip(records, cases):
+            assert record['status'] == case[-1]
+            assert record['path'] == case[2].split('?')[0]
+            assert record['origin_deny'] == ('1' if case[-1] == 403 else '0')
+            assert record['ua'] == 'Google-Display-Ads-Bot "test"'
+            assert record['cf_ray'] == 'synthetic-ray'
+            assert record['time']
+            assert 'x=1' not in json.dumps(record)
+            assert record['cf_client'] == ('203.0.113.2' if record['private_peer'] == '1' and record['cf_hop'] == '1' and record['host_ok'] == '1' else '')
         print(f'ORIGIN_GUARD_TESTS_OK cases={len(cases)}')
     finally:
         process.terminate()

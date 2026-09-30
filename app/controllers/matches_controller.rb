@@ -56,7 +56,7 @@ before_action :set_matches
 	def show
 		@user = User.includes(:event, :prefecture, :prefecture_sub).find(params[:id])
 		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
-		@match = Match.find_by(user_id: @user.id)
+		@match = Match.find_by!(user_id: @user.id)
 		@event = @user.event
 		@prefecture = @user.prefecture
 		@sub_prefecture = @user.prefecture_sub
@@ -96,7 +96,7 @@ before_action :set_matches
 
 
 	def event
-		@event = Event.find_by(ruby: params[:ruby])
+		@event = Event.find_by!(ruby: params[:ruby])
 		user_ids = User.where(event_id: @event.id).select(:id)
 
 		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
@@ -107,7 +107,7 @@ before_action :set_matches
 	end
 
 	def prefecture
-		@prefecture = Prefecture.find_by(kana: params[:kana])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		user_ids = User.where(prefecture_id: @prefecture.id).select(:id)
 		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
 
@@ -117,8 +117,8 @@ before_action :set_matches
 	end
 
 	def event_prefecture
-		@event = Event.find_by(ruby: params[:ruby])
-		@prefecture = Prefecture.find_by(kana: params[:kana])
+		@event = Event.find_by!(ruby: params[:ruby])
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		user_ids = User.where(event_id: @event.id, prefecture_id: @prefecture.id).select(:id)
 		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
 
