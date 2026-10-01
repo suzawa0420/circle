@@ -34,6 +34,19 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'AdMax has one public placement and does not run on account forms or policy pages' do
+    get '/'
+    assert_response :success
+    assert_select '.admax-switch[data-admax-id="8c416c3bb0ba1614046f01a5e3f43ca0"]', count: 1
+    assert_select 'script[src="https://adm.shinobi.jp/st/t.js"][async]', count: 1
+    assert_select 'meta[name="turbolinks-visit-control"][content="reload"]', count: 1
+    %w[/admin_users/sign_in /admin_users/sign_up /privacypolicy].each do |path|
+      get path
+      assert_response :success
+      assert_select '.admax-switch', count: 0
+    end
+  end
+
   test 'populated circle listings and profile render' do
     category = Category.create!(name: '球技', kana: 'ball-sports', order: '1')
     event = Event.create!(name: 'バスケ', ruby: 'basketball', category: category, order: '1')

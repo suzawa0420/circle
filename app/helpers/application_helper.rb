@@ -1,5 +1,11 @@
 module ApplicationHelper
 
+  def admax_public_page?
+    public_controller = %w[home categories matches schedules questions tags events prefectures places columns].include?(controller_path) ||
+                        controller_path.start_with?('circles/', 'blogs/')
+    public_controller && %w[index show dates day event prefecture event_prefecture category category_prefecture].include?(action_name)
+  end
+
   def default_meta_tags
       {
         site: "サークルブック",
