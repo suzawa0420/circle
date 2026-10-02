@@ -7,27 +7,27 @@
           - if i == 0
             = link_to "/dates/#{Time.parse(@date).since(i.days).strftime("%Y/%m/%d")}" do
               %li.c_selected
-                = Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
+                %span= Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
                 %br/
-                = Time.parse(@date).since(i.days).strftime("%-d")
+                %span= Time.parse(@date).since(i.days).strftime("%-d")
           - elsif Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}") == "土"
             = link_to "/dates/#{Time.parse(@date).since(i.days).strftime("%Y/%m/%d")}" do
               %li.c_sat
-                = Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
+                %span= Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
                 %br/
-                = Time.parse(@date).since(i.days).strftime("%-d")
+                %span= Time.parse(@date).since(i.days).strftime("%-d")
           - elsif Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}") == "日"
             = link_to "/dates/#{Time.parse(@date).since(i.days).strftime("%Y/%m/%d")}" do
               %li.c_sun
-                = Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
+                %span= Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
                 %br/
-                = Time.parse(@date).since(i.days).strftime("%-d")
+                %span= Time.parse(@date).since(i.days).strftime("%-d")
           - else
             = link_to "/dates/#{Time.parse(@date).since(i.days).strftime("%Y/%m/%d")}" do
               %li
-                = Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
+                %span= Time.parse(@date).since(i.days).strftime("#{@wdays[Time.parse(@date).since(i.days).wday]}")
                 %br/
-                = Time.parse(@date).since(i.days).strftime("%-d")
+                %span= Time.parse(@date).since(i.days).strftime("%-d")
     .search_select
       %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         - if params[:event].present?
@@ -61,18 +61,18 @@
         - if Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}") == "土"
           = link_to "/dates/#{Time.zone.now.since(i.days).strftime("%Y/%m/%d")}" do
             %li.c_sat
-              = Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}")
+              %span= Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}")
               %br/
-              = Time.zone.now.since(i.days).strftime("%-d")
+              %span= Time.zone.now.since(i.days).strftime("%-d")
         - elsif Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}") == "日"
           = link_to "/dates/#{Time.zone.now.since(i.days).strftime("%Y/%m/%d")}" do
             %li.c_sun
-              = Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}")
+              %span= Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}")
               %br/
-              = Time.zone.now.since(i.days).strftime("%-d")
+              %span= Time.zone.now.since(i.days).strftime("%-d")
         - else
           = link_to "/dates/#{Time.zone.now.since(i.days).strftime("%Y/%m/%d")}" do
             %li
-              = Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}")
+              %span= Time.zone.now.since(i.days).strftime("#{@wdays[Time.zone.now.since(i.days).wday]}")
               %br/
-              = Time.zone.now.since(i.days).strftime("%-d")
+              %span= Time.zone.now.since(i.days).strftime("%-d")

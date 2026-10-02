@@ -70,7 +70,13 @@
   .date_list_wrap { max-width: 100%; }
   .date_list_wrap > ul { display: flex; gap: cb-space(2); overflow-x: auto; padding-bottom: cb-space(2); }
   .date_list_wrap > ul > a { flex: 0 0 auto; }
-  .date_list_wrap li { min-width: $cb-touch-height; min-height: $cb-control-height; margin: 0; border-radius: $cb-radius-control; }
+  .date_list_wrap li {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: cb-space(1); min-width: $cb-touch-height; height: 64px; min-height: 64px;
+    padding: cb-space(2); margin: 0; border-radius: $cb-radius-control;
+    font-size: 16px; line-height: 1.25;
+  }
+  .date_list_wrap li br { display: none; }
   .tab_list { display: flex; width: 100%; gap: cb-space(2); margin: 0 0 cb-space(5); padding: cb-space(1); border: 1px solid $cb-border; border-radius: $cb-radius-control; background: $cb-surface; }
   .tab_list > a, .tab_list > li { flex: 1; min-width: 0; }
   .tab_list .list_item { width: 100%; float: none; border: 0; border-radius: $cb-radius-control; min-height: $cb-touch-height; display: flex; justify-content: center; align-items: center; font-size: 14px; margin: 0; }
