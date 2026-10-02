@@ -42,7 +42,42 @@
 }
 
 .mobile-circle-summary__heading {
+  flex: 1;
   min-width: 0;
+}
+
+.mobile-circle-summary__bookmark {
+  flex: none;
+  margin-left: auto;
+}
+
+.mobile-circle-save {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 56px;
+  min-height: 48px;
+  padding: 5px 8px;
+  border: 1px solid $cb-border;
+  border-radius: 8px;
+  background: $cb-surface;
+  color: $cb-action-hover;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  .fa { font-size: 20px; }
+
+  &.is-saved,
+  &:hover,
+  &:focus-visible {
+    border-color: $cb-action;
+    background: $cb-mint-soft;
+    color: $cb-action-hover;
+  }
 }
 
 .mobile-circle-summary__heading h2 {

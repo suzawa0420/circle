@@ -4,7 +4,7 @@
     .login-choice__intro
       %p.login-choice__eyebrow サークルブックへようこそ
       %h1 ログイン
-      %p ご利用方法に合わせて、ログイン先をお選びください。
+      %p サークルブックは、主催者も参加者も全員完全無料で使えるサイトです。
     .login-choice__cards
       %section.login-choice__card{ "aria-labelledby" => "organizer-login-title" }
         .login-choice__art
@@ -13,8 +13,9 @@
           %p.login-choice__role サークルを運営する方
           %h2#organizer-login-title サークル主催者
           %p.login-choice__description 活動予定の管理や、参加希望者とのやり取りはこちらから。
-          = link_to "主催者としてログイン", new_admin_user_session_path, class: "login-choice__button"
-          %p.login-choice__signup= link_to "初めての方はこちら（主催者の新規登録）", new_admin_user_registration_path
+          .login-choice__actions
+            = link_to "主催者ログイン", new_admin_user_session_path, class: "login-choice__button"
+            = link_to "無料で新規登録", new_admin_user_registration_path, class: "login-choice__button login-choice__button--signup", "aria-label" => "主催者として無料で新規登録"
       %section.login-choice__card{ "aria-labelledby" => "participant-login-title" }
         .login-choice__art
           %img{ src: "/images/mascot/squirrel-participant.png", alt: "本とラケットを持って活動するリス", width: 220, height: 220 }
@@ -22,5 +23,6 @@
           %p.login-choice__role サークルに参加する方
           %h2#participant-login-title サークル参加者
           %p.login-choice__description 気になるサークルへの参加や、活動の確認はこちらから。
-          = link_to "参加者としてログイン", new_member_session_path, class: "login-choice__button"
-          %p.login-choice__signup= link_to "初めての方はこちら（参加者の新規登録）", new_member_registration_path
+          .login-choice__actions
+            = link_to "参加者ログイン", new_member_session_path, class: "login-choice__button"
+            = link_to "無料で新規登録", new_member_registration_path, class: "login-choice__button login-choice__button--signup", "aria-label" => "参加者として無料で新規登録"

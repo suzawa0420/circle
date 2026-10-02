@@ -111,7 +111,7 @@ class ConversationsController < ApplicationController
     return if member_signed_in? || admin_user_signed_in?
     store_location_for(:member, request.fullpath) if request.get?
     if %w[new create].include?(action_name)
-      redirect_to new_member_session_path, alert: 'お問い合わせにはログインが必要です。'
+      redirect_to new_member_registration_path, alert: 'お問い合わせには無料の参加者登録が必要です。'
     else
       store_location_for(:admin_user, request.fullpath) if request.get?
       redirect_to login_path, alert: 'メッセージを確認するにはログインしてください。'
@@ -129,7 +129,7 @@ class ConversationsController < ApplicationController
       return
     end
     unless member_signed_in?
-      return redirect_to new_member_session_path, alert: '参加者アカウントでログインしてください。'
+      return redirect_to new_member_registration_path, alert: '無料の参加者登録をしてご利用ください。'
     end
     unless current_member.email_verified?
       store_location_for(:member, @conversation ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id]))

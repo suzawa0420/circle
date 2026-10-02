@@ -97,10 +97,16 @@
   line-height: 1.8;
 }
 
+.login-choice__actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
 .login-choice__button {
   display: block;
-  margin-top: 24px;
   padding: 13px 18px;
+  border: 1px solid $cb-action;
   border-radius: 9px;
   background: $cb-action;
   color: $cb-surface;
@@ -114,6 +120,17 @@
     background: $cb-action-hover;
     color: $cb-surface;
     opacity: 1;
+  }
+}
+
+.login-choice__button--signup {
+  background: $cb-surface;
+  color: $cb-action-hover;
+
+  &:hover,
+  &:focus {
+    background: $cb-mint-soft;
+    color: $cb-action-hover;
   }
 }
 
@@ -167,8 +184,11 @@
     font-size: 13px;
   }
 
-  .login-choice__button {
+  .login-choice__actions {
     margin-top: 16px;
+  }
+
+  .login-choice__button {
     padding: 11px 9px;
     font-size: 13px;
   }

@@ -78,19 +78,7 @@
               = link_to edit_user_path(@user), data: {"turbolinks" => false} do
                 .contact-button.edit プロフィール編集
           - else
-            - if @user.bookmarked_by?(current_member)
-              .bookmark_btn_wrap
-                = link_to user_bookmarks_path(@user), id: :"bookmark_b_d_#{@user.id}", :remote => true, method: :delete do
-                  %span.bookmark_icon
-                    %i.fa.fa-bookmark
-                    .booknark_txt 解除
-
-            - else
-              .bookmark_btn_wrap
-                = link_to user_bookmarks_path(@user), id: :"bookmark_b_c_#{@user.id}", :remote => true, method: :post do
-                  %span.bookmark_icon
-                    %i.fa.fa-bookmark-o
-                    .booknark_txt 保存
+            = render 'bookmarks/bookmark_area', user: @user
 
 
       .profile-content

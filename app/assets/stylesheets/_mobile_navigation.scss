@@ -122,6 +122,26 @@
     line-height: 1;
   }
 
+  .mobile-bottom-nav__icon {
+    display: inline-flex;
+    position: relative;
+  }
+
+  .mobile-bottom-nav__badge {
+    position: absolute;
+    top: -8px;
+    left: 14px;
+    min-width: 18px;
+    padding: 2px 5px;
+    border: 2px solid $cb-surface;
+    border-radius: 12px;
+    background: $brand-danger;
+    color: $cb-surface;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
   .mobile-bottom-nav__item--register,
   .mobile-bottom-nav__item.is-active {
     color: $cb-action;

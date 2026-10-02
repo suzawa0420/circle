@@ -32,6 +32,8 @@ class MemberEmailVerificationsController < ApplicationController
       return redirect_to member_email_verification_path, alert: 'リンクが無効または期限切れです。確認メールを再送してください。'
     end
     current_member.update!(email_verified_at: Time.current)
-    redirect_to stored_location_for(:member) || conversations_path, notice: 'メールアドレスを確認しました。'
+    # Clear the previous destination so a later login cannot return to it.
+    stored_location_for(:member)
+    redirect_to member_path(current_member), notice: 'メールアドレスを確認しました。'
   end
 end

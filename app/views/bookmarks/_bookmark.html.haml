@@ -1,4 +1,6 @@
-= link_to user_bookmarks_path(@user), id: :"bookmark_b_c_#{@user.id}", :remote => true, method: :post do
+- path = member_signed_in? ? user_bookmarks_path(@user) : new_member_registration_path
+- options = member_signed_in? ? { remote: true, method: :post } : {}
+= link_to path, **options, id: :"bookmark_b_c_#{@user.id}" do
   %span.bookmark_icon
     %i.fa.fa-bookmark-o
     .booknark_txt 保存

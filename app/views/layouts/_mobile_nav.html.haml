@@ -1,17 +1,28 @@
 %nav.mobile-bottom-nav{ "aria-label" => "サイトのメインメニュー" }
-  = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
-    %i.fa.fa-search{ "aria-hidden" => "true" }
-    %span サークル
-
-  = link_to blogs_path, class: "mobile-bottom-nav__item" do
-    %i.fa.fa-book{ "aria-hidden" => "true" }
-    %span 活動ブログ
-  = link_to matches_path, class: "mobile-bottom-nav__item" do
-    %i.fa.fa-users{ "aria-hidden" => "true" }
-    %span 対戦相手
-  = link_to "/places", class: "mobile-bottom-nav__item" do
-    %i.fa.fa-map-marker{ "aria-hidden" => "true" }
-    %span コート情報
+  - if admin_user_signed_in?
+    - circle = mobile_navigation_circle
+    = render "layouts/mobile_message_link"
+    = link_to circle ? user_schedules_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'schedules'}" do
+      %i.fa.fa-calendar{ "aria-hidden" => "true" }
+      %span スケジュール
+    = link_to circle ? new_circle_blog_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'circles/blogs'}" do
+      %i.fa.fa-book{ "aria-hidden" => "true" }
+      %span ブログ
+  - elsif member_signed_in?
+    = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
+      %i.fa.fa-search{ "aria-hidden" => "true" }
+      %span サークル検索
+    = render "layouts/mobile_message_link"
+    = link_to member_path(current_member, anchor: "favorites"), class: "mobile-bottom-nav__item" do
+      %i.fa.fa-bookmark{ "aria-hidden" => "true" }
+      %span お気に入り
+  - else
+    = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
+      %i.fa.fa-search{ "aria-hidden" => "true" }
+      %span サークル検索
+    = link_to login_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
+      %i.fa.fa-user-plus{ "aria-hidden" => "true" }
+      %span 無料登録・ログイン
 
   %button.mobile-bottom-nav__item.mobile-menu-trigger{ type: "button", "aria-controls" => "mobile-menu-dialog", "aria-haspopup" => "dialog", "aria-expanded" => "false" }
     %i.fa.fa-bars{ "aria-hidden" => "true" }

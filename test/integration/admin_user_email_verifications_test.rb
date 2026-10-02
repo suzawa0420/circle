@@ -46,6 +46,7 @@ class AdminUserEmailVerificationsTest < ActionDispatch::IntegrationTest
     assert_nil @owner.reload.email_verified_at
     patch admin_user_email_verification_path, params: { token: token }
     assert @owner.reload.email_verified?
+    assert_redirected_to "/users/#{@circle.id}/mypage"
     post message_conversation_path(@conversation), params: { message: { body: '認証後に初回返信しました。' } }
     assert_redirected_to conversation_path(@conversation)
     assert @conversation.reload.accepted_at

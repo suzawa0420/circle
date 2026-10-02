@@ -146,14 +146,14 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
   end
 
-  test 'anonymous member profile requests require sign in before accessing the member' do
+  test 'anonymous member profile requests require registration before accessing the member' do
     %w[/members/987654321 /members/987654321/edit].each do |path|
       get path
-      assert_redirected_to new_member_session_path
+      assert_redirected_to new_member_registration_path
     end
     assert_no_difference('Member.count') do
       patch '/members/987654321', params: { member: { nickname: 'unauthorized' } }
-      assert_redirected_to new_member_session_path
+      assert_redirected_to new_member_registration_path
     end
   end
 

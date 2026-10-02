@@ -42,7 +42,10 @@ class AdminUserEmailVerificationsController < ApplicationController
     unless verified
       return redirect_to admin_user_email_verification_path, alert: 'リンクが無効または期限切れです。確認メールを再送してください。'
     end
-    destination = stored_location_for(:admin_user) || (current_admin_user.users.exists? ? conversations_path : new_user_path)
+    # Clear the previous destination so a later login cannot return to it.
+    stored_location_for(:admin_user)
+    circle = current_admin_user.users.first
+    destination = circle ? "/users/#{circle.id}/mypage" : new_user_path
     redirect_to destination, notice: 'メールアドレスを確認しました。'
   end
 end

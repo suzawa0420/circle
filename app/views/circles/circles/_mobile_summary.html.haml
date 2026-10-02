@@ -17,6 +17,8 @@
         = @user.prefecture.name
         %span ・
         = @user.event.name
+    .mobile-circle-summary__bookmark{ id: "mobile-circle-bookmark-#{@user.id}" }
+      = render "bookmarks/mobile_button", user: @user
   %nav.mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
     = render "circles/circles/mobile_tab", path: circle_path(@user), label: "詳細", icon: "info-circle", current: active_tab == :details, disabled: false
     = render "circles/circles/mobile_tab", path: user_schedules_path(@user), label: "活動日", icon: "calendar", current: active_tab == :schedules, disabled: !owns_circle && !@user.schedules.exists?

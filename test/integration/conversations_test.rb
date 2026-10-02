@@ -35,11 +35,11 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_select '.chat-talk:first-child .chat-talk__preview', text: '別の参加者の非公開メッセージ'
   end
 
-  test 'anonymous old contact entry leads to login and old anonymous review creation is disabled' do
+  test 'anonymous old contact entry leads to registration and old anonymous review creation is disabled' do
     get new_user_user_contact_path(@circle)
     assert_redirected_to new_user_conversation_path(@circle)
     follow_redirect!
-    assert_redirected_to new_member_session_path
+    assert_redirected_to new_member_registration_path
     post user_reviews_path(@circle), params: { review: { review: 1, comment: '未登録で投稿します。' } }
     assert_response :forbidden
     assert_empty @circle.reviews
@@ -130,6 +130,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_nil @member.reload.email_verified_at
     patch member_email_verification_path, params: { token: token }
     assert @member.reload.email_verified?
+    assert_redirected_to member_path(@member)
     sign_out @member
     sign_in @other_member
     @other_member.update!(email_verified_at: nil)
@@ -289,9 +290,9 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'registration retains the inquiry destination and starts with unverified email' do
+  test 'registration starts unverified and confirmation leads to participant mypage' do
     get new_user_conversation_path(@circle)
-    assert_redirected_to new_member_session_path
+    assert_redirected_to new_member_registration_path
     get new_member_registration_path
     assert_response :success
     token = Nokogiri::HTML(response.body).at_css('input[name="spam_form_token"]')['value']
@@ -308,7 +309,21 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     member = Member.find_by!(email: 'new-chat-account@example.test')
     assert_not member.email_verified?
     patch member_email_verification_path, params: { token: member.signed_id(purpose: member.email_verification_purpose, expires_in: 24.hours) }
-    assert_redirected_to new_user_conversation_path(@circle)
+    assert_redirected_to member_path(member)
+  end
+
+  test 'empty inbox gives role appropriate guidance' do
+    @conversation.destroy!
+    sign_in @member
+    get conversations_path
+    assert_select '.chat-card', text: /気になるサークルに問い合わせると/
+    assert_select ".chat-card a[href='#{circles_path}']", text: 'サークルを探す'
+    sign_out @member
+    sign_in @owner
+    get conversations_path
+    assert_select '.chat-card', text: /参加希望者からのお問い合わせが届くと/
+    assert_select ".chat-card a[href='/users/#{@circle.id}/mypage']", text: 'マイページへ戻る'
+    assert_not_includes response.body, '気になるサークルに問い合わせると'
   end
 
 

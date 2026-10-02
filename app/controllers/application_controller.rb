@@ -21,6 +21,13 @@ class ApplicationController < ActionController::Base
     authenticate_admin_user! unless webmaster?
   end
 
+  def authenticate_member!(options = {})
+    return super(options) if member_signed_in?
+
+    store_location_for(:member, request.fullpath) if request.get?
+    redirect_to new_member_registration_path, alert: '無料の参加者登録をしてご利用ください。'
+  end
+
   def account_layout
     (controller_path == "columns" && webmaster?) || controller_path.start_with?("webmasters/", "super_admin/") || %w[account_blocks invalid_emails db_validation_errors db_searches].include?(controller_path) || (controller_path == "db_keywords" && !%w[keyword kw].include?(action_name)) ? "webmaster" : "application"
   end

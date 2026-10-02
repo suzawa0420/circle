@@ -1,0 +1,7 @@
+- unread = mobile_navigation_unread_count
+= link_to conversations_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'conversations'}", "aria-label" => unread.positive? ? "メッセージ（未読#{unread}件）" : "メッセージ（未読なし）" do
+  %span.mobile-bottom-nav__icon
+    %i.fa.fa-comment{ "aria-hidden" => "true" }
+    - if unread.positive?
+      %span.mobile-bottom-nav__badge{ "aria-hidden" => "true" }= unread > 99 ? "99+" : unread
+  %span メッセージ

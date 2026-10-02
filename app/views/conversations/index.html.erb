@@ -1,7 +1,18 @@
 <main class="chat-shell chat-inbox">
   <h1>メッセージ</h1>
-  <p class="chat-muted">サークルへの問い合わせ・参加の相談</p>
-  <% if @conversations.empty? %><p class="chat-card">メッセージはまだありません。気になるサークルから問い合わせてみましょう。</p><% end %>
+  <p class="chat-muted"><%= member_signed_in? ? 'サークルへの問い合わせ・参加の相談' : '参加希望者からのお問い合わせ・メッセージ' %></p>
+  <% if @conversations.empty? %>
+    <div class="chat-card">
+      <% if member_signed_in? %>
+        <p>メッセージはまだありません。気になるサークルに問い合わせると、ここでやり取りできます。</p>
+        <%= link_to 'サークルを探す', circles_path %>
+      <% else %>
+        <p>参加希望者からのお問い合わせが届くと、ここに表示されます。</p>
+        <% circle = current_admin_user.users.first %>
+        <%= link_to 'マイページへ戻る', circle ? "/users/#{circle.id}/mypage" : new_user_path %>
+      <% end %>
+    </div>
+  <% end %>
   <div class="chat-talk-list">
     <% @conversations.each do |conversation| %>
       <% role = member_signed_in? && conversation.member_id == current_member.id ? 'member' : 'owner' %>
