@@ -58,11 +58,10 @@
       - elsif admin_user_signed_in?
         = link_to "サークルを登録", new_user_path
       - else
-        = render "layouts/account_access", in_menu: true
-    .mobile-menu-panel__group
+        = render "layouts/mobile_account_access"
+    .mobile-menu-panel__group.mobile-menu-panel__group--support
       %strong サポート
       = link_to "よくある質問", faq_path
-      = link_to "運営に問い合わせ", "https://x.com/circlebook03", target: "_blank", rel: "noopener noreferrer"
     - if webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?
       .mobile-menu-panel__logout
         - if webmaster?

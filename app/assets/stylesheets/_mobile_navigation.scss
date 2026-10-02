@@ -248,6 +248,10 @@
     font-weight: 700;
   }
 
+  .mobile-menu-panel__group--support {
+    grid-template-columns: 1fr;
+  }
+
   .mobile-menu-panel__group a {
     display: flex;
     align-items: center;
@@ -277,6 +281,53 @@
 
   .mobile-menu-panel__logout {
     margin-top: 16px;
+  }
+
+  .mobile-menu-accounts {
+    grid-column: 1 / -1;
+  }
+
+  .mobile-menu-account {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+
+    + .mobile-menu-account { border-top: 1px solid $cb-border; }
+    > img { flex: none; width: 60px; height: 60px; object-fit: contain; }
+    h3 { margin: 0 0 8px; color: $cb-text; font-size: 14px; font-weight: 700; }
+  }
+
+  .mobile-menu-account__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mobile-menu-account__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+
+    a {
+      justify-content: center;
+      min-height: 44px;
+      padding: 8px 4px;
+      border: 0;
+      border-radius: 8px;
+      background: $cb-canvas;
+      color: $cb-action-hover;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a.mobile-menu-account__register {
+      background: $cb-action;
+      color: $cb-surface;
+
+      &:hover,
+      &:focus-visible { background: $cb-action-hover; color: $cb-surface; }
+    }
   }
 
   .mobile-menu-panel__logout form {

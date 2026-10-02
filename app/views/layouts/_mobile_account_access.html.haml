@@ -1,0 +1,15 @@
+%nav.mobile-menu-accounts{ "aria-label" => "利用者別の無料登録・ログイン" }
+  .mobile-menu-account
+    %img{ src: "/images/mascot/squirrel-organizer.png", width: 60, height: 60, alt: "", "aria-hidden" => "true" }
+    .mobile-menu-account__content
+      %h3 サークル主催者
+      .mobile-menu-account__links
+        = link_to "無料登録", new_admin_user_registration_path, class: "mobile-menu-account__register", "aria-label" => "サークル主催者の無料登録"
+        = link_to "ログイン", new_admin_user_session_path, "aria-label" => "サークル主催者のログイン"
+  .mobile-menu-account
+    %img{ src: "/images/mascot/squirrel-participant.png", width: 60, height: 60, alt: "", "aria-hidden" => "true" }
+    .mobile-menu-account__content
+      %h3 サークル参加者
+      .mobile-menu-account__links
+        = link_to "無料登録", new_member_registration_path, class: "mobile-menu-account__register", "aria-label" => "サークル参加者の無料登録"
+        = link_to "ログイン", new_member_session_path, "aria-label" => "サークル参加者のログイン"
