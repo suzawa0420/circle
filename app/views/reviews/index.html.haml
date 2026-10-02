@@ -8,6 +8,11 @@
       .reset
       %hr/
       %p 口コミは、サイト内で問い合わせて主催者から返信を受けた方が投稿できます。
+      - if can_manage_circle?(@user)
+        %section#review-request.well
+          %strong 参加者に口コミを依頼する
+          %p 参加した方とのメッセージで、活動の感想を口コミに投稿してもらえるようお願いしましょう。参加者はメッセージ画面の「口コミを投稿する」から投稿できます。
+          = link_to "メッセージを開く", conversations_path
       - if @conversation
         %p= link_to "メッセージ・相互評価へ", conversation_path(@conversation, anchor: 'evaluation')
       - elsif !admin_user_signed_in?

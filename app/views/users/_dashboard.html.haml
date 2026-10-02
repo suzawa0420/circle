@@ -1,6 +1,4 @@
 = link_to "サイト内メッセージを確認する", conversations_path
-- contact_count = @user_contacts.count
-- schedule_count = @schedules.count
 - unanswered_count = @questions_current_nil.count
 - can_add_circle = @ng_accounts.count == 0 && @admin_user.users.count < 5 && (@admin_user.check.blank? || @admin_user.check == 0)
 .dashboard-heading
@@ -64,22 +62,7 @@
     = link_to "お問い合わせを確認する →", "/users/#{@user.id}/contact_list"
 = render "/users/alert"
 
-.dashboard-stats{ "aria-label" => "サークルの管理状況" }
-  .dashboard-stat
-    %span お問い合わせ
-    %strong
-      = contact_count
-      %small 件
-  .dashboard-stat
-    %span 今後の活動
-    %strong
-      = schedule_count
-      %small 件
-  .dashboard-stat
-    %span 未回答の質問
-    %strong
-      = unanswered_count
-      %small 件
+= render "users/level_card", user: @user
 
 %section.dashboard-section
   .dashboard-section__heading

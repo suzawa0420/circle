@@ -1,0 +1,36 @@
+- status = circle_level_status(user)
+%section.dashboard-level{ "aria-labelledby" => "circle-level-title" }
+  .dashboard-level__heading
+    %h2#circle-level-title サークルレベル
+    - if status[:maximum]
+      %span.dashboard-level__badge MAX
+    - else
+      %span.dashboard-level__limit 上限 Lv.100
+  .dashboard-level__value
+    %span Lv.
+    %strong= status[:level]
+  - if status[:maximum]
+    %p.dashboard-level__message 最高レベルに到達しました！
+  - else
+    %p.dashboard-level__message
+      次のレベルまで
+      %strong= "あと#{format('%.1f', status[:remaining])}"
+  %progress.dashboard-level__progress{ max: 100, value: status[:progress], "aria-label" => status[:maximum] ? "最高レベル達成" : "次のレベルへの進捗" }
+    = "#{status[:progress]}%"
+  %p.dashboard-level__description
+    - if status[:maximum]
+      ブログや活動予定を更新して、サークルの今を伝えましょう。
+    - else
+      ブログや活動予定の投稿、質問への回答、参加者からの高評価の口コミでレベルアップ。
+  .dashboard-level__actions
+    = link_to "ブログを書く", new_circle_blog_path(user), class: "dashboard-primary"
+    = link_to "口コミを依頼する", user_reviews_path(user, anchor: "review-request"), class: "dashboard-copy"
+  %details.dashboard-level__guide
+    %summary レベルの上がり方
+    %p これまでのサクブポイントをレベルで表示しています。合計が1増えると1レベル上がり、小数部分が次のレベルへの進捗になります。
+    %ul
+      %li スケジュール登録：0.1
+      %li ブログ投稿：0.2
+      %li 質問への回答：0.3
+      %li 高評価の口コミ：2.0
+    %p 投稿などを削除すると合計も減ります。お問い合わせの未返信報告など、従来の減点も反映されます。
