@@ -49,6 +49,10 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20260927010000
     bundle exec rails db:migrate:up VERSION=20260927120000
     bundle exec rails db:migrate:up VERSION=20261002000000
+    # Additive chat/account migrations; deliberately enumerate approved versions.
+    for version in 20261001000000 20261001010000 20261001020000 20261001030000 20261001040000 20261001050000; do
+      bundle exec rails db:migrate:up VERSION="$version"
+    done
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;
@@ -58,6 +62,14 @@ case "$mode" in
     sudo -n systemctl kill --kill-whom=main --signal=USR2 circle-puma
     python3 ops/al2023/warm_public_pages.py
     CIRCLE_PUMA_SOCKET=/var/www/circle/tmp/sockets/unicorn.sock bundle exec ruby bin/verify_turnstile_readiness
+    # A single scheduler serves the shared DB. Never install it on server5.
+    if [[ "${3:-}" == server4 ]]; then
+      sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.service /etc/systemd/system/circle-chat-maintenance.service
+      sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.timer /etc/systemd/system/circle-chat-maintenance.timer
+      sudo -n systemctl daemon-reload
+      sudo -n systemctl enable --now circle-chat-maintenance.timer
+      systemctl is-active circle-chat-maintenance.timer
+    fi
     systemctl is-active circle-puma nginx
     ;;
   *) exit 2 ;;

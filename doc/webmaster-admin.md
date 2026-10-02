@@ -80,3 +80,14 @@ HEADの旧ID 1判定・master_account判定と現在の実装を照合し、次�
 - 管理操作はウェブマスター限定、no-store／noindex。メッセージ画面から主催者・参加者の管理詳細へ移動できる。
 - 追加マイグレーション: `20261001050000_add_account_moderation.rb`。ローカル開発・テストDBへ適用済み。本番には未適用。
 - テスト: `test/integration/webmaster_accounts_test.rb`（権限、検索、確認トークン、停止・解除、投稿制限、通報状態・メモ、旧削除導線、停止者の旧口コミ削除）。
+
+## 本番リリース準備（2026-10-02）
+
+- ローカルの未コミット作業をまとめ、`codex/squirrel-contact-warning` を統合。注意喚起画像は新しい問い合わせ画面へ移設した。
+- `deploy_prod.yml` は master への push で本番2台へ自動デプロイする。今回の6件の追加マイグレーションを deploy.sh に列挙し、CIには新しいチャット・管理機能のテストを追加した。
+- 通知と期限到来口コミの処理は、server4 の `circle-chat-maintenance.timer` で約1分ごとに実行する。server5やWheneverで同じ処理を追加しない。
+- ローカル検証: 主要Railsテスト120件・1184 assertions、独立セキュリティテスト28件、Turnstileテスト17件＋JS検証、画像URL/保存11件、HTTP3件、readiness4件、アセット互換性等Python9件が成功。旧スキーマから6件のマイグレーション、zeitwerk、アセット生成、ブランド画像検証、本番設定を模した起動・スタブSES配信も成功。
+- ローカルにNginxがないため origin guard の実機テストはGitHub Actions側で行う。その他の検証に本番DBや実メールは使用していない。
+- 本番のウェブマスター初期設定方法は確認待ち。ローカルのデモアカウントを本番へコピーしない。
+- リリース後はActionsのコミット・各ジョブ成否と公開HTTP応答を確認する。認証設定や未確認のログ全体は取得しない。
+- 不具合時はserver4のチャットtimerを停止し、変更をrevertする新しいコミットを通常のフローでデプロイする。追加したDB列・テーブルは残し、新規会話や口コミを消すrollback migrationは実行しない。

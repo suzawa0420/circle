@@ -302,7 +302,8 @@ class RegistrationTurnstileTest < Minitest::Test
       controller = File.read(File.join(ROOT, "app/controllers/#{account}/registrations_controller.rb"))
       assert_includes controller, 'include RegistrationTurnstileGuard'
       view = account == 'admin_users' ? 'devise' : account
-      assert_includes File.read(File.join(ROOT, "app/views/#{view}/registrations/new.html.haml")), 'devise/shared/registration_bot_guard'
+      extension = account == 'members' ? 'erb' : 'haml'
+      assert_includes File.read(File.join(ROOT, "app/views/#{view}/registrations/new.html.#{extension}")), 'devise/shared/registration_bot_guard'
     end
     assert_includes File.read(File.join(ROOT, 'app/views/devise/shared/_registration_bot_guard.html.haml')), 'devise/shared/registration_turnstile'
   end

@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Circle Book chat maintenance once per minute (server4 only)
+
+[Timer]
+OnBootSec=1min
+OnUnitInactiveSec=1min
+AccuracySec=5s
+Unit=circle-chat-maintenance.service
+
+[Install]
+WantedBy=timers.target

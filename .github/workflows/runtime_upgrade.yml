@@ -64,6 +64,8 @@ jobs:
         run: bundle exec rails test test/integration/public_invalid_urls_test.rb
       - name: Test circle owner permissions
         run: bundle exec rails test test/integration/circle_owner_permissions_test.rb
+      - name: Test participant chat and webmaster management
+        run: bundle exec rails test test/models/conversation_test.rb test/integration/admin_user_email_verifications_test.rb test/integration/registration_email_verification_test.rb test/integration/participant_accounts_test.rb test/integration/conversations_test.rb test/integration/conversation_concurrency_test.rb test/integration/conversation_urls_test.rb test/integration/webmaster_access_test.rb test/integration/webmaster_accounts_test.rb test/integration/webmaster_conversations_test.rb test/integration/webmaster_moderation_test.rb
       - run: bundle exec ruby test/security/run.rb
       - run: bundle exec ruby test/security/registration_turnstile_test.rb
       - run: node test/security/registration_turnstile_js_test.js

@@ -106,4 +106,4 @@ jobs:
           command_timeout: 10m
           script: |
             set -eu
-            bash /var/www/circle/ops/al2023/deploy.sh activate "$DEPLOY_SHA"
+            bash /var/www/circle/ops/al2023/deploy.sh activate "$DEPLOY_SHA" "${{ matrix.server }}"

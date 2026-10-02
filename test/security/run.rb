@@ -260,15 +260,14 @@ class ReviewSubmissionTest < ActionController::TestCase
   end
   test 'missing form proof creates nothing' do
     assert_no_difference('Review.count') { post :create, params: submission(spam_form_token: nil) }
-    assert_response :unprocessable_entity
+    assert_response :forbidden
   end
-  test 'valid review saved once with server ip and aggregate' do
-    assert_difference('Review.count', 1) { post :create, params: submission }
-    assert_response :redirect
-    assert_equal '198.51.100.1', Review.last.ip
-    assert_equal 5.0, @user.reload.review_score
+  test 'legacy review submission is disabled even with valid form proof' do
     assert_no_difference('Review.count') { post :create, params: submission }
-    assert_response :conflict
+    assert_response :forbidden
+    @controller.current_member = Struct.new(:id).new(4)
+    assert_no_difference('Review.count') { post :create, params: submission }
+    assert_response :forbidden
   end
   test 'invalid first or later review never alters another review or score' do
     assert_no_difference('Review.count') { post :create, params: submission(review: { review: 1, comment: '短い' }) }
@@ -299,23 +298,24 @@ class ReviewSubmissionTest < ActionController::TestCase
     @controller.current_member = Struct.new(:id).new(4)
     review = Review.create!(user: @user, member_id: 4, review: 1, comment: '参加して楽しかったです。', ip: '198.51.100.9')
     assert_no_difference('Review.count') { post :create, params: submission }
-    assert_response :conflict
+    assert_response :forbidden
     other = User.create!(review_permit: true)
     assert_raises(ActiveRecord::RecordNotFound) do
       delete :destroy, params: { user_id: other.id, id: review.id }
     end
     assert Review.exists?(review.id)
   end
-  test 'review owner can edit and delete while other member cannot' do
+  test 'published review is not editable even by its owner and others cannot delete it' do
     review = Review.create!(user: @user, member_id: 4, review: 1, comment: '参加して楽しかったです。')
     @controller.current_member = Struct.new(:id).new(5)
     delete :destroy, params: { user_id: @user.id, id: review.id }
     assert_response :forbidden
     @controller.current_member = Struct.new(:id).new(4)
     patch :update, params: { user_id: @user.id, id: review.id, review: { review: 0, comment: '改善してほしい点があります。' } }
-    assert_response :redirect
-    assert_equal 0, @user.reload.review_score
-    assert_difference('Review.count', -1) { delete :destroy, params: { user_id: @user.id, id: review.id } }
+    assert_response :forbidden
+    assert_equal '参加して楽しかったです。', review.reload.comment
+    # Owner deletion and preserved review entitlement require the full chat schema;
+    # these are covered by integration/webmaster_moderation_test and conversations_test.
   end
 end
 

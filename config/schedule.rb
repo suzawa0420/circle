@@ -3,6 +3,5 @@ if @environment.to_sym == :production
     rake 'sitemap:refresh'
   end
 end
-every 1.minute do
-  rake 'chat:maintenance'
-end
+# Production chat maintenance uses circle-chat-maintenance.timer on server4.
+# Do not also install a cron entry: both would process the same shared DB.
