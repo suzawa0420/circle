@@ -74,6 +74,8 @@ require 'test_helper'
 require_relative '../../db/migrate/20260926010000_review_non_japanese_circle_profiles'
 require_relative '../../db/migrate/20260927000000_review_circle_profiles_without_japanese_kana'
 
+require_relative '../../db/migrate/20261002000000_publish_circles_without_activity_details'
+
 class UserTest < ActiveSupport::TestCase
   self.fixture_table_names = []
 
@@ -111,7 +113,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal ["神奈川バスケ", "全国バスケ"].map { |name| ids.fetch(name) }.sort, city_results.sort
   end
 
-  test "publication requires a useful introduction and activity details" do
+  test "publication allows missing activity time and place" do
     user = User.new(name: "地域サークル", event_id: 1, prefecture_id: 1, switch: "募集中",
       area: "世田谷区", schedule: "毎週土曜日", appeal: "<p>#{'地域で活動しています。' * 12}</p>")
 
@@ -119,10 +121,64 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "published", user.publication_status
     assert_empty user.missing_publication_fields
 
-    user.area = "  "
+    [{ area: nil }, { schedule: "" }, { area: "  ", schedule: "  " }].each do |attributes|
+      user.assign_attributes(attributes)
+      user.valid?
+      assert_equal "published", user.publication_status
+      assert_empty user.missing_publication_fields
+    end
+
+    user.appeal = "短い紹介"
     user.valid?
     assert_equal "draft", user.publication_status
-    assert_includes user.missing_publication_fields, "活動場所"
+    assert_includes user.missing_publication_fields, "サークルの詳細情報（100文字以上）"
+
+    user.name = ""
+    assert_includes user.missing_publication_fields, "サークル名"
+  end
+
+  test "backfill publishes eligible drafts and their blogs while preserving moderation" do
+    category = Category.create!(name: "球技", kana: "ball-sports", order: "1")
+    event = Event.create!(name: "バスケ", ruby: "basketball", category: category, order: "1")
+    prefecture = Prefecture.create!(name: "東京都", kana: "tokyo", order: "13", sort: 13)
+    owner = AdminUser.create!(email: "optional-activity@example.test", password: "test-password-123")
+    attributes = { event: event, prefecture: prefecture, category: category, admin_user: owner,
+      name: "地域バスケサークル", switch: "募集中", appeal: "地域で楽しく活動しています。" * 10 }
+    circles = [{ area: nil, schedule: "土曜日" }, { area: "体育館", schedule: "" },
+      { area: "  ", schedule: nil }].map { |activity| User.create!(**attributes, **activity) }
+    circles.each { |circle| circle.update_column(:publication_status, "draft") }
+    blog = Blog.create!(user: circles.last, title: "活動記録", content: "地域で活動しました。" * 15)
+    incomplete = User.create!(**attributes, appeal: "<p>短い紹介</p>" + " " * 120)
+    missing_name = User.create!(**attributes)
+    missing_name.update_columns(name: "  ", publication_status: "draft")
+    reviewed = User.create!(**attributes, moderation_status: "review")
+    reviewed.update_column(:publication_status, "draft")
+    blocked = User.create!(**attributes, moderation_status: "blocked")
+    blocked.update_column(:publication_status, "draft")
+
+    assert_not_includes Blog.publicly_visible, blog
+    migration = PublishCirclesWithoutActivityDetails.new
+    migration.up
+    migration.up # Re-running must not change moderation or already published records.
+
+    circles.each do |circle|
+      assert_equal "published", circle.reload.publication_status
+      assert circle.publicly_visible?
+      assert_includes User.publicly_visible, circle
+    end
+    assert blog.reload.publicly_visible?
+    assert_includes Blog.publicly_visible, blog
+    [incomplete, missing_name].each { |circle| assert_equal "draft", circle.reload.publication_status }
+    [reviewed, blocked].each do |circle|
+      assert_not circle.reload.publicly_visible?
+      assert_not_includes User.publicly_visible, circle
+    end
+    assert_equal "review", reviewed.moderation_status
+    assert_equal "blocked", blocked.moderation_status
+
+    migration.down
+    circles.each { |circle| assert_equal "draft", circle.reload.publication_status }
+    assert_not_includes Blog.publicly_visible, blog
   end
 
   test "English-only circle profiles wait for review even without links" do

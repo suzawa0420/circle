@@ -100,8 +100,6 @@ class User < ApplicationRecord
 		missing << "サークル種目" if event_id.blank?
 		missing << "都道府県" if prefecture_id.blank?
 		missing << "募集状況" if switch.blank?
-		missing << "活動場所" if area.blank?
-		missing << "活動時間" if schedule.blank?
 		body = ActionView::Base.full_sanitizer.sanitize(appeal.to_s).gsub(/[[:space:]]/, "")
 		missing << "サークルの詳細情報（#{MINIMUM_APPEAL_LENGTH}文字以上）" if body.length < MINIMUM_APPEAL_LENGTH
 		missing
