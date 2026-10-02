@@ -36,7 +36,6 @@
       - if webmaster?
         = link_to "運営管理トップ", webmaster_path
         = link_to "口コミ管理", super_admin_reviews_path
-        = button_to "運営ログアウト", destroy_webmaster_session_path, method: :delete
       - elsif admin_user_signed_in? && current_admin_user.users.any?
         = link_to "マイページ", "/users/#{current_admin_user.users.first.id}/mypage"
       - elsif member_signed_in?
@@ -53,3 +52,17 @@
       %strong サポート
       = link_to "よくある質問", faq_path
       = link_to "運営に問い合わせ", "https://x.com/circlebook03", target: "_blank", rel: "noopener noreferrer"
+    - if webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?
+      .mobile-menu-panel__logout
+        - if webmaster?
+          = button_to destroy_webmaster_session_path, method: :delete do
+            運営ログアウト
+        - elsif member_signed_in?
+          = button_to destroy_member_session_path, method: :delete do
+            ログアウト
+        - elsif admin_user_signed_in?
+          = button_to destroy_admin_user_session_path, method: :delete do
+            ログアウト
+        - elsif exhibition_group_signed_in?
+          = button_to destroy_exhibition_group_session_path, method: :delete do
+            ログアウト
