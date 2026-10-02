@@ -63,7 +63,8 @@ class MobileNavigationTest < ActionDispatch::IntegrationTest
     get new_circle_blog_path(@circle)
     assert_response :success
     assert_select '.mobile-bottom-nav > button:first-child.mobile-circle-trigger', text: /#{@circle.name}/
-    assert_select '#mobile-circle-dialog a', count: 2
+    assert_select '#mobile-circle-dialog a', count: 3
+    assert_select '#mobile-circle-dialog a:last-child[href="/user/add"]', text: '新規サークル登録'
     assert_select "#mobile-circle-dialog a[aria-current=true][href='#{new_circle_blog_path(@circle)}']", text: /選択中/
     assert_select "#mobile-circle-dialog a[href='#{new_circle_blog_path(second)}']"
     assert_select '#mobile-circle-dialog', text: /#{foreign.name}/, count: 0

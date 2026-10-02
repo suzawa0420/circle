@@ -85,7 +85,7 @@
                 .analytics_txt
                   = link_to "/users/#{@user.id}/contact_list" do
                     \&gt;&gt; お問い合わせ管理ページ
-    - if @user.cb_point > 0
+    - if @user.cb_point > 0 && admin_user_signed_in? && @user.admin_user_id == current_admin_user.id
       .analytics_wrap
         .analytics_title
           %i.fa.fa-pinterest
@@ -185,10 +185,3 @@
                           %span.user_area
                             %i.fa.fa-map-marker
                             = user.area
-                        .list_02
-                          %span.user_schedule
-                            %i.fa.fa-pinterest>
-                            Lv.#{circle_level_status(user)[:level]}
-                          - if circle_level_status(user)[:level] > circle_level_status(@user)[:level]
-                            .cbp_txt
-                              あと#{circle_level_status(user)[:level] - circle_level_status(@user)[:level]}レベルで同じレベルになります

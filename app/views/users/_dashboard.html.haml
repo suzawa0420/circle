@@ -1,24 +1,32 @@
-= link_to "サイト内メッセージを確認する", conversations_path
 - unanswered_count = @questions_current_nil.count
 - can_add_circle = @ng_accounts.count == 0 && @admin_user.users.count < 5 && (@admin_user.check.blank? || @admin_user.check == 0)
 .dashboard-heading
   %div
-    %p.dashboard-eyebrow サークル管理
     %h1 マイページ
-  = link_to circle_path(@user), class: "dashboard-preview" do
-    公開ページ
-    %i.fa.fa-external-link{ "aria-hidden" => "true" }
 
 %section.dashboard-circle{ "aria-label" => "管理中のサークル" }
-  .dashboard-circle__identity
-    - if @user.pic_profile.present?
-      = image_tag @user.pic_profile.url, alt: "", class: "dashboard-circle__avatar"
-    - else
-      .dashboard-circle__avatar.dashboard-circle__avatar--empty
-        %i.fa.fa-users{ "aria-hidden" => "true" }
-    %div.dashboard-circle__name
-      %h2= @user.name
-      %p= [@user.prefecture&.name, @user.event&.name].compact.join(" · ")
+  .dashboard-circle__top
+    .dashboard-circle__information
+      - if admin_user_signed_in? && @user.admin_user_id == current_admin_user.id
+        = render "users/parts/user_switching", user: @user
+        %p.dashboard-circle__location= [@user.prefecture&.name, @user.event&.name].compact.join(" · ")
+      - else
+        .dashboard-circle__identity
+          - if @user.pic_profile.present?
+            = image_tag @user.pic_profile.url, alt: "", class: "dashboard-circle__avatar"
+          - else
+            .dashboard-circle__avatar.dashboard-circle__avatar--empty
+              %i.fa.fa-users{ "aria-hidden" => "true" }
+          %div.dashboard-circle__name
+            %h2= @user.name
+            %p= [@user.prefecture&.name, @user.event&.name].compact.join(" · ")
+    .dashboard-circle__tools
+      = link_to edit_user_path(@user), class: "dashboard-copy" do
+        %i.fa.fa-pencil{ "aria-hidden" => "true" }
+        編集
+      = link_to circle_path(@user), class: "dashboard-copy" do
+        %i.fa.fa-external-link{ "aria-hidden" => "true" }
+        公開ページ
   .dashboard-circle__status
     - if @user.moderation_status == "blocked"
       %span.dashboard-status.dashboard-status--attention 公開停止中
@@ -32,16 +40,17 @@
       %span.dashboard-status.dashboard-status--attention 非公開
     - if @user.switch.present?
       %span.dashboard-recruitment= @user.switch
-  = render "users/parts/user_switching", user: @user
-  .dashboard-circle__actions
-    = link_to edit_user_path(@user), class: "dashboard-primary" do
-      %i.fa.fa-pencil{ "aria-hidden" => "true" }
-      サークルを編集
-    - if @user.link.present? && @user.link.unique_id.present?
-      %span.copyTarget.dashboard-copy-value= "https://circle-book.com/u/#{@user.link.unique_id}"
-      %button.copyBtn.dashboard-copy{ type: "button" }
+  - public_url = @user.link&.unique_id.present? ? "https://circle-book.com/u/#{@user.link.unique_id}" : "https://circle-book.com#{circle_path(@user)}"
+  .dashboard-circle__url
+    %h3
+      %i.fa.fa-link{ "aria-hidden" => "true" }
+      公開URL
+    .dashboard-circle__url-row
+      = link_to public_url, class: "copyTarget dashboard-circle__url-value" do
+        = public_url
+      %button.dashboard-url-copy.dashboard-copy{ type: "button", "aria-label" => "サークルの公開URLをコピー" }
         %i.fa.fa-copy{ "aria-hidden" => "true" }
-        URLをコピー
+        %span コピー
 
 - if @user.publication_status == "draft"
   .dashboard-notice
@@ -62,7 +71,8 @@
     = link_to "お問い合わせを確認する →", "/users/#{@user.id}/contact_list"
 = render "/users/alert"
 
-= render "users/level_card", user: @user
+- if admin_user_signed_in? && @user.admin_user_id == current_admin_user.id
+  = render "users/level_card", user: @user
 
 %section.dashboard-section
   .dashboard-section__heading
