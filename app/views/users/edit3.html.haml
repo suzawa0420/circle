@@ -1,6 +1,8 @@
-- set_meta_tags noindex: true
+- set_meta_tags title: "主催者プロフィール", noindex: true
 .main.users-edit
   .container
+    %h1.cb-page-title 主催者プロフィール
+    = render "users/parts/user_switching", user: @user
     .form.users-form
       = render "users/parts/step_bar"
       .form-body.cont-body

@@ -2,7 +2,7 @@
   .search_wrap
     .search_select
 
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}
           - if @category.present?
             = @category.name
@@ -23,7 +23,7 @@
             %option{:value => "#{exhibitions_category_path(@categories.kana)}"}= @categories.name
 
 
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"}
           - if @prefecture.present?
             = @prefecture.name

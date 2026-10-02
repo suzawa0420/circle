@@ -2,24 +2,20 @@
 = render "users/parts/local_business_user_list"
 .main.users-index
   .container.top_page
-    %img.imege_title{:src => "/images/top.png"}/
-    %h1.users-heading
-      %img.img_logo_title{:alt => "サークルブック", :src => "/images/logo.png?v=20260921-green-clean", :width => 960, :height => 251}/
-    .users-txt
-      - if admin_user_signed_in? && current_admin_user.first_user
-        = link_to("活動日の登録", user_schedules_path(current_admin_user.first_user) )
-        を投稿すると
-        %br/
-        あなたの掲載順位が上がります！
-      - else
-        あなたにピッタリの
-        %br/
-        サークルやチーム、団体が見つかる！！
+    .cb-home-hero
+      .cb-home-hero__copy
+        %p.cb-home-hero__eyebrow 好きなことを、一緒に。
+        %h1.cb-home-hero__title
+          好きなことを、
+          %br/
+          仲間と楽しもう
+        %p.cb-home-hero__description スポーツも、趣味も。地域や活動から、気になる仲間を見つけましょう。
+      = image_tag "/images/mascot/squirrel-participant.png", class: "cb-home-hero__image", alt: "本とラケットを持つサークルブックのリス", width: 112, height: 140
 
     .search_wrap
       .search_word
         = form_tag(circles_search_index_path, method: :get, enforce_utf8: false) do
-          %input.search_area.change_font{:name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
+          %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
           .search_icon
             = submit_tag("検索", :name => nil)
         .search_word_announce ※複数の単語はスペースで区切ってください

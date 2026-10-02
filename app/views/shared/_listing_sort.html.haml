@@ -1,0 +1,6 @@
+%nav.cb-sort{ "aria-label" => "検索結果の並び順" }
+  - [["1", "標準"], ["2", "人気順"], ["3", "新着順"]].each do |value, label|
+    - if (params[:sort].presence || "1") == value
+      %span.cb-sort__item.is-selected{ "aria-current" => "true" }= label
+    - else
+      = link_to label, "#{request.path}?#{request.query_parameters.except('page').merge('sort' => value).to_query}", class: "cb-sort__item"

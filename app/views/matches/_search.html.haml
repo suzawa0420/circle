@@ -1,11 +1,11 @@
 .search_wrap
   .search_select
     - if @path.is('matches#index')
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"} サークル・団体
         - @events.each do |event|
           %option{:value => "/match/#{event.ruby}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
         - @prefectures.each do |prefecture|
           - if prefecture.id != 50
@@ -13,12 +13,12 @@
       .search_icon
         %i.fa.fa-search
     - elsif @path.is('matches#event_prefecture')
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @event.name
         - @events.each do |event|
           - if event.ruby != @event.ruby
             %option{:value => "/match/#{event.ruby}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @prefecture.name
         - @prefectures.each do |prefecture|
           - if prefecture.id != 50
@@ -27,12 +27,12 @@
       .search_icon
         %i.fa.fa-search
     - elsif  @path.is('matches#event')
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @event.name
         - @events.each do |event|
           - if event.ruby != @event.ruby
             %option{:value => "/match/#{event.ruby}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
         - @prefectures.each do |prefecture|
           - if prefecture.id != 50
@@ -40,11 +40,11 @@
       .search_icon
         %i.fa.fa-search
     - elsif @path.is('matches#prefecture')
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"} サークル
         - @events.each do |event|
           %option{:value => "/match/#{event.ruby}/#{@prefecture.kana}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @prefecture.name
         - @prefectures.each do |prefecture|
           - if prefecture.id != 50

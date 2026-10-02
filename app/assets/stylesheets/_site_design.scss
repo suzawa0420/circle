@@ -1,0 +1,317 @@
+// Legacy template adapters. Keep these grouped by UI role; use the same tokens
+// as new cb-* components. Scoped to the application layout (not email/admin exports).
+@import "design_mixins";
+
+.cb-site {
+  @include cb-type(body);
+  background: $cb-canvas;
+  color: $cb-text;
+  a:hover, a:active { opacity: 1; }
+  :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid $cb-action; outline-offset: 3px; }
+
+  .main > .container, .user_main > .container {
+    width: 100%; max-width: $cb-width-content;
+    padding: cb-space(6) cb-space(4) cb-space(8) !important;
+    background: transparent;
+  }
+  .users-edit > .container, .users-new > .container { max-width: $cb-width-form; }
+  .main, .user_main { min-width: 0; }
+  .main a, .user_main a { overflow-wrap: anywhere; }
+
+  // Consistent page and section hierarchy, including older directory routes.
+  .users-heading, .form-heading, .posts-heading, .top_title,
+  .e_header_title, .management-heading, .blog_1st_title,
+  .page_wrap > h1, .QandA_wrap h1, .user-show h1.user_name,
+  .matching_name, .place_name_title {
+    @include cb-type(page-title);
+    position: static; margin: 0 0 cb-space(5); padding: 0;
+    border: 0; border-radius: 0; background: transparent; box-shadow: none;
+    color: $cb-text; text-align: left; overflow-wrap: anywhere;
+  }
+  .users-txt { @include cb-type(compact); position: static; color: $cb-muted; margin: 0 0 cb-space(6); text-align: left; }
+  .container > .imege_title { display: none; }
+  .e_header_wrap { background: transparent; margin: 0 0 cb-space(6); }
+  .e_header_wrap > img { display: none; }
+  .e_header_wrap > .link_txt { position: static; transform: none; width: 100%; color: $cb-text; }
+  .e_header_title { margin-bottom: 0; }
+  .page_title, .profile_list_t, .others-user, .schedule_title,
+  .top_page .top_contents .top_heading .sub_title, .participant-section h2, .user_sub_title {
+    @include cb-type(section-title);
+    border: 0; background: transparent; color: $cb-text;
+    padding: 0; margin: cb-space(8) 0 cb-space(4); text-align: left;
+  }
+  .profile_list_t:empty { display: none; }
+  .user_name, .blog_title, .place_name { overflow-wrap: anywhere; }
+
+  // Search is a small form, not a strip of cramped 30px controls.
+  .search_wrap, .place_search_wrap { @include cb-card; margin: 0 0 cb-space(6); }
+  .search_area > .search_wrap { width: 100%; }
+  .search_word { padding: 0; margin: 0; }
+  .search_word form { display: flex; align-items: stretch; gap: cb-space(2); }
+  .search_word input.search_area {
+    flex: 1; width: 0; min-width: 0; height: $cb-control-height;
+    padding: cb-space(3); margin: 0; border: 1px solid $cb-input-border;
+    border-radius: $cb-radius-control; background: $cb-surface; color: $cb-text; font-size: 16px;
+  }
+  .search_word .search_icon { flex: 0 0 64px; width: auto; height: auto; border-radius: $cb-radius-control !important; }
+  .search_word input[type=submit] { @include cb-button; width: 100%; height: 100%; margin: 0; }
+  .search_word_announce { @include cb-type(caption); margin: cb-space(2) 0 0; color: $cb-muted; }
+  .search_select, .search_select .search_select_3 {
+    display: flex; flex-wrap: wrap; gap: cb-space(2); width: 100%;
+    margin: cb-space(4) 0 0; padding: 0; border: 0; background: transparent;
+  }
+  .search_select .search_select_3 { margin: 0; }
+  .search_select select, .search_select select:first-child, .search_select .search_select_3 select {
+    flex: 1 1 130px; width: 0; min-width: 0; max-width: 100%; min-height: $cb-control-height;
+    border: 1px solid $cb-input-border; border-radius: $cb-radius-control !important;
+    padding: cb-space(2) 32px cb-space(2) cb-space(3); color: $cb-text; font-size: 16px;
+  }
+  .search_select > .search_icon, .search_select_3 > .search_icon { display: none; } // Decorative icon; selects navigate on change.
+  .date_list_wrap { max-width: 100%; }
+  .date_list_wrap > ul { display: flex; gap: cb-space(2); overflow-x: auto; padding-bottom: cb-space(2); }
+  .date_list_wrap > ul > a { flex: 0 0 auto; }
+  .date_list_wrap li { min-width: $cb-touch-height; min-height: $cb-control-height; margin: 0; border-radius: $cb-radius-control; }
+  .tab_list { display: flex; width: 100%; gap: cb-space(2); margin: 0 0 cb-space(5); padding: cb-space(1); border: 1px solid $cb-border; border-radius: $cb-radius-control; background: $cb-surface; }
+  .tab_list > a, .tab_list > li { flex: 1; min-width: 0; }
+  .tab_list .list_item { width: 100%; float: none; border: 0; border-radius: $cb-radius-control; min-height: $cb-touch-height; display: flex; justify-content: center; align-items: center; font-size: 14px; margin: 0; }
+  .tab_list > li.list_item { width: auto; }
+  .tab_list .selected { background: $cb-mint-soft; color: $cb-action-hover; font-weight: 700; }
+
+  // Cards preserve their existing links and image layouts.
+  .user_item_wrap, .schedule_item_wrap, .places-index-item, .blog-body,
+  .user_list, .user_slide_list, .matching_wrap, .form.users-form,
+  .participant-card, .participant-stat, .organizer-dashboard__card, .chat-card, .chat-talk-list {
+    border: 1px solid $cb-border; border-radius: $cb-radius-card;
+    background: $cb-surface; box-shadow: $cb-shadow-card;
+  }
+  .user_item_wrap, .schedule_item_wrap, .places-index-item, .form.users-form { margin-bottom: cb-space(6); }
+  .user_item_wrap .users-index-item { box-shadow: none; border: 0; border-radius: 0; }
+  .user_item_wrap .user_name, .blog-body .blog_title, .places-index-item .place_name { @include cb-type(section-title); color: $cb-text; }
+  .user_item_wrap .list_cnts { @include cb-type(compact); }
+  .user_item_wrap .tag_list_wrap { height: auto; min-height: $cb-touch-height; background: $cb-canvas; }
+  .tag_list_wrap .tag_list_content a { font-size: 12px; }
+  .blog-body { overflow: hidden; }
+  .form.users-form:has(> .blog-body) { border: 0; background: transparent; box-shadow: none; }
+  .post_message { margin: 0 0 cb-space(5); border-radius: $cb-radius-card; }
+  .post-bottom { @include cb-type(caption); color: $cb-muted; }
+  .post-top { @include cb-type(label); }
+  .post-body, .rich_text_main, .rich_text_sub, .profile_list_p { overflow-wrap: anywhere; }
+  .rich_text_main, .rich_text_sub, .profile_list_p, .page_wrap p { @include cb-type(body); }
+  .rich_text_main a, .profile_list_p a, .page_wrap p a { color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
+  .rich_text_main img, .profile_list_p img { max-width: 100%; height: auto; }
+  .rich_text_main h1, .rich_text_main h2 { @include cb-type(section-title); margin: cb-space(6) 0 cb-space(3); }
+  .main table, .user_main table { width: 100%; max-width: 100%; }
+  .flex_contents { border-color: $cb-border; }
+  .flex_contents th, .flex_contents td { font-size: 14px; line-height: 1.7; padding: cb-space(3) cb-space(2); overflow-wrap: anywhere; }
+  .profile-content { padding: cb-space(4); }
+  .user-profile { border-radius: $cb-radius-card; background: $cb-surface; }
+  .matching_wrap { padding: cb-space(4); }
+  .matching_card { width: 100%; padding: 0; }
+  .matching_card .matching_name { padding-top: cb-space(3); }
+  .matching_url { overflow-wrap: anywhere; }
+  .cont-width { width: auto; margin-left: cb-space(4); margin-right: cb-space(4); }
+
+  // Forms: consistent controls, clearly separated field groups, visible state.
+  .form-body, .cont-body { padding: cb-space(4); }
+  .form-body .cont-width { margin-left: 0; margin-right: 0; }
+  .label_item, .edit01_subtitle, .edit02_subtitle, .only_member_title {
+    @include cb-type(label); display: block; color: $cb-text;
+    position: static; margin: cb-space(6) 0 cb-space(2); padding: 0;
+  }
+  .label_item .label_danger, .must_red { color: $cb-danger; background: $cb-danger-soft; border-radius: 4px; font-size: 12px; }
+  .edit01_warp, .edit02_warp, .only_member_warp { border: 0; border-radius: 0; padding: 0; margin: cb-space(6) 0; background: transparent; }
+  .only_member_warp { padding: cb-space(4); background: $cb-mint-soft; border-radius: $cb-radius-card; }
+  .only_member_warp .only_member_title, .edit01_warp .edit01_subtitle, .edit02_warp .edit02_subtitle { margin-top: 0; }
+  .form-control, .schedule_input input:not([type=submit]):not([type=checkbox]):not([type=radio]),
+  .users-form input:not([type]):not(.image), .users-form input[type=text],
+  .users-form input[type=email], .users-form input[type=password],
+  .users-form select, .schedule_wrap select, .qa_answer_form textarea {
+    @include cb-type(body); @include cb-focus;
+    max-width: 100%; min-width: 0; min-height: $cb-control-height; height: auto;
+    padding: cb-space(3); border: 1px solid $cb-input-border;
+    border-radius: $cb-radius-control; background-color: $cb-surface; color: $cb-text;
+    box-shadow: none;
+  }
+  .form-control, .users-form input[type=text], .users-form select { width: 100%; }
+  textarea.form-control, .qa_answer_form textarea, trix-editor { min-height: 160px; resize: vertical; }
+  trix-editor { @include cb-type(body); border: 1px solid $cb-input-border; border-radius: $cb-radius-control; padding: cb-space(3); background: $cb-surface; }
+  trix-toolbar .trix-button-group { flex-wrap: wrap; margin-bottom: cb-space(2); }
+  .time_form { display: flex; width: 100%; align-items: center; }
+  .time_form .form-control { flex: 1; width: 0; }
+  .form-control:disabled { background: $cb-canvas; color: $cb-muted; }
+  .field_with_errors input, .field_with_errors textarea, .field_with_errors select { border-color: $cb-danger; }
+  .form-error, .form-error_message { color: $cb-danger; font-size: 14px; }
+  .file_size, .file_size_p, .cautions, .warning_txt, .rich_text_notes { font-size: 13px; line-height: 1.7; color: $cb-muted; }
+  .warning_txt { margin: cb-space(6) 0 cb-space(2); }
+  .check_boxes { display: flex; flex-wrap: wrap; align-items: center; gap: cb-space(2); }
+  .check_boxes label { padding: cb-space(2) cb-space(2) cb-space(2) 0; margin: 0; font-size: 14px; }
+  .check_boxes input[type=checkbox] { flex: 0 0 20px; width: 20px; height: 20px; margin: 0; }
+  .attention_content, .check_boxes_advice_wrap { @include cb-card; @include cb-type(compact); background: $cb-warning-soft; color: $cb-warning-text; margin: cb-space(4) 0 cb-space(6); }
+  .attention_title { color: inherit; }
+  .users-form input[type=submit], .schedule_input input[type=submit], .qa_answer_form .submit_btn,
+  .contact_link .btn_green, .schedule_post_btn, .user_qa_btn .contact-button, .link_to_user_btn { @include cb-button; max-width: 100%; box-shadow: none; border-bottom: 0; }
+  .users-form input[type=submit], .schedule_input input[type=submit] { width: 100%; margin: cb-space(6) 0 0; }
+  .more_link, .more_text_link, .place_more { @include cb-button(secondary); margin: cb-space(4) 0; max-width: 100%; }
+  .admin_edit a, .contact-button.edit { @include cb-button(secondary); }
+  .admin_delete a { @include cb-button(danger); }
+  .schedule_wrap { padding: cb-space(4); border: 1px solid $cb-border; border-radius: $cb-radius-card; background: $cb-surface; }
+  .schedule_copy_wrap { margin-bottom: cb-space(6); }
+
+  // Informational pages have the same readable measure as detail pages.
+  .page_wrap, .QandA_wrap .contents_wrap { @include cb-card; }
+  .page_wrap p { margin: 0 0 cb-space(4); }
+  .page_wrap > br { display: none; }
+  .page_wrap .page_title:first-of-type { margin-top: cb-space(6); }
+  .QandA_accordion .title { @include cb-type(label); min-height: $cb-control-height; padding: cb-space(4) 40px cb-space(4) cb-space(4); border-radius: $cb-radius-control; background: $cb-mint-soft; color: $cb-text; }
+  .QandA_accordion .content p { @include cb-type(body); }
+  .QandA_accordion .option { margin-bottom: cb-space(3); }
+
+  // Existing role-specific screens share the same primitives.
+  .participant-shell, .chat-shell:not(.chat-thread), .organizer-dashboard, .login-choice {
+    max-width: $cb-width-content; padding-left: cb-space(4); padding-right: cb-space(4);
+  }
+  .participant-shell--narrow { max-width: $cb-width-form; }
+  .participant-heading h1, .chat-inbox > h1, .organizer-dashboard__title, .login-choice__title { @include cb-type(page-title); }
+  .participant-heading p, .chat-muted { @include cb-type(compact); color: $cb-muted; }
+  .participant-card, .chat-card { padding: cb-space(4); }
+  .participant-button { @include cb-button; }
+  .participant-button--secondary { @include cb-button(secondary); }
+  .participant-button--danger { @include cb-button(danger); }
+  .participant-field input, .participant-field select, .participant-field textarea { border-radius: $cb-radius-control; border-color: $cb-input-border; }
+  .chat-talk__name { @include cb-type(card-title); }
+  .chat-talk__preview { @include cb-type(compact); color: $cb-muted; }
+  .chat-talk__circle, .chat-talk__status, .chat-talk__meta, .chat-date, .chat-message__name, .chat-message__meta, .chat-message time { font-size: 12px; color: $cb-muted; }
+  .chat-body p { @include cb-type(body); }
+  .chat-shell .chat-button { background: $cb-action !important; border-color: $cb-action !important; border-radius: $cb-radius-control; }
+  .chat-body { border-color: $cb-border; color: $cb-text; }
+  .chat-message--mine .chat-body { background: $cb-mint-soft; border-color: $cb-border; }
+  .chat-talk { min-width: 0; }
+  .chat-talk__meta { max-width: 64px; }
+  .chat-talk-list:empty { display: none; }
+  .pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: cb-space(2); margin: cb-space(6) 0; }
+  .pagination > span > a, .pagination > span.current { display: inline-flex; align-items: center; justify-content: center; min-width: $cb-touch-height; min-height: $cb-touch-height; padding: cb-space(2); border-radius: $cb-radius-control; }
+  .pagination .current { background: $cb-action; color: $cb-surface; }
+  .footer_wrap { font-size: 12px; border-top-color: $cb-border; }
+  .footer_wrap .footer_links { display: flex; flex-wrap: wrap; justify-content: center; gap: cb-space(2) cb-space(4); }
+  .footer_wrap .footer_links a { min-height: $cb-touch-height; display: inline-flex; align-items: center; font-size: 12px; }
+}
+
+// The landing page uses the same palette with a single welcoming illustration.
+.cb-site .cb-home-hero { display: flex; align-items: center; gap: cb-space(4); padding: cb-space(6) 0 cb-space(8); }
+.cb-home-hero__copy { flex: 1; min-width: 0; }
+.cb-home-hero__eyebrow { @include cb-type(label); color: $cb-action-hover; margin-bottom: cb-space(3); }
+.cb-home-hero__title { @include cb-type(display); color: $cb-text; margin: 0 0 cb-space(4); }
+.cb-home-hero__description { @include cb-type(compact); color: $cb-muted; }
+.cb-home-hero__image { width: 112px; height: 140px; object-fit: contain; flex: none; }
+.cb-site .top_page {
+  .top_contents { border: 0; padding: 0; margin: cb-space(8) 0; background: transparent; }
+  .top_contents .top_heading { padding: 0; margin: 0 0 cb-space(4); background: transparent; }
+  .top_contents .top_heading .sub_title { margin: 0; }
+  .events-menus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: cb-space(3); }
+  .events-menus li { width: auto; padding: 0; margin: 0; }
+  .e_icon_wrap { overflow: hidden; border-radius: $cb-radius-control; }
+  .readmore-content { height: auto; max-height: 300px; }
+  .readmore-check:checked ~ .readmore-content { max-height: none; }
+  .readmore-content::before { display: none; }
+  .readmore-label { position: static; transform: none; min-height: $cb-touch-height; margin: cb-space(3) auto 0; }
+  .readmore-check { display: block; position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .readmore-check:focus-visible ~ .readmore-label { outline: 2px solid $cb-action; outline-offset: 3px; }
+  .user_slide_list { padding: cb-space(4); box-shadow: none; }
+}
+@media (max-width: 359px) {
+  .cb-home-hero__image { width: 76px; height: 110px; }
+  .cb-home-hero__title { font-size: 28px; }
+  .cb-site .top_page .events-menus { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cb-site .search_select select { flex-basis: 100%; width: 100%; }
+}
+@media (min-width: $cb-breakpoint-desktop) {
+  .cb-site .main > .container, .cb-site .user_main > .container { padding-top: cb-space(8) !important; }
+  .cb-home-hero__image { width: 180px; height: 180px; }
+  .cb-site .top_page .events-menus { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cb-site .form-body, .cb-site .cont-body, .cb-site .profile-content { padding: cb-space(6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cb-site *, .cb-site *::before, .cb-site *::after { scroll-behavior: auto; transition: none !important; animation: none !important; }
+}
+
+.cb-sort { display: flex; gap: cb-space(1); padding: cb-space(1); margin-bottom: cb-space(6); border: 1px solid $cb-border; border-radius: $cb-radius-control; background: $cb-surface; }
+.cb-sort__item { @include cb-type(label); @include cb-focus; display: flex; flex: 1; align-items: center; justify-content: center; min-height: $cb-touch-height; border-radius: $cb-radius-control; color: $cb-muted; }
+.cb-sort__item.is-selected { color: $cb-action-hover; background: $cb-mint-soft; }
+.cb-site .user_qa_btn { padding: 0; margin: cb-space(5) 0; background: transparent; }
+.cb-site .user_slide_qa_wrap { border: 1px solid $cb-border; border-radius: $cb-radius-card; background: $cb-mint-soft; padding: cb-space(4); }
+.cb-site .user_slide_qa_content_wrap { background: transparent; padding: 0; }
+.cb-site .user_slide_qa_content_wrap h3 { @include cb-type(card-title); }
+.cb-site .user-show h1.place_name { @include cb-type(page-title); padding: 0; margin-bottom: cb-space(3); }
+.cb-site .place_cnt_wrap { padding: cb-space(4); }
+.cb-site .place_d { @include cb-type(compact); color: $cb-muted; }
+
+// Secondary/less frequently used forms (facility reviews, contact, account recovery).
+.cb-site .main, .cb-site .user_main {
+  form input[type=email], form input[type=password], form input[type=tel], form input[type=url],
+  form input[type=number], form input[type=text]:not(.search_area), form select, form textarea {
+    max-width: 100%; min-width: 0; min-height: $cb-control-height;
+    border: 1px solid $cb-input-border; border-radius: $cb-radius-control;
+    padding: cb-space(3); font-size: 16px; line-height: 1.5; color: $cb-text; background-color: $cb-surface;
+  }
+  form input[type=submit]:not(.search_area) { @include cb-button; }
+  form .btn-danger, form input[type=submit].btn-danger { @include cb-button(danger); }
+  form input[type=checkbox], form input[type=radio] { width: 20px; height: 20px; accent-color: $cb-action; }
+  .place_cnt_wrap .place_name { border: 0; }
+  .place_list_title { border: 0; padding: cb-space(4); }
+  .place_list_title h2 { @include cb-type(section-title); border: 0; padding: 0; }
+  .place_review form { padding: cb-space(4); }
+  .only_member_title { background: transparent; }
+  .user_slide_qa_content_wrap h1, .user_slide_qa_content_wrap h2 { @include cb-type(section-title); color: $cb-text; }
+  .qa_large .user_slide_qa_wrap { width: 100%; min-height: 120px; height: auto; border: 1px solid $cb-border; padding: cb-space(5); background: $cb-mint-soft; }
+  .qa_large .user_slide_qa_content_wrap { width: 100%; height: auto; }
+  .qa_answer { @include cb-card; @include cb-type(body); }
+  .qa_answer_form { padding: cb-space(4) 0; }
+}
+.cb-site .organizer-dashboard {
+  .dashboard-heading h1 { @include cb-type(page-title); }
+  .dashboard-section h2 { @include cb-type(section-title); }
+  .dashboard-circle, .dashboard-stat, .dashboard-action, .dashboard-disclosure { border-radius: $cb-radius-card; border-color: $cb-border; }
+  .dashboard-copy { @include cb-button(secondary); }
+  .mypage_wrap { padding: cb-space(6) 0; }
+  .dashboard-action__text strong { @include cb-type(label); }
+}
+.cb-site .participant-section__heading { flex-wrap: wrap; }
+.cb-site .participant-section__heading h2 { margin: 0; }
+.cb-site .participant-field { margin-bottom: cb-space(6); }
+.cb-site .participant-shell h3 { @include cb-type(card-title); }
+.cb-site .participant-shell .participant-help { @include cb-type(helper); }
+.cb-site .login-choice__intro h1 { @include cb-type(page-title); }
+.cb-site .login-choice__button { @include cb-button; }
+.cb-site .login-choice__button--signup { @include cb-button(secondary); }
+.cb-site .login-choice__card { border-radius: $cb-radius-card; }
+.cb-site .account-access__link { border-radius: $cb-radius-control; }
+
+// The dashboard already receives its gutters from its container.
+.cb-site .organizer-dashboard { padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; }
+.cb-site .organizer-dashboard .mypage_wrap { padding-top: 0; }
+.cb-site .dashboard-circle__tools .dashboard-copy { font-size: 14px; }
+.cb-site .dashboard-circle__url-row { flex-wrap: wrap; }
+.cb-site .dashboard-circle__url-value { flex-basis: 180px; }
+.cb-site .participant-card, .cb-site .participant-circle { border-radius: $cb-radius-card; }
+.cb-site .participant-heading h1 { text-align: left; }
+.cb-site .main .form-heading { margin-bottom: cb-space(5); }
+.cb-site .main .progressbar { display: flex; }
+.cb-site .main .progressbar li { min-width: 0; font-size: 12px; }
+
+.cb-site .top_page .events-menus li { height: auto; }
+.cb-site .top_page .e_icon_wrap { width: 100%; margin: 0; }
+.cb-site .top_page .e_icon_wrap .link_txt { font-size: 14px; line-height: 1.5; }
+.cb-site .user-show > .container > .users-index-item { border: 1px solid $cb-border; border-radius: $cb-radius-card; padding: cb-space(4); }
+.cb-site .user-show .place_cnt_wrap { padding: cb-space(4) 0; }
+.cb-site .user-show .place_list { padding-left: 0; padding-right: 0; }
+.cb-site .article_item .flex_contents th { width: 28%; vertical-align: top; }
+.cb-site .article_item .flex_contents td { width: 72%; vertical-align: top; }
+.cb-site .account-access { color: $cb-text; }
+.cb-site .account-access__role { border-color: $cb-border; border-radius: $cb-radius-card; }
+.cb-site .account-access .account-access__links a { color: $cb-action-hover; border-radius: $cb-radius-control; }
+@media (min-width: $cb-breakpoint-desktop) {
+  body.cb-site { padding-top: 72px; }
+  .cb-site .circle-desktop-toolbar { padding-left: cb-space(6); padding-right: cb-space(6); }
+  .cb-site .participant-shell, .cb-site .chat-shell:not(.chat-thread), .cb-site .login-choice { margin-top: cb-space(8); }
+}
+.cb-site .dashboard-circle__tools .dashboard-copy { padding: cb-space(3) cb-space(2); gap: 6px; white-space: nowrap; }

@@ -1,0 +1,38 @@
+// Opt-in primitives for new and incrementally migrated pages.
+// No global element overrides: existing page styles keep their current behavior.
+@import "design_mixins";
+
+.cb-page { width: calc(100% - 32px); max-width: $cb-width-content; margin: 0 auto; color: $cb-text; }
+.cb-page--form { max-width: $cb-width-form; }
+.cb-page-title { @include cb-type(page-title); margin: 0 0 cb-space(6); padding: 0; border: 0; color: $cb-text; text-align: left; }
+.cb-section-title { @include cb-type(section-title); margin: 0 0 cb-space(4); color: $cb-text; }
+.cb-card-title { @include cb-type(card-title); margin: 0 0 cb-space(2); color: $cb-text; }
+.cb-body { @include cb-type(body); color: $cb-text; }
+.cb-help { @include cb-type(helper); color: $cb-muted; }
+.cb-card { @include cb-card; }
+.cb-stack { display: flex; flex-direction: column; gap: cb-space(4); }
+.cb-button { @include cb-button(primary); }
+.cb-button--secondary { @include cb-button(secondary); }
+.cb-button--ghost { @include cb-button(ghost); }
+.cb-button--danger { @include cb-button(danger); }
+.cb-button--small { min-height: $cb-touch-height; padding: cb-space(2) cb-space(3); }
+.cb-button--block { width: 100%; }
+.cb-text-link { @include cb-type(compact); @include cb-focus; color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
+.cb-text-link:hover { color: $cb-action-hover; opacity: 1; text-decoration: underline; }
+.cb-field { margin: 0 0 cb-space(6); }
+.cb-field__label { @include cb-type(label); display: block; margin: 0 0 cb-space(2); color: $cb-text; }
+.cb-field__input {
+  @include cb-type(body);
+  @include cb-focus;
+  width: 100%; min-width: 0; min-height: $cb-control-height; padding: cb-space(3);
+  border: 1px solid $cb-input-border; border-radius: $cb-radius-control; color: $cb-text; background: $cb-surface;
+  &::placeholder { color: $cb-muted; }
+  &[aria-invalid="true"] { border-color: $cb-danger; }
+  &:disabled { color: $cb-muted; background: $cb-canvas; }
+}
+textarea.cb-field__input { min-height: 144px; resize: vertical; }
+.cb-field__help { @include cb-type(helper); margin: cb-space(2) 0 0; color: $cb-muted; }
+.cb-field__error { @include cb-type(helper); margin: cb-space(2) 0 0; color: $cb-danger; }
+.cb-notice { @include cb-card; @include cb-type(compact); background: $cb-mint-soft; }
+.cb-notice--warning { color: $cb-warning-text; background: $cb-warning-soft; }
+.cb-notice--danger { color: $cb-danger; background: $cb-danger-soft; }

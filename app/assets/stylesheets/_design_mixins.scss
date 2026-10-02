@@ -1,0 +1,72 @@
+@import "design_tokens";
+
+@mixin cb-type($role: body) {
+  @if not map-has-key($cb-type-scale, $role) { @error "Unknown cb-type role: #{$role}"; }
+  $style: map-get($cb-type-scale, $role);
+  font-family: $cb-font-family;
+  font-size: map-get($style, size);
+  font-weight: map-get($style, weight);
+  line-height: map-get($style, line);
+  letter-spacing: 0;
+  @if map-has-key($style, desktop) {
+    @media (min-width: $cb-breakpoint-desktop) { font-size: map-get($style, desktop); }
+  }
+}
+
+@mixin cb-focus {
+  &:focus-visible { outline: 2px solid $cb-action; outline-offset: 3px; }
+}
+
+@mixin cb-card {
+  padding: cb-space(4);
+  border: 1px solid $cb-border;
+  border-radius: $cb-radius-card;
+  background: $cb-surface;
+  color: $cb-text;
+  @media (min-width: $cb-breakpoint-desktop) { padding: cb-space(5); }
+}
+
+@mixin cb-button($variant: primary) {
+  @include cb-type(label);
+  @include cb-focus;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: cb-space(2);
+  min-height: $cb-control-height;
+  padding: cb-space(3) cb-space(4);
+  border: 1px solid transparent;
+  border-radius: $cb-radius-control;
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color $cb-motion-duration $cb-motion-easing, border-color $cb-motion-duration $cb-motion-easing;
+  @if $variant == primary {
+    color: $cb-surface;
+    background: $cb-action;
+    &:hover, &:active { color: $cb-surface; background: $cb-action-hover; }
+  } @else if $variant == secondary {
+    color: $cb-action-hover;
+    background: $cb-surface;
+    border-color: $cb-input-border;
+    &:hover, &:active { color: $cb-action-hover; background: $cb-mint-soft; border-color: $cb-action; }
+  } @else if $variant == ghost {
+    color: $cb-action-hover;
+    background: transparent;
+    &:hover, &:active { color: $cb-action-hover; background: $cb-mint-soft; }
+  } @else if $variant == danger {
+    color: $cb-surface;
+    background: $cb-danger;
+    &:hover, &:active { color: $cb-surface; background: $cb-danger-hover; }
+  } @else { @error "Unknown cb-button variant: #{$variant}"; }
+  &:hover, &:active, &:focus { opacity: 1; text-decoration: none; }
+  &:disabled, &[aria-disabled="true"], &[aria-busy="true"] {
+    color: $cb-muted;
+    background: $cb-canvas;
+    border-color: $cb-border;
+    opacity: 1;
+    cursor: default;
+  }
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}

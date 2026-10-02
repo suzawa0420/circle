@@ -1,0 +1,34 @@
+// Shared design values. Colors remain owned by brand_palette.
+@import "brand_palette";
+
+$cb-font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", "メイリオ", sans-serif;
+$cb-space-scale: (0: 0, 1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 20px, 6: 24px, 8: 32px, 10: 40px, 12: 48px);
+$cb-type-scale: (
+  caption: (size: 12px, line: 1.6, weight: 400),
+  helper: (size: 13px, line: 1.7, weight: 400),
+  compact: (size: 14px, line: 1.7, weight: 400),
+  body: (size: 16px, line: 1.8, weight: 400),
+  label: (size: 14px, line: 1.5, weight: 700),
+  card-title: (size: 16px, line: 1.4, weight: 700),
+  section-title: (size: 20px, line: 1.4, weight: 700),
+  page-title: (size: 24px, desktop: 28px, line: 1.35, weight: 700),
+  display: (size: 32px, desktop: 36px, line: 1.3, weight: 700)
+);
+$cb-radius-control: 8px;
+$cb-radius-card: 16px;
+$cb-radius-dialog: 20px;
+$cb-radius-pill: 999px;
+$cb-shadow-card: 0 2px 8px rgba(32, 33, 36, .04);
+$cb-shadow-dialog: 0 12px 48px rgba(18, 35, 28, .2);
+$cb-control-height: 48px;
+$cb-touch-height: 44px;
+$cb-breakpoint-desktop: 768px;
+$cb-width-content: 760px;
+$cb-width-form: 640px;
+$cb-motion-duration: 180ms;
+$cb-motion-easing: ease-out;
+
+@function cb-space($step) {
+  @if not map-has-key($cb-space-scale, $step) { @error "Unknown cb-space step: #{$step}"; }
+  @return map-get($cb-space-scale, $step);
+}

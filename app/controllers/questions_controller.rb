@@ -41,7 +41,8 @@ class QuestionsController < ApplicationController
 	end
 
 	def edit
-    @questions = Question.where(user_id: params[:user_id]).order(id: "DESC")
+    # Answers are edited on the question detail page, with its existing owner guard.
+    redirect_to user_question_path(@user, @user.questions.find(params[:id]))
 	end
 
 	def create

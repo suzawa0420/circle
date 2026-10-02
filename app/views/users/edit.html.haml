@@ -1,6 +1,8 @@
-- set_meta_tags noindex: true
+- set_meta_tags title: "サークルの基本情報", noindex: true
 .main.users-edit
   .container
+    %h1.cb-page-title サークルの基本情報
+    = render "users/parts/user_switching", user: @user
     .form.users-form
       = render "users/parts/step_bar"
       = render "users/form"

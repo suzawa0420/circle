@@ -5,11 +5,19 @@
     = link_to circles_path do
       %i.fa.fa-search{ "aria-hidden" => "true" }
       サークルを探す
-    - if admin_user_signed_in?
-      - circle = current_admin_user.users.first
+    - if webmaster?
+      = link_to "運営管理", webmaster_path
+    - elsif admin_user_signed_in?
+      - circle = mobile_navigation_circle
       = link_to "マイページ", circle ? "/users/#{circle.id}/mypage" : new_user_path
+    - elsif member_signed_in?
+      = link_to "マイページ", member_path(current_member)
+    - elsif exhibition_group_signed_in?
+      = link_to "マイページ", exhibitor_mypage_path
     - else
-      = link_to "無料でサークル登録", new_admin_user_registration_path
+      = link_to "無料登録・ログイン", login_path
+    - if member_signed_in? || admin_user_signed_in?
+      = link_to "メッセージ", conversations_path
     %details.circle-desktop-menu
       %summary
         %i.fa.fa-bars{ "aria-hidden" => "true" }

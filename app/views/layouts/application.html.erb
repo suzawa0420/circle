@@ -1,5 +1,5 @@
   <!DOCTYPE html>
-  <html>
+  <html lang="ja">
     <head>
       <% unless webmaster? || %w[member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google Tag Manager -->
@@ -51,7 +51,7 @@
     </head>
 
     <% circle_tab = circle_navigation_tab %>
-    <body class="<%= "circle-context" if circle_tab %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>">
+    <body class="cb-site <%= "circle-context" if circle_tab %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>" data-page="<%= controller_path.tr('/', '-') %>" data-action="<%= action_name %>">
 
       <% unless webmaster? || %w[member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google Tag Manager (noscript) -->
@@ -60,12 +60,8 @@
       <!-- End Google Tag Manager (noscript) -->
       <% end %>
 
-      <% if circle_tab %>
-        <%= render "layouts/circle_desktop_toolbar" %>
-      <% else %>
-        <header>
-          <%= render "/layouts/header" %>
-        </header>
+      <%= render "layouts/circle_desktop_toolbar" %>
+      <% unless circle_tab %>
         <%= render "/layouts/mobile_heading" %>
       <% end %>
       <% if account_access_form_page? && !(webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?) %>

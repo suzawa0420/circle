@@ -1,7 +1,7 @@
 .search_wrap
   .search_word
     = form_tag(circles_search_index_path, method: :get, enforce_utf8: false) do
-      %input.search_area.change_font{:name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
+      %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
       .search_icon
         = submit_tag("検索", :name => nil)
     .search_word_announce ※複数の単語はスペースで区切ってください
@@ -10,7 +10,7 @@
 
   .search_select
 
-    %select{:name => "event_select", :onchange => "location.href=value;"}
+    %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
       %option{:value => "#"}
         - if @event.present?
           = @event.name
@@ -29,7 +29,7 @@
 
 
 
-    %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+    %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
       %option{:value => "#"}
         - if @prefecture.present?
           = @prefecture.name
@@ -89,7 +89,7 @@
 
 
       .search_select
-        %select{:name => "event_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
           - if params[:event].present?
             %option{:value => "#"}= @event.name
           - else
@@ -102,7 +102,7 @@
                     %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?pref=#{params[:pref]}&event=#{event.ruby}"}= event.name
                   - else
                     %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?event=#{event.ruby}"}= event.name
-        %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           - if params[:pref].present?
             %option{:value => "#"}= @prefecture.name
           - else
@@ -151,45 +151,5 @@
 
 
 
-- if controller.action_name == "kw"
-- elsif controller.action_name != "search"
-  %ul.tab_list
-    - if params[:sort] == "1" || params[:sort] == nil
-      %li.list_item.selected 標準
-      %a{:href => "#{request.path}?sort=2"}
-        %li.list_item 人気順
-      %a{:href => "#{request.path}?sort=3"}
-        %li.list_item 新着順
-    - elsif params[:sort] == "2"
-      %a{:href => "#{request.path}?sort=1"}
-        %li.list_item 標準
-      %li.list_item.selected 人気順
-      %a{:href => "#{request.path}?sort=3"}
-        %li.list_item 新着順
-    - else params[:sort] == "3"
-      %a{:href => "#{request.path}?sort=1"}
-        %li.list_item 標準
-      %a{:href => "#{request.path}?sort=2"}
-        %li.list_item 人気順
-      %li.list_item.selected 新着順
-
-- else controller.action_name == "search"
-  %ul.tab_list
-    - if params[:sort] == "1" || params[:sort] == nil
-      %li.list_item.selected 標準
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=2"}
-        %li.list_item 人気順
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=3"}
-        %li.list_item 新着順
-    - elsif params[:sort] == "2"
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=1"}
-        %li.list_item 標準
-      %li.list_item.selected 人気順
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=3"}
-        %li.list_item 新着順
-    - else params[:sort] == "3"
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=1"}
-        %li.list_item 標準
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=2"}
-        %li.list_item 人気順
-      %li.list_item.selected 新着順
+- unless controller.action_name == "kw"
+  = render "shared/listing_sort"

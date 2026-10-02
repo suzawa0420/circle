@@ -38,3 +38,10 @@ $state-info-border: $cb-border;
 $state-warning-text: $cb-action-hover;
 $state-warning-bg: $cb-mint-soft;
 $state-warning-border: $cb-border;
+
+// Semantic feedback colors. Use these roles rather than literal page colors.
+$cb-danger: $brand-danger;
+$cb-danger-hover: #963039;
+$cb-danger-soft: #fff1f2;
+$cb-warning-text: #76551c;
+$cb-warning-soft: #fff5de;

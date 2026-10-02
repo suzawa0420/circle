@@ -1,7 +1,7 @@
 .search_wrap
   .search_word
     = form_tag('/users/search', method: :get, enforce_utf8: false) do
-      %input.search_area.change_font{:name => "q", :placeholder => "#{@search_word}", :size => "30", :type => "text", :value => "#{params[:q]}"}/
+      %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "#{@search_word}", :size => "30", :type => "text", :value => "#{params[:q]}"}/
       .search_icon
         = submit_tag("検索", :name => nil)
     .search_word_announce ※複数の単語はスペースで区切ってください

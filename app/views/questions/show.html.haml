@@ -2,7 +2,8 @@
 .user_main.users-index
   .container.bg_white
     = link_to user_questions_path(@user) do
-      %h1.users-heading 質問コーナー
+      %span.cb-text-link 質問一覧へ戻る
+    = render "users/parts/user_switching", user: @user
     .ribbon-wrapper.qa_card_img
       .ribbon-content
         - if @question.answer.nil?

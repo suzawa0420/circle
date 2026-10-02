@@ -20,7 +20,7 @@
       .search_wrap
         .search_word
           = form_tag(circles_search_index_path, method: :get, enforce_utf8: false) do
-            %input.search_area.change_font{:name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
+            %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
             .search_icon
               = submit_tag("検索", :name => nil)
           .search_word_announce ※複数の単語はスペースで区切ってください

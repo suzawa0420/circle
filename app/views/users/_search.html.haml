@@ -1,19 +1,19 @@
 .search_wrap
   .search_word
     = form_tag('/users/search', method: :get, enforce_utf8: false) do
-      %input.search_area.change_font{:name => "q", :placeholder => "#{@search_word}", :size => "30", :type => "text", :value => "#{params[:q]}"}/
+      %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "#{@search_word}", :size => "30", :type => "text", :value => "#{params[:q]}"}/
       .search_icon
         = submit_tag("検索", :name => nil)
     .search_word_announce ※複数の単語はスペースで区切ってください
   .search_select
     - if @path.is('users#index', 'users#top', 'users#search', 'users#keyword', 'tags#index', 'db_keywords')
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"} サークル・チーム
         - @categories.includes([:events]).each do |category|
           %optgroup{:label => "#{category.name}"}
             - category.events.each do |event|
               %option{:value => "/#{event.ruby}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
         - @prefectures.each do |prefecture|
           %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
@@ -22,19 +22,19 @@
 
     - elsif @path.is('users#event_prefecture_city', 'tags#event_prefecture_city')
       .search_select_3
-        %select{:name => "event_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @event.name
           - @categories.includes([:events]).each do |category|
             %optgroup{:label => "#{category.name}"}
               - category.events.each do |event|
                 - if event.ruby != @event.ruby
                   %option{:value => "/#{event.ruby}"}= event.name
-        %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
           - @prefectures.each do |prefecture|
             - if prefecture.kana != @prefecture.kana
               %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
-        %select{:name => "city_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @city.name
           - @cities.each do |city|
             - if city.city_kana != @city.city_kana
@@ -44,19 +44,19 @@
 
     - elsif @path.is('users#event_prefecture', 'tags#event_prefecture')
       .search_select_3
-        %select{:name => "event_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @event.name
           - @categories.includes([:events]).each do |category|
             %optgroup{:label => "#{category.name}"}
               - category.events.each do |event|
                 - if event.ruby != @event.ruby
                   %option{:value => "/#{event.ruby}"}= event.name
-        %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
           - @prefectures.each do |prefecture|
             - if prefecture.kana != @prefecture.kana
               %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
-        %select{:name => "city_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"} 市区町村郡
           - @cities.each do |city|
             %option{:value => "/#{@event.ruby}/#{@prefecture.kana}/#{city.city_kana}"}= city.name
@@ -64,14 +64,14 @@
           %i.fa.fa-search
 
     - elsif  @path.is('users#event', 'tags#event')
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @event.name
         - @categories.includes([:events]).each do |category|
           %optgroup{:label => "#{category.name}"}
             - category.events.each do |event|
               - if event.ruby != @event.ruby
                 %option{:value => "/#{event.ruby}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
         - @prefectures.each do |prefecture|
           %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
@@ -80,18 +80,18 @@
 
     - elsif @path.is('users#prefecture_city', 'tags#prefecture_city')
       .search_select_3
-        %select{:name => "event_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
           %option{:value => "#"} サークル
           - @categories.each do |category|
             %optgroup{:label => "#{category.name}"}
               - category.events.each do |event|
                 %option{:value => "/#{event.ruby}/#{@prefecture.kana}/#{@city.city_kana}"}= event.name
-        %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
           - @prefectures.each do |prefecture|
             - if prefecture.kana != @prefecture.kana
               %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
-        %select{:name => "city_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @city.name
           - @cities.each do |city|
             - if city.city_kana != @city.city_kana
@@ -101,18 +101,18 @@
 
     - elsif @path.is('users#prefecture', 'tags#prefecture')
       .search_select_3
-        %select{:name => "event_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
           %option{:value => "#"} サークル
           - @categories.includes([:events]).each do |category|
             %optgroup{:label => "#{category.name}"}
               - category.events.each do |event|
                 %option{:value => "/#{event.ruby}/#{@prefecture.kana}"}= event.name
-        %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
           - @prefectures.each do |prefecture|
             - if prefecture.kana != @prefecture.kana
               %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
-        %select{:name => "city_select", :onchange => "location.href=value;"}
+        %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"} 市区町村郡
           - @cities.each do |city|
             %option{:value => "/prefectures/#{@prefecture.kana}/#{city.city_kana}"}= city.name
@@ -124,45 +124,5 @@
 
   = render "/layouts/ads/picte_search"
 
-- if controller.action_name == "kw"
-- elsif controller.action_name != "search"
-  %ul.tab_list
-    - if params[:sort] == "1" || params[:sort] == nil
-      %li.list_item.selected 標準
-      %a{:href => "#{request.path}?sort=2"}
-        %li.list_item 人気順
-      %a{:href => "#{request.path}?sort=3"}
-        %li.list_item 新着順
-    - elsif params[:sort] == "2"
-      %a{:href => "#{request.path}?sort=1"}
-        %li.list_item 標準
-      %li.list_item.selected 人気順
-      %a{:href => "#{request.path}?sort=3"}
-        %li.list_item 新着順
-    - else params[:sort] == "3"
-      %a{:href => "#{request.path}?sort=1"}
-        %li.list_item 標準
-      %a{:href => "#{request.path}?sort=2"}
-        %li.list_item 人気順
-      %li.list_item.selected 新着順
-
-- else controller.action_name == "search"
-  %ul.tab_list
-    - if params[:sort] == "1" || params[:sort] == nil
-      %li.list_item.selected 標準
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=2"}
-        %li.list_item 人気順
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=3"}
-        %li.list_item 新着順
-    - elsif params[:sort] == "2"
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=1"}
-        %li.list_item 標準
-      %li.list_item.selected 人気順
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=3"}
-        %li.list_item 新着順
-    - else params[:sort] == "3"
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=1"}
-        %li.list_item 標準
-      %a{:href => "#{request.path}?q=#{params[:q]}&sort=2"}
-        %li.list_item 人気順
-      %li.list_item.selected 新着順
+- unless controller.action_name == "kw"
+  = render "shared/listing_sort"

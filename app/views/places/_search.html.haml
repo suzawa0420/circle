@@ -1,7 +1,7 @@
 .place_search_wrap
   .search_word
     = form_tag("/places/#{@event.ruby }/search", method: :get, enforce_utf8: false) do
-      %input.search_area.change_font{:name => "kw", :placeholder => "#{@search_word}", :size => "30", :type => "text", :value => "#{params[:kw]}"}/
+      %input.search_area.change_font{"aria-label" => "施設名・地域で検索", :name => "kw", :placeholder => "#{@search_word}", :size => "30", :type => "text", :value => "#{params[:kw]}"}/
       .search_icon
         = submit_tag("検索", :name => nil)
     .search_word_announce ※複数の単語はスペースで区切ってください

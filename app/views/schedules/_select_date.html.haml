@@ -29,7 +29,7 @@
                 %br/
                 = Time.parse(@date).since(i.days).strftime("%-d")
     .search_select
-      %select{:name => "event_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         - if params[:event].present?
           %option{:value => "#"}= @event.name
         - else
@@ -42,7 +42,7 @@
                   %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?pref=#{params[:pref]}&event=#{event.ruby}"}= event.name
                 - else
                   %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?event=#{event.ruby}"}= event.name
-      %select{:name => "prefecture_select", :onchange => "location.href=value;"}
+      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         - if params[:pref].present?
           %option{:value => "#"}= @prefecture.name
         - else

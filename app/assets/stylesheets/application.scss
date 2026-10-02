@@ -9626,3 +9626,7 @@ trix-toolbar .button_group button.icon {
 @import "webmaster";
 
 @import "management_context";
+
+// Shared opt-in primitives; usage rules live in docs/design-system.md.
+@import "design_components";
+@import "site_design";
