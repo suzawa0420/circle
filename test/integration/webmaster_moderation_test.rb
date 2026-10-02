@@ -76,8 +76,13 @@ class WebmasterModerationTest < ActionDispatch::IntegrationTest
     [root_path, blogs_path, matches_path, "/places", webmaster_path].each do |path|
       get path
       assert_response :success, path
-      [circles_path, blogs_path, matches_path, "/places"].each do |destination|
+      [circles_path, login_path].each do |destination|
         assert_select "nav.mobile-bottom-nav a[href='#{destination}']", count: 1
+      end
+      assert_select 'nav.mobile-bottom-nav > a', count: 2
+      assert_select 'nav.mobile-bottom-nav > button', text: 'メニュー', count: 1
+      [circles_path, blogs_path, matches_path, "/places"].each do |destination|
+        assert_select "#mobile-menu-dialog a[href='#{destination}']", count: 1
       end
     end
     get webmaster_path
