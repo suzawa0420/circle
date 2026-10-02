@@ -120,6 +120,28 @@ class CircleOwnerPermissionsTest < ActionDispatch::IntegrationTest
     assert_not Blog.exists?(@blog.id)
   end
 
+  test 'legacy English profiles are excluded from search related circles and public pages' do
+    @other_circle.update_columns(name: 'home renovation ideas',
+      appeal: '<p title="サークル">Home renovation ideas for your house.</p>' * 10,
+      publication_status: 'published', moderation_status: 'clear', area: nil, schedule: nil)
+
+    [circles_path, "/events/#{@circle.event.ruby}",
+     "/events/#{@circle.event.ruby}/prefectures/#{@circle.prefecture.kana}",
+     circles_search_index_path(q: @circle.event.name), circle_path(@circle), blogs_path].each do |path|
+      get path
+      assert_response :success, path
+      assert_select "a[href='#{circle_path(@other_circle)}']", count: 0
+      assert_select "a[href='#{circle_path(@circle)}']" unless [circle_path(@circle), blogs_path].include?(path)
+    end
+    assert_raises(ActiveRecord::RecordNotFound) { get circle_path(@other_circle) }
+
+    sign_in_as(@other)
+    get circle_path(@other_circle)
+    assert_response :success
+    assert_select 'meta[name="robots"][content*="noindex"]'
+    assert_select "a[href='#{edit_user_path(@other_circle)}']"
+  end
+
   private
 
   def sign_in_as(admin_user)

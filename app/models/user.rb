@@ -92,6 +92,7 @@ class User < ApplicationRecord
 		where(publication_status: "published", moderation_status: "clear")
 			.where(ng_account: [nil, "OK"])
 			.where(admin_user_id: AdminUser.publicly_visible.select(:id))
+			.where("REGEXP_REPLACE(COALESCE(users.name, ''), '<[^>]*>', '', 'g') ~ :kana OR REGEXP_REPLACE(COALESCE(users.appeal, ''), '<[^>]*>', '', 'g') ~ :kana", kana: '[ぁ-んァ-ヶ]')
 	}
 
 	def missing_publication_fields
@@ -107,10 +108,16 @@ class User < ApplicationRecord
 
 	def publicly_visible?
 		publication_status == "published" && moderation_status == "clear" &&
-			[ nil, "OK" ].include?(ng_account) && admin_user.present? && admin_user.publicly_visible?
+			[ nil, "OK" ].include?(ng_account) && japanese_profile? && admin_user.present? && admin_user.publicly_visible?
 	end
 
 	private
+
+	# Recheck at read time as well: legacy drafts can become published without
+	# running validation callbacks or the earlier published-only backfills.
+	def japanese_profile?
+		ActionView::Base.full_sanitizer.sanitize([name, appeal].join(" ")).match?(JAPANESE_TEXT)
+	end
 
 	def refresh_publication_status
 		self.publication_status = missing_publication_fields.empty? ? "published" : "draft"
@@ -122,8 +129,7 @@ class User < ApplicationRecord
 
 		# Category and location labels are supplied by the site; only owner-written
 		# name and introduction count toward the Japanese-language check.
-		body = ActionView::Base.full_sanitizer.sanitize([name, appeal].join(" "))
-		self.moderation_status = "review" if body !~ JAPANESE_TEXT
+		self.moderation_status = "review" unless japanese_profile?
 	end
 
 	public

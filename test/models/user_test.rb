@@ -155,6 +155,8 @@ class UserTest < ActiveSupport::TestCase
     reviewed.update_column(:publication_status, "draft")
     blocked = User.create!(**attributes, moderation_status: "blocked")
     blocked.update_column(:publication_status, "draft")
+    english = User.create!(**attributes, name: "home renovation ideas", appeal: "Home renovation ideas for your house. " * 10)
+    english.update_columns(publication_status: "draft", moderation_status: "clear")
 
     assert_not_includes Blog.publicly_visible, blog
     migration = PublishCirclesWithoutActivityDetails.new
@@ -175,6 +177,10 @@ class UserTest < ActiveSupport::TestCase
     end
     assert_equal "review", reviewed.moderation_status
     assert_equal "blocked", blocked.moderation_status
+    assert_equal "published", english.reload.publication_status
+    assert_equal "clear", english.moderation_status
+    assert_not english.publicly_visible?
+    assert_not_includes User.publicly_visible, english
 
     migration.down
     circles.each { |circle| assert_equal "draft", circle.reload.publication_status }
@@ -211,8 +217,9 @@ class UserTest < ActiveSupport::TestCase
     japanese = User.create!(**attributes, name: "地域バスケサークル", appeal: "地域で楽しく活動しています。" * 10)
     blog = Blog.create!(user: spam, title: "活動記録", content: "地域で活動しました。" * 15)
     spam.update_column(:moderation_status, "clear") # Simulate a circle screened under the old rule.
-    assert_includes User.publicly_visible, spam
-    assert_includes Blog.publicly_visible, blog
+    assert_not spam.publicly_visible?
+    assert_not_includes User.publicly_visible, spam
+    assert_not_includes Blog.publicly_visible, blog
 
     ReviewCircleProfilesWithoutJapaneseKana.new.up
 
@@ -235,8 +242,9 @@ class UserTest < ActiveSupport::TestCase
     japanese = User.create!(**attributes, name: "地域バスケサークル", appeal: "地域で楽しく活動しています。" * 10)
     blog = Blog.create!(user: spam, title: "活動記録", content: "地域で活動しました。" * 15)
     spam.update_column(:moderation_status, "clear") # Simulate a record screened under the old rule.
-    assert_includes User.publicly_visible, spam
-    assert_includes Blog.publicly_visible, blog
+    assert_not spam.publicly_visible?
+    assert_not_includes User.publicly_visible, spam
+    assert_not_includes Blog.publicly_visible, blog
 
     ReviewNonJapaneseCircleProfiles.new.up
 
