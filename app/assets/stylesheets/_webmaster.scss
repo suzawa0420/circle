@@ -90,3 +90,6 @@
   .wm-field { grid-template-columns: minmax(0, 1fr); }
   .wm-field input[type=search] { width: 100%; min-width: 0; }
 }
+
+.webmaster-page .webmaster-login .webmaster-remember { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.webmaster-page .webmaster-login .webmaster-remember input[type=checkbox] { width: 20px; height: 20px; flex: 0 0 20px; margin: 0; }

@@ -50,7 +50,7 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20260927120000
     bundle exec rails db:migrate:up VERSION=20261002000000
     # Additive chat/account migrations; deliberately enumerate approved versions.
-    for version in 20261001000000 20261001010000 20261001020000 20261001030000 20261001040000 20261001050000 20261002010000; do
+    for version in 20261001000000 20261001010000 20261001020000 20261001030000 20261001040000 20261001050000 20261002010000 20261002020000; do
       bundle exec rails db:migrate:up VERSION="$version"
     done
     bundle exec rails db:abort_if_pending_migrations

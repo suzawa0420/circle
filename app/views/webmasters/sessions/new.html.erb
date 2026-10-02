@@ -6,6 +6,9 @@
     <%= f.email_field :email, required: true, autofocus: true, autocomplete: 'username' %>
     <%= f.label :password, 'パスワード' %>
     <%= f.password_field :password, required: true, autocomplete: 'current-password' %>
+    <%= f.label :remember_me, class: 'webmaster-remember' do %>
+      <%= f.check_box :remember_me %><span>ログイン状態を保持する（2週間）</span>
+    <% end %>
     <%= f.submit 'ログイン', class: 'webmaster-button' %>
   <% end %>
 </section>

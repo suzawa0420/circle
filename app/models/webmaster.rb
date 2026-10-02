@@ -1,5 +1,5 @@
 class Webmaster < ApplicationRecord
-  devise :database_authenticatable, :validatable, :timeoutable, :lockable,
+  devise :database_authenticatable, :validatable, :rememberable, :timeoutable, :lockable,
          timeout_in: 30.minutes, maximum_attempts: 10, unlock_strategy: :time,
          unlock_in: 30.minutes
 
