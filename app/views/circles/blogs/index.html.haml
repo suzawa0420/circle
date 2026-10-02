@@ -5,7 +5,7 @@
   .container
 
     .users-index-item
-      %h1.top_title 活動ブログ
+      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 活動ブログ
       = render "/users/parts/user_switching", user: @user, url_path: "blogs"
     .space_content
       %div

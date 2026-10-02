@@ -4,7 +4,7 @@
   - if webmaster?
     = link_to "運営管理", webmaster_path, class: "mobile-site-heading__cta"
   - elsif admin_user_signed_in?
-    - circle = current_admin_user.users.first
+    - circle = mobile_navigation_circle
     - if circle
       = link_to "マイページ", "/users/#{circle.id}/mypage", class: "mobile-site-heading__cta"
     - else

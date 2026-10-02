@@ -9,22 +9,8 @@
       - @link.errors.full_messages.each do |message|
         .form-error_message
           ・#{message}
-      %h1.p_t リンク集の作成
-      - if admin_user_signed_in?
-        - if @user.admin_user_id == current_admin_user.id
-          - if current_admin_user.users.count > 1
-            .user_select_wrap
-              現在のアカウント：
-              %select{:name => "user_select", :onchange => "location.href=value;"}
-                %option{:value => "#"}
-                  = @user.name
-                  （#{@user.event.name}）
-                - current_admin_user.users.each do |user|
-                  - if @user.id != user.id
-                    %option{:value => "/users/#{user.id}/links/new"}
-                      = user.name
-                      （#{user.event.name}）
-            .border
+      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } リンク集の作成
+      = render "users/parts/user_switching", user: @user
       .swiper-container
         .swiper-wrapper
           %img.lazyload.swiper-slide{"data-src" => "/images/circle_link01.jpg"}/

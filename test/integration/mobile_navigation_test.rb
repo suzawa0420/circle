@@ -52,7 +52,54 @@ class MobileNavigationTest < ActionDispatch::IntegrationTest
     assert_select '.mobile-bottom-nav__badge', text: '2'
     get circle_path(foreign)
     assert_select ".mobile-bottom-nav a[href='#{user_schedules_path(foreign)}']", count: 0
-    assert_select ".mobile-bottom-nav a[href='#{user_schedules_path(@circle)}']"
+    assert_select ".mobile-bottom-nav a[href='#{user_schedules_path(second)}']"
+  end
+
+  test 'circle switcher shows only owned circles and remembers selection across management pages' do
+    second = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(name: '切り替え先のサークル'))
+    outsider = AdminUser.create!(email: 'switch-outsider@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    foreign = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(admin_user_id: outsider.id, name: '表示しない他人のサークル'))
+    login(@owner)
+    get new_circle_blog_path(@circle)
+    assert_response :success
+    assert_select '.mobile-bottom-nav > button:first-child.mobile-circle-trigger', text: /#{@circle.name}/
+    assert_select '#mobile-circle-dialog a', count: 2
+    assert_select "#mobile-circle-dialog a[aria-current=true][href='#{new_circle_blog_path(@circle)}']", text: /選択中/
+    assert_select "#mobile-circle-dialog a[href='#{new_circle_blog_path(second)}']"
+    assert_select '#mobile-circle-dialog', text: /#{foreign.name}/, count: 0
+
+    get new_circle_blog_path(second)
+    assert_select '.mobile-circle-trigger', text: /#{second.name}/
+    get edit_admin_user_registration_path
+    assert_select '.mobile-circle-trigger', text: /#{second.name}/
+    assert_select ".mobile-site-heading a[href='/users/#{second.id}/mypage']"
+    assert_select "#mobile-circle-dialog a[aria-current=true][href='/users/#{second.id}/mypage']"
+    get user_questions_path(second)
+    assert_select "#mobile-circle-dialog a[href='#{user_questions_path(@circle)}']"
+    get user_reviews_path(second)
+    assert_select "#mobile-circle-dialog a[href='#{user_reviews_path(@circle)}']"
+    get conversations_path
+    assert_select '.mobile-circle-trigger', count: 0
+    assert_select '#mobile-circle-dialog', count: 0
+  end
+
+  test 'management headings show the selected circle and share its chooser across editing sections' do
+    second = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(name: '作業中のサークル'))
+    login(@owner)
+    [user_schedules_path(second), new_circle_blog_path(second), user_questions_path(second), user_reviews_path(second)].each do |path|
+      get path
+      assert_response :success
+      assert_select 'h1.management-heading', count: 1
+      assert_select '.management-circle-trigger[aria-controls="mobile-circle-dialog"]', text: /#{second.name}/
+      assert_select '.management-circle-trigger .mobile-circle-avatar', count: 1
+      assert_select 'select[name="user_select"]', count: 0
+      assert_select '#mobile-circle-dialog', count: 1
+    end
+    get new_user_schedule_path(second)
+    assert_response :success
+    assert_select ".mobile-circle-list__item[href='#{new_user_schedule_path(@circle)}']"
+    get circle_path(second)
+    assert_select '.management-circle-trigger', count: 0
   end
 
   private

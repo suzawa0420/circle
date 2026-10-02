@@ -4,7 +4,8 @@
     .form.users-form
       .form-body.cont-body
 
-        .p_t ブログの編集
+        %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } ブログの編集
+        = render "users/parts/user_switching", user: @user
 
         = render "circles/blogs/form", url_path: circle_blog_path, method: "PUT"
 

@@ -1,0 +1,101 @@
+@import "brand_palette";
+
+.management-heading {
+  margin: 8px 0 20px;
+  padding: 0;
+  border: 0;
+  color: $cb-text;
+  text-align: left;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: .02em;
+}
+
+.management-context { margin: 0 0 24px; }
+.management-circle-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid $cb-border;
+  border-radius: 14px;
+  background: $cb-surface;
+  color: $cb-text;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(18, 35, 28, .03);
+
+  &:hover, &:focus-visible { border-color: $cb-action; background: $cb-mint-soft; }
+  &:focus-visible { outline: 2px solid $cb-action; outline-offset: 3px; }
+  .mobile-circle-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .mobile-circle-avatar--empty { background: $cb-action; color: $cb-surface; font-weight: 700; }
+}
+.management-circle-trigger__content { flex: 1; min-width: 0; }
+.management-circle-trigger__label { display: block; margin-bottom: 3px; color: $cb-muted; font-size: 11px; line-height: 1.4; }
+.management-circle-trigger__name { display: block; font-size: 16px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+.management-circle-trigger__action { flex: none; display: flex; align-items: center; gap: 6px; color: $cb-action-hover; font-size: 12px; font-weight: 700; }
+
+@media (max-width: 767px) {
+  .management-heading { font-size: 24px; margin-top: 4px; margin-bottom: 16px; }
+  .management-circle-trigger__action { font-size: 11px; }
+}
+
+// The same circle chooser is accessible from the page heading on desktop.
+@media (min-width: 768px) {
+  body.mobile-menu-open { position: fixed; left: 0; right: 0; overflow: hidden; }
+  .mobile-menu-dialog.mobile-circle-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0;
+    width: calc(100% - 48px);
+    max-width: 460px;
+    max-height: calc(100dvh - 80px);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    color: $cb-text;
+    background: $cb-surface;
+    box-shadow: 0 12px 48px rgba(0,0,0,.2);
+    overflow: hidden;
+  }
+  .mobile-circle-dialog::backdrop { background: rgba(18,35,28,.45); }
+  .mobile-circle-dialog .mobile-menu-panel__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px 8px; }
+  .mobile-circle-dialog h2 { margin: 0; font-size: 18px; font-weight: 700; }
+  .mobile-circle-dialog .mobile-menu-close { flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; background: $cb-canvas; color: $cb-text; font-size: 20px; cursor: pointer; }
+  .mobile-circle-dialog .mobile-menu-panel__body { overflow-y: auto; min-height: 0; padding: 0 20px 20px; }
+  .mobile-circle-list__item { display: flex; align-items: center; gap: 12px; padding: 12px; min-height: 68px; border-radius: 12px; color: $cb-text; }
+  .mobile-circle-list__item.is-selected, .mobile-circle-list__item:hover, .mobile-circle-list__item:focus-visible { background: $cb-mint-soft; color: $cb-action-hover; }
+  .mobile-circle-list__item .mobile-circle-avatar { display: flex; align-items: center; justify-content: center; flex: none; width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+  .mobile-circle-list__item .mobile-circle-avatar--empty { background: $cb-action; color: $cb-surface; font-weight: 700; }
+  .mobile-circle-list__name { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 14px; font-weight: 700; }
+  .mobile-circle-list__current { flex: none; padding: 4px 8px; border-radius: 12px; background: $cb-surface; color: $cb-action-hover; font-size: 11px; }
+}
+
+.management-schedules {
+  .schedule_share_wrap { gap: 12px; margin: 0 0 20px; }
+  .schedule_share_wrap > a { width: 100%; }
+  .schedule_share_wrap .share_btn_tw, .schedule_share_wrap .share_btn_line { width: 100%; margin: 0; font-size: 14px; border-radius: 10px; }
+  .management-share-card { margin-bottom: 16px; padding: 16px; border: 1px solid $cb-border; border-radius: 14px; background: $cb-surface; }
+  .management-share-card h2 { margin: 0 0 10px; color: $cb-text; font-size: 14px; font-weight: 700; }
+  .schedule_list_copy { width: 100%; height: 96px; margin: 0; padding: 12px; border: 0; border-radius: 8px; background: $cb-canvas; line-height: 1.7; }
+  .copyBtn01, .copyBtn02 { width: 100%; min-height: 44px; margin: 12px 0 0; padding: 10px 8px; border: 1px solid $cb-border; border-radius: 8px; color: $cb-action-hover; background: $cb-mint-soft; font-size: 13px; font-weight: 700; }
+  .copyBtn01:hover, .copyBtn02:hover { border-color: $cb-action; }
+  .add_schedule_btn_wrap { margin: 24px 0; }
+  .add_schedule_btn_wrap .add_schedule_btn { width: 100%; margin: 0; padding: 14px 12px; border: 0; border-radius: 10px; background: $cb-action; font-size: 15px; letter-spacing: 0; }
+  .add_schedule_btn_wrap .add_schedule_btn:hover { margin: 0; border: 0; background: $cb-action-hover; }
+  .schedule_m { font-size: 20px; font-weight: 700; }
+}

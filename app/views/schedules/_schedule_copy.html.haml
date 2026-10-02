@@ -1,53 +1,57 @@
 - if @schedules.present?
-  .schedule_list_copy
-    .copyTarget01
-      - @schedules.each do |schedule01|
-        - if schedule01.present?
-          - if @schedule_m_01 != Time.parse(schedule01.day).strftime("%-m")
-            【#{Time.parse(schedule01.day).strftime("%-m")}月のスケジュール】
+  .management-share-card
+    %h2 一般向けの予定を共有
+    .schedule_list_copy
+      .copyTarget01
+        - @schedules.each do |schedule01|
+          - if schedule01.present?
+            - if @schedule_m_01 != Time.parse(schedule01.day).strftime("%-m")
+              【#{Time.parse(schedule01.day).strftime("%-m")}月のスケジュール】
+              %br/
+              - @schedule_m_01 = Time.parse(schedule01.day).strftime("%-m")
+            ・#{Time.parse(schedule01.day).strftime("%-d日(#{@wdays[Time.parse(schedule01.day).wday]})")}
+            - if schedule01.time_s.present?
+              = schedule01.time_s.strftime('%H:%M')
+              \-#{schedule01.time_e.strftime('%H:%M') if schedule01.time_e.present?}
+            = succeed "\u3000" do
+              %br/
+            = schedule01.venue
             %br/
-            - @schedule_m_01 = Time.parse(schedule01.day).strftime("%-m")
-          ・#{Time.parse(schedule01.day).strftime("%-d日(#{@wdays[Time.parse(schedule01.day).wday]})")}
-          - if schedule01.time_s.present?
-            = schedule01.time_s.strftime('%H:%M')
-            \-#{schedule01.time_e.strftime('%H:%M') if schedule01.time_e.present?}
-          = succeed "\u3000" do
             %br/
-          = schedule01.venue
-          %br/
-          %br/
-      ▼スケジュール詳細
-      %br/
-      = request.url
-  %button.copyBtn01
-    .requirement_copy
-      %i.fa.fa-copy
-      一般向けの予定をコピーする！
-  .schedule_list_copy
-    .copyTarget02
-      - @schedules.each do |schedule02|
-        - if schedule02.present?
-          - if @schedule_m_02 != Time.parse(schedule02.day).strftime("%-m")
-            【#{Time.parse(schedule02.day).strftime("%-m")}月のスケジュール】
+        ▼スケジュール詳細
+        %br/
+        = request.url
+    %button.copyBtn01
+      .requirement_copy
+        %i.fa.fa-copy
+        一般向けの予定をコピー
+  .management-share-card
+    %h2 メンバー向けの予定を共有
+    .schedule_list_copy
+      .copyTarget02
+        - @schedules.each do |schedule02|
+          - if schedule02.present?
+            - if @schedule_m_02 != Time.parse(schedule02.day).strftime("%-m")
+              【#{Time.parse(schedule02.day).strftime("%-m")}月のスケジュール】
+              %br/
+              - @schedule_m_02 = Time.parse(schedule02.day).strftime("%-m")
+            ・#{Time.parse(schedule02.day).strftime("%-d日(#{@wdays[Time.parse(schedule02.day).wday]})")}
+            - if schedule02.time_s.present?
+              = schedule02.time_s.strftime('%H:%M')
+              \-#{schedule02.time_e.strftime('%H:%M') if schedule02.time_e.present?}
+            - if schedule02.member_venue.present?
+              %br>/
+              　#{schedule02.member_venue}
+              %br/
+            - else
+              %br>/
+              　#{schedule02.venue}
+              %br/
             %br/
-            - @schedule_m_02 = Time.parse(schedule02.day).strftime("%-m")
-          ・#{Time.parse(schedule02.day).strftime("%-d日(#{@wdays[Time.parse(schedule02.day).wday]})")}
-          - if schedule02.time_s.present?
-            = schedule02.time_s.strftime('%H:%M')
-            \-#{schedule02.time_e.strftime('%H:%M') if schedule02.time_e.present?}
-          - if schedule02.member_venue.present?
-            %br>/
-            　#{schedule02.member_venue}
-            %br/
-          - else
-            %br>/
-            　#{schedule02.venue}
-            %br/
-          %br/
-      ▼出欠の登録
-      %br/
-      https://circle-book.com/s/#{@user.unique_id}/attendances
-  %button.copyBtn02
-    .requirement_copy
-      %i.fa.fa-copy
-      メンバー向けの予定をコピーする！
+        ▼出欠の登録
+        %br/
+        https://circle-book.com/s/#{@user.unique_id}/attendances
+    %button.copyBtn02
+      .requirement_copy
+        %i.fa.fa-copy
+        メンバー向けの予定をコピー

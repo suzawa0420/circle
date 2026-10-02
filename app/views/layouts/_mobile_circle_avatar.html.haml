@@ -1,0 +1,4 @@
+- if circle.pic_profile.present?
+  = image_tag circle.pic_profile.url, alt: "", class: "mobile-circle-avatar"
+- else
+  %span.mobile-circle-avatar.mobile-circle-avatar--empty{ "aria-hidden" => "true" }= circle.name.to_s.first

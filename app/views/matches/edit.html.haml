@@ -11,7 +11,8 @@
         - @match.errors.full_messages.each do |message|
           .form-error_message
             ・#{message}
-        .p_t 対戦募集の内容編集
+        %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 対戦募集の内容編集
+        = render "users/parts/user_switching", user: @user
         = form_for @match do |f|
           %p 対戦相手の募集
           = f.select :recruit, [ ['募集中','募集中'], ['募集終了','募集終了'] ]

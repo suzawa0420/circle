@@ -1,6 +1,10 @@
 %nav.mobile-bottom-nav{ "aria-label" => "サイトのメインメニュー" }
   - if admin_user_signed_in?
     - circle = mobile_navigation_circle
+    - if circle && mobile_circle_switcher?
+      %button.mobile-bottom-nav__item.mobile-bottom-nav__circle.mobile-circle-trigger{ type: "button", "aria-controls" => "mobile-circle-dialog", "aria-haspopup" => "dialog", "aria-expanded" => "false", "aria-label" => "管理するサークルを切り替え（現在：#{circle.name}）" }
+        = render "layouts/mobile_circle_avatar", circle: circle
+        %span= circle.name
     = render "layouts/mobile_message_link"
     = link_to circle ? user_schedules_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'schedules'}" do
       %i.fa.fa-calendar{ "aria-hidden" => "true" }
@@ -28,6 +32,9 @@
     %i.fa.fa-bars{ "aria-hidden" => "true" }
     %span メニュー
 
+- if admin_user_signed_in? && mobile_circle_switcher? && mobile_navigation_circle
+  = render "layouts/mobile_circle_switcher", selected_circle: mobile_navigation_circle
+
 %dialog#mobile-menu-dialog.mobile-menu-dialog{ "aria-labelledby" => "mobile-menu-title" }
   .mobile-menu-panel__header
     %h2#mobile-menu-title メニュー
@@ -48,7 +55,7 @@
         = link_to "運営管理トップ", webmaster_path
         = link_to "口コミ管理", super_admin_reviews_path
       - elsif admin_user_signed_in? && current_admin_user.users.any?
-        = link_to "マイページ", "/users/#{current_admin_user.users.first.id}/mypage"
+        = link_to "マイページ", "/users/#{mobile_navigation_circle.id}/mypage"
       - elsif member_signed_in?
         = link_to "マイページ", member_path(current_member)
         = link_to "サークルを登録", new_admin_user_registration_path

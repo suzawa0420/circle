@@ -1,7 +1,8 @@
 .user_main.users-index
   .container
     .users-index-item
-      %h1.p_t 口コミ・評価の編集
+      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 口コミ・評価の編集
+      = render "users/parts/user_switching", user: @user
       .schedule_input
         = form_for ([@user, @review]) do |f|
           %p 口コミ・評価

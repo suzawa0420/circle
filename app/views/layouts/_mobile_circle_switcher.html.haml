@@ -1,0 +1,14 @@
+%dialog#mobile-circle-dialog.mobile-menu-dialog.mobile-circle-dialog{ "aria-labelledby" => "mobile-circle-dialog-title" }
+  .mobile-menu-panel__header
+    %h2#mobile-circle-dialog-title 管理するサークルを切り替え
+    %button.mobile-menu-close{ type: "button", "aria-label" => "サークル一覧を閉じる", autofocus: true }
+      %i.fa.fa-times{ "aria-hidden" => "true" }
+  .mobile-menu-panel__body.mobile-circle-list
+    - current_admin_user.users.order(:id).each do |circle|
+      - next if controller_path == "matches" && circle.event.matching == 0
+      - selected = circle.id == selected_circle.id
+      = link_to mobile_circle_switch_path(circle), class: "mobile-circle-list__item #{'is-selected' if selected}", "aria-current" => selected ? "true" : nil do
+        = render "layouts/mobile_circle_avatar", circle: circle
+        %span.mobile-circle-list__name= circle.name
+        - if selected
+          %span.mobile-circle-list__current 選択中

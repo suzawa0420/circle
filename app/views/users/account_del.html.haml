@@ -3,18 +3,8 @@
   .container
     .form.users-form
       .form-body.cont-body.center
-        .p_t アカウントの削除
-        .user_select_wrap
-          現在のアカウント：
-          %select{:name => "user_select", :onchange => "location.href=value;"}
-            %option{:value => "#"}
-              = @user.name
-              （#{@user.event.name}）
-            - @admin_user.users.each do |user|
-              - if @user.id != user.id
-                %option{:value => "/users/#{user.id}/account_del"}
-                  = user.name
-                  （#{user.event.name}）
+        %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } アカウントの削除
+        = render "users/parts/user_switching", user: @user
         = render "users/parts/user_name", user: @user
         .warning_icon
           %i.fa.fa-warning

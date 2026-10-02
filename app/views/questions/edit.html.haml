@@ -2,10 +2,8 @@
 .user_main.users-index
   .container.bg_white
     .qa_title_wrap
-      %h1.top_title
-        質問コーナー
-        %h1
-          = render "/users/parts/user_switching", user: @user, url_path: "questions"
+      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 質問コーナー
+      = render "users/parts/user_switching", user: @user
     .qa_wrap
       - if @user.switch == "募集中"
         .qa_profile_wrap

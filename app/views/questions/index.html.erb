@@ -11,7 +11,7 @@
   <div class="container bg_white">
 
 		<div class="qa_title_wrap">
-      <h1 class="top_title">質問コーナー</h1>
+      <h1 class="<%= mobile_circle_switcher? ? "management-heading" : "top_title" %>">質問コーナー</h1>
       <%= render "/users/parts/user_switching", user: @user, url_path: "questions" %>
     </div>
 

@@ -9,21 +9,9 @@
 	<div class="form users-form">
   <div class="user_contact_wrap">
 
-    <div class="p_t">お問い合わせ管理</div>
+    <div class="management-heading">お問い合わせ管理</div>
 
-      <% if @admin_user.users.count > 1 %>
-      <div class="user_select_wrap">
-        現在のアカウント：
-        <select name="user_select" onChange="location.href=value;">
-          <option value="#"><%= @user.name %>（<%= @user.event.name %>）</option>
-          <% @admin_user.users.each do |user| %>
-            <% if @user.id != user.id %>
-              <option value="/users/<%= user.id %>/contact_list"><%= user.name %>（<%= user.event.name %>）</option>
-            <% end %>
-          <% end %>
-        </select>
-      </div>
-      <% end %>
+      <%= render "users/parts/user_switching", user: @user %>
 
       <div class="contact_address_wrap">
         お問い合わせのメールは下記に届いています。<br>

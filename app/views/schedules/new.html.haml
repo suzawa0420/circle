@@ -2,8 +2,10 @@
 .main.users-index
   .container
     .users-index-item.schedule_wrap
-      %h1.top_title スケジュールの新規追加
-      = render "/users/parts/user_name", user: @user
+      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } スケジュールの新規追加
+      = render "users/parts/user_switching", user: @user
+      - unless mobile_circle_switcher?
+        = render "/users/parts/user_name", user: @user
       - if @copy_schedules.present?
         .schedule_copy_wrap
           .schedule_copy_txt

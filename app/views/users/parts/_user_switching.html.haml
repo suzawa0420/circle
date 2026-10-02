@@ -1,14 +1,10 @@
-- if admin_user_signed_in?
-  - if user.admin_user_id == current_admin_user.id
-    - if current_admin_user.users.count > 1
-      .user_select_wrap
-        アカウントの切り替え：
-        %select{:name => "user_select", :onchange => "location.href=value;"}
-          %option{:value => "#"}
-            = user.name
-            （#{user.event.name}）
-          - current_admin_user.users.each do |user_list|
-            - if user.id != user_list.id
-              %option{:value => "/users/#{user_list.id}/#{url_path}"}
-                = user_list.name
-                （#{user_list.event.name}）
+- if admin_user_signed_in? && user.admin_user_id == current_admin_user.id
+  .management-context
+    %button.mobile-circle-trigger.management-circle-trigger{ type: "button", "aria-controls" => "mobile-circle-dialog", "aria-expanded" => "false", "aria-haspopup" => "dialog", "aria-label" => "管理するサークルを切り替え：#{user.name}" }
+      = render "layouts/mobile_circle_avatar", circle: user
+      %span.management-circle-trigger__content
+        %span.management-circle-trigger__label 現在管理中のサークル
+        %span.management-circle-trigger__name= user.name
+      %span.management-circle-trigger__action
+        切り替え
+        %i.fa.fa-angle-down{ "aria-hidden" => "true" }

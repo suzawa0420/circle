@@ -1,6 +1,7 @@
 (function () {
   var closingTimer;
   var opener;
+  var activeDialog;
   var scrollY = 0;
 
   function restorePage() {
@@ -11,7 +12,7 @@
   }
 
   function closeMenu(immediate) {
-    var dialog = document.getElementById('mobile-menu-dialog');
+    var dialog = activeDialog;
     if (!dialog || !dialog.open) return;
     clearTimeout(closingTimer);
     dialog.classList.remove('is-open');
@@ -27,11 +28,12 @@
     document.querySelectorAll('.circle-desktop-menu[open]').forEach(function (menu) {
       if (!menu.contains(event.target)) menu.open = false;
     });
-    var trigger = event.target.closest('.mobile-menu-trigger');
-    var dialog = document.getElementById('mobile-menu-dialog');
+    var trigger = event.target.closest('.mobile-menu-trigger, .mobile-circle-trigger');
+    var dialog = trigger ? document.getElementById(trigger.getAttribute('aria-controls')) : activeDialog;
     if (!dialog) return;
     if (trigger) {
       if (dialog.open) return;
+      activeDialog = dialog;
       opener = trigger;
       scrollY = window.scrollY;
       document.body.style.top = -scrollY + 'px';
@@ -45,7 +47,7 @@
       var bounds = dialog.getBoundingClientRect();
       if (event.clientX < bounds.left || event.clientX > bounds.right ||
           event.clientY < bounds.top || event.clientY > bounds.bottom) closeMenu(false);
-    } else if (dialog.open && event.target.closest('#mobile-menu-dialog a')) {
+    } else if (dialog.open && event.target.closest('dialog a')) {
       closeMenu(true);
     }
   });
@@ -59,7 +61,7 @@
 
   // Keep Escape, page navigation and desktop resizing consistent with the close button.
   document.addEventListener('cancel', function (event) {
-    if (event.target.id === 'mobile-menu-dialog') {
+    if (event.target === activeDialog) {
       event.preventDefault();
       closeMenu(false);
     }

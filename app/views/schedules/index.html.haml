@@ -1,8 +1,8 @@
 - set_meta_tags title: "活動スケジュール｜#{@user.name}",og: {title: "活動スケジュール｜#{@user.name}",description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}", image: image_url("/images/schedule_ogp.jpg")}
-.user_main.users-index
+.user_main.users-index{ class: mobile_circle_switcher? ? "management-schedules" : nil }
   .container
     .users-index-item
-      %h1.top_title 活動スケジュール
+      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 活動スケジュール
       = render "/users/parts/user_switching", user: @user, url_path: "schedules"
       - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
         - if admin_user_signed_in?

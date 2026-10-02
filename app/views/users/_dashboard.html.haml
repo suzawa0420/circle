@@ -34,14 +34,7 @@
       %span.dashboard-status.dashboard-status--attention 非公開
     - if @user.switch.present?
       %span.dashboard-recruitment= @user.switch
-  - if @admin_user.users.count > 1
-    .dashboard-circle__switch
-      %label{ for: "dashboard-circle-select" } 管理するサークルを切り替え
-      %select#dashboard-circle-select{ name: "user_select", onchange: "location.href=value;" }
-        - @admin_user.users.each do |circle|
-          %option{ value: "/users/#{circle.id}/mypage", selected: circle.id == @user.id }= circle.name
-        - if can_add_circle
-          %option{ value: "/user/add" } ＋ サークルを新規追加
+  = render "users/parts/user_switching", user: @user
   .dashboard-circle__actions
     = link_to edit_user_path(@user), class: "dashboard-primary" do
       %i.fa.fa-pencil{ "aria-hidden" => "true" }

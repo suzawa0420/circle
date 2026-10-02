@@ -11,23 +11,8 @@
         - @match.errors.full_messages.each do |message|
           .form-error_message
             ・#{message}
-        .p_t 対戦募集の内容編集
-        - if admin_user_signed_in?
-          - if @user.admin_user_id == current_admin_user.id
-            - if current_admin_user.users.count > 1
-              .user_select_wrap
-                現在のアカウント：
-                %select{:name => "user_select", :onchange => "location.href=value;"}
-                  %option{:value => "#"}
-                    = @user.name
-                    （#{@user.event.name}）
-                  - current_admin_user.users.each do |user|
-                    - if @user.id != user.id
-                      - if user.event.matching != 0
-                        %option{:value => "/users/#{user.id}/matches/new"}
-                          = user.name
-                          （#{user.event.name}）
-                      - else
+        %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 対戦募集の内容編集
+        = render "users/parts/user_switching", user: @user
         = form_for(@match, url: user_matches_path(@user)) do |f|
           %dir.your_name_txt
             = @user.name
