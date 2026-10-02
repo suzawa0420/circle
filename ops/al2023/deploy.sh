@@ -57,6 +57,8 @@ case "$mode" in
     for version in 20261002030000 20261002040000; do
       bundle exec rails db:migrate:up VERSION="$version"
     done
+    # Recalculate affected stored levels without legacy inquiry penalties.
+    bundle exec rails db:migrate:up VERSION=20261003000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

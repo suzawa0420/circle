@@ -8,7 +8,8 @@ module Circlebook
       @qa_point = Question.where(user_id: user.id).where.not(answer: [nil, '']).count * 0.3
       @review_point = Review.where(user_id: user.id, review: 1).count * 2
       # @contact_point = UserContact.where(user_id: user.id, contact_del: nil).count * 0.5
-      @respond_point = (UserContact.where(user_id: user.id, respond_check: "NG").count + Conversation.where(user_id: user.id, respond_check: "NG").count) * 30
+      # 旧お問い合わせは減点せず、サイト内メッセージの未返信報告のみ対象にする。
+      @respond_point = Conversation.where(user_id: user.id, respond_check: "NG").count * 30
 
       if user.admin_user.check.present? && user.admin_user.check != 0
         # 違反者
