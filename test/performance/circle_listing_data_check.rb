@@ -8,6 +8,8 @@ require 'active_record'
 require 'active_support/all'
 require 'kaminari/activerecord'
 require 'haml'
+require 'active_support/testing/time_helpers'
+require_relative '../../app/services/search_result_count_cache'
 
 socket = ARGV.shift
 abort 'Pass the dedicated temporary PostgreSQL socket directory' unless socket&.match?(%r{\A/private/tmp/circle-list-pg\.[a-zA-Z0-9]+\z})
@@ -52,7 +54,10 @@ end
 require_relative '../../app/services/circle_listing_data'
 
 class CircleListingDataTest < Minitest::Test
+  include ActiveSupport::Testing::TimeHelpers
+
   def setup
+    SearchResultCountCache::STORE.clear
     [UserTag, Review, Schedule, User, Tag, Event, Prefecture].each(&:delete_all)
     pref = Prefecture.create!(sort: 1, name: '東京')
     sub = Prefecture.create!(sort: 2, name: '神奈川')
@@ -136,6 +141,28 @@ class CircleListingDataTest < Minitest::Test
     assert_equal 5_000, records['Schedule']
     assert_equal 200, records['Review']
     puts "Original preload: #{records['Schedule']} Schedule objects, #{records['Review']} Review objects"
+  end
+
+  def test_listing_count_is_reused_across_pages_but_records_and_filters_stay_live
+    travel_to(Time.current.change(usec: 0)) do
+      assert_equal 21, CircleListingData.new(relation).users.total_count
+      @users.first.update!(switch: '募集停止')
+      sql, = capture do
+        current = CircleListingData.new(relation).users
+        assert_equal '募集停止', current.first.switch
+        assert_equal 21, current.total_count
+        assert_equal 21, CircleListingData.new(relation.page(2)).users.total_count
+      end
+      refute sql.any? { |query| query.include?('COUNT(') }
+      assert_equal 20, CircleListingData.new(relation.where(switch: '募集中')).users.total_count
+
+      User.where(id: @users.last.id).update_all(prefecture_sub_id: nil)
+      assert_equal 20, CircleListingData.new(relation.where.not(prefecture_sub_id: nil)).users.total_count
+      User.where(id: @users.last.id).delete_all
+      assert_equal 21, CircleListingData.new(relation).users.total_count
+      travel 31.seconds
+      assert_equal 20, CircleListingData.new(relation).users.total_count
+    end
   end
 
   def test_both_haml_templates_compile_and_use_bounded_data

@@ -1,6 +1,6 @@
 require 'digest'
 
-# Only the public keyword search opts in. Never cache records or authorization.
+# Public circle listings opt in via CircleListingData. Never cache records or authorization.
 # Per-process bounded storage avoids new infrastructure and unbounded disk keys.
 module SearchResultCountCache
   STORE = ActiveSupport::Cache::MemoryStore.new(size: 4.megabytes)

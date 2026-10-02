@@ -11,6 +11,9 @@ class CircleListingData
     @users = relation.except(:includes)
     @users = @users.includes(*retained_includes) if retained_includes.any?
     @users = @users.preload(:event, :prefecture, :prefecture_sub, :listing_tags)
+    # Pagination otherwise repeats the full public-visibility scan on every
+    # request. Cache only its count; the records and visibility stay live.
+    @users.extend(SearchResultCountCache::RelationMethods)
   end
 
   def review_count(user)

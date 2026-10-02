@@ -16,6 +16,8 @@ ActiveRecord::Schema.define do
   %i[last_post created_at].each { |column| add_column :users, column, :datetime }
   add_column :users, :cb_point, :integer
   add_column :users, :admin_user_id, :bigint
+  add_column :users, :publication_status, :string, default: 'published'
+  add_column :users, :moderation_status, :string, default: 'clear'
   create_table(:cities, force: true) { |t| t.string :name; t.string :city_kana; t.bigint :prefecture_id }
   create_table(:users_cities, force: true) { |t| t.bigint :user_id; t.bigint :city_id }
   create_table(:categories, force: true)
@@ -36,7 +38,11 @@ end
 class Category < ActiveRecord::Base; end
 class Age < ActiveRecord::Base; end
 class Group < ActiveRecord::Base; end
-class AdminUser < ActiveRecord::Base; end
+class AdminUser < ActiveRecord::Base
+  source = File.read(File.expand_path('../../app/models/admin_user.rb', __dir__))
+  class_eval(source[/^\s*SHADOW_BANNED_CHECK = .*$/])
+  class_eval(source[/^\s*scope :publicly_visible, .*$/])
+end
 class UserContact < ActiveRecord::Base; end
 class UserTag
   belongs_to :user
@@ -48,6 +54,7 @@ class User
   has_many :user_contacts
   # Use the real scope definitions without booting Rails/reading credentials.
   source = File.read(File.expand_path('../../app/models/user.rb', __dir__))
+  class_eval(source[/scope :publicly_visible, -> \{.*?\n\s*\}/m])
   scope_names = %w[list sort_1 sort_2 sort_3 ng_account user_sort_1 user_sort_2 user_sort_3 prefecture prefecture_sub prefecture_50 city tag event]
   source.each_line do |line|
     class_eval(line) if line.match?(/^\s*scope :(#{scope_names.join('|')}),/)
@@ -272,6 +279,7 @@ class SearchQueriesTest < Minitest::Test
       plan = JSON.parse(ActiveRecord::Base.connection.select_value("EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) #{sql}")).first
       puts "Synthetic plan: #{plan['Plan']['Node Type']}, execution=#{plan['Execution Time']}ms"
     end
+    SearchResultCountCache::STORE.clear
     controller.send(:set_keyword_search)
     data = controller.instance_variable_get(:@listing_data)
     relation = controller.instance_variable_get(:@users)
@@ -286,6 +294,15 @@ class SearchQueriesTest < Minitest::Test
     assert_equal 20, records['User']
     assert_equal 0, records['Review']
     puts "Search render: #{searches.length} search SQLs before, #{search_count} after"
+  end
+
+  def test_cached_public_count_does_not_keep_moderated_records_visible
+    assert_equal 45, CircleListingData.new(User.publicly_visible.page(1)).users.total_count
+    @users.last.update!(moderation_status: 'review')
+    current = CircleListingData.new(User.publicly_visible.order(:id).page(1).per(100)).users
+    refute_includes current.map(&:id), @users.last.id
+    @admin.update!(check: AdminUser::SHADOW_BANNED_CHECK)
+    assert_empty CircleListingData.new(User.publicly_visible.page(1)).users.to_a
   end
 
   def test_search_templates_compile_and_share_listing_data
