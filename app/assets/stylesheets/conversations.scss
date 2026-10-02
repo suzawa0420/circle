@@ -56,6 +56,11 @@
 .chat-body { padding: 12px 15px; background: #fff; border: 1px solid $cb-border; border-radius: 3px 18px 18px 18px; color: $cb-text; overflow-wrap: anywhere; }
 .chat-body p { margin: 0; line-height: 1.7; font-size: 14px; }
 .chat-body p + p { margin-top: 8px; }
+.chat-body a.message-url {
+  color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+  &:hover, &:focus-visible { color: $cb-action; }
+}
 .chat-message--mine .chat-body { background: $cb-mint-soft; border-color: $cb-border; border-radius: 18px 3px 18px 18px; }
 .chat-message__meta { display: flex; gap: 12px; align-items: baseline; color: $cb-muted; margin-top: 4px; font-size: 10px; }
 .chat-message--mine .chat-message__meta { justify-content: flex-end; }

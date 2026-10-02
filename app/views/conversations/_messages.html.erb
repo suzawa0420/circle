@@ -7,7 +7,7 @@
     <% unless mine %><%= render 'avatar', conversation: @conversation, role: message.sender_role %><% end %>
     <div class="chat-message__content">
       <% unless mine %><strong class="chat-message__name"><%= message.sender_role == 'owner' ? @conversation.user.name : @conversation.member.nickname %></strong><% end %>
-      <div class="chat-body"><%= simple_format(message.body) %></div>
+      <div class="chat-body"><%= chat_message_body(message.body) %></div>
       <div class="chat-message__meta"><time datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%H:%M') %></time>
       <% unless mine %>
         <details><summary>通報</summary>

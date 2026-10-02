@@ -8,6 +8,26 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     create_chat_records
   end
 
+  test 'message URLs are linked safely for participants owners and polling' do
+    accept_conversation
+    @conversation.send_message!('owner', "ご案内：https://example.test/join?a=1&b=2\n<script>alert(1)</script> javascript:alert(2)")
+    [@member, @owner].each do |account|
+      sign_in account
+      get conversation_path(@conversation)
+      assert_response :success
+      assert_select '.chat-body a.message-url[href="https://example.test/join?a=1&b=2"]', count: 1 do |links|
+        assert_equal '_blank', links.first['target']
+        assert_includes links.first['rel'], 'noopener'
+      end
+      assert_select '.chat-body script', count: 0
+      assert_select '.chat-body a[href^="javascript:"]', count: 0
+      get messages_conversation_path(@conversation), as: :json
+      assert_response :success
+      assert_includes response.parsed_body.to_s, 'message-url'
+      sign_out account
+    end
+  end
+
   test 'inbox shows latest preview and unread state for each role without leaking other threads' do
     accept_conversation
     other = Conversation.for_member!(@circle, @other_member)

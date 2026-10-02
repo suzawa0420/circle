@@ -81,6 +81,11 @@
   .wm-message--owner { margin-left: auto; background: #edf6f1; border-color: #cce2d5; }
   .wm-message--member { margin-right: auto; }
   .wm-message .wm-body { margin-bottom: 0; }
+  .wm-body a.message-url {
+    color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+    &:hover, &:focus-visible { color: $cb-action; }
+  }
 }
 @media (max-width: 767px) {
   .webmaster-page .wm-conversation .wm-message { max-width: 96%; }

@@ -9,6 +9,16 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     @master = Webmaster.create!(id: 1, email: 'webmaster@example.test', password: 'test-password-123')
   end
 
+  test 'webmaster conversation history links message URLs safely' do
+    @conversation.send_message!('member', "https://example.test/contact?a=1&b=2\n<img src=x onerror=alert(1)>")
+    login_master
+    get super_admin_conversation_path(@conversation)
+    assert_response :success
+    assert_select '.wm-body a.message-url[href="https://example.test/contact?a=1&b=2"]', count: 1
+    assert_select '.wm-body img', count: 0
+    assert_select '.wm-body [onerror]', count: 0
+  end
+
   test 'only webmaster can read list and conversation without a report' do
     [super_admin_conversations_path, super_admin_conversation_path(@conversation)].each do |path|
       get path
