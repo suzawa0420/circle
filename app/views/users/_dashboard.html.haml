@@ -46,7 +46,7 @@
       %i.fa.fa-link{ "aria-hidden" => "true" }
       公開URL
     .dashboard-circle__url-row
-      = link_to public_url, class: "copyTarget dashboard-circle__url-value" do
+      = link_to public_url, class: "copyTarget dashboard-circle__url-value", "aria-label" => "公開URL（横にスライドして全文を確認）" do
         = public_url
       %button.dashboard-url-copy.dashboard-copy{ type: "button", "aria-label" => "サークルの公開URLをコピー" }
         %i.fa.fa-copy{ "aria-hidden" => "true" }
@@ -72,7 +72,7 @@
 = render "/users/alert"
 
 - if admin_user_signed_in? && @user.admin_user_id == current_admin_user.id
-  = render "users/level_card", user: @user
+  = render "users/level_card", user: @user, breakdown: [["スケジュール登録", 0.1, @schedule_point], ["ブログ投稿", 0.2, @blog_point], ["Q&Aの回答", 0.3, @qa_point], ["高評価の口コミ", 2.0, @review_point], ["問い合わせ未返信", -30.0, -@respond_point]], rivals: @users.includes(:event, :prefecture).limit(5)
 
 %section.dashboard-section
   .dashboard-section__heading

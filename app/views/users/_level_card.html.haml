@@ -22,6 +22,9 @@
       同じレベルでは、対象となる活動が新しいサークルから表示されます。
     - else
       ブログや活動予定の投稿、質問への回答、参加者からの高評価の口コミでレベルアップ。
+  .dashboard-level__ranking
+    %strong レベルが高いほど、人気順で上位に表示されやすくなります
+    %p 募集中などの掲載条件が同じ場合に優先されます。同じレベルでは、対象となる活動が新しい順です。
   .dashboard-level__actions
     = link_to "ブログを書く", new_circle_blog_path(user), class: "dashboard-primary"
     = link_to "口コミを依頼する", user_reviews_path(user, anchor: "review-request"), class: "dashboard-copy"
@@ -35,3 +38,43 @@
       %li 高評価の口コミ：2.0
     %p 掲載順の活動日時が更新されるのは、新規ブログ・新規活動予定・質問への初回回答です。編集・削除・同じ内容の再投稿では更新されません。
     %p 投稿などを削除すると合計も減ります。お問い合わせの未返信報告など、従来の減点も反映されます。
+
+  - if local_assigns[:breakdown].present?
+    %details.dashboard-level__breakdown
+      %summary レベルの内訳を見る
+      %table
+        %caption 現在の加算・減点の内訳
+        %thead
+          %tr
+            %th{ scope: "col" } 項目
+            %th{ scope: "col" } 1件
+            %th{ scope: "col" } 合計
+        %tbody
+          - breakdown.each do |name, unit, total|
+            %tr
+              %th{ scope: "row" }= name
+              %td= format("%.1f", unit)
+              %td= format("%.1f", total.to_f)
+        %tfoot
+          %tr
+            %th{ scope: "row", colspan: 2 } 現在の合計
+            %td= format("%.1f", user.cb_point)
+      %p 合計が1増えると1レベル上がります。小数部分は次のレベルへの進捗です。表示はLv.0〜100です。
+      - if user.admin_user.check.present? && user.admin_user.check != 0
+        %p 現在は掲載ルールによる減点が適用されています。
+      - elsif user.user_time.blank? || user.user_time.to_time <= Time.zone.now.ago(1.year)
+        %p 直近1年の更新がないため、現在の合計は0です。サークル情報を更新すると投稿等の内訳が再反映されます。
+  - if local_assigns.key?(:rivals)
+    .dashboard-level__rivals
+      %h3 ライバルサークル
+      %p 同じ都道府県・種目で活動するサークルです。
+      - if rivals.present?
+        %ul
+          - rivals.each do |rival|
+            %li
+              = link_to circle_path(rival), class: "dashboard-level__rival" do
+                = image_tag rival.pic_profile.url, alt: "", class: "dashboard-level__rival-avatar"
+                %span.dashboard-level__rival-name= rival.name
+                %strong= "Lv.#{circle_level_status(rival)[:level]}"
+      - else
+        %p 現在、同じ条件のライバルサークルはありません。

@@ -22,7 +22,7 @@
   .dashboard-circle__url { margin-top: 16px; padding: 16px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-canvas; }
   .dashboard-circle__url h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; font-weight: 700; }
   .dashboard-circle__url-row { display: flex; align-items: center; gap: 12px; }
-  .dashboard-circle__url-value { flex: 1; min-width: 0; color: $cb-text; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; word-break: break-word; white-space: normal; }
+  .dashboard-circle__url-value { flex: 1; min-width: 0; color: $cb-text; font-size: 14px; line-height: 1.6; overflow-x: auto; overflow-wrap: normal; word-break: normal; white-space: nowrap; -webkit-overflow-scrolling: touch; }
   .dashboard-circle__url-row .dashboard-copy { flex: none; padding: 10px; font-size: 12px; }
   .dashboard-circle__identity { display: flex; align-items: center; gap: 12px; }
   .dashboard-circle__avatar { width: 52px; height: 52px; flex: none; border-radius: 14px; object-fit: cover; }
@@ -108,6 +108,4 @@
   .organizer-dashboard .dashboard-circle__top { flex-wrap: wrap; }
   .organizer-dashboard .dashboard-circle__information { flex-basis: 100%; }
   .organizer-dashboard .dashboard-circle__tools { width: 100%; flex-direction: row; }
-  .organizer-dashboard .dashboard-circle__url-row { flex-wrap: wrap; }
-  .organizer-dashboard .dashboard-circle__url-value { flex-basis: 100%; }
 }

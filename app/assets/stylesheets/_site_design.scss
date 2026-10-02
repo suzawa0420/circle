@@ -321,9 +321,28 @@
 .cb-site .organizer-dashboard { padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; }
 .cb-site .organizer-dashboard .mypage_wrap { padding-top: 0; }
 .cb-site .dashboard-circle__tools .dashboard-copy { font-size: 14px; }
-.cb-site .dashboard-circle__url-row { flex-wrap: wrap; }
-.cb-site .dashboard-circle__url-value { flex-basis: 180px; }
+.cb-site .dashboard-circle__url-row { flex-wrap: nowrap; }
+.cb-site .dashboard-circle__url-value { flex-basis: 0; }
 .cb-site .participant-card, .cb-site .participant-circle { border-radius: $cb-radius-card; }
+
+.cb-site .dashboard-level {
+  .dashboard-level__ranking { margin: cb-space(4) 0; padding: cb-space(4); border-radius: $cb-radius-control; background: $cb-mint-soft; color: $cb-action-hover; }
+  .dashboard-level__ranking p { margin: cb-space(2) 0 0; font-size: 13px; line-height: 1.7; }
+  .dashboard-level__breakdown { margin-top: cb-space(4); border-top: 1px solid $cb-border; }
+  .dashboard-level__breakdown summary { @include cb-focus; min-height: $cb-control-height; padding: cb-space(3) 0; font-weight: 700; cursor: pointer; color: $cb-action-hover; }
+  .dashboard-level__breakdown table { width: 100%; table-layout: fixed; font-size: 13px; }
+  .dashboard-level__breakdown caption { text-align: left; padding-bottom: cb-space(2); color: $cb-muted; }
+  .dashboard-level__breakdown th, .dashboard-level__breakdown td { padding: cb-space(3) cb-space(1); border-bottom: 1px solid $cb-border; text-align: right; }
+  .dashboard-level__breakdown th:first-child { width: 56%; text-align: left; }
+  .dashboard-level__breakdown p, .dashboard-level__rivals p { margin: cb-space(3) 0; font-size: 13px; color: $cb-muted; line-height: 1.7; }
+  .dashboard-level__rivals { margin-top: cb-space(5); padding-top: cb-space(4); border-top: 1px solid $cb-border; }
+  .dashboard-level__rivals h3 { @include cb-type(card-title); }
+  .dashboard-level__rivals ul { padding: 0; list-style: none; }
+  .dashboard-level__rival { @include cb-focus; display: flex; align-items: center; gap: cb-space(3); padding: cb-space(3) 0; color: $cb-text; }
+  .dashboard-level__rival-avatar { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; flex: none; }
+  .dashboard-level__rival-name { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 14px; }
+  .dashboard-level__rival strong { flex: none; border-radius: 6px; background: $cb-mint-soft; color: $cb-action-hover; padding: cb-space(1) cb-space(2); font-size: 14px; }
+}
 .cb-site .participant-heading h1 { text-align: left; }
 .cb-site .main .form-heading { margin-bottom: cb-space(5); }
 .cb-site .main .progressbar { display: flex; }

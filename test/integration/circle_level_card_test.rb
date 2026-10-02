@@ -19,10 +19,31 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level__value strong', text: '0'
     assert_select 'progress[value="10"]'
     assert_select '.dashboard-level__message', text: /あと0.9/
+    assert_select '.dashboard-level__ranking strong', text: /人気順で上位/
+    assert_select '.dashboard-level__breakdown tbody tr', count: 5
+    assert_select '.dashboard-level__breakdown tfoot td', text: '0.1'
     assert_select ".dashboard-level a[href='#{user_reviews_path(@circle, anchor: 'review-request')}']", text: '口コミを依頼する'
     get user_reviews_path(@circle)
     assert_response :success
     assert_select '#review-request a', text: 'メッセージを開く'
+  end
+
+  test 'rival levels appear only on the owner dashboard and exclude owned or hidden circles' do
+    other_owner = AdminUser.create!(email: 'rival-owner@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    rival = @circle.dup
+    rival.assign_attributes(name: 'ライバルバスケ', admin_user: other_owner, cb_point: 7.4)
+    rival.save!
+    hidden = rival.dup
+    hidden.assign_attributes(name: '非公開ライバル', moderation_status: 'blocked')
+    hidden.save!
+    get "/users/#{@circle.id}/mypage"
+    assert_response :success
+    assert_select '.dashboard-level__rival-name', text: rival.name
+    assert_select '.dashboard-level__rival strong', text: 'Lv.7'
+    assert_select '.dashboard-level__rival-name', text: @circle.name, count: 0
+    assert_select '.dashboard-level__rival-name', text: hidden.name, count: 0
+    get circles_path
+    assert_select '.dashboard-level__rival', count: 0
   end
 
   test 'level card caps display and hides next level at maximum' do

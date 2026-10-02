@@ -308,7 +308,7 @@ helper_method :link_count
 	def mypage
 		@user = User.find(params[:id])
     @admin_user = @user.admin_user
-    @users = User.publicly_visible.where.not(id: @user.id).where("cb_point > ?", 0).prefecture(@user.prefecture.id).event(@user.event.id).user_sort_2
+    @users = User.publicly_visible.where.not(admin_user_id: @admin_user.id).prefecture(@user.prefecture.id).event(@user.event.id).user_sort_2
     @questions_current = Question.where(user_id: @user.id)
     @questions_current_nil = Question.where(user_id: @user.id).where(answer: [nil, ""])
     @schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday)
