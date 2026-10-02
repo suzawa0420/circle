@@ -1,6 +1,7 @@
 # Uses only the disposable database guarded by search_queries_check.rb.
 require_relative 'search_queries_check'
 require_relative '../../db/migrate/20260925120000_add_alternate_circle_listing_indexes'
+require_relative '../../db/migrate/20261002040000_add_circle_level_order_index'
 require 'json'
 
 class SearchQueriesTest
@@ -9,12 +10,12 @@ class SearchQueriesTest
     # Synthetic text and IDs only. The temporary test database is guarded above.
     c.execute(<<~SQL)
       INSERT INTO users (name, appeal, switch, cb_point, last_post, created_at,
-        schedule, area, recruitment, member, cost, goal, grouping, average_age)
+        schedule, area, recruitment, member, cost, goal, grouping, average_age, admin_user_id)
       SELECT CASE WHEN n % 20 = 0 THEN '東京サークル' ELSE '大阪サークル' END,
         repeat('合成データの活動紹介', 20), '募集中', n % 1000,
         timestamp '2026-01-01' + n * interval '1 second',
         timestamp '2026-01-01' + n * interval '1 second',
-        '週末', '大阪', repeat('仲間を募集中', 10), '社会人', '無料', '交流', '混合', '二十代'
+        '週末', '大阪', repeat('仲間を募集中', 10), '社会人', '無料', '交流', '混合', '二十代', #{Integer(@admin.id)}
       FROM generate_series(1, 76000) n
     SQL
     c.execute('ANALYZE users')
@@ -26,12 +27,15 @@ class SearchQueriesTest
     before = queries.map { |sql| explain.call(sql) }
     migration = AddAlternateCircleListingIndexes.new
     migration.up
+    level_migration = AddCircleLevelOrderIndex.new
+    level_migration.up
     after = queries.map { |sql| explain.call(sql) }
     after.each_with_index do |plan, i|
-      assert_includes plan.to_json, AddAlternateCircleListingIndexes::INDEXES.keys[i]
+      assert_includes plan.to_json, (i == 0 ? "index_users_on_circle_level_order" : AddAlternateCircleListingIndexes::INDEXES.keys[i])
       puts "Synthetic sort=#{i + 2}: before_ms=#{before[i]['Execution Time']} after_ms=#{plan['Execution Time']}"
     end
   ensure
+    level_migration.down if level_migration
     migration.down if migration
   end
 

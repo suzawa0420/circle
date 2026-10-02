@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
   def authenticate_owner_or_webmaster!; authenticate_admin_user! unless webmaster?; end
   def authenticate_admin_user!; head :unauthorized unless admin_user_signed_in?; end
   def cb_point(*); end
-  def last_post(*); end
+  def record_circle_activity(*); end
 end
 module Circles; class ApplicationController < ::ApplicationController; end; end
 require_relative '../../app/controllers/reviews_controller'

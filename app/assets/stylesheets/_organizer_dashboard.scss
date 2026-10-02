@@ -86,3 +86,5 @@
   .organizer-dashboard .dashboard-action__icon { width: 32px; height: 32px; }
   .organizer-dashboard .dashboard-action__text strong { font-size: 13px; }
 }
+
+.circle-level-label { display: inline-block; margin: 6px 0; padding: 3px 8px; border-radius: 6px; background: $cb-mint-soft; color: $cb-action-hover; font-size: 12px; font-weight: 700; letter-spacing: 0; }

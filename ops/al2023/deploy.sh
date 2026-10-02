@@ -53,6 +53,10 @@ case "$mode" in
     for version in 20261001000000 20261001010000 20261001020000 20261001030000 20261001040000 20261001050000 20261002010000 20261002020000; do
       bundle exec rails db:migrate:up VERSION="$version"
     done
+    # Circle levels: additive fingerprint history and concurrent ranking index.
+    for version in 20261002030000 20261002040000; do
+      bundle exec rails db:migrate:up VERSION="$version"
+    done
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

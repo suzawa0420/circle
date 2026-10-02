@@ -29,6 +29,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Blog < ApplicationRecord
+  include RemembersCircleActivity
   belongs_to :user
   before_validation :flag_suspicious_content
 

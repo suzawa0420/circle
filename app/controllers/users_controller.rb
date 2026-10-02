@@ -310,7 +310,7 @@ helper_method :link_count
     @admin_user = @user.admin_user
     @users = User.publicly_visible.where.not(id: @user.id).where("cb_point > ?", 0).prefecture(@user.prefecture.id).event(@user.event.id).user_sort_2
     @questions_current = Question.where(user_id: @user.id)
-    @questions_current_nil = Question.where(user_id: @user.id).where(answer: nil)
+    @questions_current_nil = Question.where(user_id: @user.id).where(answer: [nil, ""])
     @schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday)
     @user_contacts = UserContact.where(user_id: @user.id, contact_del: nil)
     @user_contact_alerts = UserContact.where(user_id: @user.id, respond_check: "NG")
@@ -659,7 +659,7 @@ private
 
 	def user_params
 		permitted = params.require(:user).permit(
-			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :last_post, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :unique_id,
+			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :unique_id,
       :remove_pic_profile, :remove_pic_header, :remove_gallery_01, :remove_gallery_02, :remove_gallery_03, :remove_gallery_04,
 			decade_age:[], average_age:[] ,grouping:[], age_ids:[], group_ids:[], city_ids:[], tag_ids:[],
       link_attributes: [:id, :unique_id]

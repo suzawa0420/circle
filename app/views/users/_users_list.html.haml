@@ -32,6 +32,7 @@
             .user_list_wrapper
               .list_01
                 %h2.user_name= user.name.truncate(24)
+                %span.circle-level-label= "Lv.#{circle_level_status(user)[:level]}#{" MAX" if circle_level_status(user)[:maximum]}"
             .list_cnts
               .list_04.recruitment_txt
                 %span.user_recruitment= user.recruitment.truncate(110)

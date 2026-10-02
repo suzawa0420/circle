@@ -25,7 +25,7 @@ class Circles::BlogsController < Circles::ApplicationController
 		@blog.user_id = @user.id
 
 		if @blog.save
-      last_post(@user)
+      record_circle_activity(@user, @blog)
       cb_point(@user)
       @user.save
 

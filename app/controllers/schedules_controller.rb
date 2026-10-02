@@ -51,6 +51,8 @@ before_action :set_dates, {only: [:dates, :day]}
 
 		if @schedule.save
 
+      record_circle_activity(@user, @schedule)
+
       @schedule = Schedule.where(user_id: @user.id).last
       @schedule.date = Time.parse(@schedule.day).strftime("%Y年%-m月%-d日(#{%w(日曜日 月曜日 火曜日 水曜日 木曜日 金曜日 土曜日)[Time.parse(@schedule.day).wday]})")
       if params[:copy]
@@ -63,7 +65,6 @@ before_action :set_dates, {only: [:dates, :day]}
       end
       @schedule.save
 
-      last_post(@user)
       cb_point(@user)
       @user.save
 

@@ -217,7 +217,7 @@ class User < ApplicationRecord
     where(id: city.users.select(:id)).or(where(prefecture_id: 50))
   end
   scope :sort_1, -> {order(switch: :asc, last_post: :desc)}
-  scope :sort_2, -> {order(switch: :asc, cb_point: :desc, last_post: :desc)}
+  scope :sort_2, -> { order(switch: :asc).order(Arel.sql('LEAST(100, GREATEST(0, FLOOR(ROUND(users.cb_point::numeric, 1)))) DESC')).order(last_post: :desc, id: :desc) }
   scope :sort_3, -> {order(switch: :asc, created_at: :desc)}
   scope :users_list, -> { publicly_visible }
 
@@ -225,7 +225,7 @@ class User < ApplicationRecord
 	# User用
 	scope :ng_account, -> { publicly_visible.includes([:event, :prefecture, :tags, :reviews]) }
   scope :user_sort_1, -> {ng_account.order(switch: :asc, last_post: :desc).where.not(switch: "") }
-  scope :user_sort_2, -> {ng_account.order(switch: :asc, cb_point: :desc, last_post: :desc).where.not(switch: "") }
+  scope :user_sort_2, -> { ng_account.sort_2.where.not(switch: "") }
   scope :user_sort_3, -> {ng_account.order(switch: :asc, created_at: :desc).where.not(switch: "") }
   scope :pref, -> { includes(:prefecture).order("prefectures.sort asc") }
   scope :user, -> (user_id){ where(id: user_id) }

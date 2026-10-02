@@ -5,7 +5,7 @@ module Circlebook
     def cb_point(user)
       @schedule_point = user.schedules.count * 0.1
       @blog_point = user.blogs.count * 0.2
-      @qa_point = Question.where(user_id: user.id).where.not(answer: nil).count * 0.3
+      @qa_point = Question.where(user_id: user.id).where.not(answer: [nil, '']).count * 0.3
       @review_point = Review.where(user_id: user.id, review: 1).count * 2
       # @contact_point = UserContact.where(user_id: user.id, contact_del: nil).count * 0.5
       @respond_point = (UserContact.where(user_id: user.id, respond_check: "NG").count + Conversation.where(user_id: user.id, respond_check: "NG").count) * 30
@@ -24,15 +24,10 @@ module Circlebook
 
     end
 
-    # ソート用の日付更新
-    def last_post(user)
-			@user.user_time = Time.zone.now
-      if user.admin_user.check.present? && user.admin_user.check != 0
-        # 違反者
-        @user.last_post = Time.zone.now.ago(5.years)
-      else
-        @user.last_post = Time.zone.now
-      end
+    # Database updated_at and routine edits must not advance ranking time.
+    def record_circle_activity(user, record)
+      CircleActivityRecorder.record(record)
+      user.reload
     end
 
 

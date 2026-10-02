@@ -52,9 +52,8 @@ class QuestionsController < ApplicationController
       @invalid = "有効"
     end
 
-		if @user.questions.create(question_params)
-
-			@question = @user.questions.last
+		@question = @user.questions.build(question_params)
+		if @question.valid?
 			@question.content = @question.content.gsub(/[^!！？、。ー〜0-9０-９A-Za-zＡ-Ｚａ-ｚ-ぁ-んァ-ン一-龥]/, '')
       @question.ip_address = request.remote_ip
 
@@ -62,7 +61,7 @@ class QuestionsController < ApplicationController
 
 				if admin_user_signed_in?
 					if current_admin_user.id == @user.admin_user_id
-            last_post(@user)
+            record_circle_activity(@user, @question) if @question.answer.present?
             cb_point(@user)
             @user.save
 					end
@@ -100,7 +99,7 @@ class QuestionsController < ApplicationController
 
 		if @question.update(question_params)
 
-      last_post(@user)
+      record_circle_activity(@user, @question) if @question.saved_change_to_answer? && @question.answer.present?
       cb_point(@user)
 			@user.save
 

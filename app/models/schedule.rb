@@ -30,6 +30,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Schedule < ApplicationRecord
+  include RemembersCircleActivity
   belongs_to :user
 	has_many :name_schedules, dependent: :destroy
   has_many :names, through: :name_schedules

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_02_020000) do
+ActiveRecord::Schema.define(version: 2026_10_02_040000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,14 @@ ActiveRecord::Schema.define(version: 2026_10_02_020000) do
     t.index ["reviews_published_at", "review_deadline"], name: "index_conversations_review_publication"
     t.index ["user_id", "member_id"], name: "index_conversations_on_user_id_and_member_id", unique: true
     t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "circle_activity_fingerprints", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "kind", null: false
+    t.string "fingerprint", null: false
+    t.index ["user_id", "kind", "fingerprint"], name: "index_circle_activity_fingerprints_unique", unique: true
+    t.index ["user_id"], name: "index_circle_activity_fingerprints_on_user_id"
   end
 
   create_table "cities", force: :cascade do |t|
@@ -731,6 +739,7 @@ ActiveRecord::Schema.define(version: 2026_10_02_020000) do
     t.string "moderation_status", default: "clear", null: false
     t.index ["admin_user_id"], name: "index_users_on_admin_user_id"
     t.index ["event_id"], name: "index_users_on_event_id"
+    t.index "switch, LEAST((100)::numeric, GREATEST((0)::numeric, floor(round((cb_point)::numeric, 1)))) DESC, last_post DESC, id DESC", name: "index_users_on_circle_level_order"
     t.index ["last_post"], name: "index_users_on_last_post"
     t.index ["ng_account"], name: "index_users_on_ng_account"
     t.index ["prefecture_id"], name: "index_users_on_prefecture_id"
@@ -772,6 +781,7 @@ ActiveRecord::Schema.define(version: 2026_10_02_020000) do
 
   add_foreign_key "applications", "members"
   add_foreign_key "blogs", "users"
+  add_foreign_key "circle_activity_fingerprints", "users", on_delete: :cascade
   add_foreign_key "bookmarks", "members"
   add_foreign_key "bookmarks", "users"
   add_foreign_key "collections", "users"

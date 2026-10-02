@@ -19,6 +19,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Question < ApplicationRecord
+  include RemembersCircleActivity
   belongs_to :user
   validates :content, presence: true, length: { in: 1..80 }
 
