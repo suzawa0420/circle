@@ -73,22 +73,11 @@
                 %i.fa.fa-twitter>
                 ツイート
 
-          - if admin_user_signed_in?
-            - if @user.admin_user_id == current_admin_user.id
+          - if webmaster? || admin_user_signed_in?
+            - if can_manage_circle?(@user)
               = link_to edit_user_path(@user), data: {"turbolinks" => false} do
                 .contact-button.edit プロフィール編集
-            - else
-              - if @user.switch == "募集中"
-                = render "/users/contact_icon"
-              - else
-                .contact-button.end 募集終了
           - else
-            - if @user.switch == "募集中"
-              = render "/users/contact_icon"
-            - else
-              .contact-button.end 募集終了
-
-
             - if @user.bookmarked_by?(current_member)
               .bookmark_btn_wrap
                 = link_to user_bookmarks_path(@user), id: :"bookmark_b_d_#{@user.id}", :remote => true, method: :delete do
@@ -123,12 +112,12 @@
         = render "mobile_contact"
 
 
-        - if admin_user_signed_in?
-          - if current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id
+        - if webmaster? || admin_user_signed_in?
+          - if can_manage_circle?(@user)
             .admin_area
               .admin_edit= link_to("編集", edit_user_path(@user), data: {"turbolinks" => false})
               .admin_delete= link_to("削除", user_path(@user), method: :delete, data: {confirm: "このサークルを削除しますか？"})
-            - if current_admin_user.master_account? && @admin_user.users.count > 1
+            - if webmaster? && @admin_user.users.count > 1
               .admin_user_list
                 - @admin_user.users.each do |user|
                   %ul
@@ -337,8 +326,8 @@
                       = schedule.time_s.strftime('%H:%M')
                       = "\-#{schedule.time_e.strftime('%H:%M') if schedule.time_e.present?}"
                     = schedule.venue
-            - if admin_user_signed_in?
-              - if @user.id != current_admin_user.id
+            - if webmaster? || admin_user_signed_in?
+              - if can_manage_circle?(@user)
                 = link_to(user_schedules_path(@user.id)) do
                   .schedule_index_btn
                     %i.fa.fa-calendar
@@ -361,11 +350,9 @@
           - else
             .profile_list_p.profile_list_a
               = raw Rinku.auto_link(simple_format @user.appeal)
-          .border
 
-        - if @user.switch == "募集中"
-          = render "/users/contact_btn"
-          .border
+        = render "mobile_contact"
+        .border
 
         - if @user.reviews.any?
           %h2.user_sub_title
@@ -383,19 +370,15 @@
             口コミ・評価
           .review_sub_title 口コミがまだ投稿されていません。
           .new_review_comment
-            このサークルに参加されたことがある方は
+            サイト内で問い合わせて主催者から返信を受けた方は
             %br/
-            最初の口コミを投稿してみませんか？
+            チャット画面から口コミを投稿できます。
           .review_link_b= link_to ">>口コミ投稿",user_reviews_path(@user)
           .border
 
         - if AccountBlock.find_by(ip_address: request.remote_ip) || @user.review_permit == false
         - else
           = render "/users/question_card"
-
-        - if @user.switch == "募集中"
-          .border
-          = render "/users/contact_btn"
 
         - if @user.admin_user.open == 1 && @user.admin_user.nickname.present? && @user.admin_user.profile.present?
           .border

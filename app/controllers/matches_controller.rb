@@ -1,6 +1,7 @@
 class MatchesController < ApplicationController
+  before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :authorize_circle_write, only: [:new, :create, :edit, :update, :destroy]
 
-before_action :ensure_correct_user, {only: [:edit, :update]}
 before_action :set_matches
 
 
@@ -11,7 +12,7 @@ before_action :set_matches
 	def new
 		@user = User.find(params[:user_id])
 
-    if admin_user_signed_in? #ログイン判定
+    if webmaster? || admin_user_signed_in? #ログイン判定
 
       if @user.match.blank? #未登録
         if params[:count] == "new"
@@ -55,7 +56,7 @@ before_action :set_matches
 
 	def show
 		@user = User.includes(:event, :prefecture, :prefecture_sub).find(params[:id])
-		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
+		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (can_manage_circle?(@user))
 		@match = Match.find_by!(user_id: @user.id)
 		@event = @user.event
 		@prefecture = @user.prefecture
@@ -130,6 +131,11 @@ before_action :set_matches
 	end
 
 private
+  def authorize_circle_write
+    @match = Match.find(params[:id]) unless %w[new create].include?(action_name)
+    @user = @match ? @match.user : User.find(params[:user_id])
+    head :forbidden unless can_manage_circle?(@user)
+  end
 	def matches_with_user_details
 		Match.includes(user: [:event, :prefecture]).where(user_id: User.publicly_visible.select(:id))
 	end
@@ -153,18 +159,5 @@ private
 		@b1_name = "対戦相手・練習試合の募集"
 		@b1_url = "/matches"
 	end
-
-	def ensure_correct_user
-		@match = Match.find(params[:id])
-    if current_admin_user.id != @match.user.admin_user_id.to_i
-      if current_admin_user.id == 1
-      else
-        flash[:notice] = "権限がありません"
-        redirect_to matches_path
-      end
-    end
-	end
-
-
 
 end

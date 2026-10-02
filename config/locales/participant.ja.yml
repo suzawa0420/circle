@@ -1,0 +1,10 @@
+ja:
+  activerecord:
+    attributes:
+      member:
+        nickname: ニックネーム
+        date_of_birth: 生年月日
+        prefecture: メインの活動エリア
+        prefecture_id: メインの活動エリア
+        events: 興味のある種目
+        profile: 自己紹介

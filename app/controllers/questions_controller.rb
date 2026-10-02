@@ -2,7 +2,7 @@ class QuestionsController < ApplicationController
 
   include Circlebook
 	before_action :set_user
-	before_action :authenticate_admin_user!, only: [:update, :destroy]
+	before_action :authenticate_owner_or_webmaster!, only: [:update, :destroy]
 	before_action :authorize_question_owner, only: [:update, :destroy]
 
 
@@ -140,7 +140,7 @@ class QuestionsController < ApplicationController
 
   private
 	def authorize_question_owner
-		unless current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id
+		unless can_manage_circle?(@user)
 			render plain: '権限がありません。', status: :forbidden
 		end
 	end

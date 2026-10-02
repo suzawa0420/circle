@@ -1,6 +1,3 @@
-.main.users-new
-  .container
-    .form-heading 投稿の編集
-    .form.users-form
-      .form-body.cont-body
-        = render "form_column"
+= render 'webmasters/shared/page_header', title: 'コラムを編集', description: '内容を入力して保存してください。'
+%section.webmaster-card
+  = render 'form_column'

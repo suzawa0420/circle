@@ -3,3 +3,6 @@ if @environment.to_sym == :production
     rake 'sitemap:refresh'
   end
 end
+every 1.minute do
+  rake 'chat:maintenance'
+end

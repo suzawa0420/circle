@@ -52,7 +52,7 @@ class PlaceReviewsController < ApplicationController
   private
 
   def require_master_account
-    unless admin_user_signed_in? && current_admin_user.master_account?
+    unless webmaster?
       render plain: '権限がありません。', status: :forbidden
     end
   end

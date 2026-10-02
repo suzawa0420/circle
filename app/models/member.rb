@@ -30,6 +30,48 @@
 #  index_members_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class Member < ApplicationRecord
+  include AccountModeration
+  has_many :conversations, dependent: :destroy
+  has_many :received_conversation_reviews, -> { publicly_visible.where(author_role: 'owner') }, through: :conversations, source: :conversation_reviews
+  before_update :reset_email_verification, if: :will_save_change_to_email?
+  validates :nickname, length: { maximum: 30 }
+  validates :nickname, :prefecture, :events, presence: true, on: :profile
+  validates :profile, length: { maximum: 2000 }
+  validate :valid_date_of_birth
+
+  # Calculate on each read so the displayed decade changes after birthdays.
+  def age_group(on: Date.current)
+    return if date_of_birth.nil? || date_of_birth > on
+    years = on.year - date_of_birth.year
+    years -= 1 if on.month < date_of_birth.month || (on.month == date_of_birth.month && on.day < date_of_birth.day)
+    years < 10 ? '10歳未満' : "#{years / 10 * 10}代"
+  end
+
+  def valid_date_of_birth
+    if date_of_birth.nil? && date_of_birth_before_type_cast.present?
+      errors.add(:date_of_birth, 'を正しい日付で入力してください')
+    elsif date_of_birth && (date_of_birth > Date.current || date_of_birth < Date.new(1900, 1, 1))
+      errors.add(:date_of_birth, 'は1900年1月1日から今日までの日付を入力してください')
+    end
+  end
+
+  def email_verified?
+    email_verified_at.present?
+  end
+
+  def email_verification_purpose
+    "chat-email:#{Digest::SHA256.hexdigest(email.downcase)}"
+  end
+
+  def received_review_score
+    received_conversation_reviews.average(:score).to_f * 5
+  end
+
+  def reset_email_verification
+    self.email_verified_at = nil
+    self.verification_sent_at = nil
+  end
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

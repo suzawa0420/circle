@@ -1,0 +1,11 @@
+<%= link_to circle_path(circle), class: 'participant-circle' do %>
+  <div class="participant-circle__image">
+    <% if circle.pic_profile.present? %><%= image_tag circle.pic_profile.url, alt: '', loading: 'lazy' %><% else %><span aria-hidden="true">CB</span><% end %>
+  </div>
+  <div class="participant-circle__content">
+    <span class="participant-eyebrow"><%= circle.event&.name %>・<%= circle.prefecture&.name %></span>
+    <h3><%= circle.name %></h3>
+    <p><%= circle.schedule.presence || '活動日を確認する' %></p>
+    <span class="participant-circle__status"><%= circle.switch %></span>
+  </div>
+<% end %>

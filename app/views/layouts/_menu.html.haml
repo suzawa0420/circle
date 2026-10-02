@@ -8,15 +8,16 @@
       .logo_txt
         = link_to root_path do
           %img.img_logo_memu{:alt => "サークルブック", :src => "/images/logo.png?v=20260921-green-clean", :width => 960, :height => 251}/
-      - if member_signed_in?
+      - if webmaster?
+        .menu_btn= link_to "運営管理トップ", webmaster_path
+      - elsif member_signed_in?
         .menu_btn= link_to 'マイページ', member_path(current_member)
       - elsif admin_user_signed_in?
         - if current_admin_user.users.any?
           .menu_btn= link_to 'マイページ', "/users/#{current_admin_user.users.first.id}/mypage"
       - elsif exhibition_group_signed_in?
       - else
-        .menu_btn= link_to 'サークル登録', new_admin_user_registration_path
-        .menu_btn= link_to 'ログイン', login_path
+        = render 'layouts/account_access', in_menu: true
 
 
       %ul
@@ -26,7 +27,10 @@
 
 
 
-      - if member_signed_in?
+      - if webmaster?
+        %ul
+          %li= link_to "運営ログアウト", destroy_webmaster_session_path, method: :delete
+      - elsif member_signed_in?
         %ul
           %li= link_to 'ログアウト', destroy_member_session_path, method: :delete
           %li

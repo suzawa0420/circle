@@ -1,6 +1,17 @@
-- set_meta_tags title: "コラム"
-.main.users-index
-  .container
-    %h1.users-heading コラム
-    - if admin_user_signed_in?
-      = link_to '投稿する', new_column_path if @current_user.id == 1
+- if webmaster?
+  = render 'webmasters/shared/page_header', title: 'コラム管理', description: '運営コラムを作成・編集します。'
+  = link_to 'コラムを作成', new_column_path, class: 'wm-button'
+  .wm-section.wm-list
+    - @columns.each do |column|
+      %article.webmaster-card
+        %h2= link_to column.title, column_path(column)
+        .wm-actions= link_to '編集', edit_column_path(column), class: 'wm-button wm-button--secondary'
+  - if @columns.empty?
+    = render 'webmasters/shared/empty', message: 'コラムはありません。'
+- else
+  - set_meta_tags title: 'コラム'
+  .main.users-index
+    .container
+      %h1.users-heading コラム
+      - @columns.each do |column|
+        %p= link_to column.title, column_path(column)

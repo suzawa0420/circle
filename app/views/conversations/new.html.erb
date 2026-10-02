@@ -1,0 +1,13 @@
+<main class="chat-shell">
+  <%= link_to @user.name, circle_path(@user) %>
+  <h1>サークルに問い合わせる</h1>
+  <p>返信はこのサイトのメッセージで確認できます。初回の返信後、双方が対応について評価できます。</p>
+  <div class="chat-card">
+    <%= form_with url: user_conversations_path(@user), scope: :message, local: true do |f| %>
+      <%= f.label :body, '問い合わせ内容' %>
+      <%= f.text_area :body, required: true, maxlength: 2000, rows: 8, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
+      <p>ニックネームと公開プロフィール・評価は主催者に表示されます。</p>
+      <%= f.submit '問い合わせを送信', class: 'chat-button' %>
+    <% end %>
+  </div>
+</main>

@@ -1,7 +1,11 @@
 .header_wrap
   %ul.header-menus_sp
     / ログイン時の処理
-    - if member_signed_in?
+    - if webmaster?
+      %li= link_to "運営管理トップ", webmaster_path
+      %li= link_to "サークル検索", circles_path
+      %li= link_to "活動ブログ", blogs_path
+    - elsif member_signed_in?
       %li
         = link_to(circles_path) do
           %i.fa.fa-search
@@ -55,6 +59,11 @@
         = link_to(new_admin_user_registration_path, class: 'site-registration-link') do
           %i.fa.fa-user-plus
           .link_txt サークル登録
+    - if member_signed_in? || admin_user_signed_in?
+      %li
+        = link_to conversations_path do
+          %i.fa.fa-comment-o
+          .link_txt メッセージ
     = render "/layouts/menu"
 
 

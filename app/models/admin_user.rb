@@ -27,7 +27,22 @@
 #  index_admin_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class AdminUser < ApplicationRecord
+  include AccountModeration
   include AdminUserDecorator
+  before_update :reset_email_verification, if: :will_save_change_to_email?
+
+  def email_verified?
+    email_verified_at.present?
+  end
+
+  def email_verification_purpose
+    "organizer-email:#{Digest::SHA256.hexdigest(email.downcase)}"
+  end
+
+  def reset_email_verification
+    self.email_verified_at = nil
+    self.verification_sent_at = nil
+  end
 
   has_many :users, dependent: :destroy
   belongs_to :prefecture, optional: true
@@ -55,19 +70,11 @@ class AdminUser < ApplicationRecord
     check != SHADOW_BANNED_CHECK
   end
 
-  MASTER_ACCOUNT_ID = 1
-  MASTER_ACCOUNT_EMAIL = "circlebook26@gmail.com"
-
+  # Organizer accounts never grant site administration privileges.
   def master_account?
-    id == MASTER_ACCOUNT_ID && email.to_s.casecmp?(MASTER_ACCOUNT_EMAIL)
+    false
   end
 
-  def super_admin?
-    master_account?
-  end
-
-  def moderator?
-    master_account?
-  end
-
+  alias_method :super_admin?, :master_account?
+  alias_method :moderator?, :master_account?
 end

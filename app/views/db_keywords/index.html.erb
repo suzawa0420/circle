@@ -1,0 +1,11 @@
+<%= render 'webmasters/shared/page_header', title: '検索キーワード管理', description: '検索されたキーワードと回数を確認・編集します。' %>
+<div class="wm-list"><% @db_keywords.each do |entry| %>
+  <article class="webmaster-card">
+    <div class="wm-card-heading"><h2><%= entry.keyword %></h2><span class="wm-badge"><%= entry.search_count %>回</span></div>
+    <p class="wm-meta">登録日時：<%= entry.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+    <%= form_for entry, html: { class: 'wm-inline-form' } do |f| %><div class="wm-field"><%= f.label :keyword, 'キーワード' %><%= f.text_field :keyword %></div><%= f.submit '更新する' %><% end %>
+    <div class="wm-actions"><%= button_to 'キーワードを削除', db_keyword_path(entry), method: :delete, class: 'wm-button--danger', data: { confirm: 'このキーワードを削除しますか？' } %></div>
+  </article>
+<% end %></div>
+<% if @db_keywords.empty? %><%= render 'webmasters/shared/empty', message: '検索キーワードの記録はありません。' %><% end %>
+<%= paginate @db_keywords %>

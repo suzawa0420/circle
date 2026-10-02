@@ -1,0 +1,13 @@
+<% set_meta_tags title: 'ログイン情報の変更', noindex: true %>
+<main class="participant-shell">
+  <div class="participant-heading"><p class="participant-eyebrow">サークル参加者</p><h1>ログイン情報の変更</h1><p>メールアドレスとパスワードを管理できます。</p></div>
+  <%= render 'members/navigation', active: 'account' %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: 'participant-form' }) do |f| %>
+    <%= render 'devise/shared/error_messages', resource: resource %>
+    <section class="participant-card"><h2>メールアドレス</h2><div class="participant-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true, autocomplete: 'email' %><p class="participant-help">変更しない場合はそのままにしてください。変更後はチャット送信前にメールの再確認が必要です。</p></div></section>
+    <section class="participant-card"><h2>パスワードの変更</h2><p class="participant-help">変更しない場合は、新しいパスワード欄を空欄にしてください。</p><div class="participant-field"><%= f.label :password, '新しいパスワード' %><%= f.password_field :password, autocomplete: 'new-password', minlength: @minimum_password_length %></div><div class="participant-field"><%= f.label :password_confirmation, '新しいパスワード（確認）' %><%= f.password_field :password_confirmation, autocomplete: 'new-password' %></div></section>
+    <section class="participant-card"><h2>変更の確認</h2><div class="participant-field"><%= f.label :current_password, '現在のパスワード' %><%= f.password_field :current_password, required: true, autocomplete: 'current-password' %><p class="participant-help">安全のため、変更には現在のパスワードが必要です。</p></div></section>
+    <div class="participant-form-actions"><%= f.submit '変更を保存する', class: 'participant-button', data: { disable_with: '保存中…' } %><%= link_to 'マイページへ戻る', member_path(current_member) %></div>
+  <% end %>
+  <p class="participant-account-close"><%= link_to '退会について', unsubscribe_member_path %></p>
+</main>

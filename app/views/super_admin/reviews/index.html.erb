@@ -1,0 +1,40 @@
+<%= render 'webmasters/shared/page_header', title: '口コミ管理', description: '公開されている口コミを確認・削除します。削除は評価点にも反映されます。' %>
+<section class="wm-section"><div class="wm-section-heading"><h2>サークルへの口コミ</h2></div><div class="wm-list">
+<% @reviews.each do |review| %>
+  <article class="webmaster-card">
+    <h3><%= link_to review.user.name, user_reviews_path(review.user) %></h3>
+    <p class="wm-meta"><%= review.member&.nickname || review.nickname.presence || 'ゲストユーザー' %> ／ <%= review.review == 1 ? '良かった' : '残念だった' %></p>
+    <div class="wm-body"><%= simple_format review.comment %></div>
+    <div class="wm-actions"><%= button_to '口コミを削除（運営）', user_review_path(review.user, review), method: :delete, class: 'wm-button--danger', data: { confirm: 'この口コミ1件を削除し、サークルの評価点を再計算します。削除は取り消せません。続けますか？' } %></div>
+  </article>
+<% end %>
+</div>
+<% if @reviews.empty? %><%= render 'webmasters/shared/empty', message: '口コミはありません。' %><% end %>
+<%= paginate @reviews %>
+</section>
+<section class="wm-section"><div class="wm-section-heading"><h2>参加者への口コミ</h2></div><div class="wm-list">
+<% @evaluations.each do |evaluation| %>
+  <article class="webmaster-card">
+    <h3><%= link_to evaluation.conversation.member.nickname, member_profile_path(evaluation.conversation.member) %>さんへの口コミ</h3>
+    <p class="wm-meta"><%= evaluation.conversation.user.name %> ／ <%= evaluation.score == 1 ? '良かった' : '残念だった' %></p>
+    <div class="wm-body"><%= simple_format evaluation.comment %></div>
+    <div class="wm-actions"><%= button_to '口コミを削除（運営）', super_admin_evaluation_path(evaluation), method: :delete, class: 'wm-button--danger', data: { confirm: 'この口コミ1件を削除し、参加者の評価点に反映します。相手側の口コミは残ります。削除は取り消せません。続けますか？' } %></div>
+  </article>
+<% end %>
+</div>
+<% if @evaluations.empty? %><%= render 'webmasters/shared/empty', message: '口コミはありません。' %><% end %>
+<%= paginate @evaluations, param_name: :evaluation_page %>
+</section>
+
+<section class="wm-section"><div class="wm-section-heading"><h2>施設への口コミ</h2></div><div class="wm-list">
+<% @place_reviews.each do |review| %>
+  <article class="webmaster-card">
+    <h3><%= review.place.name %></h3>
+    <div class="wm-body"><%= simple_format review.comment %></div>
+    <div class="wm-actions"><%= button_to '口コミを削除（運営）', place_place_review_path(review.place, review), method: :delete, class: 'wm-button--danger', data: { confirm: 'この施設口コミを削除しますか？' } %></div>
+  </article>
+<% end %>
+</div>
+<% if @place_reviews.empty? %><%= render 'webmasters/shared/empty', message: '口コミはありません。' %><% end %>
+<%= paginate @place_reviews, param_name: :place_page %>
+</section>

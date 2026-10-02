@@ -1,8 +1,15 @@
 module ApplicationHelper
 
+  def account_access_form_page?
+    %w[admin_users/sessions admin_users/registrations members/sessions members/registrations].include?(controller_path) &&
+      %w[new create].include?(action_name)
+  end
+
   def admax_public_page?
+    return false if webmaster?
     public_controller = %w[home categories matches schedules questions tags events prefectures places columns].include?(controller_path) ||
                         controller_path.start_with?('circles/', 'blogs/')
+    return true if controller_path == "conversations" && %w[index show].include?(action_name)
     public_controller && %w[index show dates day event prefecture event_prefecture category category_prefecture].include?(action_name)
   end
 

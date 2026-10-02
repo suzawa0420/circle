@@ -25,6 +25,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Review < ApplicationRecord
+  belongs_to :conversation_review, optional: true
   belongs_to :user, optional: true
   belongs_to :member, optional: true
 

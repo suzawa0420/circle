@@ -25,8 +25,8 @@
             未回答の質問です。
             %br/
             回答するまで、しばらくお待ちください。
-        - if admin_user_signed_in?
-          - if @user.admin_user_id == current_admin_user.id || current_admin_user.id == 1
+        - if webmaster? || admin_user_signed_in?
+          - if can_manage_circle?(@user)
             .q_delete
               = link_to(user_question_path, method: :delete, data: {confirm: "質問を削除しますか？"}) do
                 %i.fa.fa-trash-o>
@@ -48,8 +48,8 @@
                 - else
                   %input.submit_btn{"data-disable-with" => "回答する", :name => "commit", :type => "submit", :value => "回答する"}/
                 .reset
-        - if admin_user_signed_in?
-          - if @user.admin_user_id == current_admin_user.id || current_admin_user.id == 1
+        - if webmaster? || admin_user_signed_in?
+          - if can_manage_circle?(@user)
             .qa_tw_share
               = link_to("https://twitter.com/share?url=#{request.url}&text=#{@question.answer}%0a%0a%23質問コーナー%20%23サークルブック%0a", target: '_blank') do
                 .share_btn_tw

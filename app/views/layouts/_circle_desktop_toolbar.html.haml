@@ -23,5 +23,5 @@
         - elsif exhibition_group_signed_in?
           = link_to "マイページ", exhibitor_mypage_path
         - elsif !admin_user_signed_in?
-          = link_to "ログイン", login_path
+          = render "layouts/account_access", in_menu: true
         = link_to "よくある質問", faq_path

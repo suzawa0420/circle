@@ -1,12 +1,18 @@
 = form_for @column do |f|
-  %p
-    タイトル
-    %span.must_red (必須)
-  = f.text_field :title, class: 'form-control'
-  %p リード文
-  = f.text_area :description, class: 'form-control'
-  %p 画像
-  = f.file_field :image
-  %p 本文
-  = f.text_area :text, class: 'form-control'
-  = f.submit
+  - if @column.errors.any?
+    .webmaster-flash= @column.errors.full_messages.join('、')
+  .wm-field
+    = f.label :title, 'タイトル（必須）'
+    = f.text_field :title, required: true
+  .wm-field
+    = f.label :description, 'リード文'
+    = f.text_area :description, rows: 3
+  .wm-field
+    = f.label :image, '画像'
+    = f.file_field :image
+  .wm-field
+    = f.label :text, '本文（必須）'
+    = f.text_area :text, rows: 10, required: true
+  .wm-actions
+    = f.submit '保存する'
+    = link_to '一覧に戻る', columns_path, class: 'wm-button wm-button--secondary'

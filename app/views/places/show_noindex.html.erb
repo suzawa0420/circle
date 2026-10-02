@@ -24,8 +24,8 @@
 
       </div>
 
-			<% if admin_user_signed_in?  %>
-				<% if @place.user_id.to_i == @current_user.id.to_i || @current_user.id.to_i == 1 %>
+			<% if webmaster? || admin_user_signed_in?%>
+				<% if webmaster? || (@place.user && can_manage_circle?(@place.user)) %>
 
 				<div class="place_edit">
 					<div class="post-edit_btn">

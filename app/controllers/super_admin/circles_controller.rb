@@ -1,5 +1,5 @@
 class SuperAdmin::CirclesController < ApplicationController
-  before_action :authenticate_admin_user!
+  before_action :require_webmaster!
   before_action :require_super_admin
 
   def index
@@ -13,15 +13,13 @@ class SuperAdmin::CirclesController < ApplicationController
 
   def destroy
     @admin_user = AdminUser.find(params[:id])
-    @admin_user.destroy
-    flash[:notice] = "削除しました"
-    redirect_to super_admin_circles_path
+    redirect_to confirm_super_admin_account_path(@admin_user, kind: 'owner', operation: 'delete'), status: :see_other
   end
 
   private
 
   def require_super_admin
-    unless current_admin_user.super_admin?
+    unless webmaster?
       flash[:notice] = "権限がありません"
       redirect_to root_path
     end

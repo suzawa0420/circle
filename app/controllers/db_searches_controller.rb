@@ -6,14 +6,8 @@ class DbSearchesController < ApplicationController
   end
 
   private
-	def webmaster
-    if current_admin_user.id == 1
-
-    else
-      flash[:notice] = "権限がありません"
-      redirect_to circles_path
-    end
-
+  def webmaster
+    require_webmaster!
   end
 
 end

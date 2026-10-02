@@ -1,30 +1,17 @@
 %nav.mobile-bottom-nav{ "aria-label" => "サイトのメインメニュー" }
   = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
     %i.fa.fa-search{ "aria-hidden" => "true" }
-    %span サークルを探す
+    %span サークル
 
-  - if admin_user_signed_in?
-    - first_circle = current_admin_user.users.first
-    - if first_circle
-      = link_to "/users/#{first_circle.id}/mypage", class: "mobile-bottom-nav__item" do
-        %i.fa.fa-user{ "aria-hidden" => "true" }
-        %span マイページ
-    - else
-      = link_to new_user_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
-        %i.fa.fa-user-plus{ "aria-hidden" => "true" }
-        %span サークルを登録
-  - elsif member_signed_in?
-    = link_to new_admin_user_registration_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
-      %i.fa.fa-user-plus{ "aria-hidden" => "true" }
-      %span サークルを登録
-  - elsif exhibition_group_signed_in?
-    = link_to new_admin_user_registration_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
-      %i.fa.fa-user-plus{ "aria-hidden" => "true" }
-      %span サークルを登録
-  - else
-    = link_to new_admin_user_registration_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
-      %i.fa.fa-user-plus{ "aria-hidden" => "true" }
-      %span サークルを登録
+  = link_to blogs_path, class: "mobile-bottom-nav__item" do
+    %i.fa.fa-book{ "aria-hidden" => "true" }
+    %span 活動ブログ
+  = link_to matches_path, class: "mobile-bottom-nav__item" do
+    %i.fa.fa-users{ "aria-hidden" => "true" }
+    %span 対戦相手
+  = link_to "/places", class: "mobile-bottom-nav__item" do
+    %i.fa.fa-map-marker{ "aria-hidden" => "true" }
+    %span コート情報
 
   %button.mobile-bottom-nav__item.mobile-menu-trigger{ type: "button", "aria-controls" => "mobile-menu-dialog", "aria-haspopup" => "dialog", "aria-expanded" => "false" }
     %i.fa.fa-bars{ "aria-hidden" => "true" }
@@ -44,7 +31,13 @@
       = link_to "コート・体育館", "/places"
     .mobile-menu-panel__group
       %strong アカウント
-      - if admin_user_signed_in? && current_admin_user.users.any?
+      - if member_signed_in? || admin_user_signed_in?
+        = link_to "メッセージ", conversations_path
+      - if webmaster?
+        = link_to "運営管理トップ", webmaster_path
+        = link_to "口コミ管理", super_admin_reviews_path
+        = button_to "運営ログアウト", destroy_webmaster_session_path, method: :delete
+      - elsif admin_user_signed_in? && current_admin_user.users.any?
         = link_to "マイページ", "/users/#{current_admin_user.users.first.id}/mypage"
       - elsif member_signed_in?
         = link_to "マイページ", member_path(current_member)
@@ -55,8 +48,7 @@
       - elsif admin_user_signed_in?
         = link_to "サークルを登録", new_user_path
       - else
-        = link_to "サークルを登録", new_admin_user_registration_path
-        = link_to "ログイン", login_path
+        = render "layouts/account_access", in_menu: true
     .mobile-menu-panel__group
       %strong サポート
       = link_to "よくある質問", faq_path

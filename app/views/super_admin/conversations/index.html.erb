@@ -1,0 +1,22 @@
+<%= render 'webmasters/shared/page_header', title: 'メッセージ管理', description: '主催者と参加者の会話を、最新のメッセージ順に確認できます。' %>
+<section class="webmaster-card">
+  <%= form_with url: super_admin_conversations_path, method: :get, local: true, class: 'wm-inline-form' do |f| %>
+    <div class="wm-field"><%= f.label :q, 'サークル名・参加者のニックネーム' %><%= f.search_field :q, value: @query, maxlength: 100, placeholder: '名前で会話を探す' %></div>
+    <%= f.submit '検索する' %>
+    <% if @query.present? %><%= link_to '検索を解除', super_admin_conversations_path, class: 'wm-button wm-button--secondary' %><% end %>
+  <% end %>
+</section>
+<section class="wm-section wm-list">
+  <% @conversations.each do |conversation| %>
+    <% message = @latest_messages.fetch(conversation.id) %>
+    <article class="webmaster-card">
+      <div class="wm-card-heading"><h2><%= conversation.user.name %></h2><% if conversation.blocked? %><span class="wm-badge wm-badge--danger">ブロック中</span><% end %></div>
+      <p class="wm-meta">参加者：<%= conversation.member.nickname %></p>
+      <p class="wm-meta">最新の発言：<%= message.sender_role == 'owner' ? '主催者' : '参加者' %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+      <div class="wm-body"><%= simple_format truncate(message.body, length: 180) %></div>
+      <div class="wm-actions"><%= link_to 'やり取りを確認', super_admin_conversation_path(conversation), class: 'wm-button' %></div>
+    </article>
+  <% end %>
+</section>
+<% if @conversations.empty? %><%= render 'webmasters/shared/empty', message: @query.present? ? '条件に一致する会話はありません。' : 'メッセージのやり取りはまだありません。' %><% end %>
+<%= paginate @conversations %>

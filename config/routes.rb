@@ -3,6 +3,29 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   root 'home#index'
+  resources :columns
+
+  resources :conversations, only: [:index, :show] do
+    get :messages, on: :member
+    post :message, on: :member
+    post :block, on: :member
+    delete :block, action: :unblock, on: :member
+    put :review, on: :member
+    delete :review, action: :delete_review, on: :member
+    post :report, on: :member
+    post :no_reply, on: :member
+  end
+  resource :member_email_verification, only: [:show, :create, :update] do
+    get :confirm
+  end
+  resource :admin_user_email_verification, only: [:show, :create, :update] do
+    get :confirm
+  end
+  resources :member_profiles, only: :show
+
+  devise_for :webmasters, only: :sessions, path: 'webmaster',
+    path_names: { sign_in: 'login', sign_out: 'logout' },
+    controllers: { sessions: 'webmasters/sessions' }
 
   devise_for :admin_users, :controllers => {
     :registrations => 'admin_users/registrations',
@@ -127,6 +150,7 @@ Rails.application.routes.draw do
     resources :schedules
     resources :questions
     resources :reviews
+    resources :conversations, only: [:new, :create]
 		resources :opinions, only: [:new, :create, :index]
 		resources :user_contacts
     resource :bookmarks, only: [:create, :destroy]
@@ -158,6 +182,14 @@ Rails.application.routes.draw do
 
   # 管理画面（SuperAdmin）
   namespace :super_admin do
+    resources :accounts, only: [:index, :show, :update] do
+      get :confirm, on: :member
+    end
+    resources :conversations, only: [:index, :show]
+    resources :reviews, only: :index
+    delete "evaluations/:id", to: "reviews#destroy_evaluation", as: :evaluation
+    resources :places, only: :index
+    resources :chat_reports, only: [:index, :show, :update]
     resources :circles, only: [:index, :destroy]
     patch 'circles/:id/moderation', to: 'moderation#circle', as: :circle_moderation
     patch 'blogs/:id/moderation', to: 'moderation#blog', as: :blog_moderation
@@ -183,7 +215,7 @@ Rails.application.routes.draw do
 	get 'line' , to: 'users#line'
 	get 'login' , to: 'users#login'
 	get 'admin_users' , to: 'users#admin_users'
-	get 'webmaster' , to: 'users#webmaster'
+	get 'webmaster' , to: 'webmasters/dashboard#index'
   get 'admin_user_list' , to: 'users#admin_user_list'
 	get 'event_questions' , to: 'event_questions#event_questions'
   get 'contents' , to: 'differences#contents'

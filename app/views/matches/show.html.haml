@@ -9,9 +9,9 @@
         - else
           = lazysizes_image_tag @match.user.pic_profile.url , class:'matching_icon'
         %h1.matching_name= @match.user.name
-        - if admin_user_signed_in?
+        - if webmaster? || admin_user_signed_in?
           .match_edit
-            - if @user.admin_user_id == current_admin_user.id
+            - if can_manage_circle?(@user)
               = link_to new_user_match_path(@user) do
                 .contact-button.edit プロフィール編集
         .article_item.article_padding

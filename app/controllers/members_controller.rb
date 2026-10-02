@@ -1,97 +1,56 @@
 class MembersController < ApplicationController
+  before_action :authenticate_member!, only: [:show, :edit, :update]
+  before_action :set_own_member, only: [:show, :edit, :update]
+  before_action :load_profile_options, only: [:edit, :update]
 
-    before_action :authenticate_member!, only: [:edit, :update, :show]
-    before_action :ensure_correct_member, {only: [:edit, :update, :show]}
-	before_action :set_member
+  def index
+    redirect_to circles_path
+  end
 
-	def index
-        redirect_to circles_path
-	end
-
-	def create
-
-	end
-
-    def edit
-        @member = Member.find(params[:id])
-        @events = Event.all.order(order: :asc)
-        @prefectures = Prefecture.where.not(id: 50).order(:order => :asc)
+  def show
+    @bookmarked_circles = User.publicly_visible.where(id: @member.bookmarks.select(:user_id)).includes(:event, :prefecture).order(created_at: :desc).page(params[:page]).per(12)
+    @conversations_count = @member.conversations.where(id: ChatMessage.select(:conversation_id)).count
+    @unread_count = @member.conversations.where('EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.id > conversations.member_read_message_id)', 'owner').count
+    @recommended_circles = if @member.prefecture_id.present? && @member.events.exists?
+      User.publicly_visible.where(prefecture_id: @member.prefecture_id).or(User.publicly_visible.where(prefecture_sub_id: @member.prefecture_id))
+          .where(event_id: @member.events.select(:id)).where.not(id: @member.bookmarks.select(:user_id))
+          .includes(:event, :prefecture).order(last_post: :desc).limit(4)
+    else
+      User.none
     end
+    @answers = EventAnswer.where(member_id: @member.id).includes(event_question: :event).order(created_at: :desc).limit(10)
+  end
 
-    def update
-        @member = Member.find(params[:id])
+  def edit; end
 
-        if @member.random_id.nil?
-            @member.random_id = SecureRandom.alphanumeric(6)
-        end
-
-        if @member.update(member_params)
-
-            flash[:notice] = 'プロフィール更新完了！'
-            redirect_to circles_path
-        else
-            render "edit"
-        end
+  def update
+    @member.random_id ||= SecureRandom.alphanumeric(6)
+    saved = Member.transaction do
+      @member.assign_attributes(member_params)
+      @member.save(context: :profile) || raise(ActiveRecord::Rollback)
     end
-
-    def show
-        @member = Member.find(params[:id])
-        @event_answers = EventAnswer.where(member_id: @member.id)
-        @events = Event.all
-
-        @event_ids = @member.members_events.map { |e| e.event_id }
-        @r_users = User.where(prefecture_id: @member.prefecture_id).or(User.where(prefecture_sub_id: @member.prefecture_id)).publicly_visible.where(event_id: @event_ids).order("RANDOM()").limit(5)
-
-        @bookmarks = Bookmark.where(member_id: @member.id).map { |m| m.user_id }
-        @b_users = User.publicly_visible.where(id: @bookmarks)
-
-        @event_questions = EventQuestion.all
-
-
-        # パンくず
-        @b1_name = @member.nickname
-        @b1_url = ""
+    if saved
+      redirect_to member_path(@member), notice: 'プロフィールを更新しました。'
+    else
+      render :edit, status: :unprocessable_entity
     end
+  end
 
-    def ensure_correct_member
-      if current_member.id != params[:id].to_i
-        if current_member.id == 1
+  private
 
-        else
-          flash[:notice] = "権限がありません"
-          redirect_to circles_path
+  def set_own_member
+    return head :forbidden unless current_member.id == params[:id].to_i
+    @member = current_member
+    response.headers['Cache-Control'] = 'private, no-store'
+    response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+  end
 
-        end
-      end
-    end
+  def load_profile_options
+    @event_groups = Event.includes(:category).order(:order, :id).group_by(&:category)
+    @prefectures = Prefecture.where.not(kana: 'online').order(:order, :id)
+  end
 
-
-    def set_member
-      @event = Event.find_by(ruby: params[:ruby])
-      @event_question = EventQuestion.find_by(id: params[:id])
-    end
-
-
-    private
-
-    def member_params
-        params.require(:member).permit(
-            :id,
-            :email,
-            :event_question_id,
-            :nickname,
-            :image_profile,
-            :answer,
-            :gender,
-            :profile,
-            :prefecture_id,
-            :living_prefecture_id,
-            :living_city,
-            :living_address,
-            :age,
-            event_ids: []
-        )
-    end
-
-
+  def member_params
+    params.require(:member).permit(:nickname, :image_profile, :gender, :profile, :prefecture_id, :date_of_birth, event_ids: [])
+  end
 end

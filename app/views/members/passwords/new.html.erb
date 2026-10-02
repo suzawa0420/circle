@@ -1,0 +1,8 @@
+<% set_meta_tags title: 'パスワードの再設定', noindex: true %>
+<main class="participant-shell participant-shell--narrow"><div class="participant-heading"><p class="participant-eyebrow">サークル参加者</p><h1>パスワードの再設定</h1><p>登録したメールアドレスに再設定の案内を送ります。</p></div><div class="participant-card">
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'participant-form' }) do |f| %>
+    <%= render 'devise/shared/error_messages', resource: resource %>
+    <div class="participant-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true, autofocus: true, autocomplete: 'email' %></div>
+    <%= f.submit '再設定メールを送る', class: 'participant-button participant-button--wide' %>
+  <% end %><p class="participant-auth-switch"><%= link_to 'ログインへ戻る', new_member_session_path %></p>
+</div></main>

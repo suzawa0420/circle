@@ -133,6 +133,7 @@ class User < ApplicationRecord
 	has_many :opinions
 	has_many :questions, dependent: :destroy
 	has_many :collections, dependent: :destroy
+	has_many :conversations, dependent: :destroy
 	has_many :reviews, dependent: :destroy
 	has_many :users_ages, dependent: :destroy
   has_many :ages, through: :users_ages

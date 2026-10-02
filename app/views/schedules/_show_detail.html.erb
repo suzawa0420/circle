@@ -37,8 +37,8 @@
       </div>
     <% end %>
 
-    <% if admin_user_signed_in?  %>
-      <% if @user.admin_user_id == current_admin_user.id || current_admin_user.id == 1 %>
+    <% if webmaster? || admin_user_signed_in?  %>
+      <% if can_manage_circle?(@user) %>
         <div class="post_edit">
           <%= link_to(edit_user_schedule_path(@user.id, @schedule.id)) do %>
             <i class="fa fa-pencil-square-o "> 編集</i>
@@ -54,8 +54,8 @@
     <% end %>
   </div>
 
-    <% if admin_user_signed_in?  %>
-      <% if @user.admin_user_id == current_admin_user.id || current_admin_user.id == 1 %>
+    <% if webmaster? || admin_user_signed_in?  %>
+      <% if can_manage_circle?(@user) %>
         <div class="add_schedule_btn_wrap">
           <%= link_to new_user_schedule_path(@user,copy: @schedule.id ) do %>
             <div class="add_schedule_btn">

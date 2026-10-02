@@ -18,7 +18,7 @@ class AccountBlocksController < ApplicationController
     @user = User.find_by(id: params[:user_id])
     @question = Question.find(params[:id])
 
-    if current_admin_user.id == @user.admin_user_id || current_admin_user.id == 1
+    if can_manage_circle?(@user)
       @account_block = AccountBlock.new
       @account_block.block = 1
       @account_block.ip_address = @question.ip_address
@@ -41,7 +41,7 @@ class AccountBlocksController < ApplicationController
     @user = User.find_by(id: params[:user_id])
     @review = Review.find(params[:id])
 
-    if current_admin_user.id == @user.admin_user_id || current_admin_user.id == 1
+    if can_manage_circle?(@user)
       @account_block = AccountBlock.new
       @account_block.block = 1
       @account_block.ip_address = @review.ip
@@ -61,14 +61,8 @@ class AccountBlocksController < ApplicationController
 
 
   private
-	def webmaster
-    if current_admin_user.id == 1
-
-    else
-      flash[:notice] = "権限がありません"
-      redirect_to circles_path
-    end
-
+  def webmaster
+    require_webmaster!
   end
 
 

@@ -1,0 +1,24 @@
+<% previous_date = nil %>
+<% @messages.to_a.reverse_each do |message| %>
+  <% if previous_date != message.created_at.to_date %><div class="chat-date"><time datetime="<%= message.created_at.to_date.iso8601 %>"><%= l(message.created_at.to_date) %></time></div><% end %>
+  <% previous_date = message.created_at.to_date %>
+  <% mine = message.sender_role == @role %>
+  <article class="chat-message <%= 'chat-message--mine' if mine %>">
+    <% unless mine %><%= render 'avatar', conversation: @conversation, role: message.sender_role %><% end %>
+    <div class="chat-message__content">
+      <% unless mine %><strong class="chat-message__name"><%= message.sender_role == 'owner' ? @conversation.user.name : @conversation.member.nickname %></strong><% end %>
+      <div class="chat-body"><%= simple_format(message.body) %></div>
+      <div class="chat-message__meta"><time datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%H:%M') %></time>
+      <% unless mine %>
+        <details><summary>通報</summary>
+          <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
+            <%= hidden_field_tag :message_id, message.id %>
+            <%= f.label :reason, '通報理由', for: "message-report-#{message.id}" %>
+            <%= f.text_area :reason, id: "message-report-#{message.id}", required: true, minlength: 6, maxlength: 2000 %>
+            <%= f.submit '運営に通報する' %>
+          <% end %>
+        </details>
+      <% end %></div>
+    </div>
+  </article>
+<% end %>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="turbolinks-cache-control" content="no-cache">
+  <title>ウェブマスター管理 | サークルブック</title>
+  <%= csrf_meta_tags %><%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= javascript_include_tag 'application', defer: true %>
+</head>
+<body class="webmaster-page">
+  <nav class="webmaster-nav" aria-label="運営管理">
+    <%= link_to 'サークルブック', root_path %>
+    <% if webmaster? %>
+      <%= link_to '管理トップ', webmaster_path %>
+      <%= link_to '口コミ管理', super_admin_reviews_path %>
+      <%= button_to 'ログアウト', destroy_webmaster_session_path, method: :delete %>
+    <% end %>
+  </nav>
+  <% if webmaster? %>
+    <nav class="webmaster-subnav" aria-label="管理機能">
+      <% [['管理トップ', webmaster_path], ['サークル・主催者', super_admin_circles_path], ['参加者管理', super_admin_accounts_path], ['メッセージ', super_admin_conversations_path], ['通報', super_admin_chat_reports_path], ['口コミ', super_admin_reviews_path], ['施設', super_admin_places_path], ['コラム', columns_path], ['ブロック', account_blocks_path], ['無効メール', invalid_emails_path], ['検索キーワード', db_keywords_path], ['入力エラー', db_validation_errors_path]].each do |label, path| %>
+        <%= link_to label, path, 'aria-current': (request.path == path ? 'page' : nil) %>
+      <% end %>
+    </nav>
+  <% end %>
+  <main class="webmaster-content">
+    <% flash.each do |type, message| %>
+      <% if %w[notice alert].include?(type) %><p class="webmaster-flash" role="status"><%= message %></p><% end %>
+    <% end %>
+    <%= yield %>
+  </main>
+  <% if webmaster? %><%= render "layouts/mobile_nav" %><% end %>
+</body>
+</html>

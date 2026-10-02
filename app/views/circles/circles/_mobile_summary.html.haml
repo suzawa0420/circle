@@ -19,7 +19,7 @@
         = @user.event.name
   %nav.mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
     = render "circles/circles/mobile_tab", path: circle_path(@user), label: "詳細", icon: "info-circle", current: active_tab == :details, disabled: false
-    = render "circles/circles/mobile_tab", path: circle_blogs_path(@user), label: "ブログ", icon: "book", current: active_tab == :blogs, disabled: !owns_circle && !@user.blogs.publicly_visible.exists?
-    = render "circles/circles/mobile_tab", path: user_reviews_path(@user), label: "口コミ", icon: "comment", current: active_tab == :reviews, disabled: !@user.reviews.exists?
     = render "circles/circles/mobile_tab", path: user_schedules_path(@user), label: "活動日", icon: "calendar", current: active_tab == :schedules, disabled: !owns_circle && !@user.schedules.exists?
+    = render "circles/circles/mobile_tab", path: user_reviews_path(@user), label: "口コミ", icon: "comment", current: active_tab == :reviews, disabled: !@user.reviews.exists?
     = render "circles/circles/mobile_tab", path: user_questions_path(@user), label: "Q&A", icon: "question-circle", current: active_tab == :questions, disabled: false
+    = render "circles/circles/mobile_tab", path: circle_blogs_path(@user), label: "ブログ", icon: "book", current: active_tab == :blogs, disabled: !owns_circle && !@user.blogs.publicly_visible.exists?

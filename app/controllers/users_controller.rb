@@ -2,9 +2,14 @@ class UsersController < ApplicationController
 include ApplicationHelper
 include Circlebook
 
-before_action :authenticate_admin_user!, only: [:new, :create, :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
+before_action :authenticate_admin_user!, only: [:new, :create]
+before_action :authenticate_owner_or_webmaster!, only: [ :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
 before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
 before_action :set_users, except: [:show, :new, :create]
+
+before_action :require_webmaster!, only: [:webmaster, :admin_user_list, :admin_user_update]
+
+before_action :require_verified_owner_for_registration, only: [:new, :create]
 
 helper_method :link_count
 
@@ -191,27 +196,20 @@ helper_method :link_count
   def admin_user_update
     @user = User.find(params[:id])
     @admin_user = @user.admin_user
-
-		if admin_user_signed_in?
-			if current_admin_user.master_account?
-        @admin_user.update(admin_user_params)
-        @admin_user.users.map{|user|
-          user.last_post = Time.zone.now.ago(5.years)
-          user.cb_point = -100
-          user.save
-        }
-
-        flash[:notice] = '違反者登録完了！'
-        redirect_to "/users/#{@user.id}"
-			end
-		end
-
+    if @admin_user.update(admin_user_params)
+      @admin_user.users.each do |circle|
+        circle.update!(last_post: Time.zone.now.ago(5.years), cb_point: -100)
+      end
+      redirect_to circle_path(@user), notice: '違反者登録完了！'
+    else
+      redirect_to edit_user_path(@user), alert: '更新できませんでした。入力内容を確認してください。'
+    end
   end
 
 
 	def update
 		@user = User.find(params[:id])
-		@user.user_time = Time.zone.now unless current_admin_user.master_account?
+		@user.user_time = Time.zone.now unless webmaster?
     if @user.switch.nil?
       @user.switch = "募集中"
     end
@@ -309,6 +307,7 @@ helper_method :link_count
 
 	def mypage
 		@user = User.find(params[:id])
+    @admin_user = @user.admin_user
     @users = User.publicly_visible.where.not(id: @user.id).where("cb_point > ?", 0).prefecture(@user.prefecture.id).event(@user.event.id).user_sort_2
     @questions_current = Question.where(user_id: @user.id)
     @questions_current_nil = Question.where(user_id: @user.id).where(answer: nil)
@@ -321,7 +320,7 @@ helper_method :link_count
     cb_point(@user)
 
 		# 管理者判定
-		if admin_user_signed_in?
+		if webmaster? || admin_user_signed_in?
 
       # unique_id 付与
       if @user.unique_id.blank?
@@ -591,7 +590,7 @@ helper_method :link_count
 
 
 	def webmaster
-    if current_admin_user.id == 1
+    if webmaster?
     else
         flash[:notice] = "権限がありません"
         redirect_to circles_path
@@ -614,17 +613,8 @@ helper_method :link_count
 
 
 def admin_user_list
-  if admin_user_signed_in?
-    if current_admin_user.id == 1
-      @admin_users = AdminUser.last(100)
-    else
-      flash[:notice] = "権限がありません"
-      redirect_to circles_path
-    end
-  end
+  @admin_users = AdminUser.last(100)
 end
-
-
 
 
 private
@@ -661,28 +651,38 @@ private
 
 	end
 
+  def require_verified_owner_for_registration
+    return if webmaster? || current_admin_user.email_verified?
+    store_location_for(:admin_user, new_user_path)
+    redirect_to admin_user_email_verification_path, alert: 'サークルの登録前にメールアドレスを確認してください。'
+  end
+
 	def user_params
 		permitted = params.require(:user).permit(
-			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :last_post, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :review_score, :unique_id,
-      :remove_pic_profile, :remove_pic_header, :remove_gallery_01, :remove_gallery_02, :remove_gallery_03, :remove_gallery_04, :review_permit,
+			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :last_post, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :unique_id,
+      :remove_pic_profile, :remove_pic_header, :remove_gallery_01, :remove_gallery_02, :remove_gallery_03, :remove_gallery_04,
 			decade_age:[], average_age:[] ,grouping:[], age_ids:[], group_ids:[], city_ids:[], tag_ids:[],
       link_attributes: [:id, :unique_id]
     )
-		permitted[:ng_account] = params[:user][:ng_account] if current_admin_user&.master_account? && params[:user].key?(:ng_account)
+    permitted[:review_permit] = params[:user][:review_permit] if webmaster? && params[:user].key?(:review_permit)
+		permitted[:ng_account] = params[:user][:ng_account] if webmaster? && params[:user].key?(:ng_account)
 		permitted
 	end
 
 	def admin_user_params
-		params.require(:admin_user).permit(:check, :gender, :nickname, :image_profile, :profile, :prefecture_id, :age, :open)
+		permitted = params.require(:admin_user).permit(:gender, :nickname, :image_profile, :profile, :prefecture_id, :age, :open)
+    permitted[:check] = params[:admin_user][:check] if webmaster? && params[:admin_user].key?(:check)
+    permitted
 	end
 
 	def ensure_correct_user
+    return if webmaster?
 		if admin_user_signed_in?
 			@user = User.find(params[:id])
 
 			if current_admin_user.id == @user.admin_user_id
 				# OK
-			elsif current_admin_user.master_account?
+			elsif webmaster?
 				#OK
 			else
         flash[:notice] = "権限がありません"

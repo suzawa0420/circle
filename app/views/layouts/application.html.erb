@@ -1,6 +1,7 @@
   <!DOCTYPE html>
   <html>
     <head>
+      <% unless webmaster? || %w[member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google Tag Manager -->
       <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -8,15 +9,22 @@
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','GTM-MD88D9HB');</script>
       <!-- End Google Tag Manager -->
+      <% end %>
       <% if admax_public_page? %>
         <%# Third-party ad frames need a fresh document on each public-page visit. %>
         <meta name="turbolinks-visit-control" content="reload">
       <% end %>
 
+      <% unless webmaster? || %w[member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google AdSense -->
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449"
            crossorigin="anonymous"></script>
+      <% end %>
 
+      <% if webmaster? || %w[conversations member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
+        <meta name="turbolinks-cache-control" content="no-cache">
+        <meta name="robots" content="noindex,nofollow">
+      <% end %>
       <%= csrf_meta_tag %>
       <%= csp_meta_tag %>
       <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -43,12 +51,14 @@
     </head>
 
     <% circle_tab = circle_navigation_tab %>
-    <body class="<%= "circle-context" if circle_tab %>">
+    <body class="<%= "circle-context" if circle_tab %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>">
 
+      <% unless webmaster? || %w[member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MD88D9HB"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
+      <% end %>
 
       <% if circle_tab %>
         <%= render "layouts/circle_desktop_toolbar" %>
@@ -57,6 +67,9 @@
           <%= render "/layouts/header" %>
         </header>
         <%= render "/layouts/mobile_heading" %>
+      <% end %>
+      <% if account_access_form_page? && !(webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?) %>
+        <%= render "layouts/account_access", anchor: "account-access" %>
       <% end %>
       <%= render "/layouts/mobile_nav" %>
 

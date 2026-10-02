@@ -3,7 +3,18 @@
 class AdminUsers::RegistrationsController < Devise::RegistrationsController
   include RegistrationBotGuard
   include RegistrationTurnstileGuard
+  include RegistrationEmailVerification
   before_action :verify_registration_form, only: :create
+  skip_before_action :set_imperfect_current_user
+
+  def after_sign_up_path_for(resource)
+    send_registration_verification(resource, ChatMailer.verify_owner_email(resource))
+    admin_user_email_verification_path
+  end
+
+  def after_update_path_for(resource)
+    resource.email_verified? ? super : admin_user_email_verification_path
+  end
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -17,6 +28,9 @@ class AdminUsers::RegistrationsController < Devise::RegistrationsController
 
   # GET /resource/edit
   def edit
+    # The legacy application callback uses @admin_user for the circle record.
+    # Restore Devise's account resource before rendering the email-change form.
+    self.resource = current_admin_user
     super
   end
 

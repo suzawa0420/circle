@@ -1,0 +1,12 @@
+<%= render 'webmasters/shared/page_header', title: "#{@label}の詳細", description: '会話に関する通報は、このアカウントが違反したことを意味するものではありません。' %>
+<p><%= link_to '一覧に戻る', super_admin_accounts_path(kind: @kind), class: 'wm-button wm-button--secondary' %></p>
+<article class="webmaster-card">
+<h2><%= @account.nickname.presence || "#{@label} ID #{@account.id}" %></h2>
+<dl class="wm-details"><dt>メール</dt><dd><%= @account.email %></dd><dt>状態</dt><dd><%= @account.suspended? ? '利用停止中' : '利用中' %></dd><dt>メール確認</dt><dd><%= @account.email_verified? ? '確認済み' : '未確認' %></dd></dl>
+<% if @account.suspended? %><p>停止日時：<%= l @account.suspended_at, format: :short %></p><p>停止理由（運営用）：<%= @account.suspension_reason %></p><% end %>
+<div class="wm-actions"><%= link_to(@account.suspended? ? '利用停止を解除' : '利用を停止', confirm_super_admin_account_path(@account, kind: @kind, operation: @account.suspended? ? 'resume' : 'suspend'), class: 'wm-button wm-button--secondary') %>
+<% if @kind == 'owner' %><%= link_to '主催者の削除を確認', confirm_super_admin_account_path(@account, kind: @kind, operation: 'delete'), class: 'wm-button wm-button--danger' %><% else %><%= link_to '公開プロフィール', member_profile_path(@account), class: 'wm-button wm-button--secondary' %><% end %></div>
+</article>
+<section class="wm-section"><h2>やり取り</h2><div class="wm-list"><% @conversations.each do |conversation| %><article class="webmaster-card"><h3><%= conversation.user.name %> ／ <%= conversation.member.nickname %></h3><%= link_to '会話を確認', super_admin_conversation_path(conversation), class: 'wm-button' %></article><% end %></div><%= paginate @conversations %></section>
+<section class="wm-section"><h2>受け取った公開口コミ</h2><div class="wm-list"><% @reviews.each do |review| %><article class="webmaster-card"><p class="wm-meta">評価：<%= (@kind == 'member' ? review.score : review.review).to_i == 1 ? '良かった' : '残念だった' %> ／ <%= review.created_at.strftime('%Y/%m/%d') %></p><div class="wm-body"><%= simple_format review.comment %></div></article><% end %></div><%= paginate @reviews, param_name: :review_page %></section>
+<section class="wm-section"><h2>関連する会話の通報</h2><div class="wm-list"><% @reports.each do |report| %><article class="webmaster-card"><span class="wm-badge"><%= ChatReport::STATUSES[report.status] %></span><p>通報者：<%= report.reporter_role == 'member' ? '参加者' : '主催者' %></p><div class="wm-body"><%= simple_format report.reason %></div><%= link_to '対応状況・運営メモ', super_admin_chat_report_path(report), class: 'wm-button' %></article><% end %></div><%= paginate @reports, param_name: :report_page %></section>

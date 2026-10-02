@@ -1,0 +1,10 @@
+<%= render 'webmasters/shared/page_header', title: '施設管理', description: 'コート・体育館などの施設情報を確認・編集します。' %>
+<p><%= link_to '施設を新規登録', new_place_path, class: 'wm-button' %></p>
+<section class="wm-section wm-list"><% @places.each do |place| %>
+  <article class="webmaster-card"><h2><%= place.name %></h2><dl class="wm-details"><dt>住所</dt><dd><%= place.address.presence || '未登録' %></dd></dl><div class="wm-actions">
+    <%= link_to '編集', edit_place_path(place), class: 'wm-button wm-button--secondary' %>
+    <%= button_to '施設を削除', place_path(place), method: :delete, class: 'wm-button--danger', data: { confirm: 'この施設を削除しますか？' } %>
+  </div></article>
+<% end %></section>
+<% if @places.empty? %><%= render 'webmasters/shared/empty', message: '登録済みの施設はありません。' %><% end %>
+<%= paginate @places %>

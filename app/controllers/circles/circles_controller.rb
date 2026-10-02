@@ -18,7 +18,7 @@ class Circles::CirclesController < Circles::ApplicationController
 	def show
 		@user = User.find(params[:id])
 		unless @user.publicly_visible?
-			raise ActiveRecord::RecordNotFound unless admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+			raise ActiveRecord::RecordNotFound unless can_manage_circle?(@user)
 			set_meta_tags noindex: true
 		end
 		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)

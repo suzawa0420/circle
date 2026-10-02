@@ -31,8 +31,8 @@
         更新日：<%= @place.updated_at.to_time.strftime("%Y年%-m月%-d日") %>
       </div>
 
-			<% if admin_user_signed_in?  %>
-				<% if @place.user_id.to_i == @current_user.id.to_i || @current_user.id.to_i == 1 %>
+			<% if webmaster? || admin_user_signed_in?%>
+				<% if webmaster? || (@place.user && can_manage_circle?(@place.user)) %>
           <div class="place_edit">
             <div class="post-edit_btn">
               <%= link_to( "編集", edit_place_path ) %>／
@@ -157,7 +157,7 @@
               <%= review.updated_at.to_time.strftime("%Y年%-m月%-d日") %>にレビュー済み
             </div>
             <%= simple_format review.comment %>
-            <% if admin_user_signed_in? && current_admin_user.master_account? %>
+            <% if webmaster? %>
               <%= link_to '口コミを削除', place_place_review_path(@place, review), method: :delete, data: { confirm: 'この口コミを削除しますか？' } %>
             <% end %>
           </div>

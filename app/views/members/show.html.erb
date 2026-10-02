@@ -1,0 +1,25 @@
+<% set_meta_tags title: '参加者マイページ', noindex: true, nofollow: true %>
+<main class="participant-shell">
+  <div class="participant-heading"><p class="participant-eyebrow">サークル参加者</p><h1>マイページ</h1><p>気になるサークルや、参加のやり取りをまとめて確認。</p></div>
+  <%= render 'members/navigation', active: 'home' %>
+  <section class="participant-card participant-identity">
+    <% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'participant-avatar', alt: '' %><% else %><div class="participant-avatar participant-avatar--empty" aria-hidden="true"><%= @member.nickname.to_s.first %></div><% end %>
+    <div class="participant-identity__text"><h2><%= @member.nickname %><small>さん</small></h2><p><%= @member.prefecture&.name || '活動エリア未設定' %><% if @member.age_group %>・<%= @member.age_group %><% end %></p></div>
+    <%= link_to '公開プロフィール', member_profile_path(@member), class: 'participant-text-link' %>
+  </section>
+  <div class="participant-stats">
+    <%= link_to conversations_path, class: 'participant-stat' do %><span>メッセージ</span><strong><%= @conversations_count %><small>件</small></strong><% if @unread_count.positive? %><span class="participant-badge">未読 <%= @unread_count %>件</span><% end %><% end %>
+    <%= link_to '#favorites', class: 'participant-stat' do %><span>お気に入り</span><strong><%= @bookmarked_circles.total_count %><small>件</small></strong><% end %>
+    <%= link_to member_profile_path(@member), class: 'participant-stat' do %><span>主催者からの評価</span><strong><%= @member.received_conversation_reviews.exists? ? format('%.2f', @member.received_review_score) : '—' %><small>/ 5</small></strong><% end %>
+  </div>
+  <% unless @member.email_verified? %><aside class="participant-notice"><strong>お問い合わせの前にメールアドレスを確認してください</strong><p>確認後、サークルにメッセージを送れます。</p><%= link_to 'メールアドレスを確認', member_email_verification_path %></aside><% end %>
+  <section class="participant-section" id="favorites">
+    <div class="participant-section__heading"><h2>お気に入りのサークル</h2><%= link_to 'サークルを探す', circles_path %></div>
+    <% if @bookmarked_circles.any? %><div class="participant-circle-grid"><%= render partial: 'members/circle_card', collection: @bookmarked_circles, as: :circle %></div><%= paginate @bookmarked_circles %>
+    <% else %><div class="participant-card participant-empty"><h3>気になるサークルを保存しましょう</h3><p>サークル詳細でお気に入りに追加すると、ここからいつでも確認できます。</p><%= link_to 'サークルを探す', circles_path, class: 'participant-button' %></div><% end %>
+  </section>
+  <section class="participant-section"><div class="participant-section__heading"><h2>興味のある種目</h2><%= link_to '変更する', edit_member_path(@member, anchor: 'interests') %></div><div class="participant-card"><% if @member.events.any? %><div class="participant-tags"><% @member.events.order(:order).each do |event| %><span><%= event.name %></span><% end %></div><% else %><p>好きなスポーツや趣味を登録して、サークル探しに役立てましょう。</p><% end %></div></section>
+  <% if @recommended_circles.any? %><section class="participant-section"><div class="participant-section__heading"><h2>あなたにおすすめ</h2></div><div class="participant-circle-grid"><%= render partial: 'members/circle_card', collection: @recommended_circles, as: :circle %></div></section><% end %>
+  <% if @answers.any? %><section class="participant-section"><h2>回答した質問</h2><div class="participant-card participant-link-list"><% @answers.each do |answer| %><%= link_to answer.event_question.question, "/#{answer.event_question.event.ruby}/qa/#{answer.event_question.id}" %><% end %></div></section><% end %>
+  <section class="participant-section"><h2>アカウント設定</h2><div class="participant-card participant-link-list"><%= link_to 'プロフィールを編集', edit_member_path(@member) %><%= link_to 'メールアドレス・パスワードを変更', edit_member_registration_path %><%= link_to 'ログアウト', destroy_member_session_path, method: :delete %></div></section>
+</main>

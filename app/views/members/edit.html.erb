@@ -1,0 +1,23 @@
+<% set_meta_tags title: '参加者プロフィールの編集', noindex: true, nofollow: true %>
+<main class="participant-shell">
+  <div class="participant-heading"><p class="participant-eyebrow">サークル参加者</p><h1>プロフィール編集</h1><p>あなたのことや、興味のある活動を教えてください。</p></div>
+  <%= render 'members/navigation', active: 'profile' %>
+  <%= form_with model: @member, local: true, html: { class: 'participant-form' } do |f| %>
+    <% if @member.errors.any? %><div class="participant-errors" role="alert"><strong>入力内容をご確認ください</strong><ul><% @member.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
+    <section class="participant-card">
+      <h2>基本プロフィール</h2>
+      <div class="participant-field"><%= f.label :image_profile, 'プロフィール画像' %><div class="participant-photo"><% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'participant-avatar', alt: '現在のプロフィール画像' %><% end %><%= f.file_field :image_profile, accept: 'image/jpeg,image/png' %></div><p class="participant-help">JPG・PNG形式の画像を選択してください。</p></div>
+      <div class="participant-field"><%= f.label :nickname do %>ニックネーム <span class="participant-required">必須</span><% end %><%= f.text_field :nickname, required: true, maxlength: 30, autocomplete: 'nickname', placeholder: 'サークルブック' %><p class="participant-help">プロフィールや口コミに表示されます。</p></div>
+      <fieldset class="participant-field"><legend>性別</legend><div class="participant-options"><% [['1', '男性'], ['2', '女性'], ['0', 'その他・回答しない']].each do |value, label| %><label><%= f.radio_button :gender, value %><span><%= label %></span></label><% end %></div></fieldset>
+      <div class="participant-field"><%= f.label :date_of_birth, '生年月日' %><%= f.date_field :date_of_birth, min: '1900-01-01', max: Date.current.iso8601, autocomplete: 'bday', 'aria-describedby': 'birth-privacy' %><p class="participant-help" id="birth-privacy"><strong>生年月日は公開されません。</strong>公開画面には、生年月日から自動計算した「20代」「40代」などの年代だけを表示します。</p></div>
+      <div class="participant-field"><%= f.label :prefecture_id do %>メインの活動エリア <span class="participant-required">必須</span><% end %><%= f.collection_select :prefecture_id, @prefectures, :id, :name, { prompt: '都道府県を選択してください' }, { required: true } %></div>
+    </section>
+    <section class="participant-card" id="interests"><h2>興味のある種目 <span class="participant-required">必須</span></h2><p class="participant-help">複数選択できます。気になるスポーツや趣味を選んでください。</p>
+      <%= hidden_field_tag 'member[event_ids][]', '' %>
+      <% @event_groups.each do |category, events| %><fieldset class="participant-interest-group"><legend><%= category&.name || 'その他' %></legend><div class="participant-interest-options"><%= f.collection_check_boxes :event_ids, events, :id, :name, include_hidden: false do |b| %><%= b.label(class: 'participant-interest') { b.check_box + content_tag(:span, b.text) } %><% end %></div></fieldset><% end %>
+      <% if @event_groups.empty? %><p>種目を読み込めませんでした。時間をおいて再度お試しください。</p><% end %>
+    </section>
+    <section class="participant-card"><div class="participant-field"><%= f.label :profile, '自己紹介' %><%= f.text_area :profile, rows: 5, maxlength: 2000, placeholder: '好きな活動や、参加してみたいサークルについて書いてみましょう。' %><p class="participant-help">公開プロフィールに表示されます。連絡先や住所などの個人情報は記載しないでください。</p></div></section>
+    <div class="participant-form-actions"><%= f.submit '変更を保存する', class: 'participant-button', data: { disable_with: '保存中…' } %><%= link_to 'マイページへ戻る', member_path(@member) %></div>
+  <% end %>
+</main>

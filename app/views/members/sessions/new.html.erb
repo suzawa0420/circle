@@ -1,0 +1,15 @@
+<% set_meta_tags title: '参加者ログイン', noindex: true %>
+<main class="participant-shell participant-shell--narrow">
+  <div class="participant-heading"><p class="participant-eyebrow">サークルに参加する方</p><h1>参加者ログイン</h1><p>お気に入りのサークルやメッセージを確認しましょう。</p></div>
+  <div class="participant-card">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'participant-form' }) do |f| %>
+      <%= render 'devise/shared/error_messages', resource: resource %>
+      <div class="participant-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true, autofocus: true, autocomplete: 'email' %></div>
+      <div class="participant-field"><%= f.label :password, 'パスワード' %><%= f.password_field :password, required: true, autocomplete: 'current-password' %></div>
+      <% if devise_mapping.rememberable? %><label class="participant-checkbox"><%= f.check_box :remember_me %><span>ログイン状態を保持する</span></label><% end %>
+      <%= f.submit 'ログイン', class: 'participant-button participant-button--wide' %>
+    <% end %>
+    <div class="participant-link-list"><%= link_to 'パスワードを忘れた方', new_member_password_path %><%= link_to '初めての方はこちら（無料参加者登録）', new_member_registration_path %></div>
+  </div>
+  <p class="participant-auth-switch"><%= link_to 'サークル主催者のログインはこちら', new_admin_user_session_path %></p>
+</main>

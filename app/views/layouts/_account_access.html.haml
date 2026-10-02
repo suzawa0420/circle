@@ -1,0 +1,11 @@
+%nav.account-access{ id: local_assigns[:anchor], class: ('account-access--menu' if local_assigns[:in_menu]), 'aria-label' => '利用者別の新規登録・ログイン' }
+  .account-access__group
+    %strong.account-access__title サークル主催者
+    .account-access__links
+      = link_to '新規登録', new_admin_user_registration_path, 'aria-label' => 'サークル主催者の新規登録'
+      = link_to 'ログイン', new_admin_user_session_path, 'aria-label' => 'サークル主催者のログイン'
+  .account-access__group
+    %strong.account-access__title サークル参加者
+    .account-access__links
+      = link_to '新規登録', new_member_registration_path, 'aria-label' => 'サークル参加者の新規登録'
+      = link_to 'ログイン', new_member_session_path, 'aria-label' => 'サークル参加者のログイン'

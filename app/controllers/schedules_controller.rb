@@ -2,7 +2,7 @@ class SchedulesController < ApplicationController
 
 include Circlebook
 
-before_action :authenticate_admin_user!, only: [:new, :create, :edit, :update, :destroy]
+before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :update, :destroy]
 before_action :ensure_correct_user, only: [:new, :create, :edit, :update, :destroy]
 before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :year, :month]}
 before_action :set_dates, {only: [:dates, :day]}
@@ -273,11 +273,12 @@ private
 
 
   def ensure_correct_user
+    return if webmaster?
     @user = User.find(params[:user_id])
 
     if current_admin_user.id.to_i == @user.admin_user_id.to_i
 
-    elsif current_admin_user.id == 1
+    elsif webmaster?
 
     else
       flash[:notice] = "権限がありません"

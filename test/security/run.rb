@@ -69,12 +69,15 @@ class ApplicationController < ActionController::Base
   include SpamProtection
   # Rails recycles controller instance variables between requests. Keep the
   # test identity in the session, as the real authentication layer does.
-  %i[current_member current_admin_user].each do |identity|
+  %i[current_member current_admin_user current_webmaster].each do |identity|
     define_method(identity) { session[identity] }
     define_method("#{identity}=") { |value| session[identity] = value }
   end
   def member_signed_in?; current_member.present?; end
   def admin_user_signed_in?; current_admin_user.present?; end
+  def webmaster?; current_webmaster&.id == 1; end
+  def can_manage_circle?(circle); webmaster? || (admin_user_signed_in? && current_admin_user.id == circle.admin_user_id); end
+  def authenticate_owner_or_webmaster!; authenticate_admin_user! unless webmaster?; end
   def authenticate_admin_user!; head :unauthorized unless admin_user_signed_in?; end
   def cb_point(*); end
   def last_post(*); end
@@ -355,7 +358,7 @@ class PlaceReviewSubmissionTest < ActionController::TestCase
     @controller.current_admin_user = Struct.new(:master_account?).new(false)
     assert_no_difference('PlaceReview.count') { delete :destroy, params: { place_id: @place.id, id: review.id } }
     assert_response :forbidden
-    @controller.current_admin_user = Struct.new(:master_account?).new(true)
+    @controller.current_webmaster = Struct.new(:id).new(1)
     other = Place.create!
     assert_raises(ActiveRecord::RecordNotFound) do
       delete :destroy, params: { place_id: other.id, id: review.id }

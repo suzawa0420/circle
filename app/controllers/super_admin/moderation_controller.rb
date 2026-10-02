@@ -1,5 +1,5 @@
 class SuperAdmin::ModerationController < ApplicationController
-  before_action :authenticate_admin_user!
+  before_action :require_webmaster!
   before_action :require_super_admin
 
   def circle
@@ -33,6 +33,6 @@ class SuperAdmin::ModerationController < ApplicationController
   end
 
   def require_super_admin
-    raise ActiveRecord::RecordNotFound unless current_admin_user.master_account?
+    raise ActiveRecord::RecordNotFound unless webmaster?
   end
 end

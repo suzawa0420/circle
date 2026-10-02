@@ -1,0 +1,13 @@
+<main class="chat-shell"><div class="chat-card">
+  <h1>メールアドレスの確認</h1>
+  <% if current_member.email_verified? %>
+    <p>確認済みです。</p><%= link_to 'メッセージへ', conversations_path %>
+  <% else %>
+    <p>問い合わせを送る前に、登録したメールアドレスを確認してください。</p>
+    <p><%= current_member.email %></p>
+    <% if current_member.verification_sent_at.present? %>
+      <p>確認メールを送信済みです。メール内のリンクを開いて認証してください。届かない場合は迷惑メールフォルダも確認してください。</p>
+    <% end %>
+    <%= button_to current_member.verification_sent_at.present? ? '確認メールを再送' : '確認メールを送信', member_email_verification_path, class: 'chat-button' %>
+  <% end %>
+</div></main>

@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require_relative '../config/environment'
+abort 'Use the scheduled rake task in production.' if Rails.env.production?
+loop do
+  begin
+    ChatMaintenance.run
+  rescue ChatMaintenance::DeliveryFailed
+    warn 'Notification delivery failed; retrying on next cycle.'
+  end
+  sleep 30
+end

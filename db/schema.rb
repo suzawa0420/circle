@@ -15,6 +15,17 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "webmasters", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.datetime "locked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_webmasters_on_email", unique: true
+    t.check_constraint "id = 1", name: "webmasters_single_account"
+  end
+
   create_table "account_blocks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -25,6 +36,8 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
   end
 
   create_table "admin_users", force: :cascade do |t|
+    t.datetime "suspended_at"
+    t.text "suspension_reason"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -41,6 +54,8 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
     t.string "age"
     t.integer "open", default: 0, null: false
     t.boolean "moderator", default: false, null: false
+    t.datetime "email_verified_at"
+    t.datetime "verification_sent_at"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["prefecture_id"], name: "index_admin_users_on_prefecture_id"
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
@@ -102,6 +117,75 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
     t.datetime "updated_at", null: false
     t.string "order"
     t.string "txt"
+  end
+
+  create_table "chat_messages", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.string "sender_role", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "id"], name: "index_chat_messages_on_conversation_id_and_id"
+    t.index ["conversation_id"], name: "index_chat_messages_on_conversation_id"
+  end
+
+  create_table "chat_reports", force: :cascade do |t|
+    t.string "status", default: "pending", null: false
+    t.text "operational_memo"
+    t.check_constraint "status IN ('pending', 'in_progress', 'resolved')", name: "chat_reports_status_valid"
+    t.bigint "conversation_id", null: false
+    t.bigint "chat_message_id"
+    t.bigint "conversation_review_id"
+    t.string "reporter_role", null: false
+    t.text "reason", null: false
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_message_id"], name: "index_chat_reports_on_chat_message_id"
+    t.index ["conversation_id"], name: "index_chat_reports_on_conversation_id"
+    t.index ["conversation_review_id"], name: "index_chat_reports_on_conversation_review_id"
+  end
+
+  create_table "conversation_reviews", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.string "author_role", null: false
+    t.integer "score", null: false
+    t.text "comment", null: false
+    t.boolean "participated", default: false, null: false
+    t.datetime "published_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "author_role"], name: "index_conversation_reviews_unique_author", unique: true
+    t.index ["conversation_id"], name: "index_conversation_reviews_on_conversation_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.string "public_id", limit: 24, null: false
+    t.index ["public_id"], name: "index_conversations_on_public_id", unique: true
+    t.bigint "user_id", null: false
+    t.bigint "member_id", null: false
+    t.datetime "accepted_at"
+    t.datetime "review_deadline"
+    t.datetime "reviews_published_at"
+    t.boolean "legacy_member_review", default: false, null: false
+    t.boolean "member_blocked", default: false, null: false
+    t.boolean "owner_blocked", default: false, null: false
+    t.string "respond_check"
+    t.bigint "member_read_message_id", default: 0, null: false
+    t.bigint "owner_read_message_id", default: 0, null: false
+    t.datetime "member_notification_due_at"
+    t.datetime "owner_notification_due_at"
+    t.datetime "member_notified_at"
+    t.datetime "owner_notified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_notification_due_at"], name: "index_conversations_on_member_notification_due_at"
+    t.index ["owner_notification_due_at"], name: "index_conversations_on_owner_notification_due_at"
+    t.index ["member_id"], name: "index_conversations_on_member_id"
+    t.index ["reviews_published_at", "review_deadline"], name: "index_conversations_review_publication"
+    t.index ["user_id", "member_id"], name: "index_conversations_on_user_id_and_member_id", unique: true
+    t.index ["user_id"], name: "index_conversations_on_user_id"
   end
 
   create_table "cities", force: :cascade do |t|
@@ -363,6 +447,9 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
   end
 
   create_table "members", force: :cascade do |t|
+    t.datetime "suspended_at"
+    t.text "suspension_reason"
+    t.date "date_of_birth"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -382,6 +469,8 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
     t.integer "living_prefecture_id", comment: "現住所: 都道府県"
     t.string "living_city", comment: "現住所: 市区町村"
     t.string "living_address", comment: "現住所: 以下住所"
+    t.datetime "email_verified_at"
+    t.datetime "verification_sent_at"
     t.index ["email"], name: "index_members_on_email", unique: true
     t.index ["prefecture_id"], name: "index_members_on_prefecture_id"
     t.index ["reset_password_token"], name: "index_members_on_reset_password_token", unique: true
@@ -509,6 +598,8 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
     t.string "age"
     t.string "gender"
     t.string "nickname"
+    t.bigint "conversation_review_id"
+    t.index ["conversation_review_id"], name: "index_reviews_on_conversation_review_id", unique: true
     t.index ["member_id"], name: "index_reviews_on_member_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
@@ -706,4 +797,13 @@ ActiveRecord::Schema.define(version: 2026_10_02_000000) do
   add_foreign_key "user_tags", "tags"
   add_foreign_key "user_tags", "users"
   add_foreign_key "users", "prefectures"
+
+  add_foreign_key "chat_messages", "conversations"
+  add_foreign_key "chat_reports", "chat_messages"
+  add_foreign_key "chat_reports", "conversation_reviews"
+  add_foreign_key "chat_reports", "conversations"
+  add_foreign_key "conversation_reviews", "conversations"
+  add_foreign_key "conversations", "members"
+  add_foreign_key "conversations", "users"
+  add_foreign_key "reviews", "conversation_reviews"
 end

@@ -1,0 +1,16 @@
+<%= render 'webmasters/shared/page_header', title: "#{@label}管理", description: '登録情報・やり取り・通報を確認し、利用停止や解除を行います。' %>
+<div class="wm-actions"><%= link_to '参加者', super_admin_accounts_path, class: 'wm-button' %><%= link_to '主催者', super_admin_accounts_path(kind: 'owner'), class: 'wm-button' %></div>
+<%= form_with url: super_admin_accounts_path, method: :get, class: 'wm-inline-form' do %>
+  <%= hidden_field_tag :kind, @kind %>
+  <div class="wm-field"><%= label_tag :q, 'ニックネーム・メールアドレス' %><%= search_field_tag :q, params[:q] %></div>
+  <div class="wm-field"><%= label_tag :state, '利用状態' %><%= select_tag :state, options_for_select([['すべて', ''], ['利用停止中', 'suspended']], params[:state]) %></div><%= submit_tag '検索' %>
+<% end %>
+<section class="wm-section wm-list">
+<% @accounts.each do |account| %><article class="webmaster-card">
+  <h2><%= account.nickname.presence || "#{@label} ID #{account.id}" %></h2><p class="wm-meta"><%= account.email %></p>
+  <p><span class="wm-badge"><%= account.suspended? ? '利用停止中' : '利用中' %></span></p>
+  <%= link_to '詳細を確認', super_admin_account_path(account, kind: @kind), class: 'wm-button' %>
+</article><% end %>
+<% if @accounts.empty? %><%= render 'webmasters/shared/empty', message: '条件に一致するアカウントはありません。' %><% end %>
+<%= paginate @accounts %>
+</section>

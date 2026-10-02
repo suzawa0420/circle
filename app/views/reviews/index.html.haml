@@ -1,4 +1,4 @@
-- set_meta_tags title: "#{@user.name}の口コミ・評価",og: {title: "#{@user.name}の口コミ・評価",description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}",image: @user.ogp_img,},twitter: { card: 'summary'}
+- set_meta_tags title: "#{@user.name}の口コミ・評価"
 .user_main.users-index
   .container
     .users-index-item
@@ -7,136 +7,14 @@
       = render "layouts/review_score", review_score: @user.review_score.to_f, reviews_count: @user.reviews.count
       .reset
       %hr/
-      - if admin_user_signed_in?
-        %p
-          サークル主催者は
-          %br>/
-          ご自身で口コミを書くことができません。
-        %br/
-        %p
-          参加者にこのページのURLを送って
-          %br>/
-          口コミを書いてもらいましょう！
-        .schedule_share_wrap.review_share_wrap
-          .share_btn_tw
-            = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}の口コミ投稿を募集しています！%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-              %i.fa.fa-twitter>
-              ツイート
-          .share_btn_line
-            = link_to 'LINEで共有する', "http://line.me/R/msg/text/?#{request.url}", title: 'LINE', target: '_blank'
-        - if @reviews.blank?
-          %hr/
-          .sample_review
-            %img{:src => "/images/sample_review.png"}/
-      - elsif member_signed_in?
-        - if @member_reviews.blank?
-          - if @reviews.blank?
-            .review_sub_title 口コミがまだ投稿されていません。
-            .new_review_comment
-              このサークルに参加されたことがある方は
-              %br/
-              最初の口コミを投稿してみませんか？
-            %hr/
-          - if AccountBlock.find_by(ip_address: request.remote_ip) || @user.review_permit == false
-          - else
-            %h2.top_title 口コミ投稿
-            .join_txt
-              ＼ コチラから投稿できます！ ／
-            .reviews_modal.center
-              %a.js-modal-open{"data-target" => "review_add_member", :href => ""}
-                %span.join_btn 口コミを投稿する！
-            .reviews_modal
-              #review_add_member.modal.js-modal
-                .modal_bg.js-modal-close
-                .modal_content
-                  %h2.top_title 口コミ投稿
-                  .schedule_input
-                    = form_for ([@user, @review]) do |f|
-                      = render "shared/spam_protection", scope: "review:#{@user.id}"
-                      %p 口コミ・評価
-                      .radio_button_review
-                        = f.radio_button :review, 1, {:checked => true }
-                        良かった #{f.radio_button :review, 0}残念だった
-                      %p
-                        コメント
-                        %span.must_red (必須)
-                      = f.text_area :comment, class: 'form-control form-note', placeholder: "初参加でしたが、とても楽しかったです！"
-                      = f.submit "投稿する", class: "submit_btn", data: { confirm: "この内容でよろしいですか？", disable_with: '更新中...' }
-                      .reset
-                  %br/
-                  %a.js-modal-close{:href => ""} 閉じる
-          - if @reviews.blank?
-            %hr/
-            .sample_review
-              %img{:src => "/images/sample_review.png"}/
-      - elsif @ip.blank?
-        - if @reviews.blank?
-          .review_sub_title 口コミがまだ投稿されていません。
-          .new_review_comment
-            このサークルに参加されたことがある方は
-            %br/
-            最初の口コミを投稿してみませんか？
-          %hr/
-        - if AccountBlock.find_by(ip_address: request.remote_ip)  || @user.review_permit == false
-        - else
-          %h2.top_title 口コミ投稿
-          .join_txt
-            ＼ 登録なしで投稿できます！ ／
-          .reviews_modal.center
-            %a.js-modal-open{"data-target" => "review_add_no_member", :href => ""}
-              %span.join_btn 口コミを投稿する！
-          .reviews_modal
-            #review_add_no_member.modal.js-modal
-              .modal_bg.js-modal-close
-              .modal_content
-                %h2.top_title 口コミ投稿
-                .schedule_input
-                  = form_for ([@user, @review]) do |f|
-                    = render "shared/spam_protection", scope: "review:#{@user.id}"
-                    %p ニックネーム
-                    = f.text_field :nickname, class: 'form-control', placeholder: "サークルブック"
-                    %br/
-                    %p 性別
-                    .radio_button_review
-                      = f.radio_button :gender, 1, {:checked => true}
-                      男性 #{f.radio_button :gender, 2}女性 #{f.radio_button :gender, 0}その他
-                    %p 年代
-                    = f.select :age,                                                                                          |
-                        [["10代", "10代"], ["20代", "20代"], ["30代", "30代"], ["40代", "40代"], ["50代", "50代"], ["60代以上", "60代以上"]], |
-                      :prompt => "選択してください"                                                                                   |
-                    %p 口コミ・評価
-                    .radio_button_review
-                      = f.radio_button :review, 1, {:checked => true}
-                      良かった #{f.radio_button :review, 0}残念だった
-                    %p
-                      コメント
-                      %span.must_red (必須)
-                    = f.text_area :comment, class: 'form-control form-note', placeholder: "初参加でしたが、とても楽しかったです！"
-                    = f.submit "投稿する", class: "submit_btn", data: { confirm: "この内容でよろしいですか？", disable_with: '更新中...' }
-                    .reset
-                %br/
-                %a.js-modal-close{:href => ""} 閉じる
-        - if @reviews.blank?
-          %hr/
-          .sample_review
-            %img{:src => "/images/sample_review.png"}/
-      - else
+      %p 口コミは、サイト内で問い合わせて主催者から返信を受けた方が投稿できます。
+      - if @conversation
+        %p= link_to "メッセージ・相互評価へ", conversation_path(@conversation, anchor: 'evaluation')
+      - elsif !admin_user_signed_in?
+        %p= link_to "このサークルに問い合わせる", new_user_conversation_path(@user)
+      - if @reviews.empty?
+        %p 口コミはまだありません。
       = render "/reviews/reviews_list", reviews: @reviews
       %hr/
       = render "/layouts/ad_square"
       .ad_space
-:javascript
-  $(function(){
-      $('.js-modal-open').each(function(){
-          $(this).on('click',function(){
-              var target = $(this).data('target');
-              var modal = document.getElementById(target);
-              $(modal).fadeIn();
-              return false;
-          });
-      });
-      $('.js-modal-close').on('click',function(){
-          $('.js-modal').fadeOut();
-          return false;
-      });
-  });

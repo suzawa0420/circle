@@ -1,0 +1,5 @@
+<nav class="participant-nav" aria-label="参加者アカウント">
+  <%= link_to 'マイページ', member_path(current_member), class: ('is-current' if local_assigns[:active] == 'home') %>
+  <%= link_to 'プロフィール編集', edit_member_path(current_member), class: ('is-current' if local_assigns[:active] == 'profile') %>
+  <%= link_to 'ログイン情報', edit_member_registration_path, class: ('is-current' if local_assigns[:active] == 'account') %>
+</nav>

@@ -161,11 +161,12 @@ private
 
 
   def ensure_correct_user
+    return if webmaster?
     @user = User.find(params[:user_id])
 
     if current_admin_user.id.to_i == @user.admin_user_id.to_i
 
-    elsif current_admin_user.id == 1
+    elsif webmaster?
 
     else
       flash[:notice] = "権限がありません"

@@ -1,34 +1,4 @@
-- if @user.admin_user.check == 1
-  - if @user.contact == "line" && @user.line_id != ""
-    .contact-button
-      = link_to new_user_user_contact_path(@user, check: "1") do
-        %img.icon_sns{:alt => "", :src => "/images/icon_line.png"}/
-  - elsif @user.contact == "mail"
-    .contact-button
-      = link_to new_user_user_contact_path(@user, check: "1") do
-        %img.icon_sns{:alt => "", :src => "/images/icon_mail.png"}/
-  - else
-    - if @user.line_id != ""
-      .contact-button
-        = link_to new_user_user_contact_path(@user, check: "1") do
-          %img.icon_sns{:alt => "", :src => "/images/icon_line.png"}/
-    .contact-button
-      = link_to new_user_user_contact_path(@user, check: "1") do
-        %img.icon_sns{:alt => "", :src => "/images/icon_mail.png"}/
-- else
-  - if @user.contact == "line" && @user.line_id != ""
-    .contact-button
-      = link_to new_user_user_contact_path(@user) do
-        %img.icon_sns{:alt => "", :src => "/images/icon_line.png"}/
-  - elsif @user.contact == "mail"
-    .contact-button
-      = link_to new_user_user_contact_path(@user) do
-        %img.icon_sns{:alt => "", :src => "/images/icon_mail.png"}/
-  - else
-    - if @user.line_id != ""
-      .contact-button
-        = link_to new_user_user_contact_path(@user) do
-          %img.icon_sns{:alt => "", :src => "/images/icon_line.png"}/
-    .contact-button
-      = link_to new_user_user_contact_path(@user) do
-        %img.icon_sns{:alt => "", :src => "/images/icon_mail.png"}/
+.contact-button
+  = link_to new_user_conversation_path(@user) do
+    %i.fa.fa-comment-o
+    メッセージで問い合わせ

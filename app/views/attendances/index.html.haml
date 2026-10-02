@@ -4,8 +4,8 @@
     .users-index-item
       %h1.top_title 出欠連絡（メンバー限定公開）
       = render "/users/parts/user_name", user: @user
-      - if admin_user_signed_in?
-        - if @user.admin_user_id == current_admin_user.id && params[:archive] != "1"
+      - if webmaster? || admin_user_signed_in?
+        - if can_manage_circle?(@user) && params[:archive] != "1"
           .join_txt ＼ メンバーに共有すれば簡単に出欠管理！ ／
           .attendance_url_copy
             .copyTarget= request.url

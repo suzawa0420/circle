@@ -1,4 +1,6 @@
 class LinksController < ApplicationController
+  before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :authorize_circle_write, only: [:new, :create, :edit, :update, :destroy]
 
 
 # before_action :ensure_correct_user, {only: [:edit, :update]}
@@ -13,8 +15,8 @@ class LinksController < ApplicationController
 		@user = User.find(params[:user_id])
 		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").limit(5)
 
-		if admin_user_signed_in?
-			if current_admin_user.id == @user.admin_user_id.to_i
+		if webmaster? || admin_user_signed_in?
+			if can_manage_circle?(@user)
 				if @user.link.present?
 					@link = @user.link
 					redirect_to "/link/#{@link.unique_id}"
@@ -68,7 +70,7 @@ class LinksController < ApplicationController
 	def show
 		@link = Link.find(params[:id])
 		@user = @link.user
-		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
+		raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (can_manage_circle?(@user))
 		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
 
 	end
@@ -83,7 +85,7 @@ class LinksController < ApplicationController
 
 		else
 			@user = @link.user
-			raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id))
+			raise ActiveRecord::RecordNotFound unless @user.publicly_visible? || (can_manage_circle?(@user))
 			@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
 
 			# パンくず
@@ -114,10 +116,10 @@ class LinksController < ApplicationController
 		@link = Link.find(params[:id])
 		@user = @link.user
 
-		if admin_user_signed_in?
+		if webmaster? || admin_user_signed_in?
 
-			if current_admin_user.id != @link.user.admin_user_id.to_i
-				if current_admin_user.id == 1
+			if !can_manage_circle?(@link.user)
+				if webmaster?
         else
           flash[:notice] = "権限がありません"
           redirect_to links_path
@@ -154,6 +156,10 @@ class LinksController < ApplicationController
 	end
 
 private
+  def authorize_circle_write
+    circle = %w[new create].include?(action_name) ? User.find(params[:user_id]) : Link.find(params[:id]).user
+    head :forbidden unless can_manage_circle?(circle)
+  end
 	def link_params
 		params.require(:link).permit(
 			:unique_id, :link01_title, :link01_url, :link02_title, :link02_url, :link03_title, :link03_url, :link04_title, :link04_url, :link05_title, :link05_url
@@ -164,6 +170,7 @@ private
 	end
 
 	def ensure_correct_user
+    return if webmaster?
 	end
 
 

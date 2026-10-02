@@ -4,8 +4,8 @@
       = render "/users/breadcrumb_city"
     .user-profile
       = render "/links/profile"
-      - if admin_user_signed_in?
-        - if @user.admin_user_id == current_admin_user.id
+      - if webmaster? || admin_user_signed_in?
+        - if can_manage_circle?(@user)
           .edit_link_wrap
             = link_to edit_link_path(@link) do
               .edit_link_txt

@@ -44,8 +44,8 @@
                     ツイートする
 
 
-              - if admin_user_signed_in?
-                - if @user.admin_user_id == current_admin_user.id || current_admin_user.id == 1
+              - if webmaster? || admin_user_signed_in?
+                - if can_manage_circle?(@user)
                   .post_edit
                     = link_to(edit_circle_blog_path) do
                       %i.fa.fa-pencil-square-o

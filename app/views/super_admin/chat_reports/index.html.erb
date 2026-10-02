@@ -1,0 +1,14 @@
+<%= render 'webmasters/shared/page_header', title: 'チャット・口コミの通報', description: '通報内容を確認し、対応状況を管理します。' %>
+<%= form_with url: super_admin_chat_reports_path, method: :get, class: 'wm-inline-form' do %><div class="wm-field"><%= label_tag :status, '対応状況' %><%= select_tag :status, options_for_select([['すべて', '']] + ChatReport::STATUSES.map { |key, label| [label, key] }, params[:status]) %></div><%= submit_tag '絞り込む' %><% end %>
+<div class="wm-list">
+  <% @reports.each do |report| %>
+    <article class="webmaster-card">
+      <div class="wm-card-heading"><h2><%= report.conversation.user.name %></h2><span class="wm-badge <%= 'wm-badge--pending' unless report.resolved_at %>"><%= ChatReport::STATUSES[report.status] %></span></div>
+      <p class="wm-meta">参加者：<%= report.conversation.member.nickname %> ／ <%= report.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+      <div class="wm-body"><%= simple_format report.reason %></div>
+      <div class="wm-actions"><%= link_to '通報の詳細を確認', super_admin_chat_report_path(report), class: 'wm-button' %></div>
+    </article>
+  <% end %>
+</div>
+<% if @reports.empty? %><%= render 'webmasters/shared/empty', message: '通報はありません。' %><% end %>
+<%= paginate @reports %>

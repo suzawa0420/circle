@@ -1,0 +1,8 @@
+<%= render 'webmasters/shared/page_header', title: '入力エラー記録', description: '登録・投稿時に発生した入力エラーを確認します。' %>
+<div class="wm-list"><% @db_validation_errors.each do |entry| %>
+  <article class="webmaster-card"><h2><%= entry.name %></h2><p class="wm-meta"><%= entry.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+    <dl class="wm-details"><% [entry.content_01, entry.content_02, entry.content_03].each_with_index do |content, index| %><% if content.present? %><dt>詳細 <%= index + 1 %></dt><dd><%= content %></dd><% end %><% end %></dl>
+  </article>
+<% end %></div>
+<% if @db_validation_errors.empty? %><%= render 'webmasters/shared/empty', message: '入力エラーの記録はありません。' %><% end %>
+<%= paginate @db_validation_errors %>

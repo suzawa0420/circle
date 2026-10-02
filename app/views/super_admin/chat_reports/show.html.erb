@@ -1,0 +1,21 @@
+<%= render 'webmasters/shared/page_header', title: '通報の詳細', description: '対象の口コミと会話履歴を確認できます。' %>
+<p><%= link_to '通報一覧に戻る', super_admin_chat_reports_path, class: 'wm-button wm-button--secondary' %></p>
+<section class="wm-section"><article class="webmaster-card">
+  <div class="wm-card-heading"><h2>通報内容</h2><span class="wm-badge <%= 'wm-badge--pending' unless @report.resolved_at %>"><%= ChatReport::STATUSES[@report.status] %></span></div>
+  <p class="wm-meta">通報者：<%= @report.reporter_role == 'member' ? '参加者' : '主催者' %> ／ <%= @report.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+  <div class="wm-body"><%= simple_format @report.reason %></div>
+  <% if @report.conversation_review %>
+    <h3>対象の口コミ</h3><div class="wm-body"><%= simple_format @report.conversation_review.comment %></div>
+    <% if @report.conversation_review.published_at && !@report.conversation_review.deleted_at %><div class="wm-actions"><%= button_to '対象の口コミを削除', super_admin_evaluation_path(@report.conversation_review), method: :delete, class: 'wm-button--danger', data: { confirm: 'この口コミを削除しますか？' } %></div><% end %>
+  <% end %>
+  <%= form_with model: @report, url: super_admin_chat_report_path(@report), method: :patch do |f| %>
+    <p role="alert"><%= @report.errors.full_messages.join('、') %></p>
+    <div class="wm-field"><%= f.label :status, '対応状況' %><%= f.select :status, ChatReport::STATUSES.map { |key, label| [label, key] } %></div>
+    <div class="wm-field"><%= f.label :operational_memo, '運営メモ（利用者には非公開）' %><%= f.text_area :operational_memo, rows: 5, maxlength: 4000 %></div>
+    <%= f.submit '対応状況とメモを保存' %>
+  <% end %>
+</article></section>
+<section class="wm-section wm-thread"><div class="wm-section-heading"><h2>会話履歴</h2></div>
+  <% @messages.each do |message| %><article class="webmaster-card"><div class="wm-card-heading"><h3><%= message.sender_role == 'owner' ? '主催者' : '参加者' %></h3><time class="wm-meta"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div><div class="wm-body"><%= simple_format message.body %></div></article><% end %>
+  <%= paginate @messages %>
+</section>

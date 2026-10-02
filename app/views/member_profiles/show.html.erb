@@ -1,0 +1,42 @@
+<% set_meta_tags title: "#{@member.nickname.presence || '参加者'}さんのプロフィール" %>
+<main class="participant-shell public-member-profile">
+  <section class="participant-card public-profile-card">
+    <div class="public-profile-identity">
+      <% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'public-profile-avatar', alt: "#{@member.nickname}さんのプロフィール画像" %><% else %><span class="public-profile-avatar public-profile-avatar--empty" aria-hidden="true"><%= @member.nickname.to_s.first.presence || '？' %></span><% end %>
+      <div class="public-profile-identity__text">
+        <p class="participant-eyebrow">サークル参加者</p>
+        <h1><%= @member.nickname.presence || '参加者' %><small>さん</small></h1>
+        <p class="public-profile-meta"><% if @member.age_group.present? %><span><%= @member.age_group %></span><% end %><% if @member.prefecture %><span>活動エリア：<%= @member.prefecture.name %></span><% end %></p>
+        <% if @review_count.positive? %><a class="public-profile-score" href="#reviews" aria-label="主催者からの口コミ：5点満点中<%= format('%.2f', @member.received_review_score) %>、<%= @review_count %>件"><%= render 'expression', positive: true %><strong><%= format('%.2f', @member.received_review_score) %></strong><span>/ 5</span><span>（<%= @review_count %>件）</span></a><% else %><p class="public-profile-no-score">口コミはまだありません</p><% end %>
+      </div>
+    </div>
+    <div class="public-profile-section">
+      <h2>自己紹介</h2>
+      <% if @member.profile.present? %><div class="public-profile-bio"><%= simple_format @member.profile %></div><% else %><p class="public-profile-placeholder">自己紹介はまだ登録されていません。</p><% end %>
+    </div>
+    <div class="public-profile-section">
+      <h2>興味のあること</h2>
+      <% if @interests.any? %><div class="participant-tags public-profile-interests"><% @interests.each do |event| %><span><%= event.name %></span><% end %></div><% else %><p class="public-profile-placeholder">興味のある種目はまだ登録されていません。</p><% end %>
+    </div>
+    <% if member_signed_in? && current_member.id == @member.id %><div class="public-profile-edit"><%= link_to 'プロフィールを編集', edit_member_path(@member), class: 'participant-button' %></div><% end %>
+  </section>
+  <section class="participant-section" id="reviews">
+    <div class="participant-section__heading"><h2>主催者からの口コミ</h2><span class="public-profile-count"><%= @review_count %>件</span></div>
+    <% if @review_count.positive? %>
+      <div class="public-profile-rating-counts">
+        <span><%= render 'expression', positive: true %>良かった <strong><%= @review_counts.fetch(1, 0) %></strong></span>
+        <span><%= render 'expression', positive: false %>残念だった <strong><%= @review_counts.fetch(0, 0) %></strong></span>
+      </div>
+      <p class="public-profile-placeholder">問い合わせ後のやり取りや交流についての口コミです。</p>
+      <% @reviews.each do |review| %>
+        <article class="participant-card public-profile-review">
+          <div class="public-profile-review__header"><%= render 'conversations/avatar', conversation: review.conversation, role: 'owner' %><div><%= link_to review.conversation.user.name, circle_path(review.conversation.user) %><time datetime="<%= review.published_at.to_date.iso8601 %>"><%= l(review.published_at.to_date) %></time></div></div>
+          <p class="public-profile-review__rating"><%= render 'expression', positive: review.score == 1 %><strong><%= review.score == 1 ? '良かった' : '残念だった' %></strong></p>
+          <%= simple_format review.comment %>
+          <% if webmaster? %><%= button_to '口コミを削除（運営）', super_admin_evaluation_path(review), method: :delete, data: { confirm: 'この口コミを削除しますか？相手側の口コミは残ります。' } %><% end %>
+        </article>
+      <% end %>
+      <%= paginate @reviews %>
+    <% else %><div class="participant-card public-profile-placeholder">サークル主催者から口コミが届くと、ここに表示されます。</div><% end %>
+  </section>
+</main>

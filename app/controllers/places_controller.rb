@@ -1,7 +1,7 @@
 class PlacesController < ApplicationController
   include ApplicationHelper
 
-	before_action :correct_user, {only: [:new, :count]}
+	before_action :require_webmaster!, only: [:new, :create, :count, :destroy]
 	before_action :ensure_correct_user, {only: [:edit, :update]}
 	before_action :set_place, {only: [:event, :prefecture, :city, :show, :search]}
 
@@ -54,7 +54,7 @@ class PlacesController < ApplicationController
     if admin_user_signed_in?
       @current_user = User.find_by(admin_user_id: current_admin_user.id)
     end
-		@place.user_id = @current_user.id
+		@place.user_id = @current_user&.id
 
     if @place.save(place_params)
 			@prefecture = Prefecture.find_by(id: @place.prefecture_id)
@@ -184,7 +184,7 @@ class PlacesController < ApplicationController
 
 	private
 	def correct_user
-    if current_admin_user.id == 1 || current_admin_user.id == 2197
+    if webmaster?
     else
         flash[:notice] = "権限がありません"
         redirect_to "/places"
@@ -192,10 +192,11 @@ class PlacesController < ApplicationController
   end
 
 	def ensure_correct_user
+    return if webmaster?
 		@place = Place.find(params[:id])
 		@user = User.find_by(id: @place.user_id)
     if current_admin_user.id != @user.admin_user_id.to_i
-      if current_admin_user.id == 1
+      if webmaster?
       else
         flash[:notice] = "権限がありません"
         redirect_to "/places"

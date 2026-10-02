@@ -1,0 +1,111 @@
+<main class="chat-shell chat-thread">
+  <header class="chat-thread-heading">
+    <%= link_to '‹ 一覧', conversations_path, class: 'chat-back', aria: { label: 'メッセージ一覧へ戻る' } %>
+    <%= render 'avatar', conversation: @conversation, role: @role == 'member' ? 'owner' : 'member' %>
+    <h1><%= @role == 'member' ? @conversation.user.name : "#{@conversation.member.nickname}さん" %></h1>
+    <a href="#evaluation" class="chat-evaluation-link">口コミ</a>
+  </header>
+  <details class="chat-context"><summary>相手の情報・受付状況</summary>
+  <div class="chat-card chat-person">
+    <%= link_to "#{@conversation.member.nickname}さんのプロフィール", member_profile_path(@conversation.member) %>
+    <% count = @conversation.member.received_conversation_reviews.count %>
+    <p>参加者の評価：<%= count.positive? ? "#{format('%.2f', @conversation.member.received_review_score)} / 5（#{count}件）" : 'まだありません' %></p>
+    <p id="chat-acceptance-status"><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>
+  </div>
+  </details>
+  <section aria-label="メッセージ履歴" class="chat-history">
+    <%= paginate @messages %>
+    <div id="chat-messages" class="chat-history" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if params[:page].blank? || params[:page] == '1' %>" data-accepted="<%= @conversation.accepted_at.present? %>">
+      <%= render "messages" %>
+    </div>
+  </section>
+  <div id="chat-latest" tabindex="-1"></div>
+  <section class="chat-composer" aria-label="返信する">
+    <% if (@role == 'owner' ? current_admin_user : current_member).suspended? %>
+      <p>利用停止中のため送信できません。過去の会話は確認できます。</p>
+    <% elsif @role == 'owner' && !current_admin_user.email_verified? %>
+      <p>メッセージを送信するにはメールアドレスの確認が必要です。</p>
+      <%= link_to 'メールアドレスを確認する', admin_user_email_verification_path %>
+    <% elsif @conversation.blocked? %>
+      <p>ブロック中のため、双方とも送信できません。履歴の閲覧・通報・評価は引き続き利用できます。</p>
+    <% else %>
+      <%= form_with url: message_conversation_path(@conversation), scope: :message, local: true, html: { class: "chat-compose-form" } do |f| %>
+        <%= f.label :body, 'メッセージ', class: 'chat-visually-hidden' %>
+        <%= f.text_area :body, required: true, maxlength: 2000, rows: 1, placeholder: "メッセージを入力", class: "chat-compose-input" %>
+        <%= f.submit '送信', class: 'chat-button', data: { disable_with: '送信中…' } %>
+      <% end %>
+    <% end %>
+  </section>
+  <details class="chat-card chat-controls"><summary>ブロック・返信がない場合</summary>
+    <% if @conversation["#{@role}_blocked"] %>
+      <%= button_to '自分のブロックを解除', block_conversation_path(@conversation), method: :delete %>
+    <% else %>
+      <%= button_to '相手をブロック', block_conversation_path(@conversation), data: { confirm: '双方の送信を停止します。発生済みの評価権は残ります。よろしいですか？' } %>
+    <% end %>
+    <% if @role == 'member' && !@conversation.accepted_at %>
+      <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p><% else %>
+        <%= button_to '返信がないことを報告', no_reply_conversation_path(@conversation), id: 'chat-no-reply', data: { confirm: '主催者から返信がないことを報告しますか？' } %>
+      <% end %>
+    <% end %>
+  </details>
+  <details class="chat-card chat-evaluation" id="evaluation">
+    <summary>口コミを投稿する</summary>
+    <p>やり取りの感想を教えてください。参加した方は、サークルの雰囲気についても書けます。</p>
+    <% if @conversation.review_deadline %><p>投稿期限：<%= l(@conversation.review_deadline, format: '%Y年%-m月%-d日（%a）%H時%M分') %></p><% end %>
+    <p class="chat-review-help">双方の投稿が揃うか、投稿期限が過ぎると公開されます。ニックネーム・サークル名も表示されます。</p>
+    <p class="chat-review-help">連絡先などの個人情報は書かないでください。高評価や削除の強要、報復は禁止です。</p>
+    <p id="chat-acceptance-notice" hidden>主催者から返信が届きました。<%= link_to "ページを更新して口コミを書く", conversation_path(@conversation, refresh: 1, anchor: "evaluation") %></p>
+    <% if (@role == 'owner' ? current_admin_user : current_member).suspended? %>
+      <p>利用停止中のため口コミを投稿できません。</p>
+    <% elsif !@conversation.accepted_at %>
+      <p>主催者が最初に返信すると、口コミを投稿できるようになります。</p>
+    <% elsif @conversation.reviews_published_at %>
+      <p>投稿期間は終了しました。公開後は編集できません。削除後の再投稿もできません。</p>
+    <% elsif @role == 'member' && @conversation.legacy_member_review %>
+      <p>このサークルへの口コミは投稿済みです。評価は1人につき同じサークルに1件です。</p>
+    <% else %>
+      <%= form_with url: review_conversation_path(@conversation), method: :put, scope: :evaluation, local: true do |f| %>
+        <fieldset class="chat-rating"><legend>やり取りはいかがでしたか？</legend>
+          <div class="chat-rating-options">
+            <% [[1, '良かった', 'smile'], [0, '残念だった', 'frown']].each do |score, label, expression| %>
+              <%= f.label "score_#{score}", class: "chat-rating-option chat-rating-option--#{expression}" do %>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 8h.01M16 8h.01"/><path d="<%= expression == 'smile' ? 'M8 14s1.5 2 4 2 4-2 4-2' : 'M8 16s1.5-2 4-2 4 2 4 2' %>"/></svg>
+                <span><%= label %></span>
+                <%= f.radio_button :score, score, checked: (@own_review ? @own_review.score == score : score == 1), required: true %>
+              <% end %>
+            <% end %>
+          </div>
+        </fieldset>
+        <% if @role == 'member' %>
+          <div class="chat-attendance">
+            <%= f.label :participated do %><%= f.check_box :participated, checked: @own_review&.participated? %><span>このサークルに参加しました</span><% end %>
+            <p class="chat-review-help">実際に参加した方だけチェックしてください。</p>
+          </div>
+        <% end %>
+        <%= f.label :comment, '感想（6〜2000文字）' %>
+        <%= f.text_area :comment, value: @own_review&.comment, required: true, minlength: 6, maxlength: 2000, rows: 4 %>
+        <%= f.submit (@own_review && !@own_review.deleted_at ? '口コミを更新する' : '口コミを投稿する'), class: 'chat-button' %>
+      <% end %>
+    <% end %>
+    <% if @own_review && !@own_review.deleted_at %>
+      <section class="chat-own-review">
+        <h3>自分の口コミ</h3>
+        <p class="chat-review-help"><%= @own_review.published_at ? '公開済みの口コミです。' : '公開時の表示イメージです。まだ相手には公開されていません。' %></p>
+        <%= render 'review_preview', review: @own_review %>
+      </section>
+      <%= button_to '自分の口コミを削除', review_conversation_path(@conversation), method: :delete, data: { confirm: '自分の口コミを削除しますか？相手の口コミは残ります。公開後の削除は再投稿できません。' } %>
+    <% elsif @own_review&.deleted_at %><p>自分の口コミは削除済みです。再投稿できません。</p><% end %>
+    <% @public_reviews.each do |review| %>
+      <% next if review.author_role == @role %>
+      <div class="chat-own-review"><strong>相手の口コミ：<%= review.score == 1 ? '良かった' : '残念だった' %></strong><%= simple_format review.comment %></div>
+      <details><summary>この口コミを通報する</summary>
+        <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
+          <%= hidden_field_tag :review_id, review.id %>
+          <%= f.label :reason, '通報理由', for: "review-report-#{review.id}" %>
+          <%= f.text_area :reason, id: "review-report-#{review.id}", required: true, minlength: 6, maxlength: 2000 %>
+          <%= f.submit '運営に通報する' %>
+        <% end %>
+      </details>
+    <% end %>
+  </details>
+</main>

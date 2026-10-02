@@ -10,6 +10,7 @@ module AbuseProtection
     return unless request.post?
 
     return :signup if ACCOUNTS.any? { |account| path == "/#{account}" }
+    return :login if path == "/webmaster/login"
     return :login if ACCOUNTS.any? { |account| path == "/#{account}/sign_in" }
     return :password if ACCOUNTS.any? { |account| path == "/#{account}/password" }
   end

@@ -15,7 +15,7 @@
   - @user.errors.full_messages.each do |message|
     .form-error_message
       ・#{message}
-  - if current_admin_user.master_account?
+  - if webmaster?
     .form
       = form_for @admin_user, url:"/users/#{@user.id}/admin_user_update" do |f|
         .label_item
@@ -52,14 +52,14 @@
           %li
             = f.check_box :remove_pic_header
             背景画像の削除
-    - if current_admin_user.master_account?
+    - if webmaster?
       .label_item
         %span.label.label_danger> 管理権限
         NGアカウント判定
       = f.select :ng_account, [ ['OK', 'OK'], ['NG','NG'] ]
       .label_item
         %span.label.label_danger> 管理権限
-        口コミ・質問の投稿許可
+        質問の投稿許可
       = f.select :review_permit, [ ['許可', true], ['禁止', false] ]
     - if @user.switch.present?
       .label_item
@@ -107,12 +107,7 @@
     = f.text_field :cost, class: 'form-control', placeholder: "500円"
     .label_item サークル目標
     = f.text_field :goal, class: 'form-control', placeholder: "ゆくる、楽しく活動をする！"
-    .label_item LINEビジネス（LINE@）／LINEのURL
-    %a.line_id{:href => "/line", :target => "_blank"} &gt;&gt;30秒で作れるLINEアカウントの追加方法
-    = f.text_field :line_id, class: 'form-control', placeholder: "http://nav.cx/3JiS9Im"
-    - if @user.line_id.present?
-      .label_item 連絡方法
-      = f.select :contact, [ ['メール＆LINE','both'], ['LINEのみ','line'] , ['メールのみ','mail'] ]
+    %p お問い合わせはサイト内のメッセージに届きます。
     .sns_form
       .label_item Twitter ID
       .sns_input

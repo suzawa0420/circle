@@ -1,23 +1,5 @@
-- if @user.admin_user.check == 1
-  .contact_link
-    = link_to new_user_user_contact_path(@user, check: "1") do
-      .btn.btn_c.btn_green.btn_cubic
-        %i.fa.fa-envelope>
-        このサークルに参加する！
-  .contact_link
-    = link_to new_user_user_contact_path(@user, entry: "1", check: "1") do
-      .btn.btn_c.btn_green.btn_cubic
-        %i.fa.fa-star>
-        見学してみる！
-
-- else
-  .contact_link
-    = link_to new_user_user_contact_path(@user) do
-      .btn.btn_c.btn_green.btn_cubic
-        %i.fa.fa-envelope>
-        このサークルに参加する！
-  .contact_link
-    = link_to new_user_user_contact_path(@user, entry: "1") do
-      .btn.btn_c.btn_green.btn_cubic
-        %i.fa.fa-star>
-        見学してみる！
+.contact_link
+  = link_to new_user_conversation_path(@user) do
+    .btn.btn_c.btn_green.btn_cubic
+      %i.fa.fa-envelope>
+      このサークルにお問い合わせする

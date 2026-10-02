@@ -1,0 +1,16 @@
+<% title = { 'suspend' => '利用停止', 'resume' => '利用停止の解除', 'delete' => '主催者の削除' }.fetch(@operation) %>
+<%= render 'webmasters/shared/page_header', title: "#{title}の確認", description: '対象と影響範囲を確認してから実行してください。' %>
+<article class="webmaster-card">
+<h2><%= @account.nickname.presence || "#{@label} ID #{@account.id}" %></h2><p class="wm-meta"><%= @account.email %></p>
+<dl class="wm-details"><dt>サークル</dt><dd><%= @impact[:circles] %>件</dd><dt>会話</dt><dd><%= @impact[:conversations] %>件</dd><dt>メッセージ</dt><dd><%= @impact[:messages] %>件</dd><dt>受信口コミ</dt><dd><%= @impact[:reviews] %>件</dd></dl>
+<% if @operation == 'delete' %>
+<p>主催者と、そのサークル・ブログ・予定・会話・メッセージ・通報・相互評価などの関連データを削除します。この操作は取り消せません。件数は表示時点のものです。</p>
+<% elsif @operation == 'suspend' %>
+<p>このアカウントからの新しい問い合わせ・メッセージ送信・口コミ投稿を停止します。ログインと履歴の閲覧、通報、本人による口コミ削除は引き続き利用できます。サークルや既存の口コミは公開されたままです。</p>
+<% if @kind == 'owner' %><p>この主催者のサークルへの新規問い合わせも受け付けなくなります。</p><% end %>
+<% else %><p>問い合わせ・メッセージ送信・口コミ投稿を再開できます。口コミの投稿期限は延長されません。</p><% end %>
+<%= form_with url: super_admin_account_path(@account, kind: @kind), method: :patch do %>
+<%= hidden_field_tag :operation, @operation %><%= hidden_field_tag :confirmation, @confirmation %>
+<% if @operation == 'suspend' %><div class="wm-field"><%= label_tag :reason, '停止理由（運営用・必須）' %><%= text_area_tag :reason, nil, required: true, maxlength: 2000, rows: 4 %></div><% end %>
+<div class="wm-actions"><%= submit_tag "内容を確認して#{title}する", class: @operation == 'resume' ? 'wm-button' : 'wm-button wm-button--danger' %><%= link_to 'キャンセル', super_admin_account_path(@account, kind: @kind), class: 'wm-button wm-button--secondary' %></div>
+<% end %></article>

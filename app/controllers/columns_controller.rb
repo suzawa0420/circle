@@ -1,6 +1,6 @@
 class ColumnsController < ApplicationController
   before_action :set_column
-  before_action :ensure_correct_user, {only: [:new, :edit, :update]}
+  before_action :require_webmaster!, only: [:new, :create, :edit, :update, :destroy]
 
 
   def index
@@ -44,7 +44,7 @@ class ColumnsController < ApplicationController
   end
 
   def destroy
-      @column = column.find_by(id: params[:id])
+      @column = Column.find(params[:id])
       @column.destroy   
 
     redirect_to("/")
@@ -60,21 +60,6 @@ class ColumnsController < ApplicationController
 
     end
 
-  def ensure_correct_user
-    if admin_user_signed_in?
-      
-      if @current_user.id == 1
-
-      else
-        flash[:notice] = "権限がありません"
-        redirect_to columns_path
-
-      end
-    else
-        flash[:notice] = "権限がありません"
-        redirect_to columns_path      
-    end
-  end
 
   private
   def column_params

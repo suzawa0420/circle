@@ -1,0 +1,11 @@
+<section class="webmaster-login">
+  <h1>ウェブマスターログイン</h1>
+  <p>サークルブック運営専用のログインページです。</p>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <%= f.label :email, 'メールアドレス' %>
+    <%= f.email_field :email, required: true, autofocus: true, autocomplete: 'username' %>
+    <%= f.label :password, 'パスワード' %>
+    <%= f.password_field :password, required: true, autocomplete: 'current-password' %>
+    <%= f.submit 'ログイン', class: 'webmaster-button' %>
+  <% end %>
+</section>

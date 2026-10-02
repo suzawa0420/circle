@@ -4,7 +4,7 @@
     .users-index-item
       %h1.p_t サークブック内の口コミ・評価
     %ul.reviews_all_wrap
-      - @reviews.reverse_each do |review|
+      - @reviews.each do |review|
         %li.reviews_all_contents
           = link_to(circle_path(review.user.id)) do
             .schedule_profile_wrap
@@ -17,3 +17,5 @@
               - if review.user.review_score.present?
                 = render "layouts/review_score", review_score: review.user.review_score.to_f, reviews_count: review.user.reviews.count
             = render "/reviews/review_comment", review: review
+
+    = paginate @reviews

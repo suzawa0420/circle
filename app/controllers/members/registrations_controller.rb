@@ -3,7 +3,22 @@
 class Members::RegistrationsController < Devise::RegistrationsController
   include RegistrationBotGuard
   include RegistrationTurnstileGuard
+  include RegistrationEmailVerification
   before_action :verify_registration_form, only: :create
+  before_action :permit_nickname, only: :create
+
+  def permit_nickname
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:nickname])
+  end
+
+  def after_update_path_for(resource)
+    member_path(resource)
+  end
+
+  def after_sign_up_path_for(resource)
+    send_registration_verification(resource, ChatMailer.verify_email(resource))
+    member_email_verification_path
+  end
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 

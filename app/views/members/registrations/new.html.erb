@@ -1,0 +1,18 @@
+<% set_meta_tags title: '無料参加者登録', noindex: true %>
+<main class="participant-shell participant-shell--narrow">
+  <div class="participant-heading"><p class="participant-eyebrow">サークルに参加する方</p><h1>無料参加者登録</h1><p>お気に入りの保存、サークルへの問い合わせ、メッセージが使えます。</p></div>
+  <div class="participant-card">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'participant-form' }) do |f| %>
+      <%= render 'shared/spam_protection', scope: "registration:#{resource_name}" %>
+      <%= render 'devise/shared/error_messages', resource: resource %>
+      <%= render 'devise/shared/registration_bot_guard' %>
+      <div class="participant-field"><%= f.label :nickname, 'ニックネーム' %><%= f.text_field :nickname, required: true, maxlength: 30, autocomplete: 'nickname' %><p class="participant-help">公開プロフィールや口コミに表示されます。</p></div>
+      <div class="participant-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true, autocomplete: 'email' %></div>
+      <div class="participant-field"><%= f.label :password, 'パスワード' %><%= f.password_field :password, required: true, minlength: @minimum_password_length, autocomplete: 'new-password' %><p class="participant-help"><%= @minimum_password_length %>文字以上で設定してください。</p></div>
+      <div class="participant-field"><%= f.label :password_confirmation, 'パスワード（確認）' %><%= f.password_field :password_confirmation, required: true, autocomplete: 'new-password' %></div>
+      <p class="participant-help">登録すると<%= link_to '利用規約', rules_path %>に同意したものとします。</p>
+      <%= f.submit '無料で登録する', class: 'participant-button participant-button--wide', data: { disable_with: '登録中…' } %>
+    <% end %>
+    <p class="participant-auth-switch"><%= link_to '登録済みの方はログイン', new_member_session_path %></p>
+  </div>
+</main>

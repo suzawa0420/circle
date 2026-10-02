@@ -1,5 +1,36 @@
 class ApplicationController < ActionController::Base
   include SpamProtection
+  helper_method :webmaster?, :can_manage_circle?
+  layout :account_layout
+  before_action :webmaster_privacy
+
+  def webmaster?
+    current_webmaster.present? && current_webmaster.id == 1
+  end
+
+  def can_manage_circle?(circle)
+    webmaster? || (admin_user_signed_in? && current_admin_user.id == circle.admin_user_id)
+  end
+
+  def require_webmaster!
+    authenticate_webmaster!
+    head :forbidden if webmaster_signed_in? && !webmaster?
+  end
+
+  def authenticate_owner_or_webmaster!
+    authenticate_admin_user! unless webmaster?
+  end
+
+  def account_layout
+    (controller_path == "columns" && webmaster?) || controller_path.start_with?("webmasters/", "super_admin/") || %w[account_blocks invalid_emails db_validation_errors db_searches].include?(controller_path) || (controller_path == "db_keywords" && !%w[keyword kw].include?(action_name)) ? "webmaster" : "application"
+  end
+
+  def webmaster_privacy
+    return unless webmaster? || controller_path.start_with?("webmasters/", "super_admin/")
+    response.headers["Cache-Control"] = "private, no-store"
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    response.headers["Referrer-Policy"] = "same-origin"
+  end
 	before_action :set_current_user
 	before_action :set_imperfect_current_user
 	before_action :request_path
@@ -19,10 +50,9 @@ class ApplicationController < ActionController::Base
 
   # 登録未完了時のアクション
   def set_imperfect_current_user
+    return if webmaster? || controller_path.start_with?("webmasters/", "super_admin/")
     if admin_user_signed_in? #管理人ログイン判定
-      if current_admin_user.email == "n.shibazaki@bugs.co.jp" # スーパー管理者は登録不要
-        # OK
-      elsif current_admin_user.users.any? # 登録1つ以上の判定
+      if current_admin_user.users.any? # 登録1つ以上の判定
         # OK
       elsif controller_path == 'events'
         # OK（Ajax用）
@@ -88,12 +118,14 @@ class ApplicationController < ActionController::Base
 
 
 	def after_sign_in_path_for(resource)
+    destination = stored_location_for(resource)
+    return destination if destination.present?
 
     if admin_user_signed_in?
         new_user_path
 
     elsif member_signed_in?
-      edit_member_path(current_member)
+      member_path(current_member)
 
     elsif exhibition_group_signed_in?
       edit_exhibitor_profile_path

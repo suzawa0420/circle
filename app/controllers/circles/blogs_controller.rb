@@ -1,6 +1,6 @@
 class Circles::BlogsController < Circles::ApplicationController
 
-  before_action :authenticate_admin_user!, except: [:index, :show]
+  before_action :authenticate_owner_or_webmaster!, except: [:index, :show]
   before_action :set_blog
   before_action :authorize_blog_write, only: [:new, :create, :edit, :update, :destroy]
   before_action :security_blog, only: [:edit, :update, :destroy]
@@ -9,7 +9,7 @@ class Circles::BlogsController < Circles::ApplicationController
   include Circlebook
 
   def index
-    owner = admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+    owner = can_manage_circle?(@user)
     set_meta_tags noindex: true unless @user.publicly_visible?
     @blogs = (owner ? @user.blogs : @user.blogs.publicly_visible).order(created_at: "DESC").page(params[:page])
   end
@@ -40,7 +40,7 @@ class Circles::BlogsController < Circles::ApplicationController
 	def show
 		@blog = Blog.find(params[:id])
     unless @blog.publicly_visible?
-      raise ActiveRecord::RecordNotFound unless admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+      raise ActiveRecord::RecordNotFound unless can_manage_circle?(@user)
       set_meta_tags noindex: true
     end
     @blogs = @user.blogs.publicly_visible.where.not(id: params[:id])
@@ -104,16 +104,16 @@ class Circles::BlogsController < Circles::ApplicationController
   def set_blog
     @user = User.find(params[:circle_id])
     return if @user.publicly_visible?
-    return if admin_user_signed_in? && (current_admin_user.master_account? || current_admin_user.id == @user.admin_user_id)
+    return if can_manage_circle?(@user)
 
     raise ActiveRecord::RecordNotFound
   end
 
 
   def authorize_blog_write
-    allowed = current_admin_user.master_account? || @user.admin_user_id == current_admin_user.id
+    allowed = can_manage_circle?(@user)
     allowed &&= [nil, 0].include?(current_admin_user.check) &&
-      !current_admin_user.users.exists?(ng_account: 'NG') if action_name.in?(%w[new create]) && !current_admin_user.master_account?
+      !current_admin_user.users.exists?(ng_account: 'NG') if action_name.in?(%w[new create]) && !webmaster?
     render plain: '現在、このサークルのブログを操作できません。', status: :forbidden unless allowed
   end
 

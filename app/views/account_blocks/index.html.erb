@@ -1,0 +1,8 @@
+<%= render 'webmasters/shared/page_header', title: 'ブロック管理', description: '投稿に対するブロックの記録を確認・解除します。' %>
+<div class="wm-list"><% @account_blocks.each do |entry| %>
+  <article class="webmaster-card"><h2><%= entry.model.presence || 'ブロック記録' %></h2>
+    <dl class="wm-details"><dt>登録日時</dt><dd><%= entry.created_at.strftime('%Y/%m/%d %H:%M') %></dd><dt>対象URL</dt><dd><%= entry.url %></dd><dt>IPアドレス</dt><dd><%= entry.ip_address %></dd></dl>
+    <div class="wm-actions"><%= button_to 'ブロックを解除', account_block_path(entry), method: :delete, class: 'wm-button--danger', data: { confirm: 'このブロックを解除しますか？' } %></div>
+  </article>
+<% end %></div>
+<% if @account_blocks.empty? %><%= render 'webmasters/shared/empty', message: 'ブロック記録はありません。' %><% end %>

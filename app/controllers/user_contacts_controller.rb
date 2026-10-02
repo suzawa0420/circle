@@ -1,7 +1,8 @@
 class UserContactsController < ApplicationController
   include Circlebook
+  before_action :route_new_contact_to_chat, only: [:new, :create, :index, :edit]
 
-  before_action :authenticate_admin_user!, only: [:contact_list, :update_contact]
+  before_action :authenticate_owner_or_webmaster!, only: [:contact_list, :update_contact]
   before_action :set_users, {except: [:contact_block, :contact_list, :check_thanks]}
 
   def new
@@ -181,15 +182,15 @@ class UserContactsController < ApplicationController
   end
 
   def contact_list
-		if admin_user_signed_in?
+		if webmaster? || admin_user_signed_in?
 			@user = User.find(params[:id])
       @respond_check_count = UserContact.where(user_id: @user.id, respond_check: "NG").count
-      @admin_user = current_admin_user
+      @admin_user = @user.admin_user
       @user_contacts = UserContact.where(user_id: @user.id, contact_del: nil).order(updated_at: :desc).page(params[:page]).per(10)
 
-			if current_admin_user.id == @user.admin_user_id
+			if can_manage_circle?(@user)
 				# OK
-			elsif current_admin_user.id == 1
+			elsif webmaster?
 				#OK
 			else
         flash[:notice] = "権限がありません"
@@ -273,6 +274,10 @@ class UserContactsController < ApplicationController
 
 
 private
+  def route_new_contact_to_chat
+    redirect_to new_user_conversation_path(params[:user_id]), status: :see_other
+  end
+
 	def user_contact_params
 		params.require(:user_contact).permit(:mail, :mail_confirmation, :name, :message, :entry, :respond_check, :random_id, :ip_address, :account_block, :contact_del, :comment, :violation)
 	end

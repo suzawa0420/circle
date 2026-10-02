@@ -1,0 +1,12 @@
+<%= render 'webmasters/shared/page_header', title: '無効メール管理', description: '利用を制限するメールアドレスを登録・削除します。' %>
+<section class="webmaster-card">
+  <h2>メールアドレスを追加</h2>
+  <%= form_for @invalid_email, html: { class: 'wm-inline-form' } do |f| %>
+    <div class="wm-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true %></div>
+    <%= f.submit '追加する', data: { disable_with: '追加中…' } %>
+  <% end %>
+</section>
+<section class="wm-section wm-list">
+  <% @invalid_emails.each do |entry| %><article class="webmaster-card"><h3><%= entry.email %></h3><div class="wm-actions"><%= button_to '登録を削除', invalid_email_path(entry), method: :delete, class: 'wm-button--danger', data: { confirm: 'このメールアドレスの登録を削除しますか？' } %></div></article><% end %>
+</section>
+<% if @invalid_emails.empty? %><%= render 'webmasters/shared/empty', message: '登録されたメールアドレスはありません。' %><% end %>

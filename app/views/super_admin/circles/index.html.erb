@@ -1,0 +1,42 @@
+<%= render 'webmasters/shared/page_header', title: 'サークル・主催者管理', description: '確認が必要な投稿の公開状態と、主催者の登録情報を管理します。' %>
+<% [['確認待ちのサークル', @review_circles, 'circle', false], ['確認待ちのブログ', @review_blogs, 'blog', false], ['公開停止中のサークル', @blocked_circles, 'circle', true], ['公開停止中のブログ', @blocked_blogs, 'blog', true]].each do |title, records, kind, blocked| %>
+<details class="wm-disclosure" <%= "open" if records.any? %>>
+  <summary><span><%= title %></span><span class="wm-badge"><%= records.size %>件</span></summary><div class="wm-disclosure-content">
+  <div class="wm-list">
+    <% records.each do |record| %>
+      <article class="webmaster-card">
+        <div class="wm-card-heading"><h3><%= link_to(kind == 'circle' ? record.name : record.title, kind == 'circle' ? circle_path(record) : circle_blog_path(record.user, record)) %></h3><span class="wm-badge <%= blocked ? 'wm-badge--danger' : 'wm-badge--pending' %>"><%= blocked ? '公開停止中' : '確認待ち' %></span></div>
+        <% if kind == 'blog' %><p class="wm-meta"><%= record.user.name %></p><% end %>
+        <div class="wm-actions">
+          <%= button_to(blocked ? '公開停止を解除' : '確認済みにする', kind == 'circle' ? super_admin_circle_moderation_path(record) : super_admin_blog_moderation_path(record), method: :patch, params: { moderation_status: 'clear' }) %>
+          <% unless blocked %><%= button_to '公開を停止', kind == 'circle' ? super_admin_circle_moderation_path(record) : super_admin_blog_moderation_path(record), method: :patch, params: { moderation_status: 'blocked' }, class: 'wm-button--danger' %><% end %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+  <% if records.empty? %><%= render 'webmasters/shared/empty', message: '対象の投稿はありません。' %><% end %>
+</div></details>
+<% end %>
+<details class="wm-disclosure" <%= "open" if @review_place_reviews.any? %>><summary><span>確認待ちの施設口コミ</span><span class="wm-badge"><%= @review_place_reviews.size %>件</span></summary><div class="wm-disclosure-content">
+  <div class="wm-list"><% @review_place_reviews.each do |review| %>
+    <article class="webmaster-card"><h3><%= review.place.name %></h3><div class="wm-body"><%= simple_format review.comment %></div><div class="wm-actions">
+      <%= button_to '確認済みにする', super_admin_place_review_moderation_path(review), method: :patch, params: { moderation_status: 'clear' } %>
+      <%= button_to '口コミを削除', place_place_review_path(review.place, review), method: :delete, class: 'wm-button--danger', data: { confirm: 'この口コミを削除しますか？' } %>
+    </div></article>
+  <% end %></div>
+  <% if @review_place_reviews.empty? %><%= render 'webmasters/shared/empty', message: '確認待ちの施設口コミはありません。' %><% end %>
+  <%= paginate @review_place_reviews, param_name: :review_page %>
+</div></details>
+<section class="wm-section">
+  <div class="wm-section-heading"><h2>主催者一覧</h2></div>
+  <div class="wm-list"><% @admin_users.each do |admin_user| %>
+    <article class="webmaster-card">
+      <div class="wm-card-heading"><h3><%= admin_user.nickname.presence || "主催者 ID #{admin_user.id}" %></h3><span class="wm-badge">サークル <%= admin_user.users.size %>件</span></div>
+      <dl class="wm-details"><dt>メール</dt><dd><%= admin_user.email %></dd><dt>登録日</dt><dd><%= admin_user.created_at.strftime('%Y/%m/%d') %></dd></dl>
+      <% admin_user.users.each do |circle| %><div class="wm-circle-row"><%= link_to circle.name, circle_path(circle) %><%= link_to '編集', edit_user_path(circle), class: 'wm-button wm-button--secondary' %></div><% end %>
+      <div class="wm-actions"><%= link_to '詳細・利用停止・削除', super_admin_account_path(admin_user, kind: 'owner'), class: 'wm-button wm-button--secondary' %></div>
+    </article>
+  <% end %></div>
+  <% if @admin_users.empty? %><%= render 'webmasters/shared/empty', message: '登録済みの主催者はいません。' %><% end %>
+  <%= paginate @admin_users %>
+</section>

@@ -1,0 +1,23 @@
+<% participant = review.author_role == 'member' %>
+<% member = @conversation.member %>
+<% posted_at = review.review&.created_at || review.published_at || review.created_at %>
+<article class="chat-review-preview">
+  <div class="chat-review-preview__avatar">
+    <% if participant %>
+      <% fallback = { '1' => 'icon_member_blue.png', '2' => 'icon_member_pink.png' }.fetch(member.gender, 'icon_member.png') %>
+      <%= image_tag(member.image_profile.present? ? member.image_profile.url : "/images/icon/#{fallback}", alt: '', class: 'chat-avatar') %>
+    <% else %><%= render 'avatar', conversation: @conversation, role: 'owner' %><% end %>
+  </div>
+  <div class="chat-review-preview__content">
+    <div class="chat-review-preview__name">
+      <span class="chat-review-preview__expression <%= review.score == 1 ? 'is-good' : 'is-bad' %>" role="img" aria-label="<%= review.score == 1 ? '良かった' : '残念だった' %>"><%= render 'member_profiles/expression', positive: review.score == 1 %></span>
+      <% if participant %><%= link_to member.nickname, member_profile_path(member) %><span>さん</span><% else %><%= link_to @conversation.user.name, circle_path(@conversation.user) %><% end %>
+    </div>
+    <div class="chat-review-preview__meta">
+      <% if participant %><span><%= [{ '1' => '男性', '2' => '女性', '0' => 'その他' }[member.gender], member.age_group].compact.join('・') %></span><% end %>
+      <time datetime="<%= posted_at.to_date.iso8601 %>"><%= posted_at.strftime('%Y年%-m月%-d日') %></time>
+    </div>
+    <div class="chat-review-preview__comment"><%= simple_format review.comment %></div>
+    <% if participant && review.participated? %><p class="chat-review-help">参加した感想（自己申告）</p><% end %>
+  </div>
+</article>
