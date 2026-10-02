@@ -107,6 +107,10 @@
   .user-profile { border-radius: $cb-radius-card; background: $cb-surface; }
   .matching_wrap { padding: cb-space(4); }
   .matching_card { width: 100%; padding: 0; }
+  .matching_wrap .matching_card {
+    margin: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+  }
+  &[data-page="matches"] .bg_white { background: transparent; }
   .matching_card .matching_name { padding-top: cb-space(3); }
   .matching_url { overflow-wrap: anywhere; }
   .cont-width { width: auto; margin-left: cb-space(4); margin-right: cb-space(4); }
@@ -135,7 +139,23 @@
   .form-control, .users-form input[type=text], .users-form select { width: 100%; }
   textarea.form-control, .qa_answer_form textarea, trix-editor { min-height: 160px; resize: vertical; }
   trix-editor { @include cb-type(body); border: 1px solid $cb-input-border; border-radius: $cb-radius-control; padding: cb-space(3); background: $cb-surface; }
-  trix-toolbar .trix-button-group { flex-wrap: wrap; margin-bottom: cb-space(2); }
+  // Wrap individual tools instead of squeezing each group into uneven rows.
+  trix-toolbar .trix-button-row {
+    display: flex; flex-wrap: wrap; justify-content: flex-start;
+    gap: cb-space(1); overflow: visible;
+    padding: cb-space(2); margin-bottom: cb-space(2);
+    background: $cb-canvas; border: 1px solid $cb-border; border-radius: $cb-radius-control;
+  }
+  trix-toolbar .trix-button-row .trix-button-group { display: contents; }
+  trix-toolbar .trix-button-group-spacer { display: none; }
+  trix-toolbar .trix-button-row .trix-button {
+    @include cb-focus;
+    flex: 0 0 $cb-touch-height; width: $cb-touch-height; height: $cb-touch-height;
+    max-width: none; padding: 0; margin: 0;
+    border: 1px solid $cb-border; border-radius: 4px; background: $cb-surface;
+    &.trix-active { background: $cb-mint-soft; border-color: $cb-action; }
+    &:hover:not(:disabled) { background: $cb-mint-soft; }
+  }
   .time_form { display: flex; width: 100%; align-items: center; }
   .time_form .form-control { flex: 1; width: 0; }
   .form-control:disabled { background: $cb-canvas; color: $cb-muted; }
@@ -143,9 +163,20 @@
   .form-error, .form-error_message { color: $cb-danger; font-size: 14px; }
   .file_size, .file_size_p, .cautions, .warning_txt, .rich_text_notes { font-size: 13px; line-height: 1.7; color: $cb-muted; }
   .warning_txt { margin: cb-space(6) 0 cb-space(2); }
-  .check_boxes { display: flex; flex-wrap: wrap; align-items: center; gap: cb-space(2); }
-  .check_boxes label { padding: cb-space(2) cb-space(2) cb-space(2) 0; margin: 0; font-size: 14px; }
-  .check_boxes input[type=checkbox] { flex: 0 0 20px; width: 20px; height: 20px; margin: 0; }
+  .check_boxes { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: cb-space(2); }
+  .check_boxes label {
+    display: inline-flex; align-items: center; min-height: $cb-touch-height;
+    padding: cb-space(2) cb-space(3) cb-space(2) 42px;
+    margin: 0; max-width: 100%; font-size: 14px; cursor: pointer;
+    border-radius: $cb-radius-control;
+  }
+  .check_boxes input[type=checkbox] {
+    display: block; position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: 0; opacity: 0;
+  }
+  .check_boxes input[type=checkbox]:focus-visible + label {
+    outline: 2px solid $cb-action; outline-offset: 2px;
+  }
   .attention_content, .check_boxes_advice_wrap { @include cb-card; @include cb-type(compact); background: $cb-warning-soft; color: $cb-warning-text; margin: cb-space(4) 0 cb-space(6); }
   .attention_title { color: inherit; }
   .users-form input[type=submit], .schedule_input input[type=submit], .qa_answer_form .submit_btn,
