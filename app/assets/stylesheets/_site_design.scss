@@ -183,6 +183,8 @@
   .contact_link .btn_green, .schedule_post_btn, .user_qa_btn .contact-button, .link_to_user_btn { @include cb-button; max-width: 100%; box-shadow: none; border-bottom: 0; }
   .users-form input[type=submit], .schedule_input input[type=submit] { width: 100%; margin: cb-space(6) 0 0; }
   .more_link, .more_text_link, .place_more { @include cb-button(secondary); margin: cb-space(4) 0; max-width: 100%; }
+  .admin_area { display: flex; flex-wrap: wrap; gap: cb-space(3); margin: cb-space(4) 0; }
+  .admin_edit, .admin_delete { padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .admin_edit a, .contact-button.edit { @include cb-button(secondary); }
   .admin_delete a { @include cb-button(danger); }
   .schedule_wrap { padding: cb-space(4); border: 1px solid $cb-border; border-radius: $cb-radius-card; background: $cb-surface; }
