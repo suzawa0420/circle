@@ -12,6 +12,7 @@
 | `squirrel-apology.png` | お詫び、処理失敗 | お辞儀して謝るリス |
 | `squirrel-404.png` | 404など、ページが見つからない場面 | 本を開いて困っているリス |
 | `squirrel-organizer.png` | 主催者向けログイン・管理案内 | どんぐりマークのパソコンで活動予定を管理するリス |
+| `squirrel-warning.png` | 勧誘の可能性があるサークルへの注意喚起 | 赤い注意マークを持ち、参加前の確認を呼びかけるリス |
 | `squirrel-participant.png` | 参加者向けログイン・スポーツ案内 | 本とラケットを持つリス |
 
 使用例：
@@ -26,6 +27,8 @@
 - `public/422.html`：`squirrel-sad.png`
 - `public/500.html`：`squirrel-apology.png`
 - `app/views/users/login.html.haml`：主催者に `squirrel-organizer.png`、参加者に `squirrel-participant.png`
+
+- `app/views/user_contacts/_form.html.haml`：参加前の注意画面に `squirrel-warning.png`
 
 ## 生成条件
 

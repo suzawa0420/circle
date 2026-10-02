@@ -67,7 +67,7 @@
       .warning_text
         【#{@user.name}】は、ネットワークビジネス（マルチ商法）の勧誘を目的としたサークルの可能性があります。
       .mlm_wrap
-        %img{:alt => "ネットワークビジネス", :src => "/images/mlm.png"}/
+        %img{ alt: "赤い注意マークを持ち、参加前の確認を呼びかけるリス", src: "/images/mascot/squirrel-warning.png", width: 150, height: 150 }
       .contact_link
         = link_to new_user_user_contact_path(@user) do
           .btn.btn_c.btn_gray.btn_cubic
