@@ -2,6 +2,12 @@
   <%= link_to @user.name, circle_path(@user) %>
   <h1>サークルに問い合わせる</h1>
   <p>返信はこのサイトのメッセージで確認できます。初回の返信後、双方が対応について評価できます。</p>
+  <% if [1, 2].include?(@user.admin_user.check) %>
+    <aside class="chat-card" aria-label="参加前の注意">
+      <img src="/images/mascot/squirrel-warning.png" alt="参加前の確認を呼びかけるリス" width="160" height="160" style="display:block;margin:0 auto;object-fit:contain">
+      <%= render 'users/parts/admin_user_check', admin_user: @user.admin_user %>
+    </aside>
+  <% end %>
   <div class="chat-card">
     <%= form_with url: user_conversations_path(@user), scope: :message, local: true do |f| %>
       <%= f.label :body, '問い合わせ内容' %>
