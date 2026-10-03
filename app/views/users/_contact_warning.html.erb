@@ -1,0 +1,19 @@
+<dialog id="circle-contact-warning" class="circle-contact-warning" aria-labelledby="circle-contact-warning-title" aria-describedby="circle-contact-warning-description">
+  <div class="circle-contact-warning__content">
+    <p class="circle-contact-warning__label"><i class="fa fa-warning" aria-hidden="true"></i> 参加前に必ずご確認ください</p>
+    <h2 id="circle-contact-warning-title">勧誘目的の可能性があります</h2>
+    <p id="circle-contact-warning-description" class="circle-contact-warning__risk">
+      このサークルは、<strong><%= @user.admin_user.check == 1 ? 'ネットワークビジネス（マルチ商法）' : '宗教' %>への勧誘を目的としている可能性</strong>があります。
+    </p>
+    <p>問い合わせや参加は、慎重にご検討ください。</p>
+    <ul>
+      <li>活動と関係のない商品購入・契約・入会・寄付などを求められても、その場で応じないでください。</li>
+      <li>不安を感じた場合は、問い合わせや参加を控えてください。</li>
+    </ul>
+    <p class="circle-contact-warning__note">勧誘目的であると断定するものではありません。参加前の注意喚起として表示しています。</p>
+    <div class="circle-contact-warning__actions">
+      <button type="button" class="cb-button cb-button--block" data-contact-warning-close autofocus>問い合わせをやめる</button>
+      <a href="<%= new_user_conversation_path(@user) %>" class="cb-button cb-button--secondary cb-button--block" data-contact-warning-continue>注意事項を確認して進む</a>
+    </div>
+  </div>
+</dialog>

@@ -2,6 +2,6 @@
   - if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
     = link_to "サークルを編集", edit_user_path(@user), class: "mobile-circle-summary__cta"
   - elsif @user.switch == "募集中"
-    = link_to "このサークルにお問い合わせする", new_user_conversation_path(@user), class: "mobile-circle-summary__cta"
+    = link_to "このサークルにお問い合わせする", new_user_conversation_path(@user), circle_contact_warning_options(@user).merge(class: "mobile-circle-summary__cta")
   - else
     %span.mobile-circle-summary__cta.mobile-circle-summary__cta--disabled 募集終了

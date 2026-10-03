@@ -295,6 +295,10 @@
 
 
 
+    <% if circle_contact_warning?(@user) %>
+      <%= render "users/contact_warning" %>
+    <% end %>
+
     <!-- 画像プレビュー -->
     <%= render "/layouts/image_preview" %>
 

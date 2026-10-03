@@ -1,5 +1,5 @@
 .contact_link
-  = link_to new_user_conversation_path(@user) do
+  = link_to new_user_conversation_path(@user), circle_contact_warning_options(@user) do
     .btn.btn_c.btn_green.btn_cubic
       %i.fa.fa-envelope>
       このサークルにお問い合わせする

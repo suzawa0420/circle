@@ -1,0 +1,19 @@
+@import "design_mixins";
+
+.circle-contact-warning {
+  width: calc(100% - 32px); max-width: 560px; max-height: calc(100dvh - 32px);
+  padding: 0; margin: auto; overflow-y: auto; overscroll-behavior: contain;
+  border: 1px solid $cb-border; border-radius: $cb-radius-dialog;
+  background: $cb-surface; color: $cb-text; box-shadow: $cb-shadow-dialog;
+  &::backdrop { background: rgba(18, 35, 28, .65); }
+  &__content { padding: cb-space(6); }
+  &__label { @include cb-type(label); color: $cb-warning-text; margin: 0 0 cb-space(3); }
+  h2 { font-size: 26px; line-height: 1.4; font-weight: 700; color: $cb-warning-text; margin: 0 0 cb-space(5); }
+  p, li { font-size: 16px; line-height: 1.8; }
+  &__risk { background: $cb-warning-soft; padding: cb-space(4); border-radius: $cb-radius-control; }
+  ul { list-style: disc; padding-left: cb-space(5); margin: cb-space(4) 0; }
+  li + li { margin-top: cb-space(2); }
+  &__note { font-size: 13px !important; color: $cb-muted; }
+  &__actions { display: flex; flex-direction: column; gap: cb-space(3); margin-top: cb-space(5); }
+  @media (max-width: 359px) { &__content { padding: cb-space(4); } h2 { font-size: 24px; } }
+}

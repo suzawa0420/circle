@@ -16,7 +16,7 @@
       - if @conversation
         %p= link_to "メッセージ・相互評価へ", conversation_path(@conversation, anchor: 'evaluation')
       - elsif !admin_user_signed_in?
-        %p= link_to "このサークルに問い合わせる", new_user_conversation_path(@user)
+        %p= link_to "このサークルに問い合わせる", new_user_conversation_path(@user), circle_contact_warning_options(@user)
       - if @reviews.empty?
         %p 口コミはまだありません。
       = render "/reviews/reviews_list", reviews: @reviews

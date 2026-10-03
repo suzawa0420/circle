@@ -1,4 +1,14 @@
 module UsersHelper
+  def circle_contact_warning?(user)
+    user.is_a?(User) && [1, 2].include?(user.admin_user&.check)
+  end
+
+  def circle_contact_warning_options(user)
+    return {} unless circle_contact_warning?(user)
+
+    { data: { circle_contact_warning: true }, aria: { haspopup: 'dialog', controls: 'circle-contact-warning' } }
+  end
+
   # Stored scores use tenths. Normalize float noise before splitting the level
   # and its progress, without changing or capping the stored score.
   def circle_level_status(user)
