@@ -13,7 +13,7 @@ class MobileNavigationTest < ActionDispatch::IntegrationTest
     assert_select '.mobile-bottom-nav > a', count: 3
     assert_select '.mobile-bottom-nav > button', count: 1
     assert_select '.mobile-bottom-nav > a:nth-child(1)', text: /メッセージ/
-    assert_select ".mobile-bottom-nav > a:nth-child(2)[href='#{user_schedules_path(@circle)}']", text: 'スケジュール'
+    assert_select ".mobile-bottom-nav > a:nth-child(2)[href='#{user_schedules_path(@circle)}']", text: '活動日'
     assert_select ".mobile-bottom-nav > a:nth-child(3)[href='#{new_circle_blog_path(@circle)}']", text: 'ブログ'
     assert_select '.mobile-bottom-nav__badge', text: '1'
     get conversation_path(@conversation)

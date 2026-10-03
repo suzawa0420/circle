@@ -1,0 +1,14 @@
+.circle-faq
+  - questions.each do |question|
+    %details.circle-faq__item
+      %summary.circle-faq__question
+        %span.circle-faq__label{ "aria-hidden" => "true" } Q
+        %span.circle-faq__text= question.content
+        %span.circle-faq__toggle{ "aria-hidden" => "true" }
+      .circle-faq__answer
+        %span.circle-faq__label{ "aria-hidden" => "true" } A
+        .circle-faq__text
+          - if question.answer.present?
+            = simple_format(question.answer)
+          - else
+            %p.circle-faq__pending まだ回答されていません。

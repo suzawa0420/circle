@@ -2,22 +2,7 @@
   %h2.user_sub_title
     %i.fa.fa-comments
     質問コーナー
-  - if @questions.count > 1
-    %ul.user_slide_qa
-      - @questions.first(5).each do |question|
-        %li
-          = link_to "/users/#{@user.id}/questions/#{question.id}" do
-            .user_slide_qa_wrap
-              .user_slide_qa_content_wrap
-                %h3= question.content
-  - else
-    %ul.user_slide_qa.qa_center
-      - @questions.first(1).each do |question|
-        %li
-          = link_to "/users/#{@user.id}/questions/#{question.id}" do
-            .user_slide_qa_wrap
-              .user_slide_qa_content_wrap
-                %h3= question.content
+  = render "questions/accordion", questions: @questions
 - if AccountBlock.find_by(ip_address: request.remote_ip)
 - else
   .user_qa_btn

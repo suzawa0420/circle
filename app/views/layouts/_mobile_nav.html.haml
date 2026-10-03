@@ -8,7 +8,7 @@
     = render "layouts/mobile_message_link"
     = link_to circle ? user_schedules_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'schedules'}" do
       %i.fa.fa-calendar{ "aria-hidden" => "true" }
-      %span スケジュール
+      %span 活動日
     = link_to circle ? new_circle_blog_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'circles/blogs'}" do
       %i.fa.fa-book{ "aria-hidden" => "true" }
       %span ブログ

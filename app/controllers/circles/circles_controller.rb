@@ -23,7 +23,7 @@ class Circles::CirclesController < Circles::ApplicationController
 		end
 		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
 		@schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday).order(:day => :asc)
-		@questions = Question.where(user_id: @user.id).where.not(answer: nil).order(created_at: "DESC")
+		@questions = Question.where(user_id: @user.id).order(created_at: "DESC")
 
     @admin_user = AdminUser.find(@user.admin_user.id)
 

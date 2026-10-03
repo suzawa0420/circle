@@ -1,0 +1,13 @@
+%nav.cb-area-directory{ "aria-label" => "エリア一覧からサークルを探す" }
+  .cb-area-directory__group
+    %h3.cb-area-directory__heading 全国・オンライン
+    .cb-area-directory__links
+      = link_to "全国", circles_path, class: "cb-area-directory__button"
+      - prefectures.select { |prefecture| prefecture.id == 50 }.each do |prefecture|
+        = link_to prefecture.name, "/prefectures/#{prefecture.kana}", class: "cb-area-directory__button"
+  - prefectures.reject { |prefecture| prefecture.id == 50 }.group_by(&:group).each do |group, areas|
+    .cb-area-directory__group
+      %h3.cb-area-directory__heading= "#{group}エリア"
+      .cb-area-directory__links
+        - areas.each do |prefecture|
+          = link_to prefecture.name, "/prefectures/#{prefecture.kana}", class: "cb-area-directory__button"

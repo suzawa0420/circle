@@ -77,26 +77,7 @@
                 .e_icon_wrap
                   %img.lazyload{:alt => "福岡", "data-src" => "/images/prefectures/fukuoka.jpg"}/
                   .link_txt 福岡
-          %ul.prefectures-menus.place_meus
-
-            - @prefectures.each do |prefecture|
-              - if prefecture.group != @pref_group
-                - if prefecture.id == 50
-                  .prefectures-sub-title 全国
-                - else
-                  .prefectures-sub-title
-                    = prefecture.group
-                    エリア
-                %li
-                  = link_to "/prefectures/#{prefecture.kana}" do
-                    = prefecture.name
-                - @pref_group = prefecture.group
-              - else
-                %li
-                  = link_to "/prefectures/#{prefecture.kana}" do
-                    = prefecture.name
-
-
+          = render "home/area_directory", prefectures: @prefectures
 
         %label.readmore-label{:for => "check1-2"}
     .top_contents.top_contents_btm.bg_blue
