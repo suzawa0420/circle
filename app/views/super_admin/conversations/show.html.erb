@@ -12,7 +12,7 @@
   <% @messages.each do |message| %>
     <article class="webmaster-card wm-message wm-message--<%= message.sender_role %>">
       <div class="wm-card-heading"><span class="wm-badge"><%= message.sender_label %></span><time class="wm-meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div>
-      <div class="wm-body"><%= chat_message_body(message.body) %></div>
+      <div class="wm-body"><%= message.automatic? ? automatic_message_body(message.body) : chat_message_body(message.body) %></div>
     </article>
   <% end %>
   <% if @messages.empty? %><%= render 'webmasters/shared/empty', message: 'メッセージはありません。' %><% end %>

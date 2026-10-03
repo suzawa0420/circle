@@ -8,20 +8,15 @@ class CircleInquiryGuidance
     bodies = []
     schedules = @circle.schedules.where('day >= ?', Date.current.to_s).order(:day, :time_s, :id).limit(4).to_a
     if schedules.any?
-      lines = ['活動予定のご案内', '問い合わせの前に、登録済みの活動予定をご確認ください。']
+      lines = ['直近の活動日は以下です。']
       schedules.first(3).each do |schedule|
         day = Date.parse(schedule.day)
-        lines << "\n#{day.strftime('%-m月%-d日')}（#{%w[日 月 火 水 木 金 土][day.wday]}） #{schedule.title}"
         times = [schedule.time_s, schedule.time_e].compact.map { |time| time.strftime('%H:%M') }
-        lines << times.join('〜') if times.any?
-        lines << schedule.venue.to_s
-        lines << schedule.recruitment if schedule.recruitment.present?
+        lines << ["#{day.strftime('%-m月%-d日')}（#{%w[日 月 火 水 木 金 土][day.wday]}）", times.join('〜'), schedule.venue, schedule.title].compact.join(' ')
         lines << routes.user_schedule_url(@circle, schedule, host: 'circle-book.com', protocol: 'https')
       end
-      if schedules.length > 3
-        lines << "\nほかの活動予定も見る"
-        lines << routes.user_schedules_url(@circle, host: 'circle-book.com', protocol: 'https')
-      end
+      lines << '他のスケジュールを見る'
+      lines << routes.user_schedules_url(@circle, host: 'circle-book.com', protocol: 'https')
       bodies << lines.join("\n")
     end
     if @circle.template.present?

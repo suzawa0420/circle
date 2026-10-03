@@ -3,7 +3,7 @@
   <% if previous_date != message.created_at.to_date %><div class="chat-date"><time datetime="<%= message.created_at.to_date.iso8601 %>"><%= l(message.created_at.to_date) %></time></div><% end %>
   <% previous_date = message.created_at.to_date %>
   <% if message.automatic? %>
-    <article class="chat-card inquiry-guidance__message"><strong>サークルからの自動案内</strong><div class="chat-body"><%= chat_message_body(message.body) %></div><time class="chat-message__meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%H:%M') %></time></article>
+    <article class="chat-card inquiry-guidance__message"><strong>サークルからの自動案内</strong><div class="chat-body"><%= automatic_message_body(message.body) %></div><time class="chat-message__meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%H:%M') %></time></article>
   <% else %>
   <% mine = message.sender_role == @role %>
   <article class="chat-message <%= 'chat-message--mine' if mine %>">

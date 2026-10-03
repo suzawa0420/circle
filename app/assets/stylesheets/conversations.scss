@@ -126,3 +126,9 @@
 .inquiry-guidance { margin: 24px 0; }
 .inquiry-guidance__message { background: $cb-mint-soft; overflow-wrap: anywhere; }
 .inquiry-guidance__message > strong { display: block; color: $cb-action-hover; font-size: 14px; margin-bottom: 12px; }
+
+.inquiry-schedule-list { list-style: none; padding: 0; margin: 12px 0 16px; }
+.inquiry-schedule-list li { min-width: 0; overflow-x: auto; margin: 4px 0; -webkit-overflow-scrolling: touch; }
+.inquiry-schedule-link { display: inline-block; white-space: nowrap; padding: 8px 0; color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
+.inquiry-guidance__message .chat-body > a.cb-button,
+.wm-body > a.cb-button { color: $cb-surface; text-decoration: none; }

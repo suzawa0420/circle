@@ -21,13 +21,16 @@
     - if status[:maximum]
       同じレベルでは、対象となる活動が新しいサークルから表示されます。
     - else
-      ブログや活動予定の投稿、質問への回答、参加者からの高評価の口コミでレベルアップ。
+      活動日の登録やブログの投稿、質問への回答、参加者からの高評価の口コミでレベルアップ。
   .dashboard-level__ranking
     %strong レベルが高いほど、人気順で上位に表示されやすくなります
     %p 募集中などの掲載条件が同じ場合に優先されます。同じレベルでは、対象となる活動が新しい順です。
+  %p.dashboard-level__description
+    %strong まずは活動日を登録しましょう。
+    参加希望者は活動日を確認してから申し込むことが多いため、日程・場所を登録しておくと参加の予定を立てやすくなり、お問い合わせにつながりやすくなります。
   .dashboard-level__actions
+    = link_to "活動日を追加", new_user_schedule_path(user), class: "dashboard-primary"
     = link_to "ブログを書く", new_circle_blog_path(user), class: "dashboard-primary"
-    = link_to "口コミを依頼する", user_reviews_path(user, anchor: "review-request"), class: "dashboard-copy"
   %details.dashboard-level__guide
     %summary レベルの上がり方
     %p 合計が1増えると1レベル上がり、小数部分が次のレベルへの進捗になります。

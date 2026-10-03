@@ -26,9 +26,19 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_select '.inquiry-guidance', text: /活動3/
     assert_select '.inquiry-guidance', text: /活動4/, count: 0
     assert_select '.inquiry-guidance', text: /過去の活動/, count: 0
-    assert_select '.inquiry-guidance a', text: /https:\/\/circle-book.com\/users\/#{@circle.id}\/schedules/
+    assert_select '.inquiry-schedule-list a', count: 3
+    assert_select '.inquiry-guidance a', text: '他のスケジュールを見る'
     assert_not_includes response.body, '参加確定者だけの集合場所'
     assert_select '[data-inquiry-template-copy]'
+  end
+
+  test 'compact schedule labels escape HTML and link to their own details' do
+    schedule = @circle.schedules.where('day >= ?', Date.current.to_s).order(:day).first
+    schedule.update!(title: '<script>alert(1)</script>')
+    post member_session_path, params: { member: { email: @other_member.email, password: 'test-password-123' } }
+    get new_user_conversation_path(@circle)
+    assert_select '.inquiry-schedule-list script', count: 0
+    assert_select '.inquiry-schedule-link[href=?]', "https://circle-book.com/users/#{@circle.id}/schedules/#{schedule.id}", text: /<script>/
   end
 
   test 'guidance snapshots precede first inquiry only and do not count as an owner reply' do
@@ -63,12 +73,12 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_includes guidance.join, text
   end
 
-  test 'no settings produces no guidance and three dates do not show a more link' do
+  test 'no settings produces no guidance and three dates still link to all schedules' do
     @circle.schedules.delete_all
     @circle.update!(template: '')
     assert_empty CircleInquiryGuidance.new(@circle).messages
     3.times { |i| @circle.schedules.create!(title: '練習', venue: '体育館', day: (Date.current + i).to_s) }
-    refute_includes CircleInquiryGuidance.new(@circle).messages.join, 'ほかの活動予定も見る'
+    assert_includes CircleInquiryGuidance.new(@circle).messages.join, '他のスケジュールを見る'
   end
 
   test 'member owner and webmaster all see stored automatic guidance' do

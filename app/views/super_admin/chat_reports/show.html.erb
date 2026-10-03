@@ -16,6 +16,6 @@
   <% end %>
 </article></section>
 <section class="wm-section wm-thread"><div class="wm-section-heading"><h2>会話履歴</h2></div>
-  <% @messages.each do |message| %><article class="webmaster-card"><div class="wm-card-heading"><h3><%= message.sender_label %></h3><time class="wm-meta"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div><div class="wm-body"><%= chat_message_body(message.body) %></div></article><% end %>
+  <% @messages.each do |message| %><article class="webmaster-card"><div class="wm-card-heading"><h3><%= message.sender_label %></h3><time class="wm-meta"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div><div class="wm-body"><%= message.automatic? ? automatic_message_body(message.body) : chat_message_body(message.body) %></div></article><% end %>
   <%= paginate @messages %>
 </section>
