@@ -107,6 +107,7 @@
     %h2 サークルの設定
   .dashboard-action-list
     = render "dashboard_action", title: "リンク集", description: "SNSや関連リンクをまとめる", icon: "link", path: new_user_link_path(@user)
+    = render "dashboard_action", title: "お問い合わせ内容の編集", description: "問い合わせ前の確認事項・自動案内を設定", icon: "comment-o", path: inquiry_settings_path(@user)
     - if can_add_circle
       = render "dashboard_action", title: "サークル新規追加", description: "別のサークルを管理する", icon: "plus-circle", path: "/user/add"
 

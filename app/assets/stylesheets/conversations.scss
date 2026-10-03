@@ -123,3 +123,6 @@
 .chat-review-preview__comment { padding: 12px; background: #fff; border: 1px solid $cb-border; border-radius: 0 12px 12px; overflow-wrap: anywhere; }
 .chat-review-preview__comment p { font-size: 14px; margin: 0; }
 .chat-review-preview__comment p + p { margin-top: 8px; }
+.inquiry-guidance { margin: 24px 0; }
+.inquiry-guidance__message { background: $cb-mint-soft; overflow-wrap: anywhere; }
+.inquiry-guidance__message > strong { display: block; color: $cb-action-hover; font-size: 14px; margin-bottom: 12px; }

@@ -51,6 +51,11 @@ class Conversation < ApplicationRecord
       if role == 'owner' && !chat_messages.where(sender_role: 'member').exists?
         raise NotAllowed, '参加者からの問い合わせを受けてから返信できます。'
       end
+      if role == 'member' && !chat_messages.exists?
+        CircleInquiryGuidance.new(user).messages.each do |guidance|
+          chat_messages.create!(sender_role: 'system', body: guidance)
+        end
+      end
       message = chat_messages.create!(sender_role: role, body: body)
       if role == 'owner' && accepted_at.nil?
         self.accepted_at = Time.current

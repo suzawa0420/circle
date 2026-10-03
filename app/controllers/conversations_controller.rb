@@ -21,6 +21,7 @@ class ConversationsController < ApplicationController
     @user = User.publicly_visible.find(params[:user_id])
     existing = Conversation.find_by(user: @user, member: current_member)
     return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists?
+    @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
   end
 
   def create

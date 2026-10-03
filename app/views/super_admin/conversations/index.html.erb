@@ -12,7 +12,7 @@
     <article class="webmaster-card">
       <div class="wm-card-heading"><h2><%= conversation.user.name %></h2><% if conversation.blocked? %><span class="wm-badge wm-badge--danger">ブロック中</span><% end %></div>
       <p class="wm-meta">参加者：<%= conversation.member.nickname %></p>
-      <p class="wm-meta">最新の発言：<%= message.sender_role == 'owner' ? '主催者' : '参加者' %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+      <p class="wm-meta">最新の発言：<%= message.sender_label %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %></p>
       <div class="wm-body"><%= simple_format truncate(message.body, length: 180) %></div>
       <div class="wm-actions"><%= link_to 'やり取りを確認', super_admin_conversation_path(conversation), class: 'wm-button' %></div>
     </article>

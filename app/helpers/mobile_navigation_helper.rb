@@ -30,6 +30,7 @@ module MobileNavigationHelper
     when 'links' then new_user_link_path(circle)
     when 'matches' then new_user_match_path(circle)
     when 'users'
+      return inquiry_settings_path(circle) if %w[inquiry_settings update_inquiry_settings].include?(action_name)
       return "/users/#{circle.id}/account_del" if action_name == 'account_del'
       %w[edit update edit2 update2 edit3 update3].include?(action_name) ? edit_user_path(circle) : "/users/#{circle.id}/mypage"
     else "/users/#{circle.id}/mypage"

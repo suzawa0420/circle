@@ -3,8 +3,8 @@ include ApplicationHelper
 include Circlebook
 
 before_action :authenticate_admin_user!, only: [:new, :create]
-before_action :authenticate_owner_or_webmaster!, only: [ :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
-before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :account_del, :destroy]
+before_action :authenticate_owner_or_webmaster!, only: [ :mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :inquiry_settings, :update_inquiry_settings, :account_del, :destroy]
+before_action :ensure_correct_user, only: [:mypage, :edit, :update, :edit2, :update2, :edit3, :update3, :update_contact, :inquiry_settings, :update_inquiry_settings, :account_del, :destroy]
 before_action :set_users, except: [:show, :new, :create]
 
 before_action :require_webmaster!, only: [:webmaster, :admin_user_list, :admin_user_update]
@@ -12,6 +12,7 @@ before_action :require_webmaster!, only: [:webmaster, :admin_user_list, :admin_u
 before_action :require_verified_owner_for_registration, only: [:new, :create]
 
 helper_method :link_count
+before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inquiry_settings]
 
 
 	def search
@@ -273,6 +274,23 @@ helper_method :link_count
     end
   end
 
+
+  def inquiry_settings
+    @user = User.find(params[:id])
+  end
+
+  def update_inquiry_settings
+    @user = User.find(params[:id])
+    @user.assign_attributes(params.require(:user).permit(:template))
+    if @user.template.to_s.length > 2000
+      @user.errors.add(:template, 'は2000文字以内で入力してください')
+      render :inquiry_settings, status: :unprocessable_entity
+    elsif @user.save
+      redirect_to inquiry_settings_path(@user), notice: 'お問い合わせの自動案内を更新しました。'
+    else
+      render :inquiry_settings, status: :unprocessable_entity
+    end
+  end
 
 	def update_contact
 		@user = User.find(params[:id])
@@ -618,6 +636,11 @@ end
 
 
 private
+  def inquiry_settings_privacy
+    response.headers['Cache-Control'] = 'private, no-store'
+    response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+  end
+
 	def set_users
 		@search = User.publicly_visible.ransack(params[:q])
 

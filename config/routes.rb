@@ -235,6 +235,8 @@ Rails.application.routes.draw do
 	patch 'users/:id/edit3', to: 'users#update3'
   patch 'users/:id/admin_user_update', to: 'users#admin_user_update'
   get 'users/:id/mypage' , to: 'users#mypage'
+  get 'users/:id/inquiry_settings', to: 'users#inquiry_settings', as: :inquiry_settings
+  patch 'users/:id/inquiry_settings', to: 'users#update_inquiry_settings'
 	patch 'users/:id/mypage', to: 'users#update_contact'
 	get 'users/:id/account_del' , to: 'users#account_del'
 	get 'users/:id/contact_list' , to: 'user_contacts#contact_list'

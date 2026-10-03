@@ -385,3 +385,9 @@
   .cb-site .participant-shell, .cb-site .chat-shell:not(.chat-thread), .cb-site .login-choice { margin-top: cb-space(8); }
 }
 .cb-site .dashboard-circle__tools .dashboard-copy { padding: cb-space(3) cb-space(2); gap: 6px; white-space: nowrap; }
+.cb-site .inquiry-guidance__message { background: $cb-mint-soft; box-shadow: none; }
+.cb-site .inquiry-guidance__message .chat-body { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.cb-site .inquiry-settings > .container { max-width: $cb-width-form; }
+.cb-site .inquiry-settings h2 { @include cb-type(section-title); margin-bottom: cb-space(3); }
+.cb-site .inquiry-settings textarea { display: block; width: 100%; min-height: 280px; margin: cb-space(2) 0 cb-space(3); }
+.cb-site .inquiry-settings #inquiry-settings-help { @include cb-type(helper); color: $cb-muted; }
