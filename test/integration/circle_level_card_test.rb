@@ -10,7 +10,7 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
   end
 
-  test 'dashboard shows level progress and a review request destination' do
+  test 'dashboard shows level progress and prioritizes activity registration' do
     @circle.update!(user_time: Time.current.to_s)
     @circle.schedules.create!(title: '週末の練習', venue: '体育館', day: (Date.current + 7).to_s)
     get "/users/#{@circle.id}/mypage"
@@ -24,7 +24,10 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level__breakdown th', text: 'メッセージ未返信'
     assert_select '.dashboard-level__guide', text: /旧お問い合わせは減点対象外/
     assert_select '.dashboard-level__breakdown tfoot td', text: '0.1'
-    assert_select ".dashboard-level a[href='#{user_reviews_path(@circle, anchor: 'review-request')}']", text: '口コミを依頼する'
+    assert_select ".dashboard-level__actions a.dashboard-primary[href='#{new_user_schedule_path(@circle)}']", text: '活動日を追加'
+    assert_select ".dashboard-level__actions a.dashboard-primary[href='#{new_circle_blog_path(@circle)}']", text: 'ブログを書く'
+    assert_select '.dashboard-level__description', text: /まずは活動日を登録/
+    assert_select '.dashboard-level__actions a', text: '口コミを依頼する', count: 0
     get user_reviews_path(@circle)
     assert_response :success
     assert_select '#review-request a', text: 'メッセージを開く'
