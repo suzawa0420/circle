@@ -1,0 +1,21 @@
+<%= render 'webmasters/shared/page_header', title: 'ご意見箱', description: '主催者から運営に届いたご意見を、新しい順に表示します。' %>
+<section class="wm-section">
+  <div class="wm-section-heading"><h2>ご意見一覧（全 <%= @opinions.total_count %> 件）</h2></div>
+  <div class="wm-list">
+    <% @opinions.each do |opinion| %>
+      <article class="webmaster-card">
+        <h3>
+          <% if opinion.user %>
+            <%= link_to opinion.user.name, circle_path(opinion.user) %>
+          <% else %>
+            投稿元サークルなし（削除済み・不明）
+          <% end %>
+        </h3>
+        <p class="wm-meta">投稿日時：<%= opinion.created_at.in_time_zone.strftime('%Y/%m/%d %H:%M') %> ／ 投稿ID：<%= opinion.id %></p>
+        <div class="wm-body"><%= simple_format(h(opinion.opinion)) %></div>
+      </article>
+    <% end %>
+  </div>
+  <% if @opinions.empty? %><%= render 'webmasters/shared/empty', message: 'ご意見はまだありません。' %><% end %>
+  <%= paginate @opinions %>
+</section>

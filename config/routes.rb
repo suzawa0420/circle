@@ -192,6 +192,7 @@ Rails.application.routes.draw do
     end
     resources :conversations, only: [:index, :show]
     resources :reviews, only: :index
+    resources :opinions, only: :index
     delete "evaluations/:id", to: "reviews#destroy_evaluation", as: :evaluation
     resources :places, only: :index
     resources :chat_reports, only: [:index, :show, :update]
