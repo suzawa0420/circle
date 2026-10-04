@@ -44,6 +44,7 @@ class ApplicationController < ActionController::Base
   before_action :set_data
   before_action :judge_ip
   before_action :set_canonical_url
+  include PublicSearchSeo
 
 
   private

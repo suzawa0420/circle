@@ -1,4 +1,4 @@
-- set_meta_tags title: "【#{@time.strftime("%Y")}年版】#{@prefecture.name}の#{@event.txt}｜メンバー募集サイト",description: "【完全無料／登録不要】#{@prefecture.name}の#{@event.txt}の募集サイトです！10代〜60代、社会人や学生、初心者、経験者など、誰でも参加可能！無料で簡単にメンバーの募集ができます！",keywords: "#{@event.name},#{@prefecture.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
+- set_meta_tags title: "【#{@time.strftime("%Y")}年版】#{@prefecture.name}の#{@event.txt}｜メンバー募集サイト",description: circle_listing_description,keywords: "#{@event.name},#{@prefecture.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
 - breadcrumb :event_prefecture_show, @event, @prefecture
 = render "circles/markups/circles_list", users: @users
 
@@ -22,3 +22,5 @@
 
     - else
       = render "/circles/commons/no_hit"
+
+    = render "circles/commons/discovery"

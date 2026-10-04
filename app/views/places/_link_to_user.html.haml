@@ -1,5 +1,5 @@
 .link_to_user
-  = link_to "/#{@event.ruby}/#{@prefecture.kana}" do
+  = link_to event_prefecture_path(@event.ruby, @prefecture.kana) do
     .link_to_user_btn
       = @prefecture.name
       で活動している

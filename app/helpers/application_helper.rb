@@ -1,5 +1,22 @@
 module ApplicationHelper
 
+  def fast_public_listing?
+    public_search_listing? && !admin_user_signed_in? && !member_signed_in? && !webmaster? && !exhibition_group_signed_in?
+  end
+
+  def circle_listing_header_image(user, first: false)
+    image_tag user.pic_header.url, class: 'header_imege_user_list',
+      alt: "#{user.name}の活動紹介", loading: first ? 'eager' : 'lazy',
+      fetchpriority: first ? 'high' : 'auto', decoding: 'async'
+  end
+
+  def circle_listing_description
+    area = [@prefecture&.name, @city&.name].compact.join
+    activity = @event&.txt.presence || 'サークル・チーム'
+    audience = @event&.ruby == 'student-group' ? '参加できる大学・学年などの条件' : '初心者の参加条件や募集対象'
+    "#{area.present? ? "#{area}の" : "全国の"}#{activity}を活動場所・日程・募集内容から比較。#{audience}、費用は各団体の詳細で確認できます。気になる団体の活動予定を見て、参加について問い合わせましょう。"
+  end
+
   def account_access_form_page?
     %w[admin_users/sessions admin_users/registrations members/sessions members/registrations].include?(controller_path) &&
       %w[new create].include?(action_name)

@@ -1,17 +1,10 @@
 <% if users.present? %>
-  <script type="application/ld+json">
-  {
-    "@context":"http://schema.org",
-    "@type":"ItemList",
-    "itemListElement":[
-      <% users.each.with_index(1) do |user, i| %>
-        {
-          "@type":"ListItem",
-          "position":<%= i %>,
-          "url":"<%= circle_path(user.id) %>"
-        }<%= "," unless i == users.size %>
-      <% end %>
-    ]
-  }
-  </script>
+  <% offset = users.respond_to?(:offset_value) ? users.offset_value.to_i : 0 %>
+  <script type="application/ld+json"><%= raw json_escape({
+    '@context' => 'https://schema.org', '@type' => 'ItemList',
+    'itemListElement' => users.each_with_index.map { |user, index|
+      { '@type' => 'ListItem', 'position' => offset + index + 1,
+        'url' => "https://circle-book.com#{circle_path(user.id)}" }
+    }
+  }.to_json) %></script>
 <% end %>

@@ -35,6 +35,9 @@
       <%= display_meta_tags(default_meta_tags) %>
 
 
+      <% if fast_public_listing? %>
+        <%= javascript_include_tag 'public_listing', defer: true, 'data-turbolinks-track': 'reload' %>
+      <% else %>
       <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css' %>
 
       <!-- フォトスライド -->
@@ -46,6 +49,7 @@
       <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js', async: true %>
       <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' %>
       <%= javascript_include_tag 'https://rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-ja.js' %>
+      <% end %>
 
 
     </head>
@@ -97,6 +101,7 @@
 
 
 
+    <% unless fast_public_listing? %>
     <!-- Initialize Swiper -->
     <script>
       var swiper = new Swiper('.swiper-container', {
@@ -301,6 +306,7 @@
 
     <!-- 画像プレビュー -->
     <%= render "/layouts/image_preview" %>
+    <% end %>
 
 
 

@@ -6,11 +6,10 @@ class Circles::Events::CitiesController < Circles::Events::ApplicationController
   end
 
   def show
-		@event = Event.find_by(ruby: params[:event_kana])
-		@prefecture = Prefecture.find_by(kana: params[:prefecture_kana])
-    @city = City.find_by(city_kana: params[:kana])
+		@event = Event.find_by!(ruby: params[:event_kana])
+		@prefecture = Prefecture.find_by!(kana: params[:prefecture_kana])
+    @city = City.find_by!(city_kana: params[:kana], prefecture_id: @prefecture.id)
 
-    return redirect_to circles_path if @event.nil? || @prefecture.nil? || @city.nil?
 
     users = User.where(event_id: @event.id).where_city(@city).list.order("prefectures.sort asc")
 

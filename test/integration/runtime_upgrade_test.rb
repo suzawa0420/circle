@@ -251,7 +251,7 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     city = circle.prefecture.cities.create!(name: '検証市', city_kana: 'runtime-valid-city')
     get "/events/#{circle.event.ruby}/prefectures/runtime-missing-prefecture/cities/#{city.city_kana}"
-    assert_redirected_to circles_path
+    assert_response :not_found
   ensure
     Rails.application.env_config['action_dispatch.show_exceptions'] = previous_show_exceptions
   end

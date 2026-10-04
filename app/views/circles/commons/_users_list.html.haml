@@ -6,9 +6,9 @@
       .post_link サークル活動をつぶやく！
 
 - is_master_account = webmaster?
-- listing_data = local_assigns[:listing_data] || CircleListingData.new(users)
+- listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
-- cache [users, is_master_account, 'bounded-list-v1', 'stored-image-extension-v1'] do
+- cache [users, is_master_account, 'seo-list-v2', 'stored-image-extension-v1'] do
   %ul
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
@@ -18,17 +18,14 @@
         = link_to(circle_path(user.id)) do
           .header_user_list.ribbon-wrapper
             .header_img_wrap
-              - if user.pic_header.present?
-                = lazysizes_image_tag user.pic_header.url , class:'header_imege_user_list', alt: "プロフィール｜#{user.name}"
-              - else
-                = lazysizes_image_tag user.pic_header.url , class:'header_imege_user_list'
+              = circle_listing_header_image(user, first: i == 1)
             .ribbon-content
               - if user.switch == "募集中"
                 %span.ribbon.green= user.switch
               - else
                 %span.ribbon.red= user.switch
             .tag_btn_list.slide_content
-            = lazysizes_image_tag user.pic_profile.url , class:'image_icon'
+            = image_tag user.pic_profile.url, class: 'image_icon', alt: '', loading: 'lazy', decoding: 'async'
             - if user.user_time.present?
               .post-bottom.user_updated
                 更新日：#{time_tag user.user_time.to_date}
@@ -47,6 +44,12 @@
 
 
 
+                - if user.cost.present?
+                  .list_02
+                    %span= "参加費：#{user.cost.to_s.truncate(80)}"
+                - if user.average_age.present?
+                  .list_02
+                    %span= "参加者の年代：#{user.average_age.to_s.truncate(60)}"
                 .list_02
                   %span.user_schedule
                     %i.fa.fa-tags.icon_c
@@ -93,7 +96,7 @@
 
 
       - if i == 5 || i == 10 || i == 15
-        .list_ad
+        %li.list_ad
           = render "/layouts/ad_square"
 
 = render "/layouts/ad_square"

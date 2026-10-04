@@ -1,0 +1,23 @@
+<% if params[:page].blank? || params[:page] == '1' %>
+  <section class="cb-discovery" aria-label="サークルの選び方と関連する募集">
+    <h2><%= [@prefecture&.name, @event&.name].compact.join('の') %><%= @prefecture || @event ? 'で' : '' %>参加先を探す</h2>
+    <p>活動場所・日程・参加費を比べて、通いやすい団体を探せます。募集状況と更新日を確認し、初心者・一人参加などの条件は各団体の詳細で確認してください。</p>
+    <% if @event&.ruby == 'student-group' %>
+      <p>インカレは大学を越えて活動するサークルです。参加できる大学・学年、活動内容や新歓の日程は団体ごとに異なります。応募前に募集条件を確認しましょう。</p>
+    <% end %>
+    <nav aria-label="関連するサークル募集">
+      <% if @prefecture %>
+        <% (@categories || []).flat_map(&:events).select { |event| %w[basketball volleyball badminton futsal student-group reading mountain].include?(event.ruby) && event != @event }.each do |event| %>
+          <%= link_to "#{@prefecture.name}の#{event.name}", event_prefecture_path(event.ruby, @prefecture.kana) %>
+        <% end %>
+      <% elsif @event %>
+        <% (@prefectures || []).select { |prefecture| %w[tokyo kanagawa saitama chiba osaka aichi fukuoka].include?(prefecture.kana) }.each do |prefecture| %>
+          <%= link_to "#{prefecture.name}の#{@event.name}", event_prefecture_path(@event.ruby, prefecture.kana) %>
+        <% end %>
+      <% end %>
+      <% if @event && @prefecture && @event.place == 1 %>
+        <%= link_to "#{@prefecture.name}の#{@event.name}の活動場所", "/places/#{@event.ruby}/#{@prefecture.kana}" %>
+      <% end %>
+    </nav>
+  </section>
+<% end %>

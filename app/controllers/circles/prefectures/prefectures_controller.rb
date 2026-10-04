@@ -7,8 +7,7 @@ class Circles::Prefectures::PrefecturesController < Circles::Prefectures::Applic
 
 
   def show
-		@prefecture = Prefecture.find_by(kana: params[:kana])
-    return redirect_to circles_path if @prefecture.nil?
+		@prefecture = Prefecture.find_by!(kana: params[:kana])
 
     users = User.where_pref(@prefecture.id).list.order("prefectures.sort asc")
     case params[:sort]
