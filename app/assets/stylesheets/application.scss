@@ -46,7 +46,7 @@ a {
 a:hover,
 a:focus {
   text-decoration: none;
-  color: $cb-action-hover;
+  color: $cb-teal;
 }
 
 h1,
@@ -434,9 +434,7 @@ body {
   font-weight: 600;
 }
 
-.user-name a:hover {
-  color: $cb-action;
-}
+
 
 .user-left {
   float: left;
@@ -809,9 +807,7 @@ body {
   font-weight: 600;
 }
 
-.post-name a:hover {
-  color: $cb-action;
-}
+
 
 .post-left {
   float: left;

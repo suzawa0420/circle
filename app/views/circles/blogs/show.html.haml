@@ -6,7 +6,7 @@
     - if !@blog.publicly_visible?
       .attention_content このブログは現在、一般には公開されていません。
 
-    .form.users-form
+    .form.users-form.cb-blog-article
       .form-body.blog_show
         .post-body
           - if @blog.image_01.present?
@@ -53,7 +53,7 @@
                     = link_to(circle_blog_path, method: :delete, data: {confirm: "投稿を削除しますか？"}) do
                       %i.fa.fa-trash
             = render "users/parts/admin_user_check", admin_user: @user.admin_user
-            .rich_text_main
+            .rich_text_main.cb-reading-body
               - if @blog.content.include?("<div>")
                 = raw Rinku.auto_link(sanitize @blog.content, tags: %w(p a br h1 strong ul li div), attributes:  %w(id class href))
               - else

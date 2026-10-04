@@ -442,3 +442,22 @@
 .cb-site .ribbon-content .green, .cb-site .mark_green { background: $cb-action; color: $cb-surface; }
 .cb-site .ribbon-content .red, .cb-site .mark_red { background: $cb-danger; color: $cb-surface; }
 .cb-site .ribbon-content .yellow, .cb-site .mark_yellow { background: $cb-warning-soft; color: $cb-warning-text; }
+
+.cb-site .cb-blog-article { padding: 0; }
+.cb-site .cb-blog-article .cont-width { padding: 0; }
+.cb-site .cb-blog-article .cb-reading-body { font-size: 16px; line-height: 1.95; letter-spacing: .02em; word-break: normal; }
+.cb-site .cb-blog-article .share_btn_tw a,
+.cb-site .cb-blog-article .share_btn_tw a:hover,
+.cb-site .cb-blog-article .share_btn_tw a:focus,
+.cb-site .cb-blog-article .share_btn_tw a:active { color: $cb-surface; }
+// Card links retain body text colors; inline text links keep their link color.
+.cb-site .user_item_wrap > a:not([class]),
+.cb-site .user_item_wrap > a:not([class]):hover,
+.cb-site .user_item_wrap > a:not([class]):focus,
+.cb-site .user_item_wrap > a:not([class]):active,
+.cb-site .user_slide_wrap > a,
+.cb-site .user_slide_wrap > a:hover,
+.cb-site .user_slide_wrap > a:focus,
+.cb-site .user_slide_wrap > a:active { color: $cb-text; }
+.cb-site .cb-blog-article .form-body.blog_show { padding: cb-space(5) cb-space(2) cb-space(6); }
+.cb-site .cb-blog-article { max-width: 760px; margin-left: auto; margin-right: auto; }
