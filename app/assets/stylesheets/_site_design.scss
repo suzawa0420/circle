@@ -423,3 +423,22 @@
   .cb-site .cb-area-directory__links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: cb-space(3); }
 }
 .cb-site .inquiry-guidance__message a.inquiry-guidance__edit { @include cb-button(secondary); display: flex; margin: cb-space(4) 0 cb-space(2); text-decoration: none; }
+
+// Public descriptions use the available width instead of nesting another card.
+.cb-site .profile_list_a.cb-reading-body {
+  border: 0; border-radius: 0; box-shadow: none; background: transparent;
+  margin: cb-space(4) 0; padding: 0 !important;
+  font-size: 16px; line-height: 1.95; letter-spacing: .02em;
+  word-break: normal; overflow-wrap: anywhere;
+}
+.cb-site .cb-reading-body p, .cb-site .cb-reading-body div,
+.cb-site .cb-reading-body ul, .cb-site .cb-reading-body li {
+  font-size: inherit; line-height: inherit; letter-spacing: inherit;
+}
+.cb-site .cb-reading-body p { margin: 0 0 1.25em; }
+.cb-site .cb-reading-body > div + div { margin-top: 1em; }
+.cb-site .cb-reading-body a, .cb-site .cb-reading-body strong { font-size: inherit; line-height: inherit; }
+.cb-site .cb-reading-body img { max-width: 100%; height: auto; }
+.cb-site .ribbon-content .green, .cb-site .mark_green { background: $cb-action; color: $cb-surface; }
+.cb-site .ribbon-content .red, .cb-site .mark_red { background: $cb-danger; color: $cb-surface; }
+.cb-site .ribbon-content .yellow, .cb-site .mark_yellow { background: $cb-warning-soft; color: $cb-warning-text; }

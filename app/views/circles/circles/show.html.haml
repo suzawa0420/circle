@@ -333,10 +333,10 @@
             %i.fa.fa-book
             サークルの詳細内容
           - if @user.appeal.include?("<div>")
-            .profile_list_p.profile_list_a.rich_text_sub
+            .profile_list_p.profile_list_a.rich_text_sub.cb-reading-body
               = raw Rinku.auto_link(sanitize @user.appeal, tags: %w(p a br strong ul li div), attributes:  %w(id class href))
           - else
-            .profile_list_p.profile_list_a
+            .profile_list_p.profile_list_a.cb-reading-body
               = raw Rinku.auto_link(simple_format @user.appeal)
 
         = render "mobile_contact"
