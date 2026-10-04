@@ -55,7 +55,7 @@
           = review.age
           %span.review_day
             ［#{review.created_at.strftime("%Y年%-m月%-d日")}］
-      - if webmaster? || (member_signed_in? && current_member.id == review.member_id)
+      - if can_delete_review?(review)
         %span.review_delete
           = link_to "削除", user_review_path(review.user_id, review), method: :delete, data: {confirm: "口コミを削除しますか？公開後の削除は再投稿できません。"}
     .speech_bubble

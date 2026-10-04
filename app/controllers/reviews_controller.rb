@@ -22,8 +22,7 @@ class ReviewsController < ApplicationController
 
   def destroy
     review = @user.reviews.find(params[:id])
-    owner = member_signed_in? && review.member_id == current_member.id
-    return head :forbidden unless owner || webmaster?
+    return head :forbidden unless can_delete_review?(review)
 
     if review.conversation_review
       review.conversation_review.conversation.delete_review!('member')
