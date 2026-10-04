@@ -1,0 +1,38 @@
+@import "design_tokens";
+
+// A platform notice is distinct from organizer-authored automatic guidance.
+.cb-site .cb-system-panel, .webmaster-page {
+  --cb-role-action: #{$cb-system};
+  --cb-role-ink: #{$cb-system-hover};
+  --cb-role-soft: #{$cb-system-soft};
+}
+.cb-site .cb-system-notice {
+  padding: cb-space(3) cb-space(4);
+  border: 1px solid $cb-system-border;
+  border-radius: $cb-radius-control;
+  background: $cb-system-soft;
+  color: $cb-system-hover;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.cb-site .cb-system-notice__label { display: block; font-size: 12px; margin-bottom: cb-space(1); }
+.cb-site .chat-shell .cb-system-notice a, .cb-site .cb-system-notice a, .cb-site .cb-system-panel > a { color: $cb-system-hover; text-decoration: underline; }
+.cb-site .cb-system-notice :focus-visible, .cb-site .cb-system-panel :focus-visible { outline-color: $cb-system; }
+.cb-site .cb-system-notice[hidden] { display: none; }
+.cb-site .cb-warning-notice {
+  padding: cb-space(3) cb-space(4); border: 1px solid #ead7b2;
+  border-radius: $cb-radius-control; background: $cb-warning-soft; color: $cb-warning-text;
+  font-size: 14px; line-height: 1.8; overflow-wrap: anywhere;
+}
+// Scope the floating legacy toast without changing its dismissal behavior.
+.cb-site .flash.cb-system-notice { background: $cb-system-soft; color: $cb-system-hover; }
+.cb-site .alert.cb-warning-notice { background: $cb-warning-soft; color: $cb-warning-text; }
+.webmaster-page .wm-message--owner .wm-badge { background: $cb-mint-soft; color: $cb-action-hover; }
+.webmaster-page .wm-message--member { background: $cb-participant-soft; }
+.webmaster-page .wm-message--member .wm-badge { background: $cb-participant-soft; color: $cb-participant-hover; }
+// Stored system-role messages currently carry organizer-authored initial guidance.
+.webmaster-page .wm-message--system { background: $cb-mint-soft; }
+.webmaster-page .wm-message--system .wm-badge { background: $cb-mint-soft; color: $cb-action-hover; }
+
+.webmaster-page .webmaster-flash--warning { background: $cb-warning-soft; color: $cb-warning-text; border-color: #ead7b2; }

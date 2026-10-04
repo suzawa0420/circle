@@ -1,4 +1,4 @@
-<main class="chat-shell"><div class="chat-card">
+<main class="chat-shell"><div class="chat-card cb-system-panel">
   <h1>メールアドレスの確認</h1>
   <% if @valid %>
     <%= form_with url: member_email_verification_path, method: :patch, local: true do |f| %>
@@ -6,7 +6,7 @@
       <%= f.submit 'メールアドレスを確認する', class: 'chat-button' %>
     <% end %>
   <% else %>
-    <p>リンクが無効または期限切れです。確認メールを再送してください。</p>
+    <p class="cb-warning-notice">リンクが無効または期限切れです。確認メールを再送してください。</p>
     <%= link_to '確認メールの再送', member_email_verification_path %>
   <% end %>
 </div></main>

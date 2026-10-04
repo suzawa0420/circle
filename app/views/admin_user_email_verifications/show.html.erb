@@ -1,13 +1,13 @@
-<main class="chat-shell"><div class="chat-card">
+<main class="chat-shell"><div class="chat-card cb-system-panel">
   <h1>メールアドレスの確認（サークル主催者）</h1>
   <% if current_admin_user.email_verified? %>
-    <p>確認済みです。</p>
+    <p class="cb-system-notice">確認済みです。</p>
     <%= link_to '次へ進む', current_admin_user.users.exists? ? conversations_path : new_user_path %>
   <% else %>
     <p>サークルの新規登録やメッセージの送信前に、登録したメールアドレスを確認してください。</p>
     <p><%= current_admin_user.email %></p>
     <% if current_admin_user.verification_sent_at.present? %>
-      <p>確認メールを送信済みです。メール内のリンクを開いて認証してください。届かない場合は迷惑メールフォルダも確認してください。</p>
+      <p class="cb-system-notice">確認メールを送信済みです。メール内のリンクを開いて認証してください。届かない場合は迷惑メールフォルダも確認してください。</p>
     <% end %>
     <%= button_to current_admin_user.verification_sent_at.present? ? '確認メールを再送' : '確認メールを送信', admin_user_email_verification_path, class: 'chat-button' %>
     <p><%= link_to 'メールアドレスを変更する', edit_admin_user_registration_path %></p>

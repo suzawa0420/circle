@@ -10,7 +10,7 @@
     <%= link_to "#{@conversation.member.nickname}さんのプロフィール", member_profile_path(@conversation.member) %>
     <% count = @conversation.member.received_conversation_reviews.count %>
     <p>参加者の評価：<%= count.positive? ? "#{format('%.2f', @conversation.member.received_review_score)} / 5（#{count}件）" : 'まだありません' %></p>
-    <p id="chat-acceptance-status"><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>
+    <p id="chat-acceptance-status" class="cb-system-notice"><strong class="cb-system-notice__label">システム通知</strong><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>
   </div>
   </details>
   <section aria-label="メッセージ履歴" class="chat-history">
@@ -51,10 +51,10 @@
   <details class="chat-card chat-evaluation" id="evaluation">
     <summary>口コミを投稿する</summary>
     <p>やり取りの感想を教えてください。参加した方は、サークルの雰囲気についても書けます。</p>
-    <% if @conversation.review_deadline %><p>投稿期限：<%= l(@conversation.review_deadline, format: '%Y年%-m月%-d日（%a）%H時%M分') %></p><% end %>
+    <% if @conversation.review_deadline %><p class="cb-system-notice"><strong class="cb-system-notice__label">口コミの投稿期限</strong>投稿期限：<%= l(@conversation.review_deadline, format: '%Y年%-m月%-d日（%a）%H時%M分') %></p><% end %>
     <p class="chat-review-help">双方の投稿が揃うか、投稿期限が過ぎると公開されます。ニックネーム・サークル名も表示されます。</p>
     <p class="chat-review-help">連絡先などの個人情報は書かないでください。高評価や削除の強要、報復は禁止です。</p>
-    <p id="chat-acceptance-notice" hidden>主催者から返信が届きました。<%= link_to "ページを更新して口コミを書く", conversation_path(@conversation, refresh: 1, anchor: "evaluation") %></p>
+    <p id="chat-acceptance-notice" class="cb-system-notice" hidden><strong class="cb-system-notice__label">システム通知</strong>主催者から返信が届きました。<%= link_to "ページを更新して口コミを書く", conversation_path(@conversation, refresh: 1, anchor: "evaluation") %></p>
     <% if (@role == 'owner' ? current_admin_user : current_member).suspended? %>
       <p>利用停止中のため口コミを投稿できません。</p>
     <% elsif !@conversation.accepted_at %>

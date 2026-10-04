@@ -80,6 +80,18 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.chat-avatar--member', minimum: 1
   end
 
+  test 'platform notices are separate from organizer automatic guidance' do
+    login(@owner)
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '#chat-acceptance-status.cb-system-notice .cb-system-notice__label', text: 'システム通知'
+    assert_select '.inquiry-guidance__message.cb-system-notice', count: 0
+    get admin_user_email_verification_path
+    assert_response :success
+    assert_select '.cb-system-panel', count: 1
+    assert_select '.cb-system-notice', minimum: 1
+  end
+
   private
 
   def login(owner)

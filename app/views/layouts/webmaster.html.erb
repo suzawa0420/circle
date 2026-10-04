@@ -28,7 +28,7 @@
   <% end %>
   <main class="webmaster-content">
     <% flash.each do |type, message| %>
-      <% if %w[notice alert].include?(type) %><p class="webmaster-flash" role="status"><%= message %></p><% end %>
+      <% if %w[notice alert].include?(type) %><p class="webmaster-flash <%= "webmaster-flash--warning" if type == "alert" %>" role="status"><%= message %></p><% end %>
     <% end %>
     <%= yield %>
   </main>
