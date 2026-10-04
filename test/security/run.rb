@@ -21,6 +21,7 @@ end
 Rails.application = SecurityTestApp.new
 require_relative '../../config/initializers/cloudflare_proxy'
 require_relative '../../app/controllers/concerns/spam_protection'
+require_relative '../../app/controllers/concerns/review_deletion_permission'
 require_relative '../../lib/abuse_counter_store'
 require_relative '../../lib/abuse_protection'
 require 'rails/test_help'
@@ -29,7 +30,7 @@ ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:'
 ActiveRecord::Schema.verbose = false
 ActiveRecord::Schema.define do
   create_table(:users) { |t| t.float :review_score; t.boolean :review_permit; t.string :switch; t.integer :admin_user_id; t.string :ng_account }
-  create_table(:reviews) { |t| t.integer :user_id; t.integer :member_id; t.integer :review; t.string :ip; t.text :comment; t.string :nickname; t.string :age; t.string :gender; t.timestamps }
+  create_table(:reviews) { |t| t.integer :user_id; t.integer :member_id; t.integer :conversation_review_id; t.integer :review; t.string :ip; t.text :comment; t.string :nickname; t.string :age; t.string :gender; t.timestamps }
   create_table(:places) { |t| %i[facility price access reservation score].each { |k| t.float "average_#{k}" }; t.timestamps }
   create_table(:place_reviews) { |t| t.integer :place_id; t.integer :event_id; t.string :ip_address; t.text :comment; t.string :moderation_status, default: 'clear', null: false; %i[facility price access reservation average_score].each { |k| t.float k }; t.timestamps }
   create_table(:account_blocks) { |t| t.string :ip_address }
@@ -67,6 +68,7 @@ require_relative '../../app/models/place_review'
 module Circlebook; end
 class ApplicationController < ActionController::Base
   include SpamProtection
+  include ReviewDeletionPermission
   # Rails recycles controller instance variables between requests. Keep the
   # test identity in the session, as the real authentication layer does.
   %i[current_member current_admin_user current_webmaster].each do |identity|
