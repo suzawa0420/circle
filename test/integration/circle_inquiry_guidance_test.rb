@@ -73,10 +73,10 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_includes guidance.join, text
   end
 
-  test 'no settings produces no guidance and three dates still link to all schedules' do
+  test 'unset settings show the default guidance and three dates link to all schedules' do
     @circle.schedules.delete_all
     @circle.update!(template: '')
-    assert_empty CircleInquiryGuidance.new(@circle).messages
+    assert_includes CircleInquiryGuidance.new(@circle).messages.join, CircleInquiryGuidance::DEFAULT_TEMPLATE
     3.times { |i| @circle.schedules.create!(title: '練習', venue: '体育館', day: (Date.current + i).to_s) }
     assert_includes CircleInquiryGuidance.new(@circle).messages.join, '他のスケジュールを見る'
   end
@@ -88,11 +88,13 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     get conversation_path(conversation)
     assert_response :success
     assert_select '.inquiry-guidance__message', count: 2
+    assert_select '.inquiry-guidance__edit', count: 0
     delete destroy_member_session_path
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     get conversation_path(conversation)
     assert_response :success
     assert_select '.inquiry-guidance__message', count: 2
+    assert_select '.inquiry-guidance__edit[href=?]', inquiry_settings_path(@circle), count: 1
     delete destroy_admin_user_session_path
     master = Webmaster.create!(id: 1, email: 'master-guidance@example.test', password: 'test-password-123')
     post webmaster_session_path, params: { webmaster: { email: master.email, password: 'test-password-123' } }
@@ -100,6 +102,27 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.wm-badge', text: '自動案内', count: 2
     assert_includes response.body, '参加希望日'
+  end
+
+  test 'default guidance can be quoted edited and preserved as a snapshot' do
+    @circle.update!(template: nil)
+    post member_session_path, params: { member: { email: @other_member.email, password: 'test-password-123' } }
+    get new_user_conversation_path(@circle)
+    assert_select '[data-inquiry-template-copy]' do |buttons|
+      assert_equal CircleInquiryGuidance::DEFAULT_TEMPLATE, buttons.first['data-inquiry-template-copy']
+    end
+    conversation = Conversation.for_member!(@circle, @other_member)
+    conversation.send_message!('member', '参加希望です。')
+    snapshot = conversation.chat_messages.where(sender_role: 'system').pluck(:body)
+    assert_includes snapshot.join, CircleInquiryGuidance::DEFAULT_TEMPLATE
+    delete destroy_member_session_path
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get inquiry_settings_path(@circle)
+    assert_select 'textarea', text: CircleInquiryGuidance::DEFAULT_TEMPLATE
+    patch inquiry_settings_path(@circle), params: { user: { template: '参加希望日を教えてください。' } }
+    assert_equal '参加希望日を教えてください。', @circle.reload.template
+    assert_includes CircleInquiryGuidance.new(@circle).messages.join, @circle.template
+    assert_equal snapshot, conversation.chat_messages.where(sender_role: 'system').pluck(:body)
   end
 
   test 'only owner can edit guidance and unrelated fields cannot be changed' do

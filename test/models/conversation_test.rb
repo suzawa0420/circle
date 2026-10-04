@@ -90,7 +90,7 @@ class ConversationTest < ActiveSupport::TestCase
     end
     @conversation.submit_review!('member', member_evaluation)
     @conversation.submit_review!('owner', owner_evaluation)
-    assert_equal 2, @conversation.chat_messages.count
+    assert_equal 2, @conversation.chat_messages.where.not(sender_role: 'system').count
     assert @conversation.reviews_published_at
   end
 
@@ -151,7 +151,7 @@ class ConversationTest < ActiveSupport::TestCase
   test 'message rate limit rejects a burst without losing existing messages' do
     9.times { @conversation.send_message!('member', '追加のメッセージです。') }
     assert_raises(Conversation::NotAllowed) { @conversation.send_message!('member', '送信上限を超えています。') }
-    assert_equal 10, @conversation.chat_messages.count
+    assert_equal 10, @conversation.chat_messages.where.not(sender_role: 'system').count
   end
 
   test 'blocked unread messages do not trigger email notifications' do

@@ -422,3 +422,4 @@
 @media (min-width: 768px) {
   .cb-site .cb-area-directory__links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: cb-space(3); }
 }
+.cb-site .inquiry-guidance__message a.inquiry-guidance__edit { @include cb-button(secondary); display: flex; margin: cb-space(4) 0 cb-space(2); text-decoration: none; }

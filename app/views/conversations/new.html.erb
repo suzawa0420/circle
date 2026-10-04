@@ -15,8 +15,8 @@
       <% @inquiry_guidance.each do |body| %>
         <article class="chat-card inquiry-guidance__message"><strong>サークルからの自動案内</strong><div class="chat-body"><%= automatic_message_body(body) %></div></article>
       <% end %>
-      <% if @user.template.present? %>
-        <button type="button" class="cb-button cb-button--secondary" data-inquiry-template-copy="<%= @user.template %>">確認事項を回答欄に引用する</button>
+      <% if CircleInquiryGuidance.template_for(@user).present? %>
+        <button type="button" class="cb-button cb-button--secondary" data-inquiry-template-copy="<%= CircleInquiryGuidance.template_for(@user) %>">確認事項を回答欄に引用する</button>
       <% end %>
     </section>
   <% end %>

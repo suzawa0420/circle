@@ -143,7 +143,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_redirected_to member_email_verification_path
     post message_conversation_path(@conversation), params: { message: { body: '未認証で送信します。' } }
     assert_redirected_to member_email_verification_path
-    assert_equal 1, @conversation.chat_messages.count
+    assert_equal 1, @conversation.chat_messages.where.not(sender_role: 'system').count
     token = @member.signed_id(purpose: @member.email_verification_purpose, expires_in: 24.hours)
     get confirm_member_email_verification_path(token: token)
     assert_response :success

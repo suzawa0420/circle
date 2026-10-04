@@ -79,7 +79,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     ChatMessage.insert_all!(messages)
     login_master
     get super_admin_conversation_path(@conversation)
-    assert_select '.wm-message', count: 6
+    assert_select '.wm-message', count: 7
     assert_includes response.body, '履歴メッセージ 54'
     get super_admin_conversation_path(@conversation), params: { page: 1 }
     assert_select '.wm-message', count: 50
