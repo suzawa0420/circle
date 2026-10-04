@@ -50,7 +50,7 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
   end
 
   test 'conversion failure falls back to the original without caching the failure' do
-    ListingImage.stub(:build, ->(*) { raise IOError, 'synthetic failure' }) do
+    ListingImage.stub(:build, ->(*) { raise RuntimeError, 'synthetic failure' }) do
       get @url
       assert_redirected_to @circle.pic_profile.url
       assert_equal 'no-store', response.headers['Cache-Control']
@@ -62,6 +62,24 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
       %w[http://127.0.0.1/uploads/user/a https://example.test/uploads/user/a
         https://circlebook.s3.ap-northeast-1.amazonaws.com/private/a].each do |url|
         assert_raises(IOError) { ListingImage.download(url, file) }
+      end
+    end
+  end
+
+  test 'retrieved remote uploads use the bounded downloader and generate a cached derivative' do
+    uploader = @circle.pic_profile
+    original_path = uploader.path
+    remote_file = CarrierWave::Storage::Fog::File.allocate
+    downloader = ->(url, output) do
+      assert_equal 'https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/user/profile.jpg', url
+      File.open(original_path, 'rb') { |source| IO.copy_stream(source, output) }
+    end
+    uploader.stub(:file, remote_file) do
+      uploader.stub(:url, 'https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/user/profile.jpg') do
+        ListingImage.stub(:download, downloader) do
+          assert_equal @destination, ListingImage.build(@circle, 'profile')
+          assert_equal [160, 160], MiniMagick::Image.open(@destination).dimensions
+        end
       end
     end
   end

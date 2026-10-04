@@ -32,8 +32,9 @@ jobs:
             systemctl is-active circle-sitemap.timer
             systemctl show circle-sitemap.service --property=Result --property=ExecMainStatus --property=ActiveEnterTimestamp --no-pager
       - name: Check a public listing image without exposing application logs
+        id: image_check
         if: inputs.task == 'check-listing-images'
-        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5, structured stdout
         with:
           host: 18.176.169.209
           fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
@@ -41,7 +42,40 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           key: ${{ secrets.DEPLOY_KEY }}
           command_timeout: 5m
+          capture_stdout: true
           script: |
             set -eu
             cd /var/www/circle
-            sudo -n runuser -u ec2-user -g nginx -- env RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true PATH=/opt/circle/ruby-3.3.12/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin /opt/circle/ruby-3.3.12/bin/bundle exec ruby ops/al2023/check_listing_images.rb
+            sudo -n runuser -u ec2-user -g nginx -- env RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true PATH=/opt/circle/ruby-3.3.12/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin /opt/circle/ruby-3.3.12/bin/bundle exec ruby ops/al2023/check_listing_images.rb || true
+      - name: Publish only validated image diagnostic metadata
+        id: image_result
+        if: inputs.task == 'check-listing-images'
+        env:
+          DIAGNOSTIC_OUTPUT: ${{ steps.image_check.outputs.stdout }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re
+          result = {'status': 'unavailable'}
+          for line in os.environ.get('DIAGNOSTIC_OUTPUT', '').splitlines():
+              match = re.search(r'LISTING_IMAGE_CHECK=(\{.*\})', line) if len(line) < 4096 else None
+              if match:
+                  try:
+                      result = json.loads(match.group(1))
+                  except json.JSONDecodeError:
+                      pass
+          def safe(value):
+              return re.sub(r'[^a-zA-Z0-9_:/.,-]', '', str(value))[:160]
+          summary = ' '.join(safe(result.get(key, '')) for key in ['status', 'error_class', 'missing_method', 'receiver_class'])
+          locations = result.get('code_locations', [])
+          if locations:
+              summary += ' ' + safe(locations[0])
+          if result.get('status') == 'ok':
+              summary += ' ' + safe(result.get('dimensions')) + ' bytes=' + safe(result.get('bytes'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('summary=' + summary + '\nstatus=' + safe(result.get('status')) + '\n')
+          PY
+      - name: Image diagnostic ${{ steps.image_result.outputs.summary }}
+        if: inputs.task == 'check-listing-images'
+        env:
+          DIAGNOSTIC_STATUS: ${{ steps.image_result.outputs.status }}
+        run: test "$DIAGNOSTIC_STATUS" = ok

@@ -7,13 +7,16 @@ class ListingImagesController < ActionController::Base
     raise ActiveRecord::RecordNotFound if uploader.identifier.blank? ||
       params[:fingerprint] != ListingImage.fingerprint(uploader)
 
-    destination = ListingImage.build(user, kind)
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    expires_in 1.year, public: true, immutable: true
-    send_file destination, type: 'image/jpeg', disposition: 'inline'
-  rescue IOError, SystemCallError, MiniMagick::Error, Timeout::Error, SocketError, OpenSSL::SSL::SSLError
-    # A transient storage/conversion failure must not break a public image.
-    response.headers['Cache-Control'] = 'no-store'
-    redirect_to uploader.url, allow_other_host: true
+    begin
+      destination = ListingImage.build(user, kind)
+      response.headers['X-Content-Type-Options'] = 'nosniff'
+      expires_in 1.year, public: true, immutable: true
+      send_file destination.to_s, type: 'image/jpeg', disposition: 'inline'
+    rescue StandardError
+      # Keep access/identifier checks outside this boundary. Any storage or
+      # conversion failure for an already-public image falls back to its source.
+      response.headers['Cache-Control'] = 'no-store'
+      redirect_to uploader.url, allow_other_host: true
+    end
   end
 end
