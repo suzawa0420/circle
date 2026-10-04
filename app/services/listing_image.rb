@@ -28,6 +28,7 @@ class ListingImage
       return destination if File.file?(destination)
 
       Tempfile.create(['listing-source', '.jpg']) do |source|
+        source.binmode
         if uploader.file.is_a?(CarrierWave::Storage::Fog::File)
           download(uploader.url, source)
         else
@@ -50,6 +51,7 @@ class ListingImage
           command.interlace 'Plane'
         end
         Tempfile.create(['listing-result', '.jpg'], destination.dirname) do |output|
+          output.binmode
           image.format('jpg')
           image.write(output.path)
           File.rename(output.path, destination)
@@ -60,6 +62,7 @@ class ListingImage
   end
 
   def self.download(url, output)
+    output.binmode
     uri = URI(url)
     # Never proxy an arbitrary URL, redirect, private endpoint or user input.
     raise IOError, 'Unexpected image origin' unless uri.scheme == 'https' &&

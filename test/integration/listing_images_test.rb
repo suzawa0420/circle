@@ -83,4 +83,23 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
       end
     end
   end
+
+  test 'remote JPEG chunks bypass the production default text transcoding' do
+    bytes = "\xFF\xD8\xFF\x00".b
+    response = Net::HTTPOK.new('1.1', '200', 'OK')
+    response['content-length'] = bytes.bytesize.to_s
+    response.define_singleton_method(:read_body) { |&block| block.call(bytes) }
+    http = Object.new
+    http.define_singleton_method(:request) { |_request, &block| block.call(response) }
+    connect = ->(*_args, **_options, &block) { block.call(http) }
+    Tempfile.create('listing-binary') do |output|
+      output.set_encoding(Encoding::UTF_8, Encoding::UTF_8)
+      Net::HTTP.stub(:start, connect) do
+        ListingImage.download('https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/user/image.jpg', output)
+      end
+      output.rewind
+      assert_equal Encoding::BINARY, output.external_encoding
+      assert_equal bytes, output.read
+    end
+  end
 end
