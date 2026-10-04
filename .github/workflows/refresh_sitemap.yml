@@ -1,0 +1,27 @@
+name: Refresh production sitemap
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: circle-production
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Regenerate the public sitemap on the singleton scheduler
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: 18.176.169.209
+          fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 35m
+          script: |
+            set -eu
+            sudo -n systemctl start circle-sitemap.service
+            test "$(systemctl show circle-sitemap.service --property=Result --value)" = success
+            systemctl is-active circle-sitemap.timer
+            systemctl show circle-sitemap.service --property=Result --property=ExecMainStatus --property=ActiveEnterTimestamp --no-pager
