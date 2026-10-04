@@ -75,4 +75,31 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'meta[name=robots][content*=noindex]', count: 0
   end
 
+  test 'sitemap always emits an index and truthful canonical landings' do
+    require 'sitemap_generator'
+    require 'aws-sdk-s3'
+    require 'minitest/mock'
+    require 'tmpdir'
+    require 'zlib'
+    previous_path = SitemapGenerator::Sitemap.public_path
+    Dir.mktmpdir('circle-seo-sitemap') do |directory|
+      SitemapGenerator::Sitemap.public_path = directory
+      SitemapGenerator::AwsSdkAdapter.stub(:new, SitemapGenerator::FileAdapter.new) do
+        SitemapGenerator::Interpreter.run
+      end
+      index = Nokogiri::XML(Zlib::GzipReader.open(File.join(directory, 'sitemaps/sitemap.xml.gz'), &:read))
+      assert_equal 'sitemapindex', index.root.name
+      child = Nokogiri::XML(Zlib::GzipReader.open(File.join(directory, 'sitemaps/sitemap1.xml.gz'), &:read)).remove_namespaces!
+      urls = child.xpath('//url/loc').map(&:text)
+      assert_includes urls, "https://circle-book.com#{@path}"
+      assert_includes urls, "https://circle-book.com#{circle_path(@circle)}"
+      refute urls.any? { |url| url.include?('/kw/') || url.include?('/search/') }
+      landing = child.xpath('//url').find { |node| node.at_xpath('loc').text == "https://circle-book.com#{@path}" }
+      assert_nil landing.at_xpath('lastmod')
+    end
+  ensure
+    SitemapGenerator::Sitemap.public_path = previous_path if previous_path
+    SitemapGenerator::Sitemap.reset!
+  end
+
 end

@@ -17,8 +17,8 @@ SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new(
 # 0.5 中
 # 0.3 低
 
-SitemapGenerator::Sitemap.create do
-  add root_path, changefreq: 'weekly', priority: 0.3
+SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
+  add root_path, lastmod: nil, changefreq: 'weekly', priority: 0.3
 
   User.publicly_visible.find_each do |user|
     add circle_path(user), :lastmod => user.updated_at, :priority => 0.3, :changefreq => 'weekly'
@@ -29,14 +29,14 @@ SitemapGenerator::Sitemap.create do
   population = User.publicly_visible
   Event.where(id: population.select(:event_id)).find_each do |event|
     next if event.ruby.blank? || event.ruby == 'nil'
-    add event_path(event.ruby), changefreq: 'daily', priority: 0.8
+    add event_path(event.ruby), lastmod: nil, changefreq: 'daily', priority: 0.8
     Prefecture.where(id: population.where(event_id: event.id).select(:prefecture_id)).find_each do |prefecture|
       next if prefecture.kana.blank? || prefecture.kana == 'nil'
-      add event_prefecture_path(event.ruby, prefecture.kana), changefreq: 'daily', priority: 0.8
+      add event_prefecture_path(event.ruby, prefecture.kana), lastmod: nil, changefreq: 'daily', priority: 0.8
     end
   end
   Prefecture.where(id: population.select(:prefecture_id)).find_each do |prefecture|
     next if prefecture.kana.blank? || prefecture.kana == 'nil'
-    add prefecture_path(prefecture.kana), changefreq: 'daily', priority: 0.8
+    add prefecture_path(prefecture.kana), lastmod: nil, changefreq: 'daily', priority: 0.8
   end
 end
