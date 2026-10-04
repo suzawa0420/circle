@@ -1,9 +1,11 @@
-<aside aria-label="広告" style="text-align:center;margin:24px auto;width:300px;max-width:100%;min-height:270px;">
+<aside <% if fast_public_listing? %>data-deferred-listing-ad="true"<% end %> aria-label="広告" style="text-align:center;margin:24px auto;width:300px;max-width:100%;min-height:270px;">
   <div style="font-size:12px;color:#666;margin-bottom:4px;">広告</div>
   <!-- admax -->
   <div class="admax-switch" data-admax-id="8c416c3bb0ba1614046f01a5e3f43ca0" style="display:inline-block;width:300px;height:250px;"></div>
+  <% unless fast_public_listing? %>
   <script type="text/javascript">
   (admaxads = window.admaxads || []).push({admax_id: "8c416c3bb0ba1614046f01a5e3f43ca0",type: "switch"});</script>
   <script type="text/javascript" charset="utf-8" src="https://adm.shinobi.jp/st/t.js" async></script>
+  <% end %>
   <!-- admax -->
 </aside>

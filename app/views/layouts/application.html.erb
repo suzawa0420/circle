@@ -36,6 +36,7 @@
 
 
       <% if fast_public_listing? %>
+        <link rel="preconnect" href="https://circlebook.s3.ap-northeast-1.amazonaws.com">
         <%= javascript_include_tag 'public_listing', defer: true, 'data-turbolinks-track': 'reload' %>
       <% else %>
       <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css' %>

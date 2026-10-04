@@ -17,6 +17,8 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'meta[name=robots][content*=noindex]', count: 0
     assert_select 'script[src*=public_listing][defer]', count: 1
     assert_select 'script[src*=jquery-ui]', count: 0
+    assert_select '[data-deferred-listing-ad] .admax-switch', count: 1
+    assert_select 'script[src="https://adm.shinobi.jp/st/t.js"]', count: 0
     assert_select 'script[src*=application-]', count: 0
     assert_select 'img.header_imege_user_list[loading=eager][fetchpriority=high]', count: 1
     assert_select '.user_item_wrap', text: /一回５００円/

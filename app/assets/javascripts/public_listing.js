@@ -5,6 +5,32 @@
 
 (function () {
   function ready() {
+    var placement = document.querySelector('[data-deferred-listing-ad]');
+    if (placement) {
+      var loaded = false;
+      function loadAd() {
+        if (loaded) return;
+        loaded = true;
+        var slot = placement.querySelector('[data-admax-id]');
+        (window.admaxads = window.admaxads || []).push({ admax_id: slot.dataset.admaxId, type: 'switch' });
+        var script = document.createElement('script');
+        script.src = 'https://adm.shinobi.jp/st/t.js';
+        script.async = true;
+        script.charset = 'utf-8';
+        placement.appendChild(script);
+      }
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          if (entries.some(function (entry) { return entry.isIntersecting; })) {
+            observer.disconnect();
+            loadAd();
+          }
+        }, { rootMargin: '600px' });
+        observer.observe(placement);
+      } else {
+        loadAd();
+      }
+    }
     document.querySelectorAll('.time-limit').forEach(function (element) {
       window.setTimeout(function () { element.hidden = true; }, 1000);
     });
