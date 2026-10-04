@@ -59,12 +59,16 @@ class WebmasterModerationTest < ActionDispatch::IntegrationTest
     assert @conversation.conversation_reviews.find_by!(author_role: 'member').review
   end
 
-  test 'organizer and other participant cannot delete others reviews' do
-    review = @circle.reviews.create!(member: @other_member, review: 1, comment: '参加した時の口コミです。')
+  test 'organizer and other participant cannot delete chat reviews' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    @conversation.submit_review!('owner', owner_evaluation)
+    review = @conversation.conversation_reviews.find_by!(author_role: 'member').review
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     assert_no_difference('Review.count') { delete user_review_path(@circle, review) }
     assert_response :forbidden
-    post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+    delete destroy_admin_user_session_path
+    post member_session_path, params: { member: { email: @other_member.email, password: 'test-password-123' } }
     assert_no_difference('Review.count') { delete user_review_path(@circle, review) }
     assert_response :forbidden
     get super_admin_reviews_path
