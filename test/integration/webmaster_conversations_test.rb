@@ -15,6 +15,8 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     get super_admin_conversation_path(@conversation)
     assert_response :success
     assert_select '.wm-body a.message-url[href="https://example.test/contact?a=1&b=2"]', count: 1
+    assert_select '.message-role--member', minimum: 1
+    assert_select '.message-role--owner', minimum: 1
     assert_select '.wm-body img', count: 0
     assert_select '.wm-body [onerror]', count: 0
   end

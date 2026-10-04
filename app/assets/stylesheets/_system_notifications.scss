@@ -1,7 +1,7 @@
 @import "design_tokens";
 
 // A platform notice is distinct from organizer-authored automatic guidance.
-.cb-site .cb-system-panel, .webmaster-page {
+.cb-site .cb-system-panel, .webmaster-page .webmaster-content, .webmaster-page .webmaster-nav {
   --cb-role-action: #{$cb-system};
   --cb-role-ink: #{$cb-system-hover};
   --cb-role-soft: #{$cb-system-soft};
@@ -36,3 +36,25 @@
 .webmaster-page .wm-message--system .wm-badge { background: $cb-mint-soft; color: $cb-action-hover; }
 
 .webmaster-page .webmaster-flash--warning { background: $cb-warning-soft; color: $cb-warning-text; border-color: #ead7b2; }
+
+// The same author labels appear in chat, conversation review, and report history.
+.cb-site .message-role, .webmaster-page .message-role {
+  display: inline-flex; align-items: center; width: fit-content; max-width: 100%;
+  padding: 4px 10px; margin-bottom: 8px; border-radius: 6px;
+  font-size: 12px; font-weight: 700; line-height: 1.6; overflow-wrap: anywhere;
+}
+.cb-site .message-role--owner, .webmaster-page .message-role--owner {
+  background: $cb-mint-soft; color: $cb-action-hover;
+}
+.cb-site .message-role--member, .webmaster-page .message-role--member {
+  background: $cb-participant-soft; color: $cb-participant-hover;
+}
+.cb-site .message-role--system, .webmaster-page .message-role--system {
+  background: $cb-system-soft; color: $cb-system-hover;
+}
+.webmaster-page .wm-message--owner, .webmaster-page .wm-message--system {
+  background: $cb-mint-soft; border-color: $cb-border;
+}
+.webmaster-page .wm-message--member { background: $cb-participant-soft; border-color: $cb-border; }
+.webmaster-page .wm-card-heading .message-role { margin-bottom: 0; }
+.cb-site .inquiry-guidance__message > strong.message-role { display: inline-flex; font-size: 12px; }

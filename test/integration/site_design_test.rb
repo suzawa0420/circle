@@ -71,6 +71,8 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.chat-shell.cb-participant', count: 1
     assert_select '.chat-avatar--owner', minimum: 1
     assert_select '.chat-message--member', minimum: 1
+    assert_select '.message-role--member', minimum: 1
+    assert_select '.message-role--owner', minimum: 1
     assert_select '.chat-message--owner', minimum: 1
     delete destroy_member_session_path
     login(@owner)

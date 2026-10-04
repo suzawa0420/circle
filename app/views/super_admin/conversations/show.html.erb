@@ -11,7 +11,7 @@
   <%= paginate @messages %>
   <% @messages.each do |message| %>
     <article class="webmaster-card wm-message wm-message--<%= message.sender_role %>">
-      <div class="wm-card-heading"><span class="wm-badge"><%= message.sender_label %></span><time class="wm-meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div>
+      <div class="wm-card-heading"><span class="message-role message-role--<%= message.automatic? ? "owner" : message.sender_role %>"><%= message.automatic? ? "サークルからの自動案内" : message.sender_label %></span><time class="wm-meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div>
       <div class="wm-body"><%= message.automatic? ? automatic_message_body(message.body) : chat_message_body(message.body) %></div>
     </article>
   <% end %>
