@@ -7,7 +7,7 @@ module ApplicationHelper
   def circle_listing_header_image(user, first: false)
     image_tag circle_listing_image_url(user, 'header'), class: 'header_imege_user_list',
       alt: "#{user.name}の活動紹介", loading: first ? 'eager' : 'lazy',
-      fetchpriority: first ? 'high' : 'auto', decoding: 'async'
+      fetchpriority: first ? 'high' : 'auto', decoding: 'async', data: { original_src: user.pic_header.url }
   end
 
   def circle_listing_image_url(user, kind)

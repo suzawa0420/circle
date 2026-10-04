@@ -1,6 +1,11 @@
 name: Refresh production sitemap
 on:
   workflow_dispatch:
+    inputs:
+      task:
+        type: choice
+        options: [refresh-sitemap, check-listing-images]
+        default: refresh-sitemap
 permissions:
   contents: read
 concurrency:
@@ -11,6 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Regenerate the public sitemap on the singleton scheduler
+        if: inputs.task == 'refresh-sitemap'
         uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
         with:
           host: 18.176.169.209
@@ -25,3 +31,17 @@ jobs:
             test "$(systemctl show circle-sitemap.service --property=Result --value)" = success
             systemctl is-active circle-sitemap.timer
             systemctl show circle-sitemap.service --property=Result --property=ExecMainStatus --property=ActiveEnterTimestamp --no-pager
+      - name: Check a public listing image without exposing application logs
+        if: inputs.task == 'check-listing-images'
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: 18.176.169.209
+          fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 5m
+          script: |
+            set -eu
+            cd /var/www/circle
+            sudo -n runuser -u ec2-user -g nginx -- env RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true PATH=/opt/circle/ruby-3.3.12/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin /opt/circle/ruby-3.3.12/bin/bundle exec ruby ops/al2023/check_listing_images.rb

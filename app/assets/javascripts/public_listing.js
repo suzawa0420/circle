@@ -5,6 +5,16 @@
 
 (function () {
   function ready() {
+    document.querySelectorAll('img[data-original-src]').forEach(function (image) {
+      function fallback() {
+        if (!image.dataset.originalSrc) return;
+        var original = image.dataset.originalSrc;
+        delete image.dataset.originalSrc;
+        image.src = original;
+      }
+      image.addEventListener('error', fallback, { once: true });
+      if (image.complete && image.naturalWidth === 0) fallback();
+    });
     // Analytics stays early. Start automatic ads once the leading photograph
     // has loaded and painted, avoiding competition for its network bandwidth.
     var adsense = document.querySelector('meta[name="listing-adsense"]');
