@@ -37,10 +37,11 @@ class PublishedSitemap
     raise Unavailable if xml.bytesize > MAX_BYTES
 
     document = Nokogiri::XML(xml) { |config| config.strict.nonet }
-    expected_root = index ? 'sitemapindex' : 'urlset'
-    raise Unavailable unless document.root&.name == expected_root &&
+    # SitemapGenerator uses a plain urlset at the main URL when no split is needed.
+    allowed_roots = index ? %w[sitemapindex urlset] : %w[urlset]
+    raise Unavailable unless allowed_roots.include?(document.root&.name) &&
                              document.root.namespace&.href == 'http://www.sitemaps.org/schemas/sitemap/0.9'
-    return xml unless index
+    return xml if document.root.name == 'urlset'
 
     document.xpath('//sm:sitemap/sm:loc', 'sm' => 'http://www.sitemaps.org/schemas/sitemap/0.9').each do |location|
       name = location.content.delete_prefix(ORIGIN)

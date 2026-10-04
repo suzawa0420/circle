@@ -27,6 +27,11 @@ class PublishedSitemapTest < Minitest::Test
     assert_raises(PublishedSitemap::Unavailable) { PublishedSitemap.decode(compressed(xml), index: true) }
   end
 
+  def test_main_file_can_be_an_unsplit_sitemap
+    xml = %(<urlset xmlns="#{NS}"><url><loc>https://circle-book.com/circles/123</loc></url></urlset>)
+    assert_equal xml, PublishedSitemap.decode(compressed(xml), index: true)
+  end
+
   def test_invalid_xml_is_rejected
     assert_raises(PublishedSitemap::Unavailable) { PublishedSitemap.decode(compressed('<html>error</html>'), index: true) }
     assert_raises(PublishedSitemap::Unavailable) { PublishedSitemap.decode(compressed('<urlset>'), index: false) }
