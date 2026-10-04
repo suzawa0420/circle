@@ -90,7 +90,7 @@
           = link_to(circle_path(user.id)) do
             %li.user_slide_list
               .user_list_header
-                = lazysizes_image_tag user.pic_profile.url , class:'image_icon'
+                = circle_avatar_tag user, class:'image_icon'
                 %h3.user_name= user.name.truncate(20)
               .clear
               .list_02
@@ -191,7 +191,7 @@
           = link_to(match_path(m_user.id)) do
             %li.user_slide_list
               .user_list_header
-                = lazysizes_image_tag m_user.user.pic_profile.url , class:'image_icon'
+                = circle_avatar_tag m_user.user, class:'image_icon'
                 %h3.user_name= m_user.user.name.truncate(20)
               .clear
               .list_02

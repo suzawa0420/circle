@@ -1,4 +1,4 @@
 .contact-button
-  = link_to new_user_conversation_path(@user), circle_contact_warning_options(@user) do
+  = link_to new_user_conversation_path(@user), circle_contact_warning_options(@user).merge(class: "cb-participant") do
     %i.fa.fa-comment-o
     メッセージで問い合わせ

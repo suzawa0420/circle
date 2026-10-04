@@ -1,4 +1,4 @@
-<main class="chat-shell chat-thread">
+<main class="chat-shell chat-thread <%= "cb-participant" if @role == "member" %>">
   <header class="chat-thread-heading">
     <%= link_to '‹ 一覧', conversations_path, class: 'chat-back', aria: { label: 'メッセージ一覧へ戻る' } %>
     <%= render 'avatar', conversation: @conversation, role: @role == 'member' ? 'owner' : 'member' %>

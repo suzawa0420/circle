@@ -15,8 +15,7 @@
           - if @user.pic_profile.present?
             = image_tag @user.pic_profile.url, alt: "", class: "dashboard-circle__avatar"
           - else
-            .dashboard-circle__avatar.dashboard-circle__avatar--empty
-              %i.fa.fa-users{ "aria-hidden" => "true" }
+            .dashboard-circle__avatar.dashboard-circle__avatar--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
           %div.dashboard-circle__name
             %h2= @user.name
             %p= [@user.prefecture&.name, @user.event&.name].compact.join(" · ")

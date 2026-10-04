@@ -19,16 +19,16 @@
     %label{:for => "popup-on_profile"}
       %label{:for => "popup-on_profile"}
         .btn-open_profile
-          = lazysizes_image_tag @user.pic_profile.url, class:'profile_imege', alt: "プロフィール画像｜#{@user.name}"
+          = circle_avatar_tag @user, class:'profile_imege', alt: "プロフィール画像｜#{@user.name}"
       %input#popup-on_profile{:type => "checkbox"}/
       .popup
         %label.icon-close_profile{:for => "popup-on_profile"} ×
         .popup-content
-          = lazysizes_image_tag @user.pic_profile.url, alt: "プロフィール画像｜#{@user.name}"
+          = circle_avatar_tag @user, alt: "プロフィール画像｜#{@user.name}"
         %label{:for => "popup-on_profile"}
           .btn-close_profile 閉じる
 - else
-  = lazysizes_image_tag @user.pic_profile.url , class:'profile_imege'
+  = circle_avatar_tag @user, class:'profile_imege'
 .data-box.slide_content
   - if @user.event_id.present?
     %span.data-r= @user.event.name if @user.event_id?

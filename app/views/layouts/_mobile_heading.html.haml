@@ -13,7 +13,7 @@
     - else
       = link_to "登録を完了する", new_user_path, class: "mobile-site-heading__cta"
   - elsif member_signed_in?
-    = link_to "マイページ", member_path(current_member), class: "mobile-site-heading__cta"
+    = link_to "マイページ", member_path(current_member), class: "mobile-site-heading__cta cb-participant"
   - elsif exhibition_group_signed_in?
     = link_to "マイページ", exhibitor_mypage_path, class: "mobile-site-heading__cta"
   - else

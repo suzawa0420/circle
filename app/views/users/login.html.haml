@@ -16,7 +16,7 @@
           .login-choice__actions
             = link_to "主催者ログイン", new_admin_user_session_path, class: "login-choice__button"
             = link_to "無料で新規登録", new_admin_user_registration_path, class: "login-choice__button login-choice__button--signup", "aria-label" => "主催者として無料で新規登録"
-      %section.login-choice__card{ "aria-labelledby" => "participant-login-title" }
+      %section.login-choice__card.cb-participant{ "aria-labelledby" => "participant-login-title" }
         .login-choice__art
           %img{ src: "/images/mascot/squirrel-participant.png", alt: "本とラケットを持って活動するリス", width: 220, height: 220 }
         .login-choice__content

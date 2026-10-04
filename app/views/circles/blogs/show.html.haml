@@ -30,7 +30,7 @@
             %h1.blog_1st_title= @blog.title
             .header-post.blog_profile
               = link_to(circle_path(@user.id)) do
-                = lazysizes_image_tag @user.pic_profile.url , class:'content_icon'
+                = circle_avatar_tag @user, class:'content_icon'
                 .post-user_wrap
                   .post-user
                     .post-top= @user.name.truncate(40)
@@ -79,7 +79,7 @@
                   = @user.prefecture.name
           = link_to(user_path(@user.id)) do
             .user-content
-              = lazysizes_image_tag @user.pic_profile.url , class:'image_icon'
+              = circle_avatar_tag @user, class:'image_icon'
               .list_wrapper
                 .list_01
                   %h2.user_name= @user.name.truncate(40)
@@ -117,7 +117,7 @@
                 .post-bottom= blog.created_at.strftime("%Y年%-m月%-d日 %-H:%M")
                 %h3.post_title= blog.title.truncate(36)
               .blog_user
-                = lazysizes_image_tag @user.pic_profile.url , class:'icon_s'
+                = circle_avatar_tag @user, class:'icon_s'
                 .blog_user_name= @user.name.truncate(16)
         - if @blogs.size > 5
           .more_link

@@ -4,8 +4,7 @@
 <article class="chat-review-preview">
   <div class="chat-review-preview__avatar">
     <% if participant %>
-      <% fallback = { '1' => 'icon_member_blue.png', '2' => 'icon_member_pink.png' }.fetch(member.gender, 'icon_member.png') %>
-      <%= image_tag(member.image_profile.present? ? member.image_profile.url : "/images/icon/#{fallback}", alt: '', class: 'chat-avatar') %>
+      <%= render 'avatar', conversation: @conversation, role: 'member' %>
     <% else %><%= render 'avatar', conversation: @conversation, role: 'owner' %><% end %>
   </div>
   <div class="chat-review-preview__content">

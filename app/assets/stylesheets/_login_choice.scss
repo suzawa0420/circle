@@ -31,7 +31,7 @@
 
 .login-choice__eyebrow {
   margin-bottom: 8px;
-  color: $cb-action-hover;
+  color: var(--cb-role-ink, #{$cb-action-hover});
   font-size: 13px;
   font-weight: 700;
   letter-spacing: .06em;
@@ -58,7 +58,7 @@
   align-items: center;
   justify-content: center;
   height: 214px;
-  background: $cb-mint-soft;
+  background: var(--cb-role-soft, #{$cb-mint-soft});
 
   img {
     display: block;
@@ -84,7 +84,7 @@
 }
 
 .login-choice__role {
-  color: $cb-action-hover;
+  color: var(--cb-role-ink, #{$cb-action-hover});
   font-size: 13px;
   font-weight: 700;
 }
@@ -106,9 +106,9 @@
 .login-choice__button {
   display: block;
   padding: 13px 18px;
-  border: 1px solid $cb-action;
+  border: 1px solid var(--cb-role-action, #{$cb-action});
   border-radius: 9px;
-  background: $cb-action;
+  background: var(--cb-role-action, #{$cb-action});
   color: $cb-surface;
   font-size: 15px;
   font-weight: 700;
@@ -117,7 +117,7 @@
 
   &:hover,
   &:focus {
-    background: $cb-action-hover;
+    background: var(--cb-role-ink, #{$cb-action-hover});
     color: $cb-surface;
     opacity: 1;
   }
@@ -125,12 +125,12 @@
 
 .login-choice__button--signup {
   background: $cb-surface;
-  color: $cb-action-hover;
+  color: var(--cb-role-ink, #{$cb-action-hover});
 
   &:hover,
   &:focus {
-    background: $cb-mint-soft;
-    color: $cb-action-hover;
+    background: var(--cb-role-soft, #{$cb-mint-soft});
+    color: var(--cb-role-ink, #{$cb-action-hover});
   }
 }
 

@@ -14,7 +14,7 @@
 }
 
 @mixin cb-focus {
-  &:focus-visible { outline: 2px solid $cb-action; outline-offset: 3px; }
+  &:focus-visible { outline: 2px solid var(--cb-role-action, #{$cb-action}); outline-offset: 3px; }
 }
 
 @mixin cb-card {
@@ -44,17 +44,17 @@
   transition: background-color $cb-motion-duration $cb-motion-easing, border-color $cb-motion-duration $cb-motion-easing;
   @if $variant == primary {
     color: $cb-surface;
-    background: $cb-action;
-    &:hover, &:active { color: $cb-surface; background: $cb-action-hover; }
+    background: var(--cb-role-action, #{$cb-action});
+    &:hover, &:active { color: $cb-surface; background: var(--cb-role-ink, #{$cb-action-hover}); }
   } @else if $variant == secondary {
-    color: $cb-action-hover;
+    color: var(--cb-role-ink, #{$cb-action-hover});
     background: $cb-surface;
     border-color: $cb-input-border;
-    &:hover, &:active { color: $cb-action-hover; background: $cb-mint-soft; border-color: $cb-action; }
+    &:hover, &:active { color: var(--cb-role-ink, #{$cb-action-hover}); background: var(--cb-role-soft, #{$cb-mint-soft}); border-color: var(--cb-role-action, #{$cb-action}); }
   } @else if $variant == ghost {
-    color: $cb-action-hover;
+    color: var(--cb-role-ink, #{$cb-action-hover});
     background: transparent;
-    &:hover, &:active { color: $cb-action-hover; background: $cb-mint-soft; }
+    &:hover, &:active { color: var(--cb-role-ink, #{$cb-action-hover}); background: var(--cb-role-soft, #{$cb-mint-soft}); }
   } @else if $variant == danger {
     color: $cb-surface;
     background: $cb-danger;

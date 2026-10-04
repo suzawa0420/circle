@@ -1,4 +1,4 @@
-// Circlebook app palette: neutral surfaces with one green accent.
+// Role accents: green for organizers and shared actions, blue for participants.
 $cb-teal: #16835d;
 $cb-action: #16835d;
 $cb-action-hover: #0f6849;
@@ -45,3 +45,7 @@ $cb-danger-hover: #963039;
 $cb-danger-soft: #fff1f2;
 $cb-warning-text: #76551c;
 $cb-warning-soft: #fff5de;
+
+$cb-participant: #2469a8;
+$cb-participant-hover: #1b5183;
+$cb-participant-soft: #edf4fb;

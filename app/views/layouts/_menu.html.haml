@@ -11,7 +11,7 @@
       - if webmaster?
         .menu_btn= link_to "運営管理トップ", webmaster_path
       - elsif member_signed_in?
-        .menu_btn= link_to 'マイページ', member_path(current_member)
+        .menu_btn.cb-participant= link_to 'マイページ', member_path(current_member)
       - elsif admin_user_signed_in?
         - if current_admin_user.users.any?
           .menu_btn= link_to 'マイページ', "/users/#{current_admin_user.users.first.id}/mypage"

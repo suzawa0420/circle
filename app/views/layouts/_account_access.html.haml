@@ -4,7 +4,7 @@
     .account-access__links
       = link_to '新規登録', new_admin_user_registration_path, 'aria-label' => 'サークル主催者の新規登録'
       = link_to 'ログイン', new_admin_user_session_path, 'aria-label' => 'サークル主催者のログイン'
-  .account-access__group
+  .account-access__group.cb-participant
     %strong.account-access__title サークル参加者
     .account-access__links
       = link_to '新規登録', new_member_registration_path, 'aria-label' => 'サークル参加者の新規登録'

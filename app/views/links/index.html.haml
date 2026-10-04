@@ -22,10 +22,10 @@
                   = lazysizes_image_tag link.user.pic_header.url , class:'header_link_imege'
               - if link.user.pic_profile.present?
                 .link_img_profile
-                  = lazysizes_image_tag link.user.pic_profile.url, class:'profile_link_imege', alt: "プロフィール画像｜#{link.user.name}"
+                  = circle_avatar_tag link.user, class:'profile_link_imege', alt: "プロフィール画像｜#{link.user.name}"
               - else
                 .link_img_profile
-                  = lazysizes_image_tag link.user.pic_profile.url , class:'profile_link_imege'
+                  = circle_avatar_tag link.user, class:'profile_link_imege'
               .link_name_wrap
                 .link_name= link.user.name.truncate(12)
                 .link_unique_id

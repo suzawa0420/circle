@@ -68,7 +68,7 @@
     min-height: 40px;
     padding: 8px 14px;
     border-radius: 8px;
-    background: $cb-action;
+    background: var(--cb-role-action, #{$cb-action});
     color: $cb-surface;
     font-size: 13px;
     font-weight: 700;
@@ -78,7 +78,7 @@
   .mobile-site-heading__cta:hover,
   .mobile-site-heading__cta:focus {
     color: $cb-surface;
-    background: $cb-action-hover;
+    background: var(--cb-role-ink, #{$cb-action-hover});
   }
 
   .mobile-bottom-nav {
@@ -132,8 +132,8 @@
   }
 
   .mobile-bottom-nav__circle {
-    background: $cb-mint-soft;
-    color: $cb-action-hover;
+    background: var(--cb-role-soft, #{$cb-mint-soft});
+    color: var(--cb-role-ink, #{$cb-action-hover});
     font-weight: 700;
 
     > span:last-child {
@@ -159,8 +159,8 @@
   }
 
   .mobile-circle-avatar--empty {
-    background: $cb-action;
-    color: $cb-surface;
+    background: $cb-mint-soft;
+    color: $cb-action-hover;
     font-size: 14px;
     font-weight: 700;
   }
@@ -185,7 +185,7 @@
     .mobile-circle-avatar { width: 42px; height: 42px; }
     &.is-selected,
     &:hover,
-    &:focus-visible { background: $cb-mint-soft; color: $cb-action-hover; }
+    &:focus-visible { background: var(--cb-role-soft, #{$cb-mint-soft}); color: var(--cb-role-ink, #{$cb-action-hover}); }
   }
 
   .mobile-circle-list__name {
@@ -201,7 +201,7 @@
     padding: 4px 8px;
     border-radius: 12px;
     background: $cb-surface;
-    color: $cb-action-hover;
+    color: var(--cb-role-ink, #{$cb-action-hover});
     font-size: 11px;
   }
 
@@ -226,8 +226,8 @@
 
   .mobile-bottom-nav__item--register,
   .mobile-bottom-nav__item.is-active {
-    color: $cb-action;
-    background: $cb-mint-soft;
+    color: var(--cb-role-action, #{$cb-action});
+    background: var(--cb-role-soft, #{$cb-mint-soft});
     font-weight: 700;
   }
 
@@ -350,15 +350,15 @@
   }
 
   .mobile-menu-panel__group:first-child a:first-of-type {
-    background: $cb-mint-soft;
-    border-color: $cb-action;
-    color: $cb-action-hover;
+    background: var(--cb-role-soft, #{$cb-mint-soft});
+    border-color: var(--cb-role-action, #{$cb-action});
+    color: var(--cb-role-ink, #{$cb-action-hover});
   }
 
   .mobile-menu-panel__group a:hover,
   .mobile-menu-panel__group a:focus-visible {
-    color: $cb-action-hover;
-    background: $cb-mint-soft;
+    color: var(--cb-role-ink, #{$cb-action-hover});
+    background: var(--cb-role-soft, #{$cb-mint-soft});
   }
 
   .mobile-menu-panel__logout {
@@ -397,18 +397,18 @@
       border: 0;
       border-radius: 8px;
       background: $cb-canvas;
-      color: $cb-action-hover;
+      color: var(--cb-role-ink, #{$cb-action-hover});
       font-size: 13px;
       font-weight: 700;
       text-decoration: none;
     }
 
     a.mobile-menu-account__register {
-      background: $cb-action;
+      background: var(--cb-role-action, #{$cb-action});
       color: $cb-surface;
 
       &:hover,
-      &:focus-visible { background: $cb-action-hover; color: $cb-surface; }
+      &:focus-visible { background: var(--cb-role-ink, #{$cb-action-hover}); color: $cb-surface; }
     }
   }
 
@@ -432,8 +432,8 @@
 
   .mobile-menu-panel__logout button:hover,
   .mobile-menu-panel__logout button:focus-visible {
-    color: $cb-action-hover;
-    background: $cb-mint-soft;
+    color: var(--cb-role-ink, #{$cb-action-hover});
+    background: var(--cb-role-soft, #{$cb-mint-soft});
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -17,7 +17,7 @@
               .form.users-form
                 .form-body
                   .header-post.cont-width
-                    = lazysizes_image_tag @user.pic_profile.url , class:'content_icon'
+                    = circle_avatar_tag @user, class:'content_icon'
                     .post-user_wrap
                       .post-user
                         .post-top= @user.name.truncate(40)

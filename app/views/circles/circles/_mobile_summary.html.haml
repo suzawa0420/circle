@@ -8,7 +8,7 @@
     - if @user.pic_profile.present?
       = image_tag @user.pic_profile.url, alt: "", class: "mobile-circle-summary__image"
     - else
-      .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }
+      .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
     .mobile-circle-summary__heading
       %h2= @user.name
       %p

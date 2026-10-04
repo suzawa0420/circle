@@ -17,7 +17,7 @@
       %i.fa.fa-search{ "aria-hidden" => "true" }
       %span サークル検索
     = render "layouts/mobile_message_link"
-    = link_to member_path(current_member, anchor: "favorites"), class: "mobile-bottom-nav__item" do
+    = link_to member_path(current_member, anchor: "favorites"), class: "mobile-bottom-nav__item cb-participant" do
       %i.fa.fa-bookmark{ "aria-hidden" => "true" }
       %span お気に入り
   - else

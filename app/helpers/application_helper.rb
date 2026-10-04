@@ -1,5 +1,14 @@
 module ApplicationHelper
 
+  def circle_avatar_tag(circle, **options)
+    return lazysizes_image_tag(circle.pic_profile.url, options) if circle.pic_profile.present?
+
+    options[:class] = [options[:class], 'circle-avatar--empty'].compact.join(' ')
+    options.delete(:alt)
+    options['aria-hidden'] = 'true'
+    content_tag(:span, circle.name.to_s.strip.first.presence || '？', options)
+  end
+
   def fast_public_listing?
     public_search_listing? && !admin_user_signed_in? && !member_signed_in? && !webmaster? && !exhibition_group_signed_in?
   end

@@ -1,4 +1,4 @@
 <% person = role == 'owner' ? conversation.user : conversation.member %>
 <% picture = role == 'owner' ? person.pic_profile : person.image_profile %>
 <% name = role == 'owner' ? person.name : person.nickname %>
-<span class="chat-avatar" aria-hidden="true"><% if picture.present? %><%= image_tag picture.url, alt: '', loading: 'lazy' %><% else %><%= name.to_s.first.presence || '？' %><% end %></span>
+<span class="chat-avatar chat-avatar--<%= role %>" aria-hidden="true"><% if picture.present? %><%= image_tag picture.url, alt: '', loading: 'lazy' %><% else %><%= name.to_s.first.presence || '？' %><% end %></span>

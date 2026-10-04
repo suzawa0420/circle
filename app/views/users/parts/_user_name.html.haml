@@ -1,6 +1,6 @@
 .user_profile_wrap
   = link_to(circle_path(user.id)) do
-    = lazysizes_image_tag user.pic_profile.url , class:'image_icon'
+    = circle_avatar_tag user, class:'image_icon'
     .user_profile
       %h2.user_name= user.name.truncate(40)
   .reset

@@ -221,7 +221,7 @@
   .chat-talk__preview { @include cb-type(compact); color: $cb-muted; }
   .chat-talk__circle, .chat-talk__status, .chat-talk__meta, .chat-date, .chat-message__name, .chat-message__meta, .chat-message time { font-size: 12px; color: $cb-muted; }
   .chat-body p { @include cb-type(body); }
-  .chat-shell .chat-button { background: $cb-action !important; border-color: $cb-action !important; border-radius: $cb-radius-control; }
+  .chat-shell .chat-button { background: var(--cb-role-action, #{$cb-action}) !important; border-color: var(--cb-role-action, #{$cb-action}) !important; border-radius: $cb-radius-control; }
   .chat-body { border-color: $cb-border; color: $cb-text; }
   .chat-message--mine .chat-body { background: $cb-mint-soft; border-color: $cb-border; }
   .chat-talk { min-width: 0; }
@@ -461,3 +461,55 @@
 .cb-site .user_slide_wrap > a:active { color: $cb-text; }
 .cb-site .cb-blog-article .form-body.blog_show { padding: cb-space(5) cb-space(5) cb-space(6); }
 .cb-site .cb-blog-article { max-width: 760px; margin-left: auto; margin-right: auto; }
+
+// Explicit role scopes preserve the green shared search and organizer identity.
+.cb-site .participant-shell, .cb-site .cb-participant {
+  --cb-role-action: #{$cb-participant};
+  --cb-role-ink: #{$cb-participant-hover};
+  --cb-role-soft: #{$cb-participant-soft};
+}
+.cb-site .participant-shell a:not([class]),
+.cb-site .participant-shell .participant-text-link,
+.cb-site .participant-shell .participant-auth-switch a,
+.cb-site .participant-shell .participant-link-list a,
+.cb-site .participant-shell .participant-section__heading a { color: $cb-participant-hover; }
+.cb-site .participant-shell :focus-visible, .cb-site .cb-participant:focus-visible,
+.cb-site .cb-participant :focus-visible { outline-color: $cb-participant; }
+.cb-site .cb-participant .login-choice__role,
+.cb-site .account-access .cb-participant .account-access__links a { color: $cb-participant-hover; }
+.cb-site .cb-participant .login-choice__art { background: $cb-participant-soft; }
+.cb-site .account-access .cb-participant .account-access__links a:hover { background: $cb-participant-soft; }
+.cb-site .chat-shell.cb-participant .chat-badge { background: $cb-participant; }
+.cb-site .chat-shell.cb-participant .chat-talk:hover { background: $cb-participant-soft; }
+.cb-site .chat-shell.cb-participant .chat-rating-option:has(input:checked) {
+  background: $cb-participant-soft; border-color: $cb-participant; color: $cb-participant-hover;
+  box-shadow: inset 0 0 0 1px $cb-participant;
+}
+.cb-site .chat-shell.cb-participant .chat-evaluation input { accent-color: $cb-participant; }
+.cb-site .chat-shell.cb-participant .chat-rating-option:focus-within { outline-color: $cb-participant; }
+.cb-site .chat-avatar--member { background: $cb-participant-soft; color: $cb-participant-hover; }
+.cb-site .chat-avatar--owner { background: $cb-mint-soft; color: $cb-action-hover; }
+.cb-site .chat-message--member .chat-body { background: $cb-participant-soft; }
+.cb-site .chat-message--owner .chat-body { background: $cb-mint-soft; }
+.cb-site .mobile-circle-summary__image--empty, .cb-site .circle-avatar--empty {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: $cb-mint-soft; color: $cb-action-hover; font-weight: 700;
+}
+.cb-site .mobile-circle-summary__image--empty { font-size: 22px; }
+.cb-site .circle-avatar--empty { object-fit: none; border-radius: 50%; font-size: 24px; }
+
+
+.cb-site .cb-participant .inquiry-guidance__message {
+  --cb-role-action: #{$cb-action}; --cb-role-ink: #{$cb-action-hover}; --cb-role-soft: #{$cb-mint-soft};
+}
+.cb-site .contact-button > a.cb-participant { background: $cb-participant; color: $cb-surface; }
+
+.cb-site .header-menus_sp a.cb-participant { color: $cb-participant-hover; }
+.cb-site .menu_btn.cb-participant > a { background: $cb-participant; color: $cb-surface; }
+.cb-site .wm-message--member { background: $cb-participant-soft; }
+.cb-site .wm-message--member .wm-badge { color: $cb-participant-hover; background: $cb-participant-soft; }
+
+.cb-site .chat-shell.cb-participant .chat-back,
+.cb-site .chat-shell.cb-participant .chat-evaluation-link,
+.cb-site .chat-shell.cb-participant .chat-person a,
+.cb-site .chat-shell.cb-participant .chat-evaluation a { color: $cb-participant-hover; }

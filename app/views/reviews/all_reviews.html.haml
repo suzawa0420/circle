@@ -9,7 +9,7 @@
           = link_to(circle_path(review.user.id)) do
             .schedule_profile_wrap
               .user-content
-                = lazysizes_image_tag review.user.pic_profile.url , class:'image_icon'
+                = circle_avatar_tag review.user, class:'image_icon'
                 .list_wrapper.contact_name_wrap
                   .list_01
                     %h2.user_name= review.user.name

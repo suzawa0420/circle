@@ -20,7 +20,7 @@
                   = sub_prefecture.name
     = link_to(user_path(user.id)) do
       .user-content
-        = lazysizes_image_tag user.pic_profile.url , class:'image_icon'
+        = circle_avatar_tag user, class:'image_icon'
         .list_wrapper
           .list_01
             %h2.user_name= user.name.truncate(40)

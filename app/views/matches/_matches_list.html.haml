@@ -6,7 +6,7 @@
           - if matching.user.pic_profile.present?
             %img.matching_icon{:alt => "プロフィール｜#{matching.user.name}", :src => "#{matching.user.pic_profile.url}"}/
           - else
-            = lazysizes_image_tag matching.user.pic_profile.url , class:'matching_icon'
+            = circle_avatar_tag matching.user, class:'matching_icon'
           %h2.matching_name= matching.user.name
           .article_item.article_padding
             %table

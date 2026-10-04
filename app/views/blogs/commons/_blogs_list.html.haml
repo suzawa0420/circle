@@ -1,7 +1,7 @@
 - if admin_user_signed_in? && current_admin_user.first_user
   .post_message
     = link_to(circle_path(current_admin_user.first_user)) do
-      = lazysizes_image_tag current_admin_user.first_user.pic_profile.url , class:'post_image_icon'
+      = circle_avatar_tag current_admin_user.first_user, class:'post_image_icon'
     = link_to(new_circle_blog_path(current_admin_user.first_user)) do
       .post_link サークル活動をつぶやく！
 
@@ -11,7 +11,7 @@
       .blog-body
         = link_to(circle_blog_path(blog.user_id, blog.id)) do
           .header-post.cont-width
-            = lazysizes_image_tag blog.user.pic_profile.url , class:'content_icon'
+            = circle_avatar_tag blog.user, class:'content_icon'
             .post-user_wrap
               .post-user
                 .post-top= blog.user.name.truncate(40)

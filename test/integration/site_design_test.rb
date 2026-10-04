@@ -51,6 +51,35 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select 'h1', count: 1, text: question.content
     assert_select 'textarea[name="question[answer]"]'
   end
+  test 'participant entry points have an explicit role without recoloring organizer entry points' do
+    get '/login'
+    assert_response :success
+    assert_select '.login-choice__card.cb-participant #participant-login-title', count: 1
+    assert_select '.login-choice__card.cb-participant #organizer-login-title', count: 0
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.mobile-circle-save.cb-participant', minimum: 1
+    assert_select '.mobile-circle-summary__image--empty', text: 'チ'
+    assert_select '.circle-avatar--empty.profile_imege', text: 'チ'
+  end
+
+  test 'participant chat scope and author identities remain distinct' do
+    accept_conversation
+    post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '.chat-shell.cb-participant', count: 1
+    assert_select '.chat-avatar--owner', minimum: 1
+    assert_select '.chat-message--member', minimum: 1
+    assert_select '.chat-message--owner', minimum: 1
+    delete destroy_member_session_path
+    login(@owner)
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '.chat-shell.cb-participant', count: 0
+    assert_select '.chat-avatar--member', minimum: 1
+  end
+
   private
 
   def login(owner)

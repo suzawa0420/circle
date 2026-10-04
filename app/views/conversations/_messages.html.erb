@@ -6,7 +6,7 @@
     <article class="chat-card inquiry-guidance__message"><strong>サークルからの自動案内</strong><div class="chat-body"><%= automatic_message_body(message.body) %></div><% if @role == 'owner' && message.body.start_with?("主催者からのご案内・確認事項\n") %><%= link_to 'お問い合わせ内容を編集する', inquiry_settings_path(@conversation.user), class: 'cb-button cb-button--secondary inquiry-guidance__edit' %><% end %><time class="chat-message__meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%H:%M') %></time></article>
   <% else %>
   <% mine = message.sender_role == @role %>
-  <article class="chat-message <%= 'chat-message--mine' if mine %>">
+  <article class="chat-message chat-message--<%= message.sender_role %> <%= 'chat-message--mine' if mine %>">
     <% unless mine %><%= render 'avatar', conversation: @conversation, role: message.sender_role %><% end %>
     <div class="chat-message__content">
       <% unless mine %><strong class="chat-message__name"><%= message.sender_role == 'owner' ? @conversation.user.name : @conversation.member.nickname %></strong><% end %>

@@ -20,7 +20,7 @@
 }
 
 .mobile-circle-summary__back {
-  color: $cb-action;
+  color: var(--cb-role-action, #{$cb-action});
   font-size: 12px;
   font-weight: 700;
 }
@@ -38,7 +38,7 @@
   flex: none;
   border-radius: 50%;
   object-fit: cover;
-  background: $cb-mint-soft;
+  background: var(--cb-role-soft, #{$cb-mint-soft});
 }
 
 .mobile-circle-summary__heading {
@@ -63,7 +63,7 @@
   border: 1px solid $cb-border;
   border-radius: 8px;
   background: $cb-surface;
-  color: $cb-action-hover;
+  color: var(--cb-role-ink, #{$cb-action-hover});
   font-size: 11px;
   font-weight: 700;
   line-height: 1.2;
@@ -74,9 +74,9 @@
   &.is-saved,
   &:hover,
   &:focus-visible {
-    border-color: $cb-action;
-    background: $cb-mint-soft;
-    color: $cb-action-hover;
+    border-color: var(--cb-role-action, #{$cb-action});
+    background: var(--cb-role-soft, #{$cb-mint-soft});
+    color: var(--cb-role-ink, #{$cb-action-hover});
   }
 }
 
@@ -115,7 +115,7 @@
   padding: 9px 12px;
   border-radius: 8px;
   color: $cb-surface;
-  background: $cb-action;
+  background: var(--cb-role-action, #{$cb-action});
   font-size: 14px;
   font-weight: 700;
   text-align: center;
@@ -163,9 +163,9 @@
 }
 
 .mobile-circle-summary__tabs > a.is-current {
-  color: $cb-action;
-  border-bottom-color: $cb-action;
-  background: $cb-mint-soft;
+  color: var(--cb-role-action, #{$cb-action});
+  border-bottom-color: var(--cb-role-action, #{$cb-action});
+  background: var(--cb-role-soft, #{$cb-mint-soft});
   font-weight: 700;
 }
 
@@ -218,7 +218,7 @@
   .circle-desktop-toolbar__logo img { width: 180px; height: auto; display: block; }
   .circle-desktop-toolbar nav { display: flex; align-items: center; gap: 24px; }
   .circle-desktop-toolbar nav > a, .circle-desktop-menu summary {
-    display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; font-weight: 700; color: $cb-action-hover;
+    display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; font-weight: 700; color: var(--cb-role-ink, #{$cb-action-hover});
   }
   .circle-desktop-menu { position: relative; }
   .circle-desktop-menu summary { list-style: none; cursor: pointer; }
@@ -228,5 +228,5 @@
     border-radius: 12px; background: $cb-surface; box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
   }
   .circle-desktop-menu__links a { display: block; padding: 12px; border-radius: 6px; color: $cb-text; }
-  .circle-desktop-menu__links a:hover, .circle-desktop-menu__links a:focus-visible { background: $cb-mint-soft; }
+  .circle-desktop-menu__links a:hover, .circle-desktop-menu__links a:focus-visible { background: var(--cb-role-soft, #{$cb-mint-soft}); }
 }

@@ -1,7 +1,7 @@
 - if admin_user_signed_in?
   .post_message
     = link_to(circle_path(@user)) do
-      = lazysizes_image_tag @user.pic_profile.url , class:'post_image_icon'
+      = circle_avatar_tag @user, class:'post_image_icon'
     = link_to(new_user_schedule_path(@user)) do
       .post_link スケジュールを追加する！
 - if @schedules.present?
@@ -73,7 +73,7 @@
           .schedule_user_wrap
             .schedule_list_sub_title 主催サークル
             .user_profile_wrap
-              = lazysizes_image_tag schedule.user.pic_profile.url , class:'image_icon'
+              = circle_avatar_tag schedule.user, class:'image_icon'
               .user_profile
                 %h3.user_name= schedule.user.name.truncate(40)
               .reset
