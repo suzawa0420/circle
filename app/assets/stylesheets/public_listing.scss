@@ -1,0 +1,3 @@
+// Same source of truth as other screens; PublicListingStyles removes unrelated
+// selectors after Sass compilation, including inside responsive media queries.
+@import "application";

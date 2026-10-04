@@ -39,7 +39,7 @@ case "$mode" in
       npm ci --ignore-scripts --no-audit --no-fund
     fi
     # Retain older digested assets throughout rolling deployments. Never clobber.
-    if ! git diff --quiet "$previous" "$revision" -- app/assets vendor/assets config/initializers/assets.rb Gemfile.lock package-lock.json; then
+    if ! git diff --quiet "$previous" "$revision" -- app/assets vendor/assets app/views app/helpers lib/public_listing_styles.rb config/initializers/assets.rb config/initializers/public_listing_styles.rb Gemfile.lock package-lock.json; then
       bundle exec rails assets:precompile
     fi
     bundle exec ruby bin/verify_brand_assets

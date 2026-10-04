@@ -16,6 +16,11 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{@path}"
     assert_select 'meta[name=robots][content*=noindex]', count: 0
     assert_select 'script[src*=public_listing][defer]', count: 1
+    assert_select 'link[rel=stylesheet][href*=public_listing]', count: 1
+    assert_select 'link[rel=stylesheet][href*=application-]', count: 0
+    assert_select 'meta[name=listing-adsense]', count: 1
+    assert_select 'script[src*=adsbygoogle]', count: 0
+    assert_select 'script', text: /GTM-MD88D9HB/
     assert_select 'script[src*=jquery-ui]', count: 0
     assert_select '[data-deferred-listing-ad] .admax-switch', count: 1
     assert_select 'script[src="https://adm.shinobi.jp/st/t.js"]', count: 0

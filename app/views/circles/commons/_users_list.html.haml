@@ -8,7 +8,7 @@
 - is_master_account = webmaster?
 - listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
-- cache [users, is_master_account, 'seo-list-v2', 'stored-image-extension-v1'] do
+- cache [users, is_master_account, 'seo-list-v3', 'stored-image-extension-v1'] do
   %ul
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
@@ -25,7 +25,7 @@
               - else
                 %span.ribbon.red= user.switch
             .tag_btn_list.slide_content
-            = image_tag user.pic_profile.url, class: 'image_icon', alt: '', loading: 'lazy', decoding: 'async'
+            = image_tag circle_listing_image_url(user, 'profile'), class: 'image_icon', alt: '', width: 160, height: 160, loading: 'lazy', decoding: 'async'
             - if user.user_time.present?
               .post-bottom.user_updated
                 更新日：#{time_tag user.user_time.to_date}

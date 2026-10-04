@@ -15,10 +15,10 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 
 Rails.application.config.assets.precompile += %w( swiper.min.css )
 Rails.application.config.assets.precompile += %w( photoswipe.css )
+Rails.application.config.assets.precompile += %w( public_listing.css )
 
 Rails.application.config.assets.precompile += %w( swiper.min.js )
 Rails.application.config.assets.precompile += %w( jquery-1.10.2.min.js )
 Rails.application.config.assets.precompile += %w( jquery.photoswipe.js )
 Rails.application.config.assets.precompile += %w( common.coffee.js )
 Rails.application.config.assets.precompile += %w( *.js *application.css)
-

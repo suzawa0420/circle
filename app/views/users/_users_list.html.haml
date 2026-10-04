@@ -20,7 +20,7 @@
             - else
               %span.ribbon.red= user.switch
           .tag_btn_list.slide_content
-          = image_tag user.pic_profile.url, class: 'image_icon', alt: '', loading: 'lazy', decoding: 'async'
+          = image_tag circle_listing_image_url(user, 'profile'), class: 'image_icon', alt: '', width: 160, height: 160, loading: 'lazy', decoding: 'async'
           - if user.user_time.present?
             .post-bottom.user_updated
               更新日：#{time_tag user.user_time.to_date}

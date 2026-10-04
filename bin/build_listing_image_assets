@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
+require 'mini_magick'
+
+root = File.expand_path('..', __dir__)
+[
+  ['default.png', 'listing-default-profile-v1.jpg', '160x160^', '160x160', '78'],
+  ['default.png', 'listing-default-header-v1.jpg', '400x160^', '400x160', '78'],
+  ['logo.png', 'listing-logo-v1.webp', '640x', nil, '90']
+].each do |source, destination, size, extent, quality|
+  image = MiniMagick::Image.open(File.join(root, 'public/images', source))
+  image.combine_options do |command|
+    command.thumbnail size
+    command.gravity 'center'
+    command.extent extent if extent
+    command.strip
+    command.quality quality
+  end
+  image.format(File.extname(destination).delete_prefix('.'))
+  image.write(File.join(root, 'public/images', destination))
+  File.chmod(0o644, File.join(root, 'public/images', destination))
+end

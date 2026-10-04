@@ -5,9 +5,15 @@ module ApplicationHelper
   end
 
   def circle_listing_header_image(user, first: false)
-    image_tag user.pic_header.url, class: 'header_imege_user_list',
+    image_tag circle_listing_image_url(user, 'header'), class: 'header_imege_user_list',
       alt: "#{user.name}の活動紹介", loading: first ? 'eager' : 'lazy',
       fetchpriority: first ? 'high' : 'auto', decoding: 'async'
+  end
+
+  def circle_listing_image_url(user, kind)
+    uploader = user.public_send(ListingImage::MOUNTS.fetch(kind))
+    return "/images/listing-default-#{kind}-v1.jpg" if uploader.identifier.blank?
+    listing_image_path(kind: kind, id: user.id, fingerprint: ListingImage.fingerprint(uploader))
   end
 
   def circle_listing_description

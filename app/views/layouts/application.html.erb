@@ -17,8 +17,12 @@
 
       <% unless webmaster? || %w[member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google AdSense -->
+      <% if fast_public_listing? %>
+      <meta name="listing-adsense" content="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449">
+      <% else %>
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449"
            crossorigin="anonymous"></script>
+      <% end %>
       <% end %>
 
       <% if webmaster? || %w[conversations member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
@@ -29,7 +33,7 @@
       <%= csp_meta_tag %>
       <meta name="viewport" content="width=device-width,initial-scale=1.0">
       <meta name="theme-color" content="#16835D">
-      <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+      <%= stylesheet_link_tag(fast_public_listing? ? 'public_listing' : 'application', media: 'all', 'data-turbolinks-track': 'reload') %>
 
 
       <%= display_meta_tags(default_meta_tags) %>

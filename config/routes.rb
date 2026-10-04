@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   root 'home#index'
+  get '/circle-images/:kind/:id/:fingerprint.jpg', to: 'listing_images#show',
+    as: :listing_image, constraints: { kind: /profile|header/, id: /\d+/, fingerprint: /[a-f0-9]{24}/ }
   resources :columns
 
   resources :conversations, only: [:index, :show] do

@@ -1,6 +1,9 @@
 .mobile-site-heading
   = link_to root_path, class: "mobile-site-heading__brand", "aria-label" => "サークルブック ホーム" do
-    %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
+    %picture
+      - if fast_public_listing?
+        %source{ srcset: "/images/listing-logo-v1.webp", type: "image/webp" }
+      %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
   - if webmaster?
     = link_to "運営管理", webmaster_path, class: "mobile-site-heading__cta"
   - elsif admin_user_signed_in?

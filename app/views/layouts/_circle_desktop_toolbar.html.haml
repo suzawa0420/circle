@@ -1,6 +1,9 @@
 .circle-desktop-toolbar
   = link_to root_path, class: "circle-desktop-toolbar__logo" do
-    %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
+    %picture
+      - if fast_public_listing?
+        %source{ srcset: "/images/listing-logo-v1.webp", type: "image/webp" }
+      %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
   %nav{ "aria-label" => "サイトのメインメニュー" }
     = link_to circles_path do
       %i.fa.fa-search{ "aria-hidden" => "true" }
