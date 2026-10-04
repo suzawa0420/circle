@@ -48,7 +48,10 @@ Rails.application.routes.draw do
     resources :events, only: :index
   end
 
-  get '/sitemap', to: redirect('https://s3-ap-northeast-1.amazonaws.com/circlebook/sitemaps/sitemap.xml.gz')
+  get '/sitemap', to: 'sitemaps#index'
+  get '/sitemap.xml', to: 'sitemaps#index', format: false
+  get '/sitemaps/:name.xml', to: 'sitemaps#show',
+      constraints: { name: /sitemap[1-9][0-9]*/ }, format: false
 
 
   # サークル Circle = User
