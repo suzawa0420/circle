@@ -6,7 +6,7 @@ require 'set'
 # conditional markup and pagination as well as the stylesheet itself.
 class PublicListingStyles
   SOURCE_GLOBS = %w[
-    app/views/layouts/* app/views/circles/commons/*
+    app/views/layouts/* app/views/shared/* app/views/circles/commons/*
     app/views/circles/circles/index* app/views/circles/search/*
     app/views/circles/events/**/*.haml app/views/circles/prefectures/**/*.haml
     app/views/circles/tags/**/*.haml app/views/tags/*.haml
@@ -23,7 +23,7 @@ class PublicListingStyles
     root = Rails.root
     files = SOURCE_GLOBS.flat_map { |glob| Dir[root.join(glob)] }.select { |path| File.file?(path) }.sort
     files.each { |path| context.depend_on(path) }
-    %w[app/views/circles app/views/layouts app/views/tags app/views/users app/helpers app/assets/javascripts].each do |directory|
+    %w[app/views/circles app/views/layouts app/views/shared app/views/tags app/views/users app/helpers app/assets/javascripts].each do |directory|
       ([root.join(directory).to_s] + Dir[root.join(directory, '**/')]).uniq.each { |path| context.depend_on(path) }
     end
     context.depend_on(__FILE__)
