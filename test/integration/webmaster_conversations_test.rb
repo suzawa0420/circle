@@ -89,6 +89,22 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) { get super_admin_conversation_path('missing-public-id') }
   end
 
+  test 'webmaster sees recipient read status on messages and the latest preview without changing it' do
+    member_message = @conversation.chat_messages.where(sender_role: 'member').last
+    @conversation.mark_read!('owner', through: member_message.id)
+    accept_conversation
+    login_master
+    get super_admin_conversations_path
+    assert_select '.wm-read-receipt', text: '参加者：未読'
+    get super_admin_conversation_path(@conversation)
+    assert_select '.wm-read-receipt', text: '主催者：既読'
+    assert_select '.wm-read-receipt', text: '参加者：未読'
+    assert_equal 0, @conversation.reload.member_read_message_id
+    @conversation.mark_read!('member', through: @conversation.chat_messages.maximum(:id))
+    get super_admin_conversations_path
+    assert_select '.wm-read-receipt', text: '参加者：既読'
+  end
+
   private
   def login_master
     post webmaster_session_path, params: { webmaster: { email: @master.email, password: 'test-password-123' } }

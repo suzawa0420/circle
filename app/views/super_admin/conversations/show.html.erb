@@ -12,6 +12,7 @@
   <% @messages.each do |message| %>
     <article class="webmaster-card wm-message wm-message--<%= message.sender_role %>">
       <div class="wm-card-heading"><span class="message-role message-role--<%= message.automatic? ? "owner" : message.sender_role %>"><%= message.automatic? ? "サークルからの自動案内" : message.sender_label %></span><time class="wm-meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div>
+      <% unless message.automatic? %><p class="wm-meta wm-read-receipt"><%= message.sender_role == 'owner' ? '参加者' : '主催者' %>：<%= @conversation.message_read?(message) ? '既読' : '未読' %></p><% end %>
       <div class="wm-body"><%= message.automatic? ? automatic_message_body(message.body) : chat_message_body(message.body) %></div>
     </article>
   <% end %>

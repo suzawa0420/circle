@@ -73,6 +73,14 @@ class Conversation < ApplicationRecord
     end
   end
 
+  def recipient_read_message_id(sender_role)
+    self[sender_role == 'owner' ? 'member_read_message_id' : 'owner_read_message_id']
+  end
+
+  def message_read?(message)
+    !message.automatic? && message.conversation_id == id && message.id <= recipient_read_message_id(message.sender_role)
+  end
+
   def mark_read!(role, through:)
     with_lock do
       self["#{role}_read_message_id"] = [self["#{role}_read_message_id"], through].max

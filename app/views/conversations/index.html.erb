@@ -18,8 +18,8 @@
       <% role = member_signed_in? && conversation.member_id == current_member.id ? 'member' : 'owner' %>
       <% incoming = role == 'member' ? 'owner' : 'member' %>
       <% latest = @latest_messages[conversation.id] %>
-      <% unread = @unread_conversation_ids[role].include?(conversation.id) %>
-      <%= link_to conversation_path(conversation), class: "chat-talk #{'chat-talk--unread' if unread}" do %>
+      <% unread = @unread_counts[role].fetch(conversation.id, 0) %>
+      <%= link_to conversation_path(conversation), class: "chat-talk #{'chat-talk--unread' if unread.positive?}" do %>
         <%= render 'avatar', conversation: conversation, role: incoming %>
         <span class="chat-talk__content">
           <strong class="chat-talk__name"><%= role == 'member' ? conversation.user.name : "#{conversation.member.nickname}さん" %></strong>
@@ -28,7 +28,7 @@
           <span class="chat-talk__status"><%= conversation.accepted_at ? '受付済み' : '返信待ち' %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
           <% if role == 'owner' %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>
         </span>
-        <span class="chat-talk__meta"><% if latest %><time datetime="<%= latest.created_at.iso8601 %>"><%= latest.created_at.to_date == Date.current ? latest.created_at.strftime('%H:%M') : latest.created_at.strftime('%-m/%-d') %></time><% end %><% if unread %><span class="chat-badge">未読</span><% end %></span>
+        <span class="chat-talk__meta"><% if latest %><time datetime="<%= latest.created_at.iso8601 %>"><%= latest.created_at.to_date == Date.current ? latest.created_at.strftime('%H:%M') : latest.created_at.strftime('%-m/%-d') %></time><% end %><% if unread.positive? %><span class="chat-badge" aria-label="未読<%= unread %>件"><%= unread %></span><% end %></span>
       <% end %>
     <% end %>
   </div>

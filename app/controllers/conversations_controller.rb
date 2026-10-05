@@ -10,10 +10,10 @@ class ConversationsController < ApplicationController
     @conversations = accessible_conversations.where(id: ChatMessage.select(:conversation_id)).includes(:user, :member).order(Arel.sql('(SELECT MAX(chat_messages.id) FROM chat_messages WHERE chat_messages.conversation_id = conversations.id) DESC')).page(params[:page]).per(20)
     ids = @conversations.map(&:id)
     @latest_messages = ChatMessage.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id, id: :desc).index_by(&:conversation_id)
-    @unread_conversation_ids = %w[member owner].index_with do |role|
+    @unread_counts = %w[member owner].index_with do |role|
       incoming = role == 'member' ? 'owner' : 'member'
       ChatMessage.joins(:conversation).where(conversation_id: ids, sender_role: incoming)
-        .where("chat_messages.id > conversations.#{role}_read_message_id").distinct.pluck(:conversation_id)
+        .where("chat_messages.id > conversations.#{role}_read_message_id").group(:conversation_id).count
     end
   end
 
@@ -40,17 +40,18 @@ class ConversationsController < ApplicationController
 
   def show
     @conversation.publish_reviews!
-    @messages = @conversation.chat_messages.order(id: :desc).page(params[:page]).per(50)
-    @conversation.mark_read!(@role, through: @messages.first&.id || 0) if params[:page].blank? || params[:page] == '1'
+    @messages = @conversation.chat_messages.order(id: :desc).page(params[:page]).per(50).load
+    mark_messages_read if params[:page].blank? || params[:page] == '1'
     @own_review = @conversation.conversation_reviews.find_by(author_role: @role)
     @public_reviews = @conversation.conversation_reviews.publicly_visible.order(:id)
   end
 
   def messages
-    @messages = @conversation.chat_messages.order(id: :desc).limit(50)
-    @conversation.mark_read!(@role, through: @messages.first&.id || 0)
+    @messages = @conversation.chat_messages.order(id: :desc).limit(50).load
+    mark_messages_read
     render json: { latest_id: @messages.first&.id || 0,
                    html: render_to_string(partial: 'messages', formats: [:html]),
+                   recipient_read_id: @conversation.recipient_read_message_id(@role),
                    accepted: @conversation.accepted_at.present? }
   end
 
@@ -101,6 +102,12 @@ class ConversationsController < ApplicationController
   end
 
   private
+
+  def mark_messages_read
+    return if webmaster_signed_in?
+
+    @conversation.mark_read!(@role, through: @messages.first&.id || 0)
+  end
 
   def private_page
     response.headers['Cache-Control'] = 'private, no-store'

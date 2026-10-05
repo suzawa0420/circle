@@ -38,7 +38,7 @@
 .chat-talk__circle, .chat-talk__status { display: block; font-size: 11px; color: $cb-muted; margin-top: 4px; }
 .chat-talk__meta { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-size: 11px; color: $cb-muted; }
 .chat-talk--unread .chat-talk__preview { color: $cb-text; font-weight: 600; }
-.chat-badge { font-size: 10px; background: $cb-action; color: #fff; }
+.chat-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; box-sizing: border-box; font-size: 12px; font-weight: 700; background: $cb-action; color: #fff; }
 .chat-thread-heading { position: static; display: flex; align-items: center; gap: 12px; background: transparent; width: auto; height: auto; padding: 0; }
 .chat-thread-heading h1 { flex: 1; min-width: 0; font-size: 18px; overflow-wrap: anywhere; }
 .chat-thread-heading .chat-avatar { width: 40px; height: 40px; font-size: 17px; }

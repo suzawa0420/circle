@@ -37,7 +37,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.chat-talk', count: 1
     assert_select '.chat-talk__preview', text: 'お問い合わせありがとうございます。ぜひお越しください。'
-    assert_select '.chat-badge', text: '未読'
+    assert_select '.chat-badge[aria-label="未読1件"]', text: '1'
     assert_not_includes response.body, '別の参加者の非公開メッセージ'
     get conversation_path(@conversation)
     assert_select 'body.chat-thread-page'
@@ -53,6 +53,77 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_select '.chat-talk', count: 2
     assert_select '.chat-talk:first-child .chat-talk__name', text: "#{@other_member.nickname}さん"
     assert_select '.chat-talk:first-child .chat-talk__preview', text: '別の参加者の非公開メッセージ'
+  end
+
+  test 'unread counts and individual receipts follow both recipients without counting automatic messages' do
+    first = @conversation.chat_messages.where(sender_role: 'member').first
+    second = @conversation.send_message!('member', '続けて質問があります。')
+    sign_in @owner
+    get conversations_path
+    assert_select '.chat-badge[aria-label="未読2件"]', text: '2'
+    assert_equal 0, @conversation.reload.owner_read_message_id
+    get conversation_path(@conversation)
+    assert_equal second.id, @conversation.reload.owner_read_message_id
+    get conversations_path
+    assert_select '.chat-badge', count: 0
+    sign_out @owner
+
+    sign_in @member
+    get conversation_path(@conversation)
+    [first, second].each { |message| assert_select ".chat-read-receipt[data-message-id='#{message.id}']", text: '既読' }
+    third = @conversation.send_message!('member', '追加のお問い合わせです。')
+    get messages_conversation_path(@conversation), as: :json
+    assert_equal second.id, response.parsed_body['recipient_read_id']
+    assert_equal '未読', Nokogiri::HTML.fragment(response.parsed_body['html']).at_css("[data-message-id='#{third.id}']").text
+    sign_out @member
+
+    sign_in @owner
+    get conversations_path
+    assert_select '.chat-badge[aria-label="未読1件"]', text: '1'
+    get messages_conversation_path(@conversation), as: :json
+    accept_conversation
+    reply = @conversation.chat_messages.order(:id).last
+    get conversation_path(@conversation)
+    assert_select ".chat-read-receipt[data-message-id='#{reply.id}']", text: '未読'
+    sign_out @owner
+    sign_in @member
+    get conversation_path(@conversation)
+    sign_out @member
+    sign_in @owner
+    get messages_conversation_path(@conversation), as: :json
+    assert_equal reply.id, response.parsed_body['latest_id']
+    assert_equal reply.id, response.parsed_body['recipient_read_id']
+    assert_equal '既読', Nokogiri::HTML.fragment(response.parsed_body['html']).at_css("[data-message-id='#{reply.id}']").text
+  end
+
+  test 'webmaster sessions never mark reads even when also signed in as either conversation participant' do
+    accept_conversation
+    master = Webmaster.create!(id: 1, email: 'read-master@example.test', password: 'test-password-123')
+    [@member, @owner].each do |account|
+      sign_in account
+      # Signing out of a Devise account clears every scope, so sign the master in for each case.
+      post webmaster_session_path, params: { webmaster: { email: master.email, password: 'test-password-123' } }
+      assert_response :redirect
+      before = @conversation.reload.attributes.slice('member_read_message_id', 'owner_read_message_id', 'member_notification_due_at', 'owner_notification_due_at')
+      get conversation_path(@conversation)
+      assert_response :success
+      get messages_conversation_path(@conversation), as: :json
+      assert_response :success
+      assert_equal before, @conversation.reload.attributes.slice(*before.keys)
+      get conversations_path
+      assert_select '.chat-badge[aria-label="未読1件"]', text: '1'
+      sign_out account
+    end
+  end
+
+  test 'opening older history does not clear unread messages on the latest page' do
+    ChatMessage.insert_all!(55.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    sign_in @owner
+    get conversation_path(@conversation), params: { page: 2 }
+    assert_response :success
+    assert_equal 0, @conversation.reload.owner_read_message_id
+    get conversations_path
+    assert_select '.chat-badge[aria-label="未読56件"]', text: '56'
   end
 
   test 'anonymous old contact entry leads to registration and old anonymous review creation is disabled' do

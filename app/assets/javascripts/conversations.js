@@ -53,6 +53,9 @@
         .then(function (response) { if (!response.ok || response.redirected) throw new Error('Session unavailable'); return response.json(); })
         .then(function (data) {
           if (!document.body.contains(container)) return;
+          container.querySelectorAll('.chat-read-receipt').forEach(function (receipt) {
+            receipt.textContent = Number(receipt.dataset.messageId) <= data.recipient_read_id ? '既読' : '未読';
+          });
           if (String(data.latest_id) !== container.dataset.latestId) {
             // Preserve any report the user is currently composing.
             if (!container.contains(document.activeElement) && !container.querySelector('details[open]')) {
