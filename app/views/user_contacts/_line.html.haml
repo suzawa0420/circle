@@ -31,11 +31,11 @@
         よろしくお願いします。
 %button.copyBtn.copy_txt
   .requirement_copy
-    %i.fa.fa-copy
+    = lucide_icon "copy"
     テンプレをコピーする
 = render "users/parts/admin_user_check", admin_user: @user.admin_user
 .cta_wrap.contact_space
   %a{:href => "#{@user.line_id}"}
     .cta_100.line
-      %i.fa.fa-comment
+      = lucide_icon "message-circle"
       LINEでお問い合わせをする！

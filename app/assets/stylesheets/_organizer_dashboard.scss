@@ -18,7 +18,7 @@
   .dashboard-circle__tools .dashboard-copy { width: 100%; padding: 10px 8px; font-size: 12px; background: $cb-canvas; }
   .dashboard-circle .management-circle-trigger { gap: 8px; }
   .dashboard-circle .management-circle-trigger__action { font-size: 0; gap: 0; }
-  .dashboard-circle .management-circle-trigger__action .fa { font-size: 16px; }
+  .dashboard-circle .management-circle-trigger__action .cb-icon { font-size: 16px; }
   .dashboard-circle__url { margin-top: 16px; padding: 16px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-canvas; }
   .dashboard-circle__url h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; font-weight: 700; }
   .dashboard-circle__url-row { display: flex; align-items: center; gap: 12px; }
@@ -86,8 +86,8 @@
   .dashboard-insights { margin: 28px 0 20px; background: $cb-surface; border: 1px solid $cb-border; border-radius: 12px; }
   .dashboard-insights > summary { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 14px 16px; font-size: 13px; font-weight: 700; cursor: pointer; list-style: none; }
   .dashboard-insights > summary::-webkit-details-marker { display: none; }
-  .dashboard-insights > summary .fa-angle-down { margin-left: auto; }
-  .dashboard-insights[open] > summary .fa-angle-down { transform: rotate(180deg); }
+  .dashboard-insights > summary .cb-icon--chevron-down { margin-left: auto; }
+  .dashboard-insights[open] > summary .cb-icon--chevron-down { transform: rotate(180deg); }
   .dashboard-insights__body { padding: 0 12px 12px; }
 }
 

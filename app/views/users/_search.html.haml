@@ -18,8 +18,7 @@
         - @prefectures.each do |prefecture|
           %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
-
+        = lucide_icon "search"
     - elsif @path.is('users#event_prefecture_city', 'tags#event_prefecture_city')
       .search_select_3
         %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
@@ -40,8 +39,7 @@
             - if city.city_kana != @city.city_kana
               %option{:value => "/#{@event.ruby}/#{@prefecture.kana}/#{city.city_kana}"}= city.name
         .search_icon
-          %i.fa.fa-search
-
+          = lucide_icon "search"
     - elsif @path.is('users#event_prefecture', 'tags#event_prefecture')
       .search_select_3
         %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
@@ -61,8 +59,7 @@
           - @cities.each do |city|
             %option{:value => "/#{@event.ruby}/#{@prefecture.kana}/#{city.city_kana}"}= city.name
         .search_icon
-          %i.fa.fa-search
-
+          = lucide_icon "search"
     - elsif  @path.is('users#event', 'tags#event')
       %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @event.name
@@ -76,8 +73,7 @@
         - @prefectures.each do |prefecture|
           %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
-
+        = lucide_icon "search"
     - elsif @path.is('users#prefecture_city', 'tags#prefecture_city')
       .search_select_3
         %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
@@ -97,8 +93,7 @@
             - if city.city_kana != @city.city_kana
               %option{:value => "/prefectures/#{@prefecture.kana}/#{city.city_kana}"}= city.name
         .search_icon
-          %i.fa.fa-search
-
+          = lucide_icon "search"
     - elsif @path.is('users#prefecture', 'tags#prefecture')
       .search_select_3
         %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
@@ -117,7 +112,7 @@
           - @cities.each do |city|
             %option{:value => "/prefectures/#{@prefecture.kana}/#{city.city_kana}"}= city.name
         .search_icon
-          %i.fa.fa-search
+          = lucide_icon "search"
     - else
 
   = render "/schedules/select_date"

@@ -63,7 +63,7 @@
 
         - if @exhibition.detail.present?
           %h2.schedule_sub_title
-            %i.fa.fa-book
+            = lucide_icon "book-open"
             活動内容の詳細
           - if @exhibition.detail.include?("<div>")
             .profile_list_p.profile_list_a.rich_text_sub
@@ -74,7 +74,7 @@
 
         - if @exhibition.gallery_img_01.present?
           %h2.schedule_sub_title
-            %i.fa.fa-camera-retro
+            = lucide_icon "camera"
             ギャラリー写真
         .post-body
           - if @exhibition.gallery_img_01.present?

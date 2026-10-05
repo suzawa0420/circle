@@ -5,10 +5,10 @@
     \-#{schedule.time_e.strftime('%H:%M') if schedule.time_e.present?}
   %br/
   - if schedule.member_venue.present?
-    %i.fa.fa-map-marker
+    = lucide_icon "map-pin"
     = schedule.member_venue
   - else
-    %i.fa.fa-map-marker
+    = lucide_icon "map-pin"
     = schedule.venue
   - if schedule.title.present?
     %br/

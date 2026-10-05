@@ -9,7 +9,7 @@
       - if @copy_schedules.present?
         .schedule_copy_wrap
           .schedule_copy_txt
-            %i.fa.fa-copy
+            = lucide_icon "copy"
             過去のスケジュールから複製する
           %select{:name => "schedule_select", :onchange => "location.href=value;"}
             %option{:value => "#"} コピーするスケジュールを選択する

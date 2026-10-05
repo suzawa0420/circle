@@ -5,9 +5,9 @@
       = render "dashboard"
       %details.dashboard-insights
         %summary
-          %i.fa.fa-bar-chart{ "aria-hidden" => "true" }
+          = lucide_icon "chart-no-axes-combined", **{ "aria-hidden" => "true" }
           掲載状況
-          %i.fa.fa-angle-down{ "aria-hidden" => "true" }
+          = lucide_icon "chevron-down", **{ "aria-hidden" => "true" }
         .dashboard-insights__body
           = render "/users/analytics"
       = render "/layouts/ads/picte_mypage", user: @user

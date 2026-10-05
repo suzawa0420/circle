@@ -36,7 +36,6 @@ gem 'kaminari'
 gem 'jquery-rails'
 
 gem 'bootstrap-sass', '~> 3.3.7'
-gem "font-awesome-rails"
 gem 'momentjs-rails'
 gem "rack-cors"
 

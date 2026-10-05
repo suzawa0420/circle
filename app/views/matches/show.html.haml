@@ -58,16 +58,16 @@
                     - if @match.user.twitter.present?
                       %a{:href => "https://twitter.com/#{@match.user.twitter}"}
                         %span.sns_link.twitter_link
-                          %i.fa.fa-twitter-square
+                          = lucide_icon "share-2"
                           Twitter
                     - if @match.user.instagram.present?
                       %a{:href => "https://www.instagram.com/#{@match.user.instagram}"}
                         %span.sns_link.instagram_link
-                          %i.fa.fa-instagram
+                          = lucide_icon "camera"
                           Instagram
         - if @match.user.web.present?
           .matching_url
-            %i.fa.fa-chain
+            = lucide_icon "link"
             %a{:href => "#{@match.user.web}"}
               = @match.user.web
           .border

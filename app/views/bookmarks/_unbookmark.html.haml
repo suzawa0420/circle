@@ -1,4 +1,4 @@
 = link_to user_bookmarks_path(@user), id: :"bookmark_b_d_#{@user.id}", :remote => true, method: :delete do
   %span.bookmark_icon
-    %i.fa.fa-bookmark
+    = lucide_icon "bookmark"
     .booknark_txt 保存済み

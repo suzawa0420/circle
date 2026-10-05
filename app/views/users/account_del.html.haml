@@ -7,7 +7,7 @@
         = render "users/parts/user_switching", user: @user
         = render "users/parts/user_name", user: @user
         .warning_icon
-          %i.fa.fa-warning
+          = lucide_icon "triangle-alert"
         .warning_text
           このサークルと、紐づくブログ・スケジュール・口コミ・メッセージなどをすべて削除します。
           %br/

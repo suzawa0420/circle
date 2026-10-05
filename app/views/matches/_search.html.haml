@@ -11,7 +11,7 @@
           - if prefecture.id != 50
             %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
+        = lucide_icon "search"
     - elsif @path.is('matches#event_prefecture')
       %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @event.name
@@ -25,7 +25,7 @@
             - if prefecture.kana != @prefecture.kana
               %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
+        = lucide_icon "search"
     - elsif  @path.is('matches#event')
       %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @event.name
@@ -38,7 +38,7 @@
           - if prefecture.id != 50
             %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
+        = lucide_icon "search"
     - elsif @path.is('matches#prefecture')
       %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
         %option{:value => "#"} サークル
@@ -51,5 +51,5 @@
             - if prefecture.kana != @prefecture.kana
               %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
+        = lucide_icon "search"
     - else

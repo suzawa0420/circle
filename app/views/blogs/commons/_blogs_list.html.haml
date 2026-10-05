@@ -44,11 +44,11 @@
                 = simple_format blog.content.truncate(120)
         .blog_tag.tag_bottom.cont-width
           = link_to event_path(blog.user.event.ruby), class: "tag_btn" do
-            %i.fa.fa-tags.tag-color
+            = lucide_icon "tags", class: "tag-color"
             = blog.user.event.name
 
           = link_to event_prefecture_path(blog.user.event.ruby, blog.user.prefecture.kana), class: "tag_btn" do
-            %i.fa.fa-tags.tag-color
+            = lucide_icon "tags", class: "tag-color"
             = blog.user.prefecture.name
 
 

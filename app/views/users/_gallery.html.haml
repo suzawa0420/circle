@@ -10,7 +10,8 @@
                   = lazysizes_image_tag @user.gallery_01.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
               %input#popup-on_01{:type => "checkbox"}/
               .popup
-                %label.icon-close_01{:for => "popup-on_01"} ×
+                %label.icon-close_01{:for => "popup-on_01"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @user.gallery_01.url
                 %label{:for => "popup-on_01"}
@@ -23,7 +24,8 @@
                   = lazysizes_image_tag @user.gallery_02.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
               %input#popup-on_02{:type => "checkbox"}/
               .popup
-                %label.icon-close_02{:for => "popup-on_02"} ×
+                %label.icon-close_02{:for => "popup-on_02"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @user.gallery_02.url
                 %label{:for => "popup-on_02"}
@@ -36,7 +38,8 @@
                   = lazysizes_image_tag @user.gallery_03.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
               %input#popup-on_03{:type => "checkbox"}/
               .popup
-                %label.icon-close_03{:for => "popup-on_03"} ×
+                %label.icon-close_03{:for => "popup-on_03"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @user.gallery_03.url
                 %label{:for => "popup-on_03"}
@@ -49,7 +52,8 @@
                   = lazysizes_image_tag @user.gallery_04.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
               %input#popup-on_04{:type => "checkbox"}/
               .popup
-                %label.icon-close_04{:for => "popup-on_04"} ×
+                %label.icon-close_04{:for => "popup-on_04"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @user.gallery_04.url
                 %label{:for => "popup-on_04"}

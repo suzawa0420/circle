@@ -20,9 +20,9 @@
   .review_r
     .speech_title
       - if review.review == 1
-        %i.fa.fa-smile-o.good
+        = lucide_icon "smile", class: "good"
       - elsif review.review == 0
-        %i.fa.fa-frown-o.bad
+        = lucide_icon "frown", class: "bad"
       - else
       - if review.member.present?
         = link_to review.member.nickname, member_profile_path(review.member)

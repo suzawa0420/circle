@@ -26,7 +26,7 @@
               - if @admin_user.image_profile.present?
                 = image_tag(@admin_user.image_profile.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :image_profile, class: "image", style: "display:none;", id: "file_profile"
             .label_item
               %span.label.label_danger> 必須

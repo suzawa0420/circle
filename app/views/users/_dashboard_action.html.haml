@@ -1,10 +1,10 @@
 = link_to path, { class: "dashboard-action" }.merge(local_assigns.fetch(:link_options, {})) do
   %span.dashboard-action__icon
-    %i{ class: "fa fa-#{icon}", "aria-hidden" => "true" }
+    = lucide_icon icon
   %span.dashboard-action__text
     %strong= title
     %small= description
   - if local_assigns[:badge].present?
     %span.dashboard-action__badge= badge
   - else
-    %i.fa.fa-angle-right.dashboard-action__arrow{ "aria-hidden" => "true" }
+    = lucide_icon "chevron-right", class: "dashboard-action__arrow", **{ "aria-hidden" => "true" }

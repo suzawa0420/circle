@@ -79,6 +79,6 @@
         / 親
       .delete_btn
         = link_to(attendance_path(@user.unique_id, @name.id), method: :delete, data: {confirm: "#{ @name.name }さんの登録を削除しますか？"}) do
-          %i.fa.fa-trash
+          = lucide_icon "trash-2"
             = @name.name
             さんの登録を削除する

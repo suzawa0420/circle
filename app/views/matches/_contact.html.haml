@@ -4,7 +4,7 @@
     .contact_link
       = link_to new_user_user_contact_path(@match.id, entry: "2") do
         .btn.btn_c.btn_green.btn_cubic
-          %i.fa.fa-envelope>
+          = lucide_icon "mail"
           練習試合の連絡をする！
   - else
     .stop_match

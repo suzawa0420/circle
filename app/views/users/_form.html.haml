@@ -32,13 +32,13 @@
         - if @user.pic_header.present?
           = image_tag(@user.pic_header.url)
         - else
-          %i.fa.fa-image
+          = lucide_icon "image"
       = f.file_field :pic_header, class: "image", style: "display:none;", id: "file_header"
       #img_field_profile{:onclick => "$('#file_profile').click()"}
         - if @user.pic_profile.present?
           = image_tag(@user.pic_profile.url)
         - else
-          %i.fa.fa-image
+          = lucide_icon "image"
       = f.file_field :pic_profile, class: "image", style: "display:none;", id: "file_profile"
       .file_size_p ※10MB以下のjpgかpngのみ対応
     .img_field_profile_space
@@ -130,25 +130,25 @@
             - if @user.gallery_01.present?
               = image_tag(@user.gallery_01.url)
             - else
-              %i.fa.fa-image
+              = lucide_icon "image"
           = f.file_field :gallery_01, class: "image", style: "display:none;", id: "file_01"
           #img_field_02{:onclick => "$('#file_02').click()"}
             - if @user.gallery_02.present?
               = image_tag(@user.gallery_02.url)
             - else
-              %i.fa.fa-image
+              = lucide_icon "image"
           = f.file_field :gallery_02, class: "image", style: "display:none;", id: "file_02"
           #img_field_03{:onclick => "$('#file_03').click()"}
             - if @user.gallery_03.present?
               = image_tag(@user.gallery_03.url)
             - else
-              %i.fa.fa-image
+              = lucide_icon "image"
           = f.file_field :gallery_03, class: "image", style: "display:none;", id: "file_03"
           #img_field_04{:onclick => "$('#file_04').click()"}
             - if @user.gallery_04.present?
               = image_tag(@user.gallery_04.url)
             - else
-              %i.fa.fa-image
+              = lucide_icon "image"
           = f.file_field :gallery_04, class: "image", style: "display:none;", id: "file_04"
       - if @user.gallery_01.present? || @user.gallery_02.present? || @user.gallery_03.present? || @user.gallery_04.present?
         %ul.remove_img
@@ -179,7 +179,7 @@
     - elsif @admin_user.check.present? && @admin_user.check != 0
       %br/
       .attention_content
-        %i.fa.fa-warning
+        = lucide_icon "triangle-alert"
         このアカウントは一時的に制限されています
     - else
       .warning_txt ※更新完了に少し時間がかかります

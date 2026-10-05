@@ -25,7 +25,7 @@
     .top_contents.bg_blue
       .top_heading
         %h2.sub_title
-          %i.fa.fa-users
+          = lucide_icon "users"
           サークルをカテゴリーから探す
       .readmore
         %input#check1-1.readmore-check{:type => "checkbox"}/
@@ -41,7 +41,7 @@
     .top_contents.bg_blue
       .top_heading
         %h2.sub_title
-          %i.fa.fa-users
+          = lucide_icon "users"
           サークルをエリアから探す
       .readmore
         %input#check1-2.readmore-check{:type => "checkbox"}/
@@ -83,7 +83,7 @@
     .top_contents.top_contents_btm.bg_blue
       .top_heading
         %h2.sub_title
-          %i.fa.fa-users
+          = lucide_icon "users"
           メンバー募集中のサークル
       %ul.user_slide_wrap
         - @users.each do |user|
@@ -95,15 +95,15 @@
               .clear
               .list_02
                 %span.user_area
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   = user.event.name
               .list_02
                 %span.user_schedule
-                  %i.fa.fa-calendar
+                  = lucide_icon "calendar-days"
                   = user.schedule
               .list_03
                 %span.user_area
-                  %i.fa.fa-map-marker
+                  = lucide_icon "map-pin"
                   = user.prefecture.name
                   - if user.area.present?
                     ：#{user.area}
@@ -112,7 +112,7 @@
     .top_contents.bg_green
       .top_heading
         %h2.sub_title
-          %i.fa.fa-flag-checkered
+          = lucide_icon "flag"
           対戦相手をジャンルから探す
       .readmore
         %input#check2-1.readmore-check{:type => "checkbox"}/
@@ -128,7 +128,7 @@
     .top_contents.bg_green
       .top_heading
         %h2.sub_title
-          %i.fa.fa-flag-checkered
+          = lucide_icon "flag"
           対戦相手をエリアから探す
       .readmore
         %input#check2-2.readmore-check{:type => "checkbox"}/
@@ -183,7 +183,7 @@
     .top_contents.top_contents_btm.bg_green
       .top_heading
         %h2.sub_title
-          %i.fa.fa-flag-checkered
+          = lucide_icon "flag"
           対戦相手を募集中のサークル
       %ul.user_slide_wrap
         - @match_users.each do |m_user|
@@ -196,15 +196,15 @@
               .clear
               .list_02
                 %span.user_area
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   = m_user.user.event.name
               .list_02
                 %span.user_area
-                  %i.fa.fa-map-marker
+                  = lucide_icon "map-pin"
                   = m_user.user.prefecture.name
               .list_03
                 %span.user_area
-                  %i.fa.fa-trophy
+                  = lucide_icon "trophy"
                   = m_user.level
                   - if m_user.level == "初級"
                     （★☆☆）
@@ -217,7 +217,7 @@
     .top_contents.bg_yellow
       .top_heading
         %h2.sub_title
-          %i.fa.fa-dribbble
+          = lucide_icon "circle-dot"
           コートや体育館、施設を探す
       .readmore
         %input#check3-1.readmore-check{:type => "checkbox"}/

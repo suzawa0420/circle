@@ -18,33 +18,33 @@
               = "｜#{exhibition.exhibitor.name}" if exhibition.exhibitor.name.present?
             .schedule_cont
               .user_area
-                %i.fa.fa-calendar.icon_c
+                = lucide_icon "calendar-days", class: "icon_c"
                 = exhibition.event_date.strftime("%Y年%-m月%-d日(#{%w(日 月 火 水 木 金 土)[exhibition.event_date.wday]}) %H:%M")
                 %br
                 = "　　　〜 #{exhibition.end_date.strftime("%Y年%-m月%-d日(#{%w(日 月 火 水 木 金 土)[exhibition.end_date.wday]}) %H:%M")}"
               .user_schedule
-                %i.fa.fa-map-marker.icon_c
+                = lucide_icon "map-pin", class: "icon_c"
                   = "#{exhibition.prefecture.name}｜#{exhibition.venue_name}"
 
               -# .user_schedule
               -#   - if exhibition.recruitment_numbers.present?
               -#     - if exhibition.recruitment_numbers == 0
-              -#       %i.fa.fa-users>
+              -#       = lucide_icon "users"
               -#       募集人数：制限なし
               -#     - elsif exhibition.name_schedules.where(answer: 1).count == 0
-              -#       %i.fa.fa-users>
+              -#       = lucide_icon "users"
               -#       募集人数：#{exhibition.recruitment_numbers}名
               -#     - elsif exhibition.recruitment_numbers >= 1
-              -#       %i.fa.fa-users>
+              -#       = lucide_icon "users"
               -#       参加人数：#{exhibition.name_schedules.where(answer: 1).count}
               -#       %span.small_font
               -#         \/#{exhibition.recruitment_numbers}名
               -#     - else
-              -#       %i.fa.fa-users>
+              -#       = lucide_icon "users"
               -#       参加人数：#{exhibition.name_schedules.where(answer: 1).count}名
               -#   - elsif exhibition.name_schedules.where(answer: 1).count == 0
               -#   - else
-              -#     %i.fa.fa-users>
+              -#     = lucide_icon "users"
               -#     参加人数：#{exhibition.name_schedules.where(answer: 1).count}名
         %hr.hr_w/
         = link_to exhibitor_path(exhibition.exhibitor.id) do

@@ -17,13 +17,13 @@
               - if @profile.header_img.present?
                 = image_tag(@profile.header_img.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :header_img, class: "image", style: "display:none;", id: "file_header"
             #img_field_profile{:onclick => "$('#file_profile').click()"}
               - if @profile.profile_img.present?
                 = image_tag(@profile.profile_img.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :profile_img, class: "image", style: "display:none;", id: "file_profile"
             .file_size_p ※10MB以下のjpgかpngのみ対応
           %br

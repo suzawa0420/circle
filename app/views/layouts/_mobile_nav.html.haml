@@ -7,29 +7,29 @@
         %span= circle.name
     = render "layouts/mobile_message_link"
     = link_to circle ? user_schedules_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'schedules'}" do
-      %i.fa.fa-calendar{ "aria-hidden" => "true" }
+      = lucide_icon "calendar-days", **{ "aria-hidden" => "true" }
       %span 活動日
     = link_to circle ? new_circle_blog_path(circle) : new_user_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'circles/blogs'}" do
-      %i.fa.fa-book{ "aria-hidden" => "true" }
+      = lucide_icon "book-open", **{ "aria-hidden" => "true" }
       %span ブログ
   - elsif member_signed_in?
     = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
-      %i.fa.fa-search{ "aria-hidden" => "true" }
+      = lucide_icon "search", **{ "aria-hidden" => "true" }
       %span サークル検索
     = render "layouts/mobile_message_link"
     = link_to member_path(current_member, anchor: "favorites"), class: "mobile-bottom-nav__item cb-participant" do
-      %i.fa.fa-bookmark{ "aria-hidden" => "true" }
+      = lucide_icon "bookmark", **{ "aria-hidden" => "true" }
       %span お気に入り
   - else
     = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
-      %i.fa.fa-search{ "aria-hidden" => "true" }
+      = lucide_icon "search", **{ "aria-hidden" => "true" }
       %span サークル検索
     = link_to login_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
-      %i.fa.fa-user-plus{ "aria-hidden" => "true" }
+      = lucide_icon "user-round-plus", **{ "aria-hidden" => "true" }
       %span 無料登録・ログイン
 
   %button.mobile-bottom-nav__item.mobile-menu-trigger{ type: "button", "aria-controls" => "mobile-menu-dialog", "aria-haspopup" => "dialog", "aria-expanded" => "false" }
-    %i.fa.fa-bars{ "aria-hidden" => "true" }
+    = lucide_icon "menu", **{ "aria-hidden" => "true" }
     %span メニュー
 
 - if admin_user_signed_in? && mobile_circle_switcher? && mobile_navigation_circle
@@ -39,7 +39,7 @@
   .mobile-menu-panel__header
     %h2#mobile-menu-title メニュー
     %button.mobile-menu-close{ type: "button", "aria-label" => "メニューを閉じる", autofocus: true }
-      %i.fa.fa-times{ "aria-hidden" => "true" }
+      = lucide_icon "x", **{ "aria-hidden" => "true" }
   .mobile-menu-panel__body
     .mobile-menu-panel__group
       %strong 探す

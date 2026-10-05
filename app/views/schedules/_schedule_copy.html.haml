@@ -23,7 +23,7 @@
         = request.url
     %button.copyBtn01
       .requirement_copy
-        %i.fa.fa-copy
+        = lucide_icon "copy"
         一般向けの予定をコピー
   .management-share-card
     %h2 メンバー向けの予定を共有
@@ -53,5 +53,5 @@
         https://circle-book.com/s/#{@user.unique_id}/attendances
     %button.copyBtn02
       .requirement_copy
-        %i.fa.fa-copy
+        = lucide_icon "copy"
         メンバー向けの予定をコピー

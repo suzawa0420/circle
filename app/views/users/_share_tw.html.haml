@@ -1,4 +1,4 @@
 - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
   = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-    %i.fa.fa-twitter>
+    = lucide_icon "share-2"
     ツイート

@@ -72,7 +72,7 @@ li.current_page {
 }
 
 .top_page .top_contents .top_heading,
-.top_page .top_contents .top_heading .sub_title .fa,
+.top_page .top_contents .top_heading .sub_title .cb-icon,
 .users-heading,
 .schedule_title {
   color: $cb-teal;
@@ -209,9 +209,9 @@ input[type="radio"] {
   color: $cb-rating-empty;
 }
 
-.user_item_wrap .user_schedule .fa,
-.user_item_wrap .user_area .fa,
-.user_item_wrap .review_count .fa {
+.user_item_wrap .user_schedule .cb-icon,
+.user_item_wrap .user_area .cb-icon,
+.user_item_wrap .review_count .cb-icon {
   color: $cb-muted;
 }
 

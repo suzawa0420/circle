@@ -12,7 +12,7 @@
         .blob_cta_2
           .contact-button.tw
             = link_to("https://twitter.com/share?url=#{request.url}&text=30秒以内に「#{@difference.dummy}」を見つけられたらRT%20%0a%23間違い探しメーカー%0a", target: '_blank') do
-              %i.fa.fa-twitter
+              = lucide_icon "share-2"
               ツイートする
           .contact-button.line
             = link_to("http://line.me/R/msg/text/?#{request.url}", target: '_blank') do

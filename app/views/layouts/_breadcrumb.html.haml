@@ -4,7 +4,7 @@
       %ul
         %li
           = link_to(root_path) do
-            %i.fa.fa-home.home_icon
+            = lucide_icon "house", class: "home_icon"
         - if @b1_name.present?
           %li= link_to @b1_name, @b1_url
         - if @b2_name.present?

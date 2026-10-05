@@ -33,7 +33,8 @@
                   = lazysizes_image_tag @user.pic_header.url, class:'header_imege', alt: "ヘッダー画像｜#{@user.name}"
               %input#popup-on_header{:type => "checkbox"}/
               .popup
-                %label.icon-close_header{:for => "popup-on_header"} ×
+                %label.icon-close_header{:for => "popup-on_header"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @user.pic_header.url, alt: "ヘッダー画像｜#{@user.name}"
                 %label{:for => "popup-on_header"}
@@ -50,7 +51,8 @@
                   = circle_avatar_tag @user, class:'profile_imege', alt: "プロフィール画像｜#{@user.name}"
               %input#popup-on_profile{:type => "checkbox"}/
               .popup
-                %label.icon-close_profile{:for => "popup-on_profile"} ×
+                %label.icon-close_profile{:for => "popup-on_profile"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = circle_avatar_tag @user, alt: "プロフィール画像｜#{@user.name}"
                 %label{:for => "popup-on_profile"}
@@ -70,7 +72,7 @@
           .share_btn_tw.btn_tw_space
             - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
               = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-                %i.fa.fa-twitter>
+                = lucide_icon "share-2"
                 ツイート
 
           - if webmaster? || admin_user_signed_in?
@@ -87,11 +89,11 @@
             更新日：#{time_tag @user.user_time.to_date}
           - if @user.user_time.to_time <= Time.current.ago(1.years)
             .attention_content
-              %i.fa.fa-warning
+              = lucide_icon "triangle-alert"
               このサークルは1年以上更新されていません。
         - else
           .attention_content
-            %i.fa.fa-warning
+            = lucide_icon "triangle-alert"
             このサークルは1年以上更新されていません。
 
         = render "users/parts/admin_user_check", admin_user: @user.admin_user
@@ -117,17 +119,17 @@
         .content_01
         .content_02
           .user_schedule.slide_content
-            %i.fa.fa-tags
+            = lucide_icon "tags"
             = @user.event.txt
 
           - if @user.schedule.present?
             .user_schedule.slide_content
-              %i.fa.fa-calendar
+              = lucide_icon "calendar-days"
               = @user.schedule
 
           .user_area.slide_content
             - if @user.prefecture_id.present?
-              %i.fa.fa-map-marker
+              = lucide_icon "map-pin"
               = @user.prefecture.name
               - if @user.prefecture_sub_id.present?
                 = "・#{@sub_prefecture.name}"
@@ -159,7 +161,8 @@
                           = lazysizes_image_tag @user.gallery_01.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
                       %input#popup-on_01{:type => "checkbox"}/
                       .popup
-                        %label.icon-close_01{:for => "popup-on_01"} ×
+                        %label.icon-close_01{:for => "popup-on_01"}
+                          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                         .popup-content
                           = lazysizes_image_tag @user.gallery_01.url
                         %label{:for => "popup-on_01"}
@@ -172,7 +175,8 @@
                           = lazysizes_image_tag @user.gallery_02.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
                       %input#popup-on_02{:type => "checkbox"}/
                       .popup
-                        %label.icon-close_02{:for => "popup-on_02"} ×
+                        %label.icon-close_02{:for => "popup-on_02"}
+                          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                         .popup-content
                           = lazysizes_image_tag @user.gallery_02.url
                         %label{:for => "popup-on_02"}
@@ -185,7 +189,8 @@
                           = lazysizes_image_tag @user.gallery_03.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
                       %input#popup-on_03{:type => "checkbox"}/
                       .popup
-                        %label.icon-close_03{:for => "popup-on_03"} ×
+                        %label.icon-close_03{:for => "popup-on_03"}
+                          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                         .popup-content
                           = lazysizes_image_tag @user.gallery_03.url
                         %label{:for => "popup-on_03"}
@@ -198,7 +203,8 @@
                           = lazysizes_image_tag @user.gallery_04.url , class:'gallery_imege', alt: "ギャラリー｜#{@user.name}"
                       %input#popup-on_04{:type => "checkbox"}/
                       .popup
-                        %label.icon-close_04{:for => "popup-on_04"} ×
+                        %label.icon-close_04{:for => "popup-on_04"}
+                          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                         .popup-content
                           = lazysizes_image_tag @user.gallery_04.url
                         %label{:for => "popup-on_04"}
@@ -250,12 +256,12 @@
                     - if @user.twitter.present?
                       %a{:href => "https://twitter.com/#{@user.twitter}", :rel => "”nofollow”"}
                         %span.sns_link.twitter_link
-                          %i.fa.fa-twitter-square
+                          = lucide_icon "share-2"
                           Twitter
                     - if @user.instagram.present?
                       %a{:href => "https://www.instagram.com/#{@user.instagram}", :rel => "”nofollow”"}
                         %span.sns_link.instagram_link
-                          %i.fa.fa-instagram
+                          = lucide_icon "camera"
                           Instagram
 
               %tr.flex_contents
@@ -268,14 +274,14 @@
         - if @user.link.present?
           - if @user.link.link02_url.present?
             .content_08
-              %i.fa.fa-chain
+              = lucide_icon "link"
               %a{:href => "https://circle-book.com/link/#{@user.link.unique_id}"}
                 = "circle-book.com/link/#{@user.link.unique_id}"
             .border
 
         - if @user.web.present?
           .content_08
-            %i.fa.fa-chain
+            = lucide_icon "link"
             %a{:href => "#{@user.web}", :rel => "”nofollow”"}
               = @user.web
           .border
@@ -302,7 +308,7 @@
 
         - if @schedules.present?
           %h2.user_sub_title
-            %i.fa.fa-calendar
+            = lucide_icon "calendar-days"
             活動スケジュール
           .profile_list_p
             - @schedules.first(7).each do |schedule|
@@ -318,19 +324,19 @@
               - if can_manage_circle?(@user)
                 = link_to(user_schedules_path(@user.id)) do
                   .schedule_index_btn
-                    %i.fa.fa-calendar
+                    = lucide_icon "calendar-days"
                     スケジュールの詳細を見る
             - else
               = link_to(user_schedules_path(@user.id)) do
                 .schedule_index_btn
-                  %i.fa.fa-calendar
+                  = lucide_icon "calendar-days"
                   スケジュールの詳細を見る
           .border
 
         - if @user.appeal.present?
           .profile_list_t.p_t_t
           %h2.user_sub_title
-            %i.fa.fa-book
+            = lucide_icon "book-open"
             サークルの詳細内容
           - if @user.appeal.include?("<div>")
             .profile_list_p.profile_list_a.rich_text_sub.cb-reading-body
@@ -344,7 +350,7 @@
 
         - if @user.reviews.any?
           %h2.user_sub_title
-            %i.fa.fa-smile-o
+            = lucide_icon "smile"
             口コミ・評価
           - @user.reviews.order(created_at: :DESC).first(3).each do |review|
             = render "/reviews/review_comment", review: review
@@ -354,7 +360,7 @@
 
         - else
           %h2.user_sub_title
-            %i.fa.fa-smile-o
+            = lucide_icon "smile"
             口コミ・評価
           .review_sub_title 口コミがまだ投稿されていません。
           .new_review_comment
@@ -371,7 +377,7 @@
         - if @user.admin_user.open == 1 && @user.admin_user.nickname.present? && @user.admin_user.profile.present?
           .border
           %h2.user_sub_title
-            %i.fa.fa-user
+            = lucide_icon "user-round"
             主催者のプロフィール
           .admin_user_profile_wrap
             .admin_user_profile
@@ -393,7 +399,7 @@
                   - else
                   = @user.admin_user.age
                   - if @user.admin_user.prefecture.present?
-                    %i.fa.fa-map-marker
+                    = lucide_icon "map-pin"
                     = @user.admin_user.prefecture.name
 
             - if @user.admin_user.profile.size >= 200
@@ -462,11 +468,11 @@
                   %h3.user_name= user.name.truncate(20)
                 .list_02
                   %span.user_schedule
-                    %i.fa.fa-calendar
+                    = lucide_icon "calendar-days"
                     = user.schedule
                 .list_03
                   %span.user_area
-                    %i.fa.fa-map-marker
+                    = lucide_icon "map-pin"
                     = user.area
         - if @users.size > 5
           .more_link

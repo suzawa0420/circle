@@ -361,7 +361,7 @@ header {
 }
 
 
-.schedule_t .fa{
+.schedule_t .cb-icon{
 	width: 24px;
     margin: auto;
     text-align: center;
@@ -653,7 +653,7 @@ header {
     font-size: 14px;
 }
 
-.user_schedule .fa, .user_area .fa {
+.user_schedule .cb-icon, .user_area .cb-icon {
   width: 24px;
   color: $cb-muted;
   margin: auto;
@@ -1526,7 +1526,7 @@ border-bottom: 1px solid;
   display: flex;
   -webkit-align-items: center;
   align-items: center;
-  .fa{
+  .cb-icon{
     font-size: 18px;
   }
   .orange{
@@ -1551,7 +1551,7 @@ border-bottom: 1px solid;
   font-size: 14px;
   margin-left: 4px;
   }
-  .review_count .fa {
+  .review_count .cb-icon {
     color: #9c9c9c;
     font-size: 18px;
     margin-left: 4px;

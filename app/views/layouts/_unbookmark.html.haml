@@ -1,3 +1,3 @@
 = link_to user_bookmarks_path(@user), id: :"bookmark_l_d_#{@user.id}", :remote => true, method: :delete do
-  %i.fa.fa-bookmark.orange
+  = lucide_icon "bookmark", class: "orange"
   .fixed_btn_txt 解除する

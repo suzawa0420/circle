@@ -6,7 +6,7 @@
       %img{ src: "/images/logo.png?v=20260921-green-clean", alt: "サークルブック", width: 960, height: 251 }
   %nav{ "aria-label" => "サイトのメインメニュー" }
     = link_to circles_path do
-      %i.fa.fa-search{ "aria-hidden" => "true" }
+      = lucide_icon "search", **{ "aria-hidden" => "true" }
       サークルを探す
     - if webmaster?
       = link_to "運営管理", webmaster_path
@@ -23,7 +23,7 @@
       = link_to "メッセージ", conversations_path
     %details.circle-desktop-menu
       %summary
-        %i.fa.fa-bars{ "aria-hidden" => "true" }
+        = lucide_icon "menu", **{ "aria-hidden" => "true" }
         メニュー
       .circle-desktop-menu__links
         = link_to "活動ブログを探す", blogs_path

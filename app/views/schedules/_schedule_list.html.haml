@@ -7,7 +7,7 @@
         - accepted_count = schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
         - if @schedule_month != Time.parse(schedule.day).strftime("%-m")
           %h2.schedule_m
-            %i.fa.fa-calendar
+            = lucide_icon "calendar-days"
             = Time.parse(schedule.day).strftime("%-m月")
             のスケジュール
           - @schedule_month = Time.parse(schedule.day).strftime("%-m")
@@ -31,27 +31,27 @@
                 - else
                   .schedule_mark.mark_green 募集中
             .schedule_venue
-              %i.fa.fa-map-marker
+              = lucide_icon "map-pin"
               = schedule.venue
             .schedule_member
               - if schedule.recruitment_numbers.present?
                 - if schedule.recruitment_numbers == 0
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   募集人数：制限なし
                 - elsif accepted_count == 0
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   募集人数：#{schedule.recruitment_numbers}名
                 - elsif schedule.recruitment_numbers >= 1
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   参加人数：#{accepted_count}
                   %span.small_font
                     \/#{schedule.recruitment_numbers}名
                 - else
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   参加人数：#{accepted_count}名
               - elsif accepted_count == 0
               - else
-                %i.fa.fa-users
+                = lucide_icon "users"
                 参加人数：#{accepted_count}名
             - if schedule.title.present?
               .schedule_title_list
@@ -67,7 +67,7 @@
         - accepted_count = past_schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
         - if @past_schedule_month != Time.parse(past_schedule.day).strftime("%-m")
           %h3.schedule_m
-            %i.fa.fa-calendar
+            = lucide_icon "calendar-days"
             = Time.parse(past_schedule.day).strftime("%Y年%-m月")
           - @past_schedule_month = Time.parse(past_schedule.day).strftime("%-m")
         = link_to(user_schedule_path(@user.id, past_schedule.id)) do
@@ -79,27 +79,27 @@
                 \-#{past_schedule.time_e.strftime('%H:%M') if past_schedule.time_e.present?}
               %span.schedule_mark.mark_gray 開催終了
             .schedule_venue
-              %i.fa.fa-map-marker
+              = lucide_icon "map-pin"
               = past_schedule.venue
             .schedule_member
               - if past_schedule.recruitment_numbers.present?
                 - if past_schedule.recruitment_numbers == 0
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   募集人数：制限なし
                 - elsif accepted_count == 0
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   募集人数：#{past_schedule.recruitment_numbers}名
                 - elsif past_schedule.recruitment_numbers >= 1
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   参加人数：#{accepted_count}
                   %span.small_font
                     \/#{past_schedule.recruitment_numbers}名
                 - else
-                  %i.fa.fa-users
+                  = lucide_icon "users"
                   参加人数：#{accepted_count}名
               - elsif accepted_count == 0
               - else
-                %i.fa.fa-users
+                = lucide_icon "users"
                 参加人数：#{accepted_count}名
             - if past_schedule.title.present?
               .schedule_title_list

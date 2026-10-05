@@ -2,5 +2,5 @@
 - options = member_signed_in? ? { remote: true, method: :post } : {}
 = link_to path, **options, id: :"bookmark_b_c_#{@user.id}" do
   %span.bookmark_icon
-    %i.fa.fa-bookmark-o
+    = lucide_icon "bookmark"
     .booknark_txt 保存

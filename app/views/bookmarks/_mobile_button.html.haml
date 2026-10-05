@@ -2,9 +2,9 @@
 - label = saved ? "保存済み" : "保存"
 - if member_signed_in?
   = link_to user_bookmarks_path(user), remote: true, method: saved ? :delete : :post, class: "mobile-circle-save cb-participant #{'is-saved' if saved}", role: "button", "aria-pressed" => saved.to_s, "aria-label" => saved ? "サークルの保存を解除" : "サークルを保存" do
-    %i.fa{ class: saved ? "fa-bookmark" : "fa-bookmark-o", "aria-hidden" => "true" }
+    = lucide_icon "bookmark"
     %span= label
 - else
   = link_to new_member_registration_path, class: "mobile-circle-save cb-participant", "aria-label" => "無料参加者登録してサークルを保存" do
-    %i.fa.fa-bookmark-o{ "aria-hidden" => "true" }
+    = lucide_icon "bookmark", **{ "aria-hidden" => "true" }
     %span 保存

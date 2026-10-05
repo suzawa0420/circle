@@ -1,5 +1,5 @@
 .contact_link
   = link_to new_user_conversation_path(@user), circle_contact_warning_options(@user).merge(class: "cb-participant") do
     .btn.btn_c.btn_green.btn_cubic
-      %i.fa.fa-envelope>
+      = lucide_icon "mail"
       このサークルにお問い合わせする

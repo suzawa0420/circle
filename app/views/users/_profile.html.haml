@@ -6,7 +6,8 @@
           = lazysizes_image_tag @user.pic_header.url, class:'header_imege', alt: "ヘッダー画像｜#{@user.name}"
       %input#popup-on_header{:type => "checkbox"}/
       .popup
-        %label.icon-close_header{:for => "popup-on_header"} ×
+        %label.icon-close_header{:for => "popup-on_header"}
+          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
         .popup-content
           = lazysizes_image_tag @user.pic_header.url, alt: "ヘッダー画像｜#{@user.name}"
         %label{:for => "popup-on_header"}
@@ -22,7 +23,8 @@
           = circle_avatar_tag @user, class:'profile_imege', alt: "プロフィール画像｜#{@user.name}"
       %input#popup-on_profile{:type => "checkbox"}/
       .popup
-        %label.icon-close_profile{:for => "popup-on_profile"} ×
+        %label.icon-close_profile{:for => "popup-on_profile"}
+          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
         .popup-content
           = circle_avatar_tag @user, alt: "プロフィール画像｜#{@user.name}"
         %label{:for => "popup-on_profile"}

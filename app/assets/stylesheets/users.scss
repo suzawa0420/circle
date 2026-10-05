@@ -363,7 +363,7 @@ header {
 }
 
 
-.schedule_t .fa{
+.schedule_t .cb-icon{
 	width: 24px;
     margin: auto;
     text-align: center;
@@ -655,7 +655,7 @@ header {
     font-size: 14px;
 }
 
-.user_schedule .fa, .user_area .fa {
+.user_schedule .cb-icon, .user_area .cb-icon {
   width: 24px;
   color: $cb-muted;
   margin: auto;
@@ -1129,8 +1129,8 @@ input {
 .search_area{
   margin: 0 0 20px;
 }
-.user_schedule .fa,
-.user_area .fa{
+.user_schedule .cb-icon,
+.user_area .cb-icon{
     width: 24px;
     color: $cb-muted;
     margin: auto;
@@ -1279,7 +1279,7 @@ display: flex;
 -webkit-align-items: center;
 align-items: center; 
 
-  .fa{
+  .cb-icon{
     font-size: 18px;
   }
   .orange{
@@ -1327,7 +1327,7 @@ text-align: center;
 font-size: 14px;
 margin-left: 4px;
 }
-.review_count .fa {
+.review_count .cb-icon {
   color: #9c9c9c;
   font-size: 18px;
   margin-left: 4px;
@@ -1480,7 +1480,7 @@ width: 90%;
     margin-top: 3px;
     border-bottom: 2px solid #30803e;
   }
-  .btn_c i.fa {
+  .btn_c .cb-icon {
     margin-right: 8px;
     font-size: 18px;
   }
@@ -1506,7 +1506,7 @@ width: 90%;
   padding: 8px 10px;
   border-radius: 7px;
 }
-.contact-button .fa, .schedule_index_btn .fa {
+.contact-button .cb-icon, .schedule_index_btn .cb-icon {
   font-size: 18px;
   padding-right: 4px;
 }

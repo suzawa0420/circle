@@ -1,72 +1,72 @@
 .place_form
   = form_for @place do |f|
     %p
-      %i.fa.fa-bank
+      = lucide_icon "landmark"
       施設名
       %span.must_red (必須)
     = f.text_field :name, class: 'form-control', placeholder: "サークルブック体育館"
     .box_warp
       %span.box_subtitle
-        %i.fa.fa-soccer-ball-o
+        = lucide_icon "circle-dot"
         種目
         %span.must_red (必須)
       .check_boxes
         = f.collection_check_boxes(:event_ids, Event.where(place: 1), :id, :name)
     %p
-      %i.fa.fa-desktop
+      = lucide_icon "monitor"
       参考URL
     = f.text_field :url, class: 'form-control', placeholder: "https://circle-book.com"
     %p
-      %i.fa.fa-institution
+      = lucide_icon "landmark"
       カテゴリー
       %span.must_red (必須)
     .radio_button
       = f.radio_button :tag, 1, {:checked => true}
       屋内（体育館） #{f.radio_button :tag, 2}屋外（グランド、公園）
     %p
-      %i.fa.fa-map-marker
+      = lucide_icon "map-pin"
       住所
       %span.must_red (必須)
     = f.text_field :address, class: 'form-control', id: 'change_address', placeholder: "東京都千代田区丸の内1-1-1"
     %p
-      %i.fa.fa-map-marker
+      = lucide_icon "map-pin"
       都道府県
       %span.must_red (必須)
     - prefecture_options = Prefecture.where.not(id: 0).order(:id).map { |c| [c.name, c.id, data: { children_path: prefecture_cities_path(c) }] }
     = f.select :prefecture_id, prefecture_options, { include_blank: true }, class: 'select-parent'
     %p
-      %i.fa.fa-map-marker
+      = lucide_icon "map-pin"
       市区郡
       %span.must_red (必須)
     - cities = @place.prefecture.try(:cities) || []
     - city_options = cities.map { |c| [c.name, c.id] }
     = f.select :city_id, city_options, { include_blank: true }, class: 'select-children'
     %p
-      %i.fa.fa-phone
+      = lucide_icon "phone"
       電話番号
     = f.text_field :tel, class: 'form-control', id: 'change_tel', placeholder: "03-1234-5678"
     %p
-      %i.fa.fa-bus
+      = lucide_icon "bus"
       アクセス
     = f.text_field :access, class: 'form-control change_font', placeholder: "大手町駅／東京駅"
     %p
-      %i.fa.fa-automobile
+      = lucide_icon "car"
       駐車場情報
     = f.text_field :parking, class: 'form-control change_font', id: 'change_parking', placeholder: "200台"
     %p
-      %i.fa.fa-clock-o
+      = lucide_icon "clock"
       利用可能時間
     = f.text_area :time, class: 'form-control change_font', id: 'change_time', placeholder: "平日10:00-20:00\n休日9:00-19:00"
     %p
-      %i.fa.fa-calendar
+      = lucide_icon "calendar-days"
       定休日
     = f.text_field :regular_holiday, class: 'form-control change_font', id: 'change_regular_holiday', placeholder: "毎週火曜日"
     %p
-      %i.fa.fa-university
+      = lucide_icon "landmark"
       施設規模
     = f.text_area :scale, class: 'form-control change_font', id: 'change_scale', placeholder: "バスケットボール2面\nフットサル1面\n卓球24台"
     %p
-      %i.fa.fa-money
+      = lucide_icon "banknote"
       利用料金（URLのみ可）
     = f.text_area :price, class: 'form-control change_font', id: 'change_price', placeholder: "午前　1時間1,000円\n午後　1時間1,500円\n"
     = f.submit @place_button, data: { disable_with: '更新中...' }

@@ -7,13 +7,6 @@
 
 
 
-$fa-font-path: '@fortawesome/fontawesome-free/webfonts';
-$fa-font-display: swap;
-@import '@fortawesome/fontawesome-free/scss/fontawesome';
-@import '@fortawesome/fontawesome-free/scss/solid';
-@import '@fortawesome/fontawesome-free/scss/regular';
-@import '@fortawesome/fontawesome-free/scss/brands';
-@import '@fortawesome/fontawesome-free/scss/v4-shims';
 
 
 
@@ -229,7 +222,7 @@ body {
   color: white;
 }
 
-.header-menus .fa {
+.header-menus .cb-icon {
   padding-right: 5px;
 }
 
@@ -585,7 +578,7 @@ body {
   font-size: 16px;
 }
 
-.share_btn .fa-share-alt {
+.share_btn .cb-icon--share-2 {
   color: #fff;
 }
 
@@ -926,7 +919,7 @@ body {
   font-size: 16px;
 }
 
-.post-share .fa-share-alt {
+.post-share .cb-icon--share-2 {
   color: #fff;
 }
 
@@ -1300,7 +1293,7 @@ body {
   padding: 0px 6px;
   margin: 0 8px;
 
-  .fa {
+  .cb-icon {
     display: block;
     font-weight: 700;
     color: #aaa;
@@ -1587,8 +1580,8 @@ a.line_id {
   margin: 0 0 20px;
 }
 
-.user_schedule .fa,
-.user_area .fa {
+.user_schedule .cb-icon,
+.user_area .cb-icon {
   width: 24px;
   color: $cb-muted;
   margin: auto;
@@ -3032,7 +3025,7 @@ li.current_page {
   color: #fff;
 }
 
-.share_btn_tw .fa-twitter {
+.share_btn_tw .cb-icon--share-2 {
   margin-right: 6px;
 }
 
@@ -3613,7 +3606,7 @@ li.current_page {
   margin-top: 4px;
 
   th a,
-  th a .fa {
+  th a .cb-icon {
     text-decoration: underline;
     color: $cb-teal;
     font-weight: 700;
@@ -3920,7 +3913,7 @@ li.current_page {
 }
 
 
-.schedule_t .fa {
+.schedule_t .cb-icon {
   width: 24px;
   margin: auto;
   text-align: center;
@@ -4262,7 +4255,7 @@ li.current_page {
   color: #757575;
 }
 
-.sns_link .fa {
+.sns_link .cb-icon {
   font-size: 16px;
 }
 
@@ -4957,7 +4950,7 @@ li.current_page {
   height: 30px;
 }
 
-.collection_delete .fa-trash {
+.collection_delete .cb-icon--trash-2 {
   font-size: 18px;
 }
 
@@ -5610,7 +5603,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   align-items: center;
   /* 縦方向中央揃え */
 
-  .fa {
+  .cb-icon {
     font-size: 18px;
   }
 
@@ -5783,7 +5776,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     width: 48%;
     font-size: 14px;
 
-    .fa {
+    .cb-icon {
       margin-right: 0px;
       font-size: 18px;
     }
@@ -5792,7 +5785,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   .cta_100 {
     width: 98%;
 
-    .fa {
+    .cb-icon {
       margin-right: 8px;
       font-size: 18px;
     }
@@ -5888,7 +5881,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 
 
-  .btn_c i.fa {
+  .btn_c .cb-icon {
     margin-right: 8px;
     font-size: 18px;
   }
@@ -5908,7 +5901,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .contact-button,
 .schedule_index_btn {
-  .fa {
+  .cb-icon {
     font-size: 18px;
     padding-right: 4px;
   }
@@ -5930,7 +5923,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   font-weight: 700;
   margin-left: 6px;
 
-  .fa {
+  .cb-icon {
     color: #9c9c9c;
     font-size: 18px;
     margin-left: 4px;
@@ -6063,7 +6056,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 }
 
 .place_form {
-  .fa {
+  .cb-icon {
     color: #676767;
     font-size: 14px;
   }
@@ -6637,7 +6630,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     color: $cb-muted;
   }
 
-  .fa {
+  .cb-icon {
     color: $cb-teal;
     font-size: 20px;
   }
@@ -7231,7 +7224,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   }
 
   .user_about {
-    .fa {
+    .cb-icon {
       width: 24px;
       color: $cb-muted;
       margin: auto;
@@ -7408,7 +7401,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
   font-weight: 700;
   margin-bottom: 6px;
 
-  .fa {
+  .cb-icon {
     color: $cb-text;
   }
 }
@@ -7431,7 +7424,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         font-size: 16px;
         font-weight: 700;
 
-        .fa {
+        .cb-icon {
           color: $cb-text;
         }
       }
@@ -7716,7 +7709,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
     -webkit-align-items: center;
     align-items: center;
 
-    .fa {
+    .cb-icon {
       color: $cb-action;
       font-size: 16px;
     }
@@ -7751,7 +7744,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
       min-height: 80px;
     }
 
-    .fa {
+    .cb-icon {
       color: $cb-action;
       font-size: 16px;
     }
@@ -7768,7 +7761,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
         color: $cb-text;
         padding-bottom: 0px;
 
-        .fa {
+        .cb-icon {
           font-size: 12px;
           color: $cb-text;
         }
@@ -8439,14 +8432,14 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .schedule_venue,
 .schedule_member {
-  .fa {
+  .cb-icon {
     width: 20px;
     text-align: center;
     color: $cb-muted;
   }
 }
 
-.schedule_venue .fa {
+.schedule_venue .cb-icon {
   font-size: 16px;
 }
 
@@ -9250,7 +9243,7 @@ trix-toolbar .button_group button.icon {
       .admin_user_cont {
         color: #7e7e7e;
 
-        .fa {
+        .cb-icon {
           padding-right: 2px;
         }
       }
@@ -9633,3 +9626,5 @@ trix-toolbar .button_group button.icon {
 
 @import "system_notifications";
 @import "help_center";
+
+@import "lucide_icons";

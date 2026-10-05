@@ -1,3 +1,3 @@
 = link_to user_bookmarks_path(@user), id: :"bookmark_l_c_#{@user.id}", :remote => true, method: :post do
-  %i.fa.fa-bookmark
+  = lucide_icon "bookmark"
   .fixed_btn_txt 保存する

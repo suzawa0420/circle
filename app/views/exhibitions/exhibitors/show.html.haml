@@ -12,7 +12,8 @@
                   = lazysizes_image_tag @exhibitor.header_img.url, class:'header_imege', alt: "ヘッダー画像｜#{@exhibitor.name}"
               %input#popup-on_header{:type => "checkbox"}/
               .popup
-                %label.icon-close_header{:for => "popup-on_header"} ×
+                %label.icon-close_header{:for => "popup-on_header"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @exhibitor.header_img.url, alt: "ヘッダー画像｜#{@exhibitor.name}"
                 %label{:for => "popup-on_header"}
@@ -27,7 +28,8 @@
                   = lazysizes_image_tag @exhibitor.profile_img.url, class:'profile_imege', alt: "プロフィール画像｜#{@exhibitor.name}"
               %input#popup-on_profile{:type => "checkbox"}/
               .popup
-                %label.icon-close_profile{:for => "popup-on_profile"} ×
+                %label.icon-close_profile{:for => "popup-on_profile"}
+                  = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
                 .popup-content
                   = lazysizes_image_tag @exhibitor.profile_img.url, alt: "プロフィール画像｜#{@exhibitor.name}"
                 %label{:for => "popup-on_profile"}
@@ -45,7 +47,7 @@
           更新日：#{@exhibitor.exhibition_group.updated_at.to_time.strftime("%Y年%-m月%-d日")}
         - if @exhibitor.exhibition_group.updated_at.to_time <= Time.current.ago(1.years)
           .attention_content
-            %i.fa.fa-warning
+            = lucide_icon "triangle-alert"
             このグループは1年以上更新されていません。
 
         %h1.user_name= @exhibitor.name
@@ -61,24 +63,24 @@
                     - if @exhibitor.twitter_id.present?
                       %a{:href => "https://twitter.com/#{@exhibitor.twitter_id}", :rel => "”nofollow”"}
                         %span.sns_link.twitter_link
-                          %i.fa.fa-twitter-square
+                          = lucide_icon "share-2"
                           Twitter
                     - if @exhibitor.instagram_id.present?
                       %a{:href => "https://www.instagram.com/#{@exhibitor.instagram_id}", :rel => "”nofollow”"}
                         %span.sns_link.instagram_link
-                          %i.fa.fa-instagram
+                          = lucide_icon "camera"
                           Instagram
 
         - if @exhibitor.web_url.present?
           .content_08
-            %i.fa.fa-chain
+            = lucide_icon "link"
             %a{:href => "#{@exhibitor.web_url}", :rel => "”nofollow”"}
               = @exhibitor.web_url
 
         - if @exhibitor.introduction.present?
           .profile_list_t.p_t_t
           %h2.user_sub_title
-            %i.fa.fa-book
+            = lucide_icon "book-open"
             グループの詳細情報
           .profile_list_p.profile_list_a.rich_text_sub
             = raw Rinku.auto_link(sanitize @exhibitor.introduction, tags: %w(p a br strong ul li div), attributes:  %w(id class href))

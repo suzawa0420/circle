@@ -8,13 +8,13 @@
         .clear
         .list_02
           %span.user_area
-            %i.fa.fa-users
+            = lucide_icon "users"
             = user.event.name
         .list_02
           %span.user_schedule
-            %i.fa.fa-calendar
+            = lucide_icon "calendar-days"
             = user.schedule
         .list_03
           %span.user_area
-            %i.fa.fa-map-marker
+            = lucide_icon "map-pin"
             = user.area

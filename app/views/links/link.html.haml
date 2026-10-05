@@ -9,7 +9,7 @@
           .edit_link_wrap
             = link_to edit_link_path(@link) do
               .edit_link_txt
-                %i.fa.fa-link
+                = lucide_icon "link"
                 リンクを編集
         - else
       - else
@@ -18,11 +18,11 @@
         - if @user.twitter.present?
           %a{:href => "https://twitter.com/#{@user.twitter}"}
             %span.twitter_link
-              %i.fa.fa-twitter-square
+              = lucide_icon "share-2"
         - if @user.instagram.present?
           %a{:href => "https://www.instagram.com/#{@user.instagram}"}
             %span.instagram_link
-              %i.fa.fa-instagram
+              = lucide_icon "camera"
     .reset
     .links_content
       = link_to @link.link01_title, "#{@link.link01_url}" if @link.link01_title.present? && @link.link01_url.present?
@@ -32,6 +32,6 @@
       = link_to @link.link05_title, "#{@link.link05_url}" if @link.link05_title.present? && @link.link05_url.present?
     .circle_link_footer
       = link_to links_path do
-        %i.fa.fa-link
+        = lucide_icon "link"
         サークルリンク
       .link_sub_txt サークル運営者向け リンク集の無料作成

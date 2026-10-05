@@ -8,20 +8,20 @@
     - elsif member_signed_in?
       %li
         = link_to(circles_path) do
-          %i.fa.fa-search
+          = lucide_icon "search"
           .link_txt サークル検索
       %li
         = link_to(blogs_path) do
-          %i.fa.fa-book
+          = lucide_icon "book-open"
           .link_txt 活動ブログ
       %li
         = link_to(member_path(current_member), class: "cb-participant") do
-          %i.fa.fa-user
+          = lucide_icon "user-round"
           .link_txt マイページ
     - elsif exhibition_group_signed_in?
       %li
         = link_to(exhibitor_mypage_path) do
-          %i.fa.fa-user
+          = lucide_icon "user-round"
           .link_txt マイページ
 
 
@@ -30,39 +30,39 @@
       - if first_user
         %li
           = link_to "/users/#{first_user.id}/mypage" do
-            %i.fa.fa-user.notice_icon
+            = lucide_icon "user-round", class: "notice_icon"
             .link_txt マイページ
       %li
         = link_to(circles_path) do
-          %i.fa.fa-search
+          = lucide_icon "search"
           .link_txt サークル検索
       %li
         = link_to(blogs_path) do
-          %i.fa.fa-book
+          = lucide_icon "book-open"
           .link_txt 活動ブログ
       / ログインなし
     - else
       %li
         - if @path.is('matches')
           = link_to(matches_path) do
-            %i.fa.fa-flag-checkered
+            = lucide_icon "flag"
             .link_txt 対戦相手募集
         - else
           = link_to(circles_path) do
-            %i.fa.fa-search
+            = lucide_icon "search"
             .link_txt サークル検索
       %li
         = link_to(blogs_path) do
-          %i.fa.fa-book
+          = lucide_icon "book-open"
           .link_txt 活動ブログ
       %li
         = link_to(new_admin_user_registration_path, class: 'site-registration-link') do
-          %i.fa.fa-user-plus
+          = lucide_icon "user-round-plus"
           .link_txt サークル登録
     - if member_signed_in? || admin_user_signed_in?
       %li
         = link_to conversations_path do
-          %i.fa.fa-comment-o
+          = lucide_icon "message-circle"
           .link_txt メッセージ
     = render "/layouts/menu"
 

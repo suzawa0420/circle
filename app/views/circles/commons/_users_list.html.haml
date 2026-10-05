@@ -55,11 +55,11 @@
                     %span= "参加者の年代：#{user.average_age.to_s.truncate(60)}"
                 .list_02
                   %span.user_schedule
-                    %i.fa.fa-tags.icon_c
+                    = lucide_icon "tags", class: "icon_c"
                     = user.event.txt
                 .list_03
                   %span.user_area
-                    %i.fa.fa-map-marker.icon_c
+                    = lucide_icon "map-pin", class: "icon_c"
                     = user.prefecture.name
                     - if user.prefecture_sub_id.present?
                       ・#{user.prefecture_sub.name}
@@ -67,7 +67,7 @@
                     = user.area
                 .list_02
                   %span.user_schedule
-                    %i.fa.fa-calendar.icon_c
+                    = lucide_icon "calendar-days", class: "icon_c"
                     = user.schedule
                   - if user.switch == "募集中"
                     - listing_data.schedules_for(user).each do |schedule|

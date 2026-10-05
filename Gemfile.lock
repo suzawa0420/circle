@@ -257,8 +257,6 @@ GEM
     fog-xml (0.1.5)
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
-    font-awesome-rails (4.7.0.9)
-      railties (>= 3.2, < 9.0)
     formatador (1.2.3)
       reline
     get_process_mem (1.0.0)
@@ -597,7 +595,6 @@ DEPENDENCIES
   erb2haml
   execjs
   fog-aws
-  font-awesome-rails
   gretel
   haml-rails
   hirb

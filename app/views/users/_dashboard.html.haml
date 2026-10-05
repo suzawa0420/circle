@@ -21,10 +21,10 @@
             %p= [@user.prefecture&.name, @user.event&.name].compact.join(" · ")
     .dashboard-circle__tools
       = link_to edit_user_path(@user), class: "dashboard-copy" do
-        %i.fa.fa-pencil{ "aria-hidden" => "true" }
+        = lucide_icon "pencil", **{ "aria-hidden" => "true" }
         編集
       = link_to circle_path(@user), class: "dashboard-copy" do
-        %i.fa.fa-external-link{ "aria-hidden" => "true" }
+        = lucide_icon "external-link", **{ "aria-hidden" => "true" }
         公開ページ
   .dashboard-circle__status
     - if @user.moderation_status == "blocked"
@@ -42,13 +42,13 @@
   - public_url = @user.link&.unique_id.present? ? "https://circle-book.com/u/#{@user.link.unique_id}" : "https://circle-book.com#{circle_path(@user)}"
   .dashboard-circle__url
     %h3
-      %i.fa.fa-link{ "aria-hidden" => "true" }
+      = lucide_icon "link", **{ "aria-hidden" => "true" }
       公開URL
     .dashboard-circle__url-row
       = link_to public_url, class: "copyTarget dashboard-circle__url-value", "aria-label" => "公開URL（横にスライドして全文を確認）" do
         = public_url
       %button.dashboard-url-copy.dashboard-copy{ type: "button", "aria-label" => "サークルの公開URLをコピー" }
-        %i.fa.fa-copy{ "aria-hidden" => "true" }
+        = lucide_icon "copy", **{ "aria-hidden" => "true" }
         %span コピー
 
 - if @user.publication_status == "draft"
@@ -79,7 +79,7 @@
     %p 日々の更新はこちらから
   .dashboard-action-grid
     = render "dashboard_action", title: "ブログを書く", description: "活動の様子を投稿", icon: "pencil", path: new_circle_blog_path(@user)
-    = render "dashboard_action", title: "スケジュール", description: "活動日を登録・編集", icon: "calendar", path: user_schedules_path(@user)
+    = render "dashboard_action", title: "スケジュール", description: "活動日を登録・編集", icon: "calendar-days", path: user_schedules_path(@user)
     - if @schedules.present?
       = render "dashboard_action", title: "出欠管理", description: "メンバーの参加を確認", icon: "users", path: attendances_path(@user.unique_id)
 
@@ -88,9 +88,9 @@
     %h2 参加者とのやりとり
   .dashboard-action-list
     - if @user.user_contacts.present?
-      = render "dashboard_action", title: "お問い合わせ管理", description: "応募・問い合わせを確認", icon: "envelope-o", path: "/users/#{@user.id}/contact_list", badge: (@respond_check_count > 0 ? "要確認 #{@respond_check_count}" : nil)
-    = render "dashboard_action", title: "質問コーナー", description: "質問の確認・回答", icon: "question-circle", path: user_questions_path(@user), badge: (unanswered_count > 0 ? "未回答 #{unanswered_count}" : nil)
-    = render "dashboard_action", title: "口コミ・評価", description: "参加者の声を確認", icon: "comment-o", path: user_reviews_path(@user)
+      = render "dashboard_action", title: "お問い合わせ管理", description: "応募・問い合わせを確認", icon: "mail", path: "/users/#{@user.id}/contact_list", badge: (@respond_check_count > 0 ? "要確認 #{@respond_check_count}" : nil)
+    = render "dashboard_action", title: "質問コーナー", description: "質問の確認・回答", icon: "circle-help", path: user_questions_path(@user), badge: (unanswered_count > 0 ? "未回答 #{unanswered_count}" : nil)
+    = render "dashboard_action", title: "口コミ・評価", description: "参加者の声を確認", icon: "message-circle", path: user_reviews_path(@user)
 
 - if @user.event.matching != 0
   %section.dashboard-section
@@ -98,7 +98,7 @@
       %h2 対戦相手を探す
     .dashboard-action-list
       - match_url = @user.match.present? ? match_path(@user) : new_user_match_path(@user)
-      = render "dashboard_action", title: "対戦相手の募集", description: "募集内容を作成・確認", icon: "flag-checkered", path: match_url
+      = render "dashboard_action", title: "対戦相手の募集", description: "募集内容を作成・確認", icon: "flag", path: match_url
       = render "dashboard_action", title: "対戦相手の一覧", description: "ほかのチームを探す", icon: "search", path: matches_path
 
 %section.dashboard-section
@@ -106,16 +106,16 @@
     %h2 サークルの設定
   .dashboard-action-list
     = render "dashboard_action", title: "リンク集", description: "SNSや関連リンクをまとめる", icon: "link", path: new_user_link_path(@user)
-    = render "dashboard_action", title: "お問い合わせ内容の編集", description: "問い合わせ前の確認事項・自動案内を設定", icon: "comment-o", path: inquiry_settings_path(@user)
+    = render "dashboard_action", title: "お問い合わせ内容の編集", description: "問い合わせ前の確認事項・自動案内を設定", icon: "message-circle", path: inquiry_settings_path(@user)
     - if can_add_circle
-      = render "dashboard_action", title: "サークル新規追加", description: "別のサークルを管理する", icon: "plus-circle", path: "/user/add"
+      = render "dashboard_action", title: "サークル新規追加", description: "別のサークルを管理する", icon: "plus", path: "/user/add"
 
 %section.dashboard-section.dashboard-account-settings
   .dashboard-section__heading
     %h2 アカウント設定
   .dashboard-action-list
-    = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock", path: edit_admin_user_registration_path
-    = render "dashboard_action", title: "サークルを削除する", description: "ブログ・スケジュールなどもすべて削除されます", icon: "trash-o", path: user_path(@user), link_options: { method: :delete, data: { confirm: circle_deletion_confirmation(@user) } }
+    = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock-keyhole", path: edit_admin_user_registration_path
+    = render "dashboard_action", title: "サークルを削除する", description: "ブログ・スケジュールなどもすべて削除されます", icon: "trash-2", path: user_path(@user), link_options: { method: :delete, data: { confirm: circle_deletion_confirmation(@user) } }
 
 %section.dashboard-section
   .dashboard-section__heading

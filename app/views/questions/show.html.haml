@@ -30,16 +30,16 @@
           - if can_manage_circle?(@user)
             .q_delete
               = link_to(user_question_path, method: :delete, data: {confirm: "質問を削除しますか？"}) do
-                %i.fa.fa-trash-o>
+                = lucide_icon "trash-2"
                 質問を削除する
               - if @question.ip_address.present?
                 %span.ml-10
                   - if AccountBlock.find_by(ip_address: @question.ip_address)
-                    %i.fa.fa-ban>
+                    = lucide_icon "ban"
                     このアカウントは通報済みです
                   - else
                     = link_to("/users/#{@user.id}/questions/#{@question.id}/block", method: :update, data: {confirm: "質問者を通報しますか？"}) do
-                      %i.fa.fa-ban>
+                      = lucide_icon "ban"
                       質問者を通報する
             .qa_answer_form
               = form_for ([@user,@question]) do |f|
@@ -54,7 +54,7 @@
             .qa_tw_share
               = link_to("https://twitter.com/share?url=#{request.url}&text=#{@question.answer}%0a%0a%23質問コーナー%20%23サークルブック%0a", target: '_blank') do
                 .share_btn_tw
-                  %i.fa.fa-twitter>
+                  = lucide_icon "share-2"
                   回答をTwitterでシェアする！
         - else
           - if @user.switch == "募集中"
@@ -63,13 +63,13 @@
               .post_cta.profile_cta
                 = link_to user_questions_path(@user) do
                   .contact-button.qa_btn.qa
-                    %i.fa.fa-comments
+                    = lucide_icon "messages-square"
                     このサークルに質問する！
               .post_cta
                 .contact_link
                   = link_to new_user_user_contact_path(@user, entry: "3") do
                     .btn.btn_c.btn_green.btn_cubic
-                      %i.fa.fa-envelope>
+                      = lucide_icon "mail"
                       このサークルに直接質問する！
     = render "/layouts/ad_square"
     .ad_space

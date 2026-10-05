@@ -10,7 +10,7 @@
             .schedule_share_wrap
               .share_btn_tw.h40
                 = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}の活動スケジュール%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-                  %i.fa.fa-twitter>
+                  = lucide_icon "share-2"
                   ツイート
               .share_btn_line
                 = link_to 'LINEで共有する', "http://line.me/R/msg/text/?#{request.url}", title: 'LINE', target: '_blank'
@@ -18,7 +18,7 @@
             .add_schedule_btn_wrap
               = link_to new_user_schedule_path(@user) do
                 .add_schedule_btn
-                  %i.fa.fa-calendar-plus-o
+                  = lucide_icon "calendar-plus"
                   活動日を追加する
       = render "/schedules/schedule_list"
 / text copy 01

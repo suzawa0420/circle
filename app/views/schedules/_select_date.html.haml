@@ -54,7 +54,7 @@
             - else
               %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?pref=#{prefecture.kana}"}= prefecture.name
       .search_icon
-        %i.fa.fa-search
+        = lucide_icon "search"
   - else
     %ul
       - 14.times do |i|

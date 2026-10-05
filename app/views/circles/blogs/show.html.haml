@@ -40,7 +40,7 @@
               .share_btn_tw
                 - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
                   = link_to("https://twitter.com/share?url=#{request.url}&text=#{@blog.title}｜#{@user.name}%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-                    %i.fa.fa-twitter>
+                    = lucide_icon "share-2"
                     ツイートする
 
 
@@ -48,10 +48,10 @@
                 - if can_manage_circle?(@user)
                   .post_edit
                     = link_to(edit_circle_blog_path) do
-                      %i.fa.fa-pencil-square-o
+                      = lucide_icon "square-pen"
                   .post_delete
                     = link_to(circle_blog_path, method: :delete, data: {confirm: "投稿を削除しますか？"}) do
-                      %i.fa.fa-trash
+                      = lucide_icon "trash-2"
             = render "users/parts/admin_user_check", admin_user: @user.admin_user
             .rich_text_main.cb-reading-body
               - if @blog.content.include?("<div>")
@@ -71,11 +71,11 @@
             %ul.tag_lists
               %li
                 = link_to event_path(@user.event.ruby), class: "tag_btn" do
-                  %i.fa.fa-tags.tag-color
+                  = lucide_icon "tags", class: "tag-color"
                   = @user.event.name
               %li
                 = link_to event_prefecture_path(@user.event.ruby, @user.prefecture.kana), class: "tag_btn" do
-                  %i.fa.fa-tags.tag-color
+                  = lucide_icon "tags", class: "tag-color"
                   = @user.prefecture.name
           = link_to(user_path(@user.id)) do
             .user-content
@@ -86,11 +86,11 @@
               .list_cnts
                 .list_02
                   %span.user_schedule
-                    %i.fa.fa-calendar.icon_c
+                    = lucide_icon "calendar-days", class: "icon_c"
                     = @user.schedule
                 .list_03
                   %span.user_area
-                    %i.fa.fa-map-marker.icon_c
+                    = lucide_icon "map-pin", class: "icon_c"
                     = @user.prefecture.name
                     = "：" if @user.area.present?
                     = @user.area

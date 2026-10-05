@@ -7,6 +7,15 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
 
   setup { create_chat_records }
 
+  test 'owner dashboard renders Lucide actions including additional circle registration' do
+    login(@owner)
+    get "/users/#{@circle.id}/mypage"
+    assert_response :success
+    assert_select '.dashboard-action svg.cb-icon--plus', count: 1
+    assert_select '.dashboard-action svg.cb-icon', minimum: 5
+    assert_select '.fa', count: 0
+  end
+
   test 'public pages share the design scope and a Japanese document language' do
     [root_path, circles_path, '/blogs', '/matches', '/places', '/about', '/faq', '/rules', '/privacypolicy', '/login'].each do |path|
       get path

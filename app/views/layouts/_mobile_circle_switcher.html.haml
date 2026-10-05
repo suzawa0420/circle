@@ -2,7 +2,7 @@
   .mobile-menu-panel__header
     %h2#mobile-circle-dialog-title 管理するサークルを切り替え
     %button.mobile-menu-close{ type: "button", "aria-label" => "サークル一覧を閉じる", autofocus: true }
-      %i.fa.fa-times{ "aria-hidden" => "true" }
+      = lucide_icon "x", **{ "aria-hidden" => "true" }
   .mobile-menu-panel__body.mobile-circle-list
     - current_admin_user.users.order(:id).each do |circle|
       - next if controller_path == "matches" && circle.event.matching == 0
@@ -15,5 +15,5 @@
     - if current_admin_user.users.count < 5 && !current_admin_user.users.where(ng_account: "NG").exists? && (current_admin_user.check.blank? || current_admin_user.check == 0)
       = link_to "/user/add", class: "mobile-circle-list__item mobile-circle-list__add" do
         %span.mobile-circle-avatar.mobile-circle-avatar--empty
-          %i.fa.fa-plus{ "aria-hidden" => "true" }
+          = lucide_icon "plus", **{ "aria-hidden" => "true" }
         %span.mobile-circle-list__name 新規サークル登録

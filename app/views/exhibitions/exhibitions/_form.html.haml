@@ -12,7 +12,7 @@
       .img_field_profile_wrap
         .label_item トップ画像
         #img_field_header{:onclick => "$('#file_header').click()"}
-          %i.fa.fa-image
+          = lucide_icon "image"
         = f.file_field :header_img, class: "image", style: "display:none;", id: "file_header"
         .file_size_p ※10MB以下のjpgかpngのみ対応
         .img_field_profile_space
@@ -71,25 +71,25 @@
               - if exhibition.gallery_img_01.present?
                 = image_tag(exhibition.gallery_img_01.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :gallery_img_01, class: "image", style: "display:none;", id: "file_01"
             #img_field_02{:onclick => "$('#file_02').click()"}
               - if exhibition.gallery_img_02.present?
                 = image_tag(exhibition.gallery_img_02.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :gallery_img_02, class: "image", style: "display:none;", id: "file_02"
             #img_field_03{:onclick => "$('#file_03').click()"}
               - if exhibition.gallery_img_03.present?
                 = image_tag(exhibition.gallery_img_03.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :gallery_img_03, class: "image", style: "display:none;", id: "file_03"
             #img_field_04{:onclick => "$('#file_04').click()"}
               - if exhibition.gallery_img_04.present?
                 = image_tag(exhibition.gallery_img_04.url)
               - else
-                %i.fa.fa-image
+                = lucide_icon "image"
             = f.file_field :gallery_img_04, class: "image", style: "display:none;", id: "file_04"
         - if exhibition.gallery_img_01.present? || exhibition.gallery_img_02.present? || exhibition.gallery_img_03.present? || exhibition.gallery_img_04.present?
           %ul.remove_img

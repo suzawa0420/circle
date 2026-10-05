@@ -70,7 +70,7 @@
           <div class="chat-rating-options">
             <% [[1, '良かった', 'smile'], [0, '残念だった', 'frown']].each do |score, label, expression| %>
               <%= f.label "score_#{score}", class: "chat-rating-option chat-rating-option--#{expression}" do %>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 8h.01M16 8h.01"/><path d="<%= expression == 'smile' ? 'M8 14s1.5 2 4 2 4-2 4-2' : 'M8 16s1.5-2 4-2 4 2 4 2' %>"/></svg>
+                <%= lucide_icon expression == "smile" ? "smile" : "frown" %>
                 <span><%= label %></span>
                 <%= f.radio_button :score, score, checked: (@own_review ? @own_review.score == score : score == 1), required: true %>
               <% end %>

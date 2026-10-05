@@ -15,7 +15,7 @@
             - if @copy_schedule.top_image.present?
               = image_tag(@copy_schedule.top_image.url)
             - else
-              %i.fa.fa-image
+              = lucide_icon "image"
           = f.file_field :top_image, class: "image", style: "display:none;", id: "file_header"
           .file_size_p ※10MB以下のjpgかpngのみ対応
         .img_field_profile_space
@@ -48,7 +48,7 @@
         = f.text_field :cost, value: @copy_schedule.cost, class: 'form-control form-venue', placeholder: "500円"
         .only_member_warp
           %span.only_member_title
-            %i.fa.fa-lock
+            = lucide_icon "lock-keyhole"
             メンバー限定の公開情報
           .cautions ※限定URLを共有したメンバーのみに公開されます
           .label_item 開催場所の名所
@@ -78,7 +78,7 @@
             - if @schedule.top_image.present?
               = image_tag(@schedule.top_image.url)
             - else
-              %i.fa.fa-image
+              = lucide_icon "image"
           = f.file_field :top_image, class: "image", style: "display:none;", id: "file_header"
           .file_size_p ※10MB以下のjpgかpngのみ対応
         .img_field_profile_space
@@ -105,7 +105,7 @@
         = f.text_field :cost, class: 'form-control form-venue', placeholder: "500円"
         .only_member_warp
           %span.only_member_title
-            %i.fa.fa-lock
+            = lucide_icon "lock-keyhole"
             メンバー限定の公開情報
           .cautions
             ※限定URLを共有したメンバーのみに公開されます

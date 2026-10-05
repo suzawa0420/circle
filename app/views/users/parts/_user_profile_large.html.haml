@@ -5,18 +5,18 @@
       %ul.tag_lists
         %li
           = link_to("/#{user.event.ruby}", class: "tag_btn") do
-            %i.fa.fa-tags.tag-color
+            = lucide_icon "tags", class: "tag-color"
             = user.event.name
         %li
           = link_to("/#{user.event.ruby}/#{user.prefecture.kana}", class: "tag_btn") do
-            %i.fa.fa-tags.tag-color
+            = lucide_icon "tags", class: "tag-color"
             = user.prefecture.name
         - if user.prefecture_sub_id.present?
           %li
             - @prefectures.each do |sub_prefecture|
               - if user.prefecture_sub_id == sub_prefecture.id
                 = link_to("/#{user.event.ruby}/#{sub_prefecture.kana}", class: "tag_btn") do
-                  %i.fa.fa-tags.tag-color
+                  = lucide_icon "tags", class: "tag-color"
                   = sub_prefecture.name
     = link_to(user_path(user.id)) do
       .user-content
@@ -27,11 +27,11 @@
         .list_cnts
           .list_02
             %span.user_schedule
-              %i.fa.fa-calendar.icon_c
+              = lucide_icon "calendar-days", class: "icon_c"
               = user.schedule
           .list_03
             %span.user_area
-              %i.fa.fa-map-marker.icon_c
+              = lucide_icon "map-pin", class: "icon_c"
               = user.prefecture.name
               = "：" if user.area.present?
               = user.area

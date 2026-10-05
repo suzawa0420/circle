@@ -13,7 +13,7 @@
             .copyTarget= request.url
           %button.copyBtn
             .requirement_copy
-              %i.fa.fa-copy
+              = lucide_icon "copy"
               URLをコピーする！
       - if params[:archive] != "1"
         - if @names.blank?

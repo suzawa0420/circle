@@ -1,6 +1,6 @@
 - if @questions.any?
   %h2.user_sub_title
-    %i.fa.fa-comments
+    = lucide_icon "messages-square"
     質問コーナー
   = render "questions/accordion", questions: @questions
 - if AccountBlock.find_by(ip_address: request.remote_ip)
@@ -8,5 +8,5 @@
   .user_qa_btn
     = link_to  user_questions_path(@user) do
       .contact-button.qa_btn.qa
-        %i.fa.fa-comments
+        = lucide_icon "messages-square"
         このサークルに質問する

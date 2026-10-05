@@ -36,14 +36,14 @@
               = "｜#{schedule.title}" if schedule.title.present?
             .schedule_cont
               .user_area
-                %i.fa.fa-calendar.icon_c
+                = lucide_icon "calendar-days", class: "icon_c"
                 = Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")
                 - if schedule.time_s.present?
                   = schedule.time_s.strftime('%H:%M')
                   〜
                   \#{schedule.time_e.strftime('%H:%M') if schedule.time_e.present?}
               .user_schedule
-                %i.fa.fa-map-marker.icon_c
+                = lucide_icon "map-pin", class: "icon_c"
                 = schedule.user.prefecture.name
                 - if schedule.user.prefecture_sub_id.present?
                   ・#{schedule.user.prefecture_sub.name}
@@ -51,22 +51,22 @@
               .user_schedule
                 - if schedule.recruitment_numbers.present?
                   - if schedule.recruitment_numbers == 0
-                    %i.fa.fa-users>
+                    = lucide_icon "users"
                     募集人数：制限なし
                   - elsif accepted_count == 0
-                    %i.fa.fa-users>
+                    = lucide_icon "users"
                     募集人数：#{schedule.recruitment_numbers}名
                   - elsif schedule.recruitment_numbers >= 1
-                    %i.fa.fa-users>
+                    = lucide_icon "users"
                     参加人数：#{accepted_count}
                     %span.small_font
                       \/#{schedule.recruitment_numbers}名
                   - else
-                    %i.fa.fa-users>
+                    = lucide_icon "users"
                     参加人数：#{accepted_count}名
                 - elsif accepted_count == 0
                 - else
-                  %i.fa.fa-users>
+                  = lucide_icon "users"
                   参加人数：#{accepted_count}名
         %hr.hr_w/
         = link_to(circle_path(schedule.user.id)) do

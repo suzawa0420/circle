@@ -1,6 +1,6 @@
 <dialog id="circle-contact-warning" class="circle-contact-warning" aria-labelledby="circle-contact-warning-title" aria-describedby="circle-contact-warning-description">
   <div class="circle-contact-warning__content">
-    <p class="circle-contact-warning__label"><i class="fa fa-warning" aria-hidden="true"></i> 参加前に必ずご確認ください</p>
+    <p class="circle-contact-warning__label"><%= lucide_icon "triangle-alert" %> 参加前に必ずご確認ください</p>
     <h2 id="circle-contact-warning-title">勧誘目的の可能性があります</h2>
     <p id="circle-contact-warning-description" class="circle-contact-warning__risk">
       このサークルは、<strong><%= @user.admin_user.check == 1 ? 'ネットワークビジネス（マルチ商法）' : '宗教' %>への勧誘を目的としている可能性</strong>があります。

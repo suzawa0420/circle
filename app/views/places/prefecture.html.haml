@@ -17,7 +17,7 @@
         .cp_actab
           %input#tab-one{:name => "tabs", :type => "checkbox"}/
           %label{:for => "tab-one"}
-            %i.fa.fa-search.search-list
+            = lucide_icon "search", class: "search-list"
             = @prefecture.name
             の市区郡から探す
           .cp_actab-content

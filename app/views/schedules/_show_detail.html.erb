@@ -32,7 +32,7 @@
     <% if @path.is('schedules#show') %>
       <div class="share_btn_tw">
         <%= link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}の活動日です！%20%23サークルブック%0a", target: '_blank') do %>
-          <i class="fa fa-twitter"></i>ツイートする
+          <%= lucide_icon "share-2" %>ツイートする
         <% end %>
       </div>
     <% end %>
@@ -41,13 +41,13 @@
       <% if can_manage_circle?(@user) %>
         <div class="post_edit">
           <%= link_to(edit_user_schedule_path(@user.id, @schedule.id)) do %>
-            <i class="fa fa-pencil-square-o "> 編集</i>
+            <%= lucide_icon "square-pen" %> 編集
           <% end %>
         </div>
 
         <div class="post_delete">
           <%= link_to(user_schedule_path(@user.id, @schedule.id), method: :delete, data: {confirm: "投稿を削除しますか？"}) do %>
-            <i class="fa fa-trash "> 削除</i>
+            <%= lucide_icon "trash-2" %> 削除
           <% end %>
         </div>
       <% end %>
@@ -59,7 +59,7 @@
         <div class="add_schedule_btn_wrap">
           <%= link_to new_user_schedule_path(@user,copy: @schedule.id ) do %>
             <div class="add_schedule_btn">
-              <i class="fa fa-calendar-plus-o "></i> コピーして新規作成する！
+              <%= lucide_icon "calendar-plus" %> コピーして新規作成する！
             </div>
           <% end %>
         </div>
@@ -161,18 +161,18 @@
 
     <% if @user.link.present? %>
       <% if @user.link.link02_url.present? %>
-        <div class="content_08"><i class="fa fa-chain "></i><a href="https://circle-book.com/link/<%= @user.link.unique_id %>"> circle-book.com/link/<%= @user.link.unique_id %></a></div>
+        <div class="content_08"><%= lucide_icon "link" %><a href="https://circle-book.com/link/<%= @user.link.unique_id %>"> circle-book.com/link/<%= @user.link.unique_id %></a></div>
         <div class="border"></div>
       <% end %>
     <% end %>
 
     <% if @user.web.present? %>
-      <div class="content_08"><i class="fa fa-chain "></i><a href="<%= @user.web %>" rel=”nofollow”> <%= @user.web %></a></div>
+      <div class="content_08"><%= lucide_icon "link" %><a href="<%= @user.web %>" rel=”nofollow”> <%= @user.web %></a></div>
       <div class="border"></div>
     <% end %>
 
     <% if @schedule.note.present? %>
-      <h2 class="schedule_sub_title"><i class="fa fa-book "></i> 活動内容の詳細</h2>
+      <h2 class="schedule_sub_title"><%= lucide_icon "book-open" %> 活動内容の詳細</h2>
 
       <% if @schedule.note.include?("<div>") %>
         <div class="profile_list_p profile_list_a rich_text_sub cb-reading-body">
@@ -199,7 +199,7 @@
       <div class="contact_link">
         <%= link_to "/schedules/#{@user.unique_id}" do %>
           <div class="btn btn_c btn_green btn_cubic">
-            <i class="fa fa-calendar-check-o"></i>出欠回答ページに移動
+            <%= lucide_icon "calendar-check" %>出欠回答ページに移動
           </div>
         <% end %>
       </div>

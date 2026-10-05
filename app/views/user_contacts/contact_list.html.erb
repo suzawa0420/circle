@@ -17,7 +17,7 @@
         お問い合わせのメールは下記に届いています。<br>
         <%= @user.admin_user.email %><br>
         <%= link_to "/admin_users/edit" do %>
-          >> <i class="fa fa-envelope-o "></i> アドレスを変更する
+          >> <%= lucide_icon "mail" %> アドレスを変更する
         <% end %>
         <br><br>
         <div class="receive_setting">
@@ -26,7 +26,7 @@
         </div>
         お問い合わせ内容は下記から変更できます。<br>
         <%= link_to "/users/#{@user.id}/user_contacts/new" do %>
-          >> <i class="fa fa-file-text-o "></i> テンプレを変更する
+          >> <%= lucide_icon "file-text" %> テンプレを変更する
         <% end %>
       </div>
 
@@ -60,7 +60,7 @@
                 <%= user_contact.created_at.strftime("%Y年%-m月%-d日 %-H:%M") %>
               </div>
               <div class="mail_contact">
-                <i class="fa fa-envelope-square "></i>
+                <%= lucide_icon "mail" %>
                   <%= mail_to "#{user_contact.mail}", nil,
                         :subject => "【サークルブック】#{@user.name}",
                         :body => "こちらにご記入ください"  %>
@@ -87,7 +87,7 @@
 
 
                 <div class="comment_contact">
-                  <i class="fa fa-pencil-square "></i>  メモする
+                  <%= lucide_icon "square-pen" %>  メモする
 
                       <%= f.text_area :comment, class: 'form-control', placeholder: "7月7日に参加予定" %>
 
@@ -98,13 +98,13 @@
                       <div class="reset"></div>
 
                       <div class="text_btn_wrap">
-                        <%= f.button type: "submit", name: "submit", value: "delete", data: {confirm: "一度削除すると、元に戻せません。削除してよろしいでしょうか？"}, class: "text_btn" do %><i class="fa fa-trash-o "></i> 削除する<% end %>
+                        <%= f.button type: "submit", name: "submit", value: "delete", data: {confirm: "一度削除すると、元に戻せません。削除してよろしいでしょうか？"}, class: "text_btn" do %><%= lucide_icon "trash-2" %> 削除する<% end %>
                         <br>
 
                         <% if user_contact.account_block.present? %>
                           <div class="text_btn account_block_done">違反通報済み</div>
                         <% else %>
-                          <%= f.button type: "submit", name: "submit", value: "report", data: {confirm: "このお問い合わせを、違反報告しますか？"}, class: "text_btn" do %><i class="fa fa-frown-o "></i> 違反報告<% end %>
+                          <%= f.button type: "submit", name: "submit", value: "report", data: {confirm: "このお問い合わせを、違反報告しますか？"}, class: "text_btn" do %><%= lucide_icon "frown" %> 違反報告<% end %>
                         <% end %>
                       </div>
 
