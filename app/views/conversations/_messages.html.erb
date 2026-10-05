@@ -11,11 +11,15 @@
     <div class="chat-message__content">
       <span class="message-role message-role--<%= message.sender_role %>"><%= message.sender_label %></span>
       <% unless mine %><strong class="chat-message__name"><%= message.sender_role == 'owner' ? @conversation.user.name : @conversation.member.nickname %></strong><% end %>
-      <div class="chat-body"><%= chat_message_body(message.body) %></div>
-      <div class="chat-message__meta"><time datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%H:%M') %></time>
-      <% if mine %><span class="chat-read-receipt" data-message-id="<%= message.id %>"><%= @conversation.message_read?(message) ? '既読' : '未読' %></span><% end %>
+      <div class="chat-message__row">
+        <div class="chat-body"><%= chat_message_body(message.body) %></div>
+        <div class="chat-message__meta">
+          <% if mine %><span class="chat-read-receipt" data-message-id="<%= message.id %>"><%= @conversation.message_read?(message) ? '既読' : '未読' %></span><% end %>
+          <time datetime="<%= message.created_at.iso8601 %>" title="<%= message.created_at.strftime('%Y年%-m月%-d日 %H:%M') %>"><%= message.created_at.strftime('%H:%M') %></time>
+        </div>
+      </div>
       <% unless mine %>
-        <details><summary>通報</summary>
+        <details class="chat-message__report"><summary>通報</summary>
           <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
             <%= hidden_field_tag :message_id, message.id %>
             <%= f.label :reason, '通報理由', for: "message-report-#{message.id}" %>
@@ -23,7 +27,7 @@
             <%= f.submit '運営に通報する' %>
           <% end %>
         </details>
-      <% end %></div>
+      <% end %>
     </div>
   </article>
   <% end %>
