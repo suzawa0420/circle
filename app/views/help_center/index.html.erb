@@ -1,7 +1,7 @@
 <% set_meta_tags title: 'ヘルプセンター・よくある質問', noindex: @query.present? || @category.present? || @audience != 'all' %>
 <main class="help-shell">
   <header class="help-heading"><p class="help-eyebrow">サークルブックの使い方</p><h1>ヘルプセンター</h1><p>困っていることを検索して、解決方法を確認できます。</p></header>
-  <section class="help-card" aria-label="ヘルプを検索">
+  <section class="help-card help-search-card" aria-label="ヘルプを検索">
     <%= form_with url: help_search_path, method: :post, local: true, class: 'help-search' do %>
       <%= hidden_field_tag :spam_form_token, spam_form_token('help-search') %>
       <%= label_tag :help_query, '困っていること・キーワード' %>
@@ -12,15 +12,43 @@
     <% end %>
   </section>
   <% if @query.blank? && @category.blank? && @audience == 'all' %>
-    <section class="help-section"><h2>よくあるお困りごと</h2><div class="help-links"><% @featured.each do |article| %><%= link_to article[:title], help_article_path(article[:id]) %><% end %></div></section>
+    <section class="help-section" aria-labelledby="help-featured-heading">
+      <div class="help-section-heading"><h2 id="help-featured-heading">よくあるお困りごと</h2><p>まずはこちらをご確認ください</p></div>
+      <div class="help-featured-grid">
+        <% @featured.each do |article| %>
+          <%= link_to help_article_path(article[:id]), class: 'help-featured-link', aria: { label: article[:title] } do %>
+            <span class="help-featured-top"><span class="help-topic-icon"><%= help_icon(article[:category]) %></span><span class="help-chevron"><%= help_icon('chevron') %></span></span>
+            <span class="help-featured-title"><%= HelpCenterHelper::HELP_SHORT_TITLES.fetch(article[:id], article[:title]) %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
   <% end %>
-  <section class="help-section"><h2><%= @query.present? ? '検索結果' : '質問一覧' %>（<%= @articles.size %>件）</h2>
-    <% if @articles.empty? %><p>一致する回答が見つかりませんでした。「ログイン」「メッセージ」など短い言葉でもお試しください。</p><%= link_to 'すべての質問を見る', faq_path %><% end %>
-    <% HelpCatalog::CATEGORIES.each do |category, label| %>
-      <% articles = @articles.select { |article| article[:category] == category } %>
-      <% next if articles.empty? %>
-      <div class="help-card"><h3><%= label %></h3><div class="help-links"><% articles.each do |article| %><%= link_to help_article_path(article[:id]) do %><span><%= article[:title] %></span><small><%= HelpCatalog::AUDIENCES[article[:audience]] %></small><% end %><% end %></div></div>
+  <section class="help-section" aria-labelledby="help-list-heading">
+    <div class="help-section-heading help-section-heading--list"><h2 id="help-list-heading"><%= @query.present? ? '検索結果' : '質問一覧' %></h2><span class="help-count"><%= @articles.size %>件</span></div>
+    <% if @articles.empty? %>
+      <div class="help-card help-empty"><h3>回答が見つかりませんでした</h3><p>一致する回答が見つかりませんでした。「ログイン」「メッセージ」など短い言葉でもお試しください。</p><%= link_to 'すべての質問を見る', faq_path %></div>
     <% end %>
+    <% groups = HelpCatalog::CATEGORIES.filter_map { |category, label| articles = @articles.select { |article| article[:category] == category }; [category, label, articles] if articles.any? } %>
+    <% if groups.size > 1 %>
+      <nav class="help-category-nav" aria-label="質問のカテゴリー"><% groups.each do |category, label, articles| %><%= link_to label, "#help-category-#{category}" %><% end %></nav>
+    <% end %>
+    <div class="help-category-list">
+      <% groups.each do |category, label, articles| %>
+        <section class="help-category-card" id="help-category-<%= category %>" aria-labelledby="help-heading-<%= category %>">
+          <div class="help-category-heading"><span class="help-topic-icon"><%= help_icon(category) %></span><h3 id="help-heading-<%= category %>"><%= label %></h3><span class="help-category-count"><%= articles.size %>件</span></div>
+          <div class="help-question-list">
+            <% articles.each do |article| %>
+              <%= link_to help_article_path(article[:id]), class: 'help-question-link' do %>
+                <span class="help-question-mark" aria-hidden="true">Q</span>
+                <span class="help-question-copy"><span class="help-question-title"><%= article[:title] %></span><% if article[:audience] != 'all' %><small class="help-audience"><%= HelpCatalog::AUDIENCES[article[:audience]] %></small><% end %></span>
+                <span class="help-chevron"><%= help_icon('chevron') %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
   </section>
   <%= render 'help_center/contact_options' %>
 </main>

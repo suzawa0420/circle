@@ -95,6 +95,36 @@ class CircleOwnerPermissionsTest < ActionDispatch::IntegrationTest
     assert Question.exists?(@question.id)
   end
 
+  test 'mypage exposes circle deletion with an explicit warning and deletes related content only' do
+    schedule = @circle.schedules.create!(title: '週末の練習', venue: '体育館', day: (Date.current + 7).to_s)
+    sign_in_as(@owner)
+    get "/users/#{@circle.id}/mypage"
+    assert_response :success
+    assert_select '.dashboard-account-settings' do
+      assert_select "a[href='#{edit_admin_user_registration_path}']"
+      assert_select "a[href='#{user_path(@circle)}'][data-method='delete']", count: 1 do |links|
+        assert_includes links.first.text, 'サークルを削除する'
+        warning = links.first['data-confirm']
+        [@circle.name, '削除してもよろしいですか', 'ブログ', 'スケジュール', '口コミ', 'メッセージ', '元に戻せません'].each do |text|
+          assert_includes warning, text
+        end
+      end
+    end
+    get "/users/#{@circle.id}/account_del"
+    assert_response :success
+    assert_select 'h1', text: 'サークルの削除'
+    assert_select "a[href='#{user_path(@circle)}'][data-confirm*='ブログ'][data-confirm*='スケジュール']"
+
+    delete user_path(@circle)
+    assert_redirected_to circles_path
+    assert_not User.exists?(@circle.id)
+    assert_not Blog.exists?(@blog.id)
+    assert_not Schedule.exists?(schedule.id)
+    assert_not Question.exists?(@question.id)
+    assert AdminUser.exists?(@owner.id)
+    assert User.exists?(@other_circle.id)
+  end
+
   test 'anonymous visitors cannot delete a circle or its content' do
     delete user_path(@circle)
     assert_redirected_to new_admin_user_session_path

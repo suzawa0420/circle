@@ -1,4 +1,4 @@
-= link_to path, class: "dashboard-action" do
+= link_to path, { class: "dashboard-action" }.merge(local_assigns.fetch(:link_options, {})) do
   %span.dashboard-action__icon
     %i{ class: "fa fa-#{icon}", "aria-hidden" => "true" }
   %span.dashboard-action__text

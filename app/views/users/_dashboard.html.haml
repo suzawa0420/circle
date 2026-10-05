@@ -115,6 +115,7 @@
     %h2 アカウント設定
   .dashboard-action-list
     = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock", path: edit_admin_user_registration_path
+    = render "dashboard_action", title: "サークルを削除する", description: "ブログ・スケジュールなどもすべて削除されます", icon: "trash-o", path: user_path(@user), link_options: { method: :delete, data: { confirm: circle_deletion_confirmation(@user) } }
 
 %section.dashboard-section
   .dashboard-section__heading

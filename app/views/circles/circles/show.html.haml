@@ -104,7 +104,7 @@
           - if can_manage_circle?(@user)
             .admin_area
               .admin_edit= link_to("編集", edit_user_path(@user), data: {"turbolinks" => false})
-              .admin_delete= link_to("削除", user_path(@user), method: :delete, data: {confirm: "このサークルを削除しますか？"})
+              .admin_delete= link_to("削除", user_path(@user), method: :delete, data: {confirm: circle_deletion_confirmation(@user)})
             - if webmaster? && @admin_user.users.count > 1
               .admin_user_list
                 - @admin_user.users.each do |user|

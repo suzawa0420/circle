@@ -1,4 +1,8 @@
 module UsersHelper
+  def circle_deletion_confirmation(user)
+    "「#{user.name}」を削除してもよろしいですか？\nこのサークルに紐づくブログ・スケジュール・口コミ・メッセージなどもすべて削除され、元に戻せません。"
+  end
+
   def circle_contact_warning?(user)
     user.is_a?(User) && [1, 2].include?(user.admin_user&.check)
   end

@@ -14,7 +14,7 @@
       %li.user_item_wrap
         - if is_master_account
           = link_to "編集", edit_user_path(user), data: { "turbolinks" => false }, class: "moderator-edit-btn"
-          = link_to "削除", user_path(user), method: :delete, data: { confirm: "「#{user.name}」を削除しますか？" }, class: "moderator-delete-btn"
+          = link_to "削除", user_path(user), method: :delete, data: { confirm: circle_deletion_confirmation(user) }, class: "moderator-delete-btn"
         = link_to(circle_path(user.id)) do
           .header_user_list.ribbon-wrapper
             .header_img_wrap
