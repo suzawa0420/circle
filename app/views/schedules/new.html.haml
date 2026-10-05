@@ -11,16 +11,20 @@
           .schedule_copy_txt
             = lucide_icon "copy"
             過去のスケジュールから複製する
-          %select{:name => "schedule_select", :onchange => "location.href=value;"}
-            %option{:value => "#"} コピーするスケジュールを選択する
-            - @copy_schedules.each do |schedule|
-              %option{:value => "/users/#{schedule.user.id}/schedules/new?copy=#{schedule.id}"}
-                = Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")
-                - if schedule.time_s.present?
-                  = schedule.time_s.strftime('%-H:%M')
-                  \-#{schedule.time_e.strftime('%-H:%M') if schedule.time_e.present?}
-                - if schedule.member_venue.present?
-                  ＠#{schedule.member_venue}
-                - else
-                  ＠#{schedule.venue}
+          = form_tag new_user_schedule_path(@user), method: :get do
+            %select{name: "copy", required: true, "aria-label" => "コピーするスケジュール"}
+              %option{value: ""} コピーするスケジュールを選択する
+              - @copy_schedules.each do |schedule|
+                %option{value: schedule.id, selected: @copy_schedule&.id == schedule.id}
+                  = Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")
+                  - if schedule.time_s.present?
+                    = schedule.time_s.strftime('%-H:%M')
+                    \-#{schedule.time_e.strftime('%-H:%M') if schedule.time_e.present?}
+                  - if schedule.member_venue.present?
+                    ＠#{schedule.member_venue}
+                  - else
+                    ＠#{schedule.venue}
+            .schedule_copy_actions
+              = button_tag "同じ内容でコピー", name: "copy_mode", value: "same", class: "btn btn-default"
+              = button_tag "1週間後に同じ内容で作成", name: "copy_mode", value: "next_week", class: "btn btn-primary"
       = render "/schedules/form"

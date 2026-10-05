@@ -7,124 +7,63 @@
     ・#{message}
 .schedule_add_wrap
   .schedule_input
-    - if params[:copy].present?
-      = form_for ([@user, @schedule]) do |f|
-        .img_field_profile_wrap
-          .label_item トップ画像
-          #img_field_header{:onclick => "$('#file_header').click()"}
-            - if @copy_schedule.top_image.present?
-              = image_tag(@copy_schedule.top_image.url)
-            - else
-              = lucide_icon "image"
-          = f.file_field :top_image, class: "image", style: "display:none;", id: "file_header"
-          .file_size_p ※10MB以下のjpgかpngのみ対応
-        .img_field_profile_space
-        - if @path.is('schedules#edit')
-          .label_item 募集状況
-          = f.select  :recruitment,  [ ['募集中','募集中'], ['募集終了','募集終了'] ,['中止','中止'] ], class: 'form-control form-venue'
-          %br/
-        .label_item
-          %span.label.label_danger> 必須
-          日程
-        = f.text_field :day, id: 'datepicker', class: 'form-control form-day', readonly: "readonly", placeholder: "#{@time.strftime("%Y-%m-%d")}"
-        .label_item 時間帯
-        .time_form
-          - if @copy_schedule.time_s.present?
-            = f.time_field :time_s, value: @copy_schedule.time_s.strftime('%H:%M'), class: 'form-control', placeholder: "18:00"
+    = form_for ([@user, @schedule]) do |f|
+      = hidden_field_tag :copy, @copy_schedule.id if @copy_schedule
+      .img_field_profile_wrap
+        .label_item トップ画像
+        #img_field_header{:onclick => "$('#file_header').click()"}
+          - image_schedule = @schedule.top_image.present? ? @schedule : @copy_schedule
+          - if image_schedule&.top_image.present?
+            = image_tag(image_schedule.top_image.url)
           - else
-            = f.time_field :time_s, class: 'form-control', placeholder: "18:00"
-          .form_f 〜
-          - if @copy_schedule.time_e.present?
-            = f.time_field :time_e, value: @copy_schedule.time_e.strftime('%H:%M'), class: 'form-control', placeholder: "20:00"
-          - else
-            = f.time_field :time_e, class: 'form-control', placeholder: "20:00"
-        .label_item
-          %span.label.label_danger> 必須
-          活動エリア
-        = f.text_field :venue, value: @copy_schedule.venue, class: 'form-control form-venue', placeholder: "東京都の新宿区周辺"
-        .label_item 募集人数
-        = render "/schedules/recruitment_numbers", f: f
-        .label_item 参加費
-        = f.text_field :cost, value: @copy_schedule.cost, class: 'form-control form-venue', placeholder: "500円"
-        .only_member_warp
-          %span.only_member_title
-            = lucide_icon "lock-keyhole"
-            メンバー限定の公開情報
-          .cautions ※限定URLを共有したメンバーのみに公開されます
-          .label_item 開催場所の名所
-          = f.text_field :member_venue, value: @copy_schedule.member_venue, class: 'form-control form-venue', placeholder: "サークルブック体育館"
-          .label_item 開催場所の住所（郵便番号は不要）
-          = f.text_field :venue_address, value: @copy_schedule.venue_address, class: 'form-control form-venue', |
-            placeholder: "東京都新宿区新宿1-1-1"                                                                        |
-        .label_item
-          %span.label.label_danger> 必須
-          タイトル
-        = f.text_field :title, value: @copy_schedule.title, class: 'form-control form-venue', placeholder: "初心者限定のバスケdayです！"
-        .label_item 活動内容
-        .rich_text_sub
-          .rich_text_notes ▼文字の装飾は最後に行ってください
-          = f.hidden_field :note, value: @copy_schedule.note, id: :article_text
-          %trix-editor{:input => "article_text", :placeholder => "持ち物は○○です。参加費は△△です。"}
-        .warning_txt ※更新完了に少し時間がかかります
-        %input{:formaction => "/users/#{@user.id}/schedules?copy=#{params[:copy]}", :formmethod => "POST", :type => "submit", :value => "#{@btn_name}"}/
-        .reset
-
-
-    - else
-      = form_for ([@user, @schedule]) do |f|
-        .img_field_profile_wrap
-          .label_item トップ画像
-          #img_field_header{:onclick => "$('#file_header').click()"}
-            - if @schedule.top_image.present?
-              = image_tag(@schedule.top_image.url)
-            - else
-              = lucide_icon "image"
-          = f.file_field :top_image, class: "image", style: "display:none;", id: "file_header"
-          .file_size_p ※10MB以下のjpgかpngのみ対応
-        .img_field_profile_space
-        - if @path.is('schedules#edit')
-          .label_item 募集状況
-          = f.select  :recruitment,  [ ['募集中','募集中'], ['募集終了','募集終了'] ,['中止','中止'] ], class: 'form-control form-venue'
+            = lucide_icon "image"
+        = f.file_field :top_image, class: "image", style: "display:none;", id: "file_header"
+        .file_size_p ※10MB以下のjpgかpngのみ対応
+      .img_field_profile_space
+      - if @path.is('schedules#edit')
+        .label_item 募集状況
+        = f.select  :recruitment,  [ ['募集中','募集中'], ['募集終了','募集終了'] ,['中止','中止'] ], class: 'form-control form-venue'
+        %br/
+      .label_item
+        %span.label.label_danger> 必須
+        日程
+      = f.text_field :day, id: 'datepicker', class: 'form-control form-day', readonly: "readonly", placeholder: "#{@time.strftime("%Y-%m-%d")}"
+      .label_item 時間帯
+      .time_form
+        = f.time_field :time_s, class: 'form-control', placeholder: "18:00"
+        .form_f 〜
+        = f.time_field :time_e, class: 'form-control', placeholder: "20:00"
+      .label_item
+        %span.label.label_danger> 必須
+        活動エリア
+      = f.text_field :venue, class: 'form-control form-venue', placeholder: "東京都の新宿区周辺"
+      .label_item 募集人数
+      = render "/schedules/recruitment_numbers", f: f
+      .label_item 参加費
+      = f.text_field :cost, class: 'form-control form-venue', placeholder: "500円"
+      .only_member_warp
+        %span.only_member_title
+          = lucide_icon "lock-keyhole"
+          メンバー限定の公開情報
+        .cautions
+          ※限定URLを共有したメンバーのみに公開されます
           %br/
-        .label_item
-          %span.label.label_danger> 必須
-          日程
-        = f.text_field :day, id: 'datepicker', class: 'form-control form-day', readonly: "readonly", placeholder: "#{@time.strftime("%Y-%m-%d")}"
-        .label_item 時間帯
-        .time_form
-          = f.time_field :time_s, class: 'form-control', placeholder: "18:00"
-          .form_f 〜
-          = f.time_field :time_e, class: 'form-control', placeholder: "20:00"
-        .label_item
-          %span.label.label_danger> 必須
-          活動エリア
-        = f.text_field :venue, class: 'form-control form-venue', placeholder: "東京都の新宿区周辺"
-        .label_item 募集人数
-        = render "/schedules/recruitment_numbers", f: f
-        .label_item 参加費
-        = f.text_field :cost, class: 'form-control form-venue', placeholder: "500円"
-        .only_member_warp
-          %span.only_member_title
-            = lucide_icon "lock-keyhole"
-            メンバー限定の公開情報
-          .cautions
-            ※限定URLを共有したメンバーのみに公開されます
-            %br/
-            = link_to ">>限定URLはこちら","/schedules/#{@user.unique_id}", target: :_blank
-          .label_item 開催場所の名所
-          = f.text_field :member_venue, class: 'form-control form-venue', placeholder: "サークルブック体育館"
-          .label_item 開催場所の住所（郵便番号は不要）
-          = f.text_field :venue_address, class: 'form-control form-venue', |
-            placeholder: "東京都新宿区新宿1-1-1"                                   |
-        .label_item
-          %span.label.label_danger> 必須
-          タイトル
-        = f.text_field :title, class: 'form-control form-venue', placeholder: "初心者限定のエンジョイバスケです！"
-        .label_item 活動内容
-        .rich_text_sub
-          .rich_text_notes ▼文字の装飾は最後に行ってください
-          = f.hidden_field :note, id: :article_text
-          %trix-editor{:input => "article_text", :placeholder => "持ち物は○○です！"}
-        .warning_txt ※更新完了に少し時間がかかります
-        = f.submit @btn_name, data: { disable_with: '作成中...' }
-        .reset
+          = link_to ">>限定URLはこちら","/schedules/#{@user.unique_id}", target: :_blank
+        .label_item 開催場所の名所
+        = f.text_field :member_venue, class: 'form-control form-venue', placeholder: "サークルブック体育館"
+        .label_item 開催場所の住所（郵便番号は不要）
+        = f.text_field :venue_address, class: 'form-control form-venue', |
+          placeholder: "東京都新宿区新宿1-1-1"                                   |
+      .label_item
+        %span.label.label_danger> 必須
+        タイトル
+      = f.text_field :title, class: 'form-control form-venue', placeholder: "初心者限定のエンジョイバスケです！"
+      = f.hidden_field :google_map
+      .label_item 活動内容
+      .rich_text_sub
+        .rich_text_notes ▼文字の装飾は最後に行ってください
+        = f.hidden_field :note, id: :article_text
+        %trix-editor{:input => "article_text", :placeholder => "持ち物は○○です！"}
+      .warning_txt ※更新完了に少し時間がかかります
+      = f.submit @btn_name, data: { disable_with: '作成中...' }
+      .reset

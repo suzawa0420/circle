@@ -21,14 +21,14 @@ before_action :set_dates, {only: [:dates, :day]}
 		@schedule = @user.schedules.build
     @btn_name = "新規作成"
 
-    @copy_schedules = Schedule.where(user_id: @user.id).order(:day => :asc, :time_s => :asc).last(10)
-
-    if params[:copy]
-      @copy_schedule = Schedule.find(params[:copy])
-      if @user.id != @copy_schedule.user.id
-        flash[:notice] = "URLに誤りがあります"
-        redirect_to new_user_schedule_path
-      end
+    set_copy_schedules
+    set_copy_schedule
+    if @copy_schedule
+      @schedule.assign_attributes(@copy_schedule.attributes.slice(
+        'time_s', 'time_e', 'venue', 'cost', 'member_venue', 'venue_address',
+        'title', 'note', 'recruitment_numbers', 'google_map'
+      ))
+      @schedule.day = (Date.parse(@copy_schedule.day) + 7).iso8601 if params[:copy_mode] == 'next_week'
     end
 
 		@b1_name = @user.name
@@ -38,13 +38,7 @@ before_action :set_dates, {only: [:dates, :day]}
   end
 
 	def create
-    if params[:copy]
-      @copy_schedule = Schedule.find(params[:copy])
-      if @user.id != @copy_schedule.user.id
-        flash[:notice] = "URLに誤りがあります"
-        redirect_to new_user_schedule_path
-      end
-    end
+    set_copy_schedule
 
     @schedule = @user.schedules.new(schedule_params)
     @btn_name = "更新する"
@@ -55,7 +49,7 @@ before_action :set_dates, {only: [:dates, :day]}
 
       @schedule = Schedule.where(user_id: @user.id).last
       @schedule.date = Time.parse(@schedule.day).strftime("%Y年%-m月%-d日(#{%w(日曜日 月曜日 火曜日 水曜日 木曜日 金曜日 土曜日)[Time.parse(@schedule.day).wday]})")
-      if params[:copy]
+      if @copy_schedule
         if @schedule.top_image.blank?
           @schedule.top_image = @copy_schedule.top_image.file
         end
@@ -71,6 +65,8 @@ before_action :set_dates, {only: [:dates, :day]}
       flash[:notice] = "追加しました！"
       redirect_to user_schedules_path
     else
+      set_copy_schedules
+      @btn_name = "新規作成"
       render "new"
     end
 
@@ -244,6 +240,14 @@ def day
 end
 
 private
+  def set_copy_schedules
+    @copy_schedules = @user.schedules.order(:day => :asc, :time_s => :asc).last(10)
+  end
+
+  def set_copy_schedule
+    @copy_schedule = @user.schedules.find(params[:copy]) if params[:copy].present?
+  end
+
   def set_schedules
     @user = User.find(params[:user_id])
     @schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday).order(:day => :asc, :time_s => :asc)

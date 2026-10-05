@@ -59,7 +59,14 @@
         <div class="add_schedule_btn_wrap">
           <%= link_to new_user_schedule_path(@user,copy: @schedule.id ) do %>
             <div class="add_schedule_btn">
-              <%= lucide_icon "calendar-plus" %> コピーして新規作成する！
+              <%= lucide_icon "calendar-plus" %> 同じ内容でコピー
+            </div>
+          <% end %>
+        </div>
+        <div class="add_schedule_btn_wrap">
+          <%= link_to new_user_schedule_path(@user, copy: @schedule.id, copy_mode: :next_week) do %>
+            <div class="add_schedule_btn">
+              <%= lucide_icon "calendar-plus" %> 1週間後に同じ内容で作成
             </div>
           <% end %>
         </div>
