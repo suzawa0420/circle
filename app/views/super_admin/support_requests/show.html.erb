@@ -1,0 +1,6 @@
+<%= render 'webmasters/shared/page_header', title: '運営への連絡詳細', description: '内容を確認して対応状況を更新します。必要な連絡は既存の運営メールから行ってください。' %>
+<%= link_to '問い合わせ一覧へ戻る', super_admin_support_requests_path %>
+<article class="webmaster-card"><h2><%= SupportRequest::KINDS[@support_request.kind] %></h2><p class="wm-meta"><%= HelpCatalog::CATEGORIES[@support_request.category] %> ／ <%= SupportRequest::AUDIENCES[@support_request.audience] %> ／ <%= @support_request.created_at.strftime('%Y/%m/%d %H:%M') %></p><p>連絡先：<%= @support_request.email %></p><div class="wm-body"><%= simple_format(h(@support_request.body)) %></div>
+<% if @support_request.errors.any? %><p role="alert">対応状況とメモの入力内容を確認してください。</p><% end %>
+<%= form_with model: [:super_admin, @support_request], local: true do |f| %><div class="help-field"><%= f.label :status, '対応状況' %><%= f.select :status, SupportRequest::STATUSES.map { |key, label| [label, key] } %></div><div class="help-field"><%= f.label :staff_note, '運営用メモ（利用者には表示されません）' %><%= f.text_area :staff_note, rows: 5, maxlength: 4000 %></div><%= f.submit '対応状況を保存', class: 'cb-button' %><% end %>
+</article>

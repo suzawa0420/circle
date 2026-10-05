@@ -5,6 +5,7 @@
     <h1><%= @role == 'member' ? @conversation.user.name : "#{@conversation.member.nickname}さん" %></h1>
     <a href="#evaluation" class="chat-evaluation-link">口コミ</a>
   </header>
+  <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
   <details class="chat-context"><summary>相手の情報・受付状況</summary>
   <div class="chat-card chat-person">
     <%= link_to "#{@conversation.member.nickname}さんのプロフィール", member_profile_path(@conversation.member) %>

@@ -21,7 +21,7 @@
   </nav>
   <% if webmaster? %>
     <nav class="webmaster-subnav" aria-label="管理機能">
-      <% [['管理トップ', webmaster_path], ['サークル・主催者', super_admin_circles_path], ['参加者管理', super_admin_accounts_path], ['メッセージ', super_admin_conversations_path], ['通報', super_admin_chat_reports_path], ['口コミ', super_admin_reviews_path], ['ご意見箱', super_admin_opinions_path], ['施設', super_admin_places_path], ['コラム', columns_path], ['ブロック', account_blocks_path], ['無効メール', invalid_emails_path], ['検索キーワード', db_keywords_path], ['入力エラー', db_validation_errors_path]].each do |label, path| %>
+      <% [['管理トップ', webmaster_path], ['サークル・主催者', super_admin_circles_path], ['参加者管理', super_admin_accounts_path], ['メッセージ', super_admin_conversations_path], ['通報', super_admin_chat_reports_path], ['口コミ', super_admin_reviews_path], ['ご意見箱', super_admin_opinions_path], ['問い合わせ・ヘルプ改善', super_admin_support_requests_path], ['施設', super_admin_places_path], ['コラム', columns_path], ['ブロック', account_blocks_path], ['無効メール', invalid_emails_path], ['検索キーワード', db_keywords_path], ['入力エラー', db_validation_errors_path]].each do |label, path| %>
         <%= link_to label, path, 'aria-current': (request.path == path ? 'page' : nil) %>
       <% end %>
     </nav>

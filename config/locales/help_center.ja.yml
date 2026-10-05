@@ -1,0 +1,13 @@
+ja:
+  activerecord:
+    models:
+      support_request: 運営への連絡
+    attributes:
+      support_request:
+        kind: 連絡の種類
+        category: カテゴリー
+        audience: 利用者の種類
+        email: 連絡先メールアドレス
+        body: 内容
+        status: 対応状況
+        staff_note: 運営用メモ

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_03_000000) do
+ActiveRecord::Schema.define(version: 2026_10_05_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -395,6 +395,37 @@ ActiveRecord::Schema.define(version: 2026_10_03_000000) do
     t.index ["impressionable_type", "impressionable_id", "session_hash"], name: "poly_session_index"
     t.index ["impressionable_type", "message", "impressionable_id"], name: "impressionable_type_message_index"
     t.index ["user_id"], name: "index_impressions_on_user_id"
+  end
+
+  create_table "help_events", force: :cascade do |t|
+    t.string "kind", null: false
+    t.string "query", limit: 100
+    t.string "article_id"
+    t.string "audience"
+    t.string "category"
+    t.integer "result_count"
+    t.string "visitor_key", limit: 64, null: false
+    t.date "recorded_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_help_events_on_created_at"
+    t.index ["visitor_key", "article_id", "recorded_on"], name: "help_daily_feedback_unique", unique: true, where: "((kind)::text = ANY ((ARRAY['helpful'::character varying, 'unhelpful'::character varying])::text[]))"
+  end
+
+  create_table "support_requests", force: :cascade do |t|
+    t.string "kind", default: "inquiry", null: false
+    t.string "category", null: false
+    t.string "audience", null: false
+    t.string "email", null: false
+    t.text "body", null: false
+    t.string "status", default: "pending", null: false
+    t.text "staff_note"
+    t.bigint "member_id"
+    t.bigint "admin_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kind", "created_at"], name: "index_support_requests_on_kind_and_created_at"
+    t.index ["status", "created_at"], name: "index_support_requests_on_status_and_created_at"
   end
 
   create_table "invalid_emails", force: :cascade do |t|

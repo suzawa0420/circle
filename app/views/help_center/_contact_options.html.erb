@@ -1,0 +1,5 @@
+<section class="help-card"><h2>解決しない場合・運営への連絡</h2><div class="help-links">
+<%= link_to 'FAQで解決しない問い合わせ', new_support_request_path(category: local_assigns[:category]) %>
+<%= link_to 'ご意見・改善提案（原則返信なし）', new_support_request_path(kind: 'suggestion', category: 'other') %>
+<%= link_to '迷惑行為・不正利用の通報について', help_article_path('report') %>
+</div><p class="help-meta">サークルへの参加・日程・参加費の確認は、各サークルの主催者に連絡してください。</p></section>

@@ -1,4 +1,5 @@
 <%= render 'webmasters/shared/page_header', title: 'ウェブマスター管理', description: '確認が必要な投稿や通報、各種運営設定を管理できます。' %>
+<p class="wm-meta">未対応の問い合わせ・安全報告：<%= @pending_support_requests %>件 ／ 新しいご意見：<%= @pending_suggestions %>件</p>
 <div class="webmaster-grid">
   <%= link_to super_admin_circles_path, class: 'webmaster-card' do %>
     <h2>サークル・主催者管理</h2><p>サークルの編集、主催者の確認、公開停止・解除</p>
@@ -7,7 +8,7 @@
   <%= link_to super_admin_chat_reports_path, class: 'webmaster-card' do %>
     <h2>チャット・口コミの通報</h2><p>通報内容と会話履歴を確認し、対応状況を管理</p><strong>未解決 <%= @pending_reports %> 件</strong>
   <% end %>
-  <% [['参加者管理', super_admin_accounts_path, '登録情報・評価・通報履歴と利用停止・解除'], ['メッセージ管理', super_admin_conversations_path, '最新のメッセージと主催者・参加者のやり取りを確認'], ['口コミ管理', super_admin_reviews_path, 'サークル・参加者への公開口コミを確認・削除'], ['ご意見箱', super_admin_opinions_path, '主催者から運営に届いたご意見の全文・投稿日時を確認'], ['コラム管理', columns_path, 'コラムの作成・編集・削除'], ['ブロック管理', account_blocks_path, '投稿のブロック一覧・解除'], ['無効メール管理', invalid_emails_path, '利用を制限するメールアドレスの管理'], ['検索キーワード', db_keywords_path, '検索キーワードの確認・編集'], ['入力エラー記録', db_validation_errors_path, '登録・投稿時の入力エラーの確認'], ['施設管理', super_admin_places_path, '施設情報の確認・編集']].each do |title, path, description| %>
+  <% [['参加者管理', super_admin_accounts_path, '登録情報・評価・通報履歴と利用停止・解除'], ['メッセージ管理', super_admin_conversations_path, '最新のメッセージと主催者・参加者のやり取りを確認'], ['口コミ管理', super_admin_reviews_path, 'サークル・参加者への公開口コミを確認・削除'], ['問い合わせ・ヘルプ改善', super_admin_support_requests_path, '未対応の問い合わせ・安全報告と検索・回答評価を確認'], ['ご意見箱', super_admin_opinions_path, '主催者から運営に届いたご意見の全文・投稿日時を確認'], ['コラム管理', columns_path, 'コラムの作成・編集・削除'], ['ブロック管理', account_blocks_path, '投稿のブロック一覧・解除'], ['無効メール管理', invalid_emails_path, '利用を制限するメールアドレスの管理'], ['検索キーワード', db_keywords_path, '検索キーワードの確認・編集'], ['入力エラー記録', db_validation_errors_path, '登録・投稿時の入力エラーの確認'], ['施設管理', super_admin_places_path, '施設情報の確認・編集']].each do |title, path, description| %>
     <%= link_to path, class: 'webmaster-card' do %><h2><%= title %></h2><p><%= description %></p><% end %>
   <% end %>
 </div>

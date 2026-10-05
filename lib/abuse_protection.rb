@@ -9,6 +9,9 @@ module AbuseProtection
     path = Rack::Utils.unescape_path(request.path).squeeze('/').sub(%r{/\z}, '').sub(%r{\.[^/]+\z}, '')
     return unless request.post?
 
+    return :support if path == '/support' || path.match?(%r{\A/users/[^/]+/opinions\z})
+    return :help if path == '/help/search' || path.match?(%r{\A/help/[^/]+/feedback\z})
+
     return :signup if ACCOUNTS.any? { |account| path == "/#{account}" }
     return :login if path == "/webmaster/login"
     return :login if ACCOUNTS.any? { |account| path == "/#{account}/sign_in" }
@@ -19,7 +22,7 @@ module AbuseProtection
     Rack::Attack.cache.store = store
     # Rack::Attack is inserted automatically by its Railtie, after RemoteIp.
     # Use Rails' trusted-proxy handling, never the first raw X-Forwarded-For.
-    { signup: [10, 3600], login: [60, 300], password: [10, 3600] }.each do |kind, (limit, period)|
+    { signup: [10, 3600], login: [60, 300], password: [10, 3600], support: [5, 3600], help: [60, 3600] }.each do |kind, (limit, period)|
       Rack::Attack.throttle("account/#{kind}", limit: limit, period: period) do |request|
         if endpoint(request) == kind
           Digest::SHA256.hexdigest(ActionDispatch::Request.new(request.env).remote_ip.to_s)

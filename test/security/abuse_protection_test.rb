@@ -43,6 +43,16 @@ class AbuseProtectionTest < Minitest::Test
     assert_equal 200, request('/members', method: 'PATCH')[0]
   end
 
+  def test_support_limit_covers_legacy_routes_and_help_has_a_separate_limit
+    5.times { assert_equal 200, request('/support')[0] }
+    assert_equal 429, request('/support.json')[0]
+    assert_equal 429, request('/users/1anything/opinions')[0]
+    assert_equal 200, request('/support/new', method: 'GET')[0]
+    60.times { assert_equal 200, request('/help/search')[0] }
+    assert_equal 429, request('/help/login/feedback')[0]
+    assert_equal 200, request('/faq', method: 'GET')[0]
+  end
+
   def test_public_pages_and_health_are_unaffected
     80.times { assert_equal 200, request('/circles', method: 'GET')[0] }
     assert_equal 200, request('/health', method: 'GET')[0]

@@ -3,6 +3,7 @@ class ChatMaintenance
   class DeliveryFailed < StandardError; end
 
   def self.run
+    HelpEvent.where('created_at < ?', 90.days.ago).delete_all
     Conversation.where(reviews_published_at: nil).where('review_deadline <= ?', Time.current).find_each(&:publish_reviews!)
     failures = 0
     Conversation::ROLES.each do |role|

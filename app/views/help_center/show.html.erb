@@ -1,0 +1,8 @@
+<% set_meta_tags title: "#{@article[:title]}｜ヘルプセンター" %>
+<main class="help-shell">
+  <%= link_to 'ヘルプセンターに戻る', faq_path %>
+  <article class="help-card"><p class="help-eyebrow"><%= HelpCatalog::CATEGORIES[@article[:category]] %> ／ <%= HelpCatalog::AUDIENCES[@article[:audience]] %></p><h1><%= @article[:title] %></h1><div class="help-answer"><%= simple_format(h(@article[:body])) %></div><% label, path = help_action(@article) %><%= link_to label, path, class: 'cb-button' %></article>
+  <section class="help-card"><h2>この回答で解決できましたか？</h2><%= form_with url: help_feedback_path(@article[:id]), method: :post, local: true do %><%= hidden_field_tag :spam_form_token, spam_form_token("help-feedback:#{@article[:id]}") %><div class="help-actions"><%= button_tag '解決できた', name: 'answer', value: 'helpful', class: 'cb-button' %><%= button_tag '解決しなかった', name: 'answer', value: 'unhelpful', class: 'cb-button cb-button--secondary' %></div><% end %></section>
+  <% if @article[:id] == 'report' %><section class="help-card"><h2>通報する画面にアクセスできない場合</h2><%= link_to '安全上の問題を運営に報告する', new_support_request_path(kind: 'safety', category: 'review'), class: 'cb-button' %></section><% end %>
+  <%= render 'help_center/contact_options', category: @article[:category] %>
+</main>

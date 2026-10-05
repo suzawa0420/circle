@@ -5,4 +5,4 @@
     <div class="participant-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true, autofocus: true, autocomplete: 'email' %></div>
     <%= f.submit '再設定メールを送る', class: 'participant-button participant-button--wide' %>
   <% end %><p class="participant-auth-switch"><%= link_to 'ログインへ戻る', new_member_session_path %></p>
-</div></main>
+<%= render "help_center/context_link", article: "reset-mail", label: "再設定メールが届かないときはこちら" %></div></main>

@@ -1,4 +1,5 @@
 <%= render 'webmasters/shared/page_header', title: 'ご意見箱', description: '主催者から運営に届いたご意見を、新しい順に表示します。' %>
+<section class="wm-section"><h2>新しい窓口からのご意見（全 <%= @suggestions.total_count %> 件）</h2><p>週1回まとめて確認します。個別の返信は原則行いません。</p><div class="wm-list"><% @suggestions.each do |suggestion| %><article class="webmaster-card"><h3><%= SupportRequest::AUDIENCES[suggestion.audience] %>からのご意見</h3><p class="wm-meta"><%= suggestion.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= SupportRequest::STATUSES[suggestion.status] %></p><div class="wm-body"><%= simple_format(h(suggestion.body)) %></div><div class="wm-actions"><%= link_to '詳細・対応状況', super_admin_support_request_path(suggestion) %></div></article><% end %></div><% if @suggestions.empty? %><p>新しい窓口からのご意見はありません。</p><% end %><%= paginate @suggestions, param_name: :suggestion_page %></section>
 <section class="wm-section">
   <div class="wm-section-heading"><h2>ご意見一覧（全 <%= @opinions.total_count %> 件）</h2></div>
   <div class="wm-list">

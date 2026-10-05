@@ -1,6 +1,7 @@
 .main.users-new
   .container
     %h1.form-heading ログイン（主催者用）
+    = render "help_center/context_link", article: "login", label: "ログインできないときはこちら"
     .login_info_txt
       = link_to ">>参加者用のログインはコチラ",new_member_session_path
 

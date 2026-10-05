@@ -193,6 +193,7 @@ Rails.application.routes.draw do
     resources :conversations, only: [:index, :show]
     resources :reviews, only: :index
     resources :opinions, only: :index
+    resources :support_requests, only: [:index, :show, :update]
     delete "evaluations/:id", to: "reviews#destroy_evaluation", as: :evaluation
     resources :places, only: :index
     resources :chat_reports, only: [:index, :show, :update]
@@ -213,7 +214,12 @@ Rails.application.routes.draw do
 
 
   # 静的ページ
-	get 'faq' , to: 'pages#faq'
+	get 'faq', to: 'help_center#index'
+  post 'help/search', to: 'help_center#search', as: :help_search
+  get 'help/:id', to: 'help_center#show', as: :help_article
+  post 'help/:id/feedback', to: 'help_center#feedback', as: :help_feedback
+  resources :support_requests, only: [:new, :create], path: 'support'
+  get 'support/thanks', to: 'support_requests#thanks', as: :support_thanks
 	get 'rules' , to: 'pages#rules'
 	get 'privacypolicy' , to: 'pages#privacypolicy'
 	get 'about' , to: 'pages#about'

@@ -59,6 +59,8 @@ case "$mode" in
     done
     # Recalculate affected stored levels without legacy inquiry penalties.
     bundle exec rails db:migrate:up VERSION=20261003000000
+    # Help center: additive private requests and anonymous search/answer counters.
+    bundle exec rails db:migrate:up VERSION=20261005000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

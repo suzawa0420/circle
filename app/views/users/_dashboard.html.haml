@@ -115,3 +115,11 @@
     %h2 アカウント設定
   .dashboard-action-list
     = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock", path: edit_admin_user_registration_path
+
+%section.dashboard-section
+  .dashboard-section__heading
+    %h2 ヘルプ・運営への連絡
+  .dashboard-action-list
+    = link_to "ヘルプセンター・よくある質問", faq_path
+    = link_to "ご意見・改善提案（原則返信なし）", new_support_request_path(kind: "suggestion", category: "other")
+    = link_to "FAQで解決しない問い合わせ", new_support_request_path

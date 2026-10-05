@@ -3,6 +3,7 @@
   .container
     %h1.cb-page-title サークルの基本情報
     = render "users/parts/user_switching", user: @user
+    = render "help_center/context_link", article: "edit-listing", label: "募集の編集・表示で困ったときはこちら"
     .form.users-form
       = render "users/parts/step_bar"
       = render "users/form"

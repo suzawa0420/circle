@@ -3,4 +3,4 @@ Rails.application.config.filter_parameters += [:password, :'cf-turnstile-respons
 
 Rails.application.config.filter_parameters += [:token, :body, :comment, :reason, :message, :evaluation, :report]
 
-Rails.application.config.filter_parameters += [:date_of_birth]
+Rails.application.config.filter_parameters += [:date_of_birth, :help_query, :staff_note, :support_request]

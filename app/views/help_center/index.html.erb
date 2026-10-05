@@ -1,0 +1,26 @@
+<% set_meta_tags title: 'ヘルプセンター・よくある質問', noindex: @query.present? || @category.present? || @audience != 'all' %>
+<main class="help-shell">
+  <header class="help-heading"><p class="help-eyebrow">サークルブックの使い方</p><h1>ヘルプセンター</h1><p>困っていることを検索して、解決方法を確認できます。</p></header>
+  <section class="help-card" aria-label="ヘルプを検索">
+    <%= form_with url: help_search_path, method: :post, local: true, class: 'help-search' do %>
+      <%= hidden_field_tag :spam_form_token, spam_form_token('help-search') %>
+      <%= label_tag :help_query, '困っていること・キーワード' %>
+      <%= search_field_tag :help_query, @query, maxlength: 100, placeholder: '例：ログインできない、返信が来ない' %>
+      <p class="help-meta">名前・メールアドレスなどの個人情報は入力しないでください。</p>
+      <div class="help-filters"><div><%= label_tag :audience, '利用者の種類' %><%= select_tag :audience, options_for_select(HelpCatalog::AUDIENCES.map { |key, label| [label, key] }, @audience) %></div><div><%= label_tag :category, 'カテゴリー' %><%= select_tag :category, options_for_select([['すべて', '']] + HelpCatalog::CATEGORIES.map { |key, label| [label, key] }, @category) %></div></div>
+      <%= submit_tag 'ヘルプを検索', class: 'cb-button' %>
+    <% end %>
+  </section>
+  <% if @query.blank? && @category.blank? && @audience == 'all' %>
+    <section class="help-section"><h2>よくあるお困りごと</h2><div class="help-links"><% @featured.each do |article| %><%= link_to article[:title], help_article_path(article[:id]) %><% end %></div></section>
+  <% end %>
+  <section class="help-section"><h2><%= @query.present? ? '検索結果' : '質問一覧' %>（<%= @articles.size %>件）</h2>
+    <% if @articles.empty? %><p>一致する回答が見つかりませんでした。「ログイン」「メッセージ」など短い言葉でもお試しください。</p><%= link_to 'すべての質問を見る', faq_path %><% end %>
+    <% HelpCatalog::CATEGORIES.each do |category, label| %>
+      <% articles = @articles.select { |article| article[:category] == category } %>
+      <% next if articles.empty? %>
+      <div class="help-card"><h3><%= label %></h3><div class="help-links"><% articles.each do |article| %><%= link_to help_article_path(article[:id]) do %><span><%= article[:title] %></span><small><%= HelpCatalog::AUDIENCES[article[:audience]] %></small><% end %><% end %></div></div>
+    <% end %>
+  </section>
+  <%= render 'help_center/contact_options' %>
+</main>

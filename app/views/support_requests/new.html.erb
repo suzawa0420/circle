@@ -1,0 +1,23 @@
+<% set_meta_tags title: '運営への連絡', noindex: true %>
+<main class="help-shell"><%= link_to 'ヘルプセンターに戻る', faq_path %><h1>運営への連絡</h1>
+<% unless @ready %><section class="help-card"><h2>どのような内容ですか？</h2>
+<%= form_with url: new_support_request_path, method: :get, local: true do %>
+<div class="help-field"><%= label_tag :kind, '連絡の種類' %><%= select_tag :kind, options_for_select(SupportRequest::KINDS.map { |key, label| [label, key] }, @support_request.kind) %></div>
+<div class="help-field"><%= label_tag :category, '困っている内容' %><%= select_tag :category, options_for_select(HelpCatalog::CATEGORIES.map { |key, label| [label, key] }, @support_request.category) %></div>
+<%= submit_tag '関連する回答を見る', class: 'cb-button' %><% end %></section><% else %><p class="help-meta"><%= SupportRequest::KINDS[@support_request.kind] %> ／ <%= HelpCatalog::CATEGORIES[@support_request.category] %>　<%= link_to '内容の種類を選び直す', new_support_request_path(kind: @support_request.kind, category: @support_request.category) %></p><% end %>
+<% if @support_request.kind == 'suggestion' %><section class="help-card"><h2>ご意見箱について</h2><p>サービス改善の参考として受け付け、まとめて確認します。個別の返信は原則行いません。不具合やアカウントの個別対応が必要な場合は、連絡の種類で「FAQで解決しない問い合わせ」を選んでください。</p></section>
+<% elsif @support_request.kind == 'safety' %><section class="help-card"><h2>通報について</h2><p>会話・口コミの通報機能から送信すると、対象の履歴と一緒に運営が確認できます。画面にアクセスできない場合は、下のフォームで対象URLと状況をお知らせください。</p><%= link_to 'メッセージ一覧を開く', conversations_path %></section>
+<% else %><% if @ready %><details class="help-card"><summary>関連する回答をもう一度見る</summary><% else %><section class="help-card"><h2>まずはこちらをご確認ください</h2><% end %><div class="help-links"><% @answers.each do |article| %><%= link_to article[:title], help_article_path(article[:id]) %><% end %></div><%= link_to '別の言葉でヘルプを検索する', faq_path %><% if @ready %></details><% else %></section><% end %><% end %>
+<% unless @ready %><%= link_to @support_request.kind == 'suggestion' ? 'ご意見を送る' : '解決しないので運営に連絡する', new_support_request_path(kind: @support_request.kind, category: @support_request.category, step: 'form'), class: 'cb-button' %>
+<% else %><section class="help-card"><h2><%= SupportRequest::KINDS[@support_request.kind] %></h2>
+<% if @support_request.errors.any? %><div role="alert"><p>入力内容を確認してください。</p><ul><% @support_request.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
+<p>受付後、内容を確認します。サークルへの代理連絡は行いません。パスワード・認証コード・身分証の画像などは送らないでください。</p>
+<%= form_with model: @support_request, local: true do |f| %>
+<%= hidden_field_tag :spam_form_token, spam_form_token('support-request') %><%= f.hidden_field :kind %><%= f.hidden_field :category %>
+<div class="help-honeypot" aria-hidden="true"><%= label_tag :contact_website, 'Website' %><%= text_field_tag :contact_website, nil, tabindex: -1, autocomplete: 'off' %></div>
+<div class="help-field"><%= f.label :audience, '利用者の種類' %><%= f.select :audience, SupportRequest::AUDIENCES.map { |key, label| [label, key] } %></div>
+<div class="help-field"><%= f.label :email, @support_request.kind == 'suggestion' ? '連絡先メールアドレス（任意）' : '連絡先メールアドレス' %><%= f.email_field :email, required: @support_request.kind != 'suggestion', maxlength: 254, autocomplete: 'email' %><p class="help-meta"><%= @support_request.kind == 'suggestion' ? '任意です。内容の確認のため連絡が必要な場合にのみ使用します。' : '必要な確認・返信のために使用します。' %></p></div>
+<div class="help-field"><%= f.label :body, '内容' %><%= f.text_area :body, required: true, minlength: 10, maxlength: 4000, rows: 8, placeholder: '対象ページのURL、困っている状況、試した操作、エラー表示、端末・ブラウザーなど（10〜4000文字）' %></div>
+<%= f.submit 'この内容を運営に送信する', class: 'cb-button', data: { disable_with: '送信中…' } %>
+<% end %></section><% end %>
+</main>

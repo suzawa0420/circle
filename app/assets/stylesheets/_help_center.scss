@@ -1,0 +1,23 @@
+.help-shell { max-width: 860px; margin: 24px auto 64px; padding: 0 16px; color: #263e31; }
+.help-shell .help-heading { height: auto; margin-bottom: 24px; }
+.help-shell h1 { font-size: clamp(24px, 5vw, 32px); line-height: 1.5; margin: 12px 0; }
+.help-shell h2 { font-size: 20px; line-height: 1.5; margin: 0 0 16px; }
+.help-shell h3 { font-size: 17px; margin: 0 0 12px; }
+.help-shell p { line-height: 1.85; }
+.help-card { background: #fff; border: 1px solid #dbe5dd; border-radius: 12px; padding: 24px; margin: 20px 0; }
+.help-eyebrow, .help-meta { color: #56695d; font-size: 13px; }
+.help-search label, .help-field label { display: block; margin-bottom: 7px; font-weight: 600; }
+.help-search input[type=search], .help-shell select, .help-field input, .help-field textarea { width: 100%; box-sizing: border-box; border: 1px solid #80978a; border-radius: 7px; padding: 12px; font-size: 16px; color: #263e31; background: #fff; }
+.help-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.help-field { margin: 20px 0; }
+.help-links { display: grid; }
+.help-links a { padding: 14px 0; border-bottom: 1px solid #e2e9e4; color: #17653d; line-height: 1.65; display: flex; justify-content: space-between; gap: 12px; }
+.help-links small { white-space: nowrap; color: #56695d; }
+.help-answer { margin: 24px 0; }
+.help-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.help-context { margin: 16px 0; font-size: 14px; }
+.help-context a { color: #17653d; text-decoration: underline; }
+.help-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 600px) { .help-card { padding: 18px; } .help-filters { grid-template-columns: 1fr; } .help-links a { flex-direction: column; gap: 4px; } }
+
+.help-shell select { height: auto; min-height: 48px; line-height: 1.5; }
