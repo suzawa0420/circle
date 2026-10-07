@@ -10,6 +10,7 @@
         <% if kind == 'circle' && record.admin_user_id.present? %><label class="wm-selection"><%= check_box_tag 'owner_ids[]', record.admin_user_id, false, id: "#{form_id}-#{record.id}", form: form_id, data: { bulk_owner: true }, autocomplete: 'off' %><%= record.name %>の主催者を削除対象に選択</label><% end %>
         <div class="wm-card-heading"><h3><%= link_to(kind == 'circle' ? record.name : record.title, kind == 'circle' ? circle_path(record) : circle_blog_path(record.user, record)) %></h3><span class="wm-badge <%= blocked ? 'wm-badge--danger' : 'wm-badge--pending' %>"><%= blocked ? '公開停止中' : '確認待ち' %></span></div>
         <% if kind == 'blog' %><p class="wm-meta"><%= record.user.name %></p><% end %>
+        <%= render "webmasters/shared/moderation_reasons", record: record %>
         <div class="wm-actions">
           <%= button_to(blocked ? '公開停止を解除' : '確認済みにする', kind == 'circle' ? super_admin_circle_moderation_path(record) : super_admin_blog_moderation_path(record), method: :patch, params: { moderation_status: 'clear' }) %>
           <% unless blocked %><%= button_to '公開を停止', kind == 'circle' ? super_admin_circle_moderation_path(record) : super_admin_blog_moderation_path(record), method: :patch, params: { moderation_status: 'blocked' }, class: 'wm-button--danger' %><% end %>
@@ -38,7 +39,8 @@
       <label class="wm-selection"><%= check_box_tag 'owner_ids[]', admin_user.id, false, id: "bulk-owner-#{admin_user.id}", form: 'bulk-owners', data: { bulk_owner: true }, autocomplete: 'off' %>主催者 ID <%= admin_user.id %>を削除対象に選択</label>
       <div class="wm-card-heading"><h3><%= admin_user.nickname.presence || "主催者 ID #{admin_user.id}" %></h3><span class="wm-badge">サークル <%= admin_user.users.size %>件</span></div>
       <dl class="wm-details"><dt>メール</dt><dd><%= admin_user.email %></dd><dt>登録日</dt><dd><%= admin_user.created_at.strftime('%Y/%m/%d') %></dd></dl>
-      <% admin_user.users.each do |circle| %><div class="wm-circle-row"><%= link_to circle.name, circle_path(circle) %><%= link_to '編集', edit_user_path(circle), class: 'wm-button wm-button--secondary' %></div><% end %>
+      <% if admin_user.suspended? %><p class="wm-meta">利用停止理由：<%= admin_user.suspension_reason.presence || '未記録' %></p><% end %>
+      <% admin_user.users.each do |circle| %><div class="wm-circle-row"><%= link_to circle.name, circle_path(circle) %><%= link_to '編集', edit_user_path(circle), class: 'wm-button wm-button--secondary' %></div><%= render 'webmasters/shared/moderation_reasons', record: circle %><% end %>
       <div class="wm-actions"><%= link_to '詳細・利用停止・削除', super_admin_account_path(admin_user, kind: 'owner'), class: 'wm-button wm-button--secondary' %></div>
     </article>
   <% end %></div>

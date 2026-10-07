@@ -17,6 +17,9 @@
         - elsif @user.publication_status != "draft"
           このサークルは一般には公開されていません。
 
+    - if webmaster?
+      = render "webmasters/shared/moderation_reasons", record: @user
+
     .user-profile
       .header-wrapper.ribbon-wrapper
         .ribbon-content

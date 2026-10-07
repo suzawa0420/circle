@@ -63,6 +63,7 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261005000000
     bundle exec rails db:migrate:up VERSION=20261007000000
     bundle exec rails db:migrate:up VERSION=20261008000000
+    bundle exec rails db:migrate:up VERSION=20261009000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

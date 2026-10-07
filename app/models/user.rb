@@ -111,6 +111,10 @@ class User < ApplicationRecord
 			[ nil, "OK" ].include?(ng_account) && japanese_profile? && admin_user.present? && admin_user.publicly_visible?
 	end
 
+  def moderation_rule_reasons
+    japanese_profile? ? [] : ['non_japanese_profile']
+  end
+
 	private
 
 	# Recheck at read time as well: legacy drafts can become published without
@@ -129,7 +133,12 @@ class User < ApplicationRecord
 
 		# Category and location labels are supplied by the site; only owner-written
 		# name and introduction count toward the Japanese-language check.
-		self.moderation_status = "review" unless japanese_profile?
+    reasons = moderation_rule_reasons
+    if reasons.any?
+      self.moderation_status = "review"
+      self.moderation_reasons = ModerationReasonReport.snapshot(reasons)
+      self.moderation_checked_at = Time.current
+    end
 	end
 
 	public

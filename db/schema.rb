@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_08_000000) do
+ActiveRecord::Schema.define(version: 2026_10_09_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 2026_10_08_000000) do
     t.string "moderation_status", default: "clear", null: false
     t.index ["moderation_status"], name: "index_blogs_on_moderation_status"
     t.index ["user_id"], name: "index_blogs_on_user_id"
+    t.jsonb "moderation_reasons", default: [], null: false
+    t.datetime "moderation_checked_at"
   end
 
   create_table "bookmarks", force: :cascade do |t|
@@ -799,6 +801,8 @@ ActiveRecord::Schema.define(version: 2026_10_08_000000) do
     t.index ["switch", "last_post"], name: "index_users_on_switch_and_last_post_desc", order: { last_post: :desc }
     t.index ["switch", "cb_point", "last_post"], name: "index_users_on_switch_popularity_and_last_post", order: { cb_point: :desc, last_post: :desc }
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+    t.jsonb "moderation_reasons", default: [], null: false
+    t.datetime "moderation_checked_at"
   end
 
   create_table "users_ages", force: :cascade do |t|
