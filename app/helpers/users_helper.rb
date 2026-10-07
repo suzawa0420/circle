@@ -13,6 +13,11 @@ module UsersHelper
     { data: { circle_contact_warning: true }, aria: { haspopup: 'dialog', controls: 'circle-contact-warning' } }
   end
 
+  def circle_inquiry_link_options(user)
+    options = circle_contact_warning_options(user)
+    options.merge(data: (options[:data] || {}).merge(circle_inquiry_click: true))
+  end
+
   # Stored scores use tenths. Normalize float noise before splitting the level
   # and its progress, without changing or capping the stored score.
   def circle_level_status(user)

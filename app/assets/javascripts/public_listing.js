@@ -3,6 +3,7 @@
 //= require rails-ujs
 //= require mobile_navigation
 //= require home_screen_install
+//= require circle_inquiry_tracking
 
 (function () {
   function ready() {

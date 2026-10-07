@@ -1,4 +1,4 @@
 .contact-button
-  = link_to new_user_conversation_path(@user), circle_contact_warning_options(@user).merge(class: "cb-participant") do
+  = link_to new_user_conversation_path(@user), circle_inquiry_link_options(@user).merge(class: "cb-participant") do
     = lucide_icon "message-circle"
     メッセージで問い合わせ
