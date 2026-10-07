@@ -1,7 +1,0 @@
-- links = related_circle_filter_landings
-- if links.any?
-  %nav.cb-filter-landings{ 'aria-label' => '募集内容・年代別のサークル一覧' }
-    %h2 条件からサークルを探す
-    .cb-filter-landings__links
-      - links.each do |label, url|
-        = link_to label, url

@@ -28,18 +28,6 @@ class CircleFilterLanding
       age: ages.any? ? Age.find(ages.first) : nil)
   end
 
-  def self.related(event: nil, prefecture: nil, group: nil, age: nil)
-    users = User.publicly_visible
-    users = users.where(event_id: event.id) if event
-    users = users.where_pref(prefecture.id) if prefecture
-    for_groups = age ? users.where(id: UsersAge.where(age_id: age.id).select(:user_id)) : users
-    for_ages = group ? users.where(id: UsersGroup.where(group_id: group.id).select(:user_id)) : users
-    groups = Group.where(id: UsersGroup.where(user_id: for_groups.select(:id)).select(:group_id)).order(:id)
-    ages = Age.where(id: UsersAge.where(user_id: for_ages.select(:id)).select(:age_id)).order(:id)
-    groups.map { |item| [item.name, path(event: event, prefecture: prefecture, group: item, age: age)] } +
-      ages.map { |item| [item.name, path(event: event, prefecture: prefecture, group: group, age: item)] }
-  end
-
   # Aggregate the registered combinations once, rather than issuing a search
   # for every theoretical combination. Null dimensions represent 'all'.
   def self.each_populated_path

@@ -70,7 +70,7 @@ class CircleFilterLandingsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'registered combinations generate only populated paths and internal links' do
+  test 'registered combinations generate only populated paths without duplicate filter navigation' do
     sub = Prefecture.create!(name: '神奈川県', kana: 'landing-kanagawa')
     @circle.update!(prefecture_sub: sub)
     urls = CircleFilterLanding.each_populated_path.to_a
@@ -80,9 +80,11 @@ class CircleFilterLandingsTest < ActionDispatch::IntegrationTest
     assert_includes urls, CircleFilterLanding.path(group: @group)
     assert_includes urls, CircleFilterLanding.path(age: @age)
     get event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana)
-    assert_select '.cb-filter-landings a[href=?]', CircleFilterLanding.path(event: @circle.event, prefecture: @circle.prefecture, group: @group)
+    assert_select '.cb-filter-landings', count: 0
+    assert_select 'details.cb-detailed-search', count: 1
     get CircleFilterLanding.path(event: @circle.event, prefecture: @circle.prefecture, group: @group)
-    assert_select '.cb-filter-landings a[href=?]', @path
+    assert_select '.cb-filter-landings', count: 0
+    assert_select 'details.cb-detailed-search', count: 1
     urls.each do |url|
       get url
       assert_response :success

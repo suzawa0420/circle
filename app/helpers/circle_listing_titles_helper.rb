@@ -47,16 +47,4 @@ module CircleListingTitlesHelper
     subject
   end
 
-
-  def related_circle_filter_landings
-    return [] if params[:q].present? || @category || @city || @tag
-    return [] if Array(@search_groups).size > 1 || Array(@search_ages).size > 1
-    group = Array(@search_groups).first
-    age = Array(@search_ages).first
-    key = ['circle-filter-links-v1', @event&.id, @prefecture&.id, group&.id, age&.id]
-    Rails.cache.fetch(key, expires_in: 10.minutes) do
-      CircleFilterLanding.related(event: @event, prefecture: @prefecture, group: group, age: age)
-    end.reject { |_label, url| url == request.path }
-  end
-
 end
