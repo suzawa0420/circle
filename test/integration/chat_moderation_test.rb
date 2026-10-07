@@ -91,6 +91,19 @@ class ChatModerationTest < ActionDispatch::IntegrationTest
     assert_equal 'spam', held.reload.moderation_status
   end
 
+  test 'viewing an older page marks its released message read without clearing newer unread messages' do
+    held = @conversation.send_message!('member', @spam)
+    held.moderate!('approve')
+    held.update!(released_at: 1.hour.ago)
+    ChatMessage.insert_all!(55.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "新しい履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    login_owner
+    get conversation_path(@conversation), params: { page: 2 }
+    assert_response :success
+    assert @conversation.reload.message_read?(held.reload)
+    assert_equal 0, @conversation.owner_read_message_id
+    assert @conversation.owner_notification_due_at
+  end
+
   private
   def login_member
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }

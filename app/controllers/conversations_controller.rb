@@ -47,7 +47,7 @@ class ConversationsController < ApplicationController
   def show
     @conversation.publish_reviews!
     @messages = @conversation.chat_messages.visible_to(@role).delivery_order.page(params[:page]).per(50).load
-    mark_messages_read if params[:page].blank? || params[:page] == '1'
+    mark_messages_read(advance_cursor: params[:page].blank? || params[:page] == '1')
     @own_review = @conversation.conversation_reviews.find_by(author_role: @role)
     @public_reviews = @conversation.conversation_reviews.publicly_visible.order(:id)
   end
@@ -122,10 +122,10 @@ class ConversationsController < ApplicationController
 
   private
 
-  def mark_messages_read
+  def mark_messages_read(advance_cursor: true)
     return if webmaster_signed_in?
 
-    @conversation.mark_read!(@role, through: @messages.map(&:id).max || 0, message_ids: @messages.map(&:id))
+    @conversation.mark_read!(@role, through: advance_cursor ? (@messages.map(&:id).max || 0) : 0, message_ids: @messages.map(&:id))
     @messages.each { |m| m.reload if m.released_at }
   end
 
