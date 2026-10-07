@@ -10,9 +10,9 @@ module CircleListingTitlesHelper
   end
 
   def circle_listing_heading
-    count, bracket, subject = circle_listing_title.partition('】')
+    count, _bracket, subject = circle_listing_title.partition('】')
     safe_join([
-      content_tag(:span, count + bracket, class: 'circle-listing-heading__count'),
+      content_tag(:span, count.delete_prefix('【'), class: 'circle-listing-heading__count'),
       content_tag(:span, subject, class: 'circle-listing-heading__subject')
     ])
   end

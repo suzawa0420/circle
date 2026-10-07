@@ -1,39 +1,24 @@
-- detailed = params[:detailed] == '1'
+- detailed = Array(params[:group_ids]).any?(&:present?) || Array(params[:age_ids]).any?(&:present?)
 %details.cb-detailed-search.cb-role-participant{ open: detailed }
   %summary
     = lucide_icon 'search'
     %span 詳しく絞り込む
     = lucide_icon 'chevron-down', class: 'cb-detailed-search__chevron'
-  = form_tag circles_search_index_path, method: :get, enforce_utf8: false do
-    = hidden_field_tag :detailed, '1'
-    = hidden_field_tag :sort, params[:sort] if params[:sort].present?
-    - { category_id: @category&.id, city_id: @city&.id, tag_id: @tag&.id }.each do |key, value|
-      = hidden_field_tag key, params[key].presence || value if params[key].present? || value
-    .cb-detailed-search__fields
-      %label
-        %span キーワード
-        = text_field_tag :q, params[:q], placeholder: '例）バスケ　東京'
-      %label
-        %span 種目・カテゴリー
-        = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, params[:event_id].presence || @event&.id), include_blank: '指定しない'
-      %label
-        %span エリア
-        = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, params[:prefecture_id].presence || @prefecture&.id), include_blank: '指定しない'
-    %fieldset
-      %legend 募集内容
-      .cb-detailed-search__choices
-        - Group.order(:id).each do |group|
-          %label
-            = check_box_tag 'group_ids[]', group.id, Array(params[:group_ids]).include?(group.id.to_s), id: "filter-group-#{group.id}"
-            %span= group.name
-    %fieldset
-      %legend 年齢層
-      .cb-detailed-search__choices
-        - Age.order(:id).each do |age|
-          %label
-            = check_box_tag 'age_ids[]', age.id, Array(params[:age_ids]).include?(age.id.to_s), id: "filter-age-#{age.id}"
-            %span= age.name
-    %p.cb-detailed-search__hint 募集内容・年齢層は複数選択できます。各項目内では、選んだいずれかに当てはまるサークルを表示します。
-    .cb-detailed-search__actions
-      = submit_tag 'この条件で検索', name: nil, class: 'cb-button'
-      = link_to '条件をクリア', circles_path, class: 'cb-button cb-button--secondary'
+  %fieldset
+    %legend 募集内容
+    .cb-detailed-search__choices
+      - Group.order(:id).each do |group|
+        %label
+          = check_box_tag 'group_ids[]', group.id, Array(params[:group_ids]).include?(group.id.to_s), id: "filter-group-#{group.id}"
+          %span= group.name
+  %fieldset
+    %legend 年齢層
+    .cb-detailed-search__choices
+      - Age.order(:id).each do |age|
+        %label
+          = check_box_tag 'age_ids[]', age.id, Array(params[:age_ids]).include?(age.id.to_s), id: "filter-age-#{age.id}"
+          %span= age.name
+  %p.cb-detailed-search__hint 募集内容・年齢層は複数選択できます。各項目内では、選んだいずれかに当てはまるサークルを表示します。
+  .cb-detailed-search__actions
+    = submit_tag 'この条件で検索', name: nil, class: 'cb-button'
+    = link_to '条件をクリア', circles_path, class: 'cb-button cb-button--secondary'

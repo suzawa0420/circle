@@ -39,7 +39,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
       get path
       assert_response :success
       assert_select 'title', text: "【全1件】#{subject} | サークルブック"
-      assert_select 'h1', text: "【全1件】#{subject}"
+      assert_select 'h1', text: "全1件#{subject}"
       unless path.start_with?('/categories/')
         first_image = css_select('img.header_imege_user_list[fetchpriority=high]').first
         assert_select 'link[rel=preload][as=image][type="image/webp"][fetchpriority=high][href=?]', first_image['src'], count: 1
@@ -50,7 +50,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
   test 'listing titles show filtered totals without year or unrelated conditions' do
     get @path
     assert_select 'title', text: '【全1件】東京都のバスケチーム募集 | サークルブック'
-    assert_select 'h1', text: '【全1件】東京都のバスケチーム募集'
+    assert_select 'h1', text: '全1件東京都のバスケチーム募集'
     assert_select '.mobile-site-heading source[sizes="150px"][srcset*="320w"]', count: 1
     @circle.update_columns(publication_status: 'draft')
     SearchResultCountCache::STORE.clear
@@ -68,7 +68,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     get "/#{@circle.event.ruby}/#{@circle.prefecture.kana}/tag/#{tag.id}"
     assert_response :success
     assert_select 'title', text: '【全1件】東京都の初心者歓迎のバドミントンサークル募集 | サークルブック'
-    assert_select 'h1', text: '【全1件】東京都の初心者歓迎のバドミントンサークル募集'
+    assert_select 'h1', text: '全1件東京都の初心者歓迎のバドミントンサークル募集'
     other = Tag.create!(name: '50代', text: '50代の')
     get "/#{@circle.event.ruby}/#{@circle.prefecture.kana}/tag/#{other.id}"
     assert_response :success
@@ -107,7 +107,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{@path}?page=2"
     assert_select 'title', text: "【全#{count + 1}件】東京都のバスケチーム募集（2ページ目） | サークルブック"
-    assert_select 'h1', text: "【全#{count + 1}件】東京都のバスケチーム募集（2ページ目）"
+    assert_select 'h1', text: "全#{count + 1}件東京都のバスケチーム募集（2ページ目）"
     json = css_select('script[type="application/ld+json"]').map { |node| JSON.parse(node.text) }.find { |item| item['@type'] == 'ItemList' }
     assert_equal count + 1, json['itemListElement'].first['position']
   end

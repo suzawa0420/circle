@@ -1,63 +1,19 @@
 .search_wrap
-  .search_word
-    = form_tag(circles_search_index_path, method: :get, enforce_utf8: false) do
-      - if params[:detailed] == '1'
-        = hidden_field_tag :detailed, '1'
-        - %w[event_id prefecture_id category_id city_id tag_id sort].each do |key|
-          = hidden_field_tag key, params[key] if params[key].present?
-        - %w[group_ids age_ids].each do |key|
-          - Array(params[key]).each do |value|
-            = hidden_field_tag "#{key}[]", value
-      %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
-      .search_icon
-        = submit_tag("検索", :name => nil)
-    .search_word_announce ※複数の単語はスペースで区切ってください
-
-
-
-  .search_select
-
-    %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
-      %option{:value => "#"}
-        - if @event.present?
-          = @event.name
-        - else
-          = "サークル・チーム"
-
-      - categories.each do |category|
-        %optgroup{:label => "#{category.name}"}
-          - category.events.each do |event|
-
-            - if @event.present? && @event.id == event.id
-            - elsif @prefecture.present?
-              %option{:value => "#{event_prefecture_path(event.ruby, @prefecture.kana)}"}= event.name
-            - else
-              %option{:value => "#{event_path(event.ruby)}"}= event.name
-
-
-
-    %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
-      %option{:value => "#"}
-        - if @prefecture.present?
-          = @prefecture.name
-        - else
-          = "都道府県"
-
-      - prefecture_option_groups(prefectures).each do |region, region_prefectures|
-        %optgroup{ label: region }
-          - region_prefectures.each do |prefecture|
-            - if @prefecture.present? && @prefecture.id == prefecture.id
-
-            - elsif @event.present?
-              %option{:value => "#{event_prefecture_path(@event.ruby, prefecture.kana)}"}= prefecture.name
-            - else
-              %option{:value => "#{prefecture_path(prefecture.kana)}"}= prefecture.name
-
-
-
-    .search_icon
-      = lucide_icon "search"
-  = render "circles/commons/detailed_search", categories: categories, prefectures: prefectures
+  = form_tag circles_search_index_path, method: :get, enforce_utf8: false, class: 'cb-circle-search-form' do
+    = hidden_field_tag :detailed, '1'
+    = hidden_field_tag :sort, params[:sort] if params[:sort].present?
+    - { category_id: @category&.id, city_id: @city&.id, tag_id: @tag&.id }.each do |key, value|
+      = hidden_field_tag key, params[key].presence || value if params[key].present? || value
+    .search_word
+      .cb-search-keyword
+        %input.search_area.change_font{ "aria-label" => "キーワードで検索", name: "q", placeholder: "例）バスケ　東京", type: "text", value: params[:q] }
+        .search_icon
+          = submit_tag '検索', name: nil
+      .search_word_announce ※複数の単語はスペースで区切ってください
+    .search_select
+      = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, params[:event_id].presence || @event&.id), include_blank: 'サークル・チーム', 'aria-label' => '種目・カテゴリー'
+      = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, params[:prefecture_id].presence || @prefecture&.id), include_blank: '都道府県', 'aria-label' => '都道府県'
+    = render "circles/commons/detailed_search"
   - @wdays =  ["日", "月", "火", "水", "木", "金", "土" ]
   .date_list_wrap
     - if path.is('schedules#day')
