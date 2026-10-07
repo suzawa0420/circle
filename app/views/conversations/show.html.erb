@@ -30,10 +30,19 @@
     <% elsif @conversation.blocked? %>
       <p>ブロック中のため、双方とも送信できません。履歴の閲覧・通報・評価は引き続き利用できます。</p>
     <% else %>
-      <%= form_with url: message_conversation_path(@conversation), scope: :message, local: true, html: { class: "chat-compose-form" } do |f| %>
+      <%= form_with url: message_conversation_path(@conversation), scope: :message, local: true, html: { class: "chat-compose-form", multipart: true } do |f| %>
+        <% if @message_error %><p class="chat-upload-error" role="alert"><%= @message_error %> 写真は選び直してください。</p><% end %>
+        <div class="chat-upload-preview" hidden><img alt="送信する写真"><span class="chat-upload-name"></span><button type="button" class="chat-upload-remove">取り消す</button></div>
+        <p class="chat-upload-error" data-upload-error role="alert" hidden></p>
+        <div class="chat-compose-row">
+        <%= f.label :image, class: 'chat-image-picker', title: '写真を1枚選ぶ（10MBまで）' do %>
+          <%= lucide_icon 'camera' %><span class="chat-visually-hidden">写真を1枚選ぶ（10MBまで）</span>
+          <%= f.file_field :image, accept: 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif', class: 'chat-image-input', aria: { label: '写真を1枚選ぶ（10MBまで）' } %>
+        <% end %>
         <%= f.label :body, 'メッセージ', class: 'chat-visually-hidden' %>
-        <%= f.text_area :body, required: true, maxlength: 2000, rows: 1, placeholder: "メッセージを入力", class: "chat-compose-input" %>
+        <%= f.text_area :body, value: @draft_body, maxlength: 2000, rows: 1, placeholder: "メッセージを入力", class: "chat-compose-input" %>
         <%= f.submit '送信', class: 'chat-button', data: { disable_with: '送信中…' } %>
+        </div>
       <% end %>
     <% end %>
   </section>
@@ -110,3 +119,5 @@
     <% end %>
   </details>
 </main>
+
+<%= render 'conversations/image_viewer' %>

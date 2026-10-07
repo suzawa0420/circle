@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     as: :listing_image, constraints: { kind: /profile|header/, id: /\d+/, fingerprint: /[a-f0-9]{24}/ }
   resources :columns
 
+  get 'conversations/:conversation_id/images/:id', to: 'chat_images#show', as: :chat_image
+
   resources :conversations, only: [:index, :show] do
     get :messages, on: :member
     post :message, on: :member

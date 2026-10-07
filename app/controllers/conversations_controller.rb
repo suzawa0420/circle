@@ -56,8 +56,18 @@ class ConversationsController < ApplicationController
   end
 
   def message
-    @conversation.send_message!(@role, params.require(:message).permit(:body)[:body])
+    attributes = params.require(:message)
+    upload = attributes[:image]
+    if upload.present? && !upload.is_a?(ActionDispatch::Http::UploadedFile)
+      raise Conversation::NotAllowed, '画像は1メッセージにつき1枚だけ選択してください。'
+    end
+    @conversation.send_message!(@role, attributes.permit(:body)[:body], image: upload.presence)
     redirect_to conversation_path(@conversation)
+  rescue ActiveRecord::RecordInvalid => error
+    @message_error = error.record.errors.full_messages.join('、')
+    @draft_body = attributes[:body].to_s.first(2000)
+    show
+    render :show, status: :unprocessable_entity
   end
 
   def block

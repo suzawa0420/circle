@@ -12,7 +12,7 @@
       <span class="message-role message-role--<%= message.sender_role %>"><%= message.sender_label %></span>
       <% unless mine %><strong class="chat-message__name"><%= message.sender_role == 'owner' ? @conversation.user.name : @conversation.member.nickname %></strong><% end %>
       <div class="chat-message__row">
-        <div class="chat-body"><%= chat_message_body(message.body) %></div>
+        <div class="chat-body"><%= render 'conversations/image', message: message %><%= chat_message_body(message.body) if message.body.present? %></div>
         <div class="chat-message__meta">
           <% if mine %><span class="chat-read-receipt" data-message-id="<%= message.id %>"><%= @conversation.message_read?(message) ? '既読' : '未読' %></span><% end %>
           <time datetime="<%= message.created_at.iso8601 %>" title="<%= message.created_at.strftime('%Y年%-m月%-d日 %H:%M') %>"><%= message.created_at.strftime('%H:%M') %></time>

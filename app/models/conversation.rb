@@ -39,7 +39,7 @@ class Conversation < ApplicationRecord
     member_blocked? || owner_blocked?
   end
 
-  def send_message!(role, body)
+  def send_message!(role, body, image: nil)
     with_lock do
       raise NotAllowed, 'ブロック中はメッセージを送信できません。' if blocked?
       ensure_active_sender!(role)
@@ -56,7 +56,7 @@ class Conversation < ApplicationRecord
           chat_messages.create!(sender_role: 'system', body: guidance)
         end
       end
-      message = chat_messages.create!(sender_role: role, body: body)
+      message = chat_messages.create!(sender_role: role, body: body.to_s, image: image)
       if role == 'owner' && accepted_at.nil?
         self.accepted_at = Time.current
         self.review_deadline = 14.days.from_now

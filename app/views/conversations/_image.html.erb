@@ -1,0 +1,5 @@
+<% if message.image? %>
+  <%= link_to chat_image_path(message.conversation.public_id, message.id), class: 'chat-image-link', data: { chat_image: true, turbolinks: false }, aria: { label: '送信された写真を拡大する' } do %>
+    <%= image_tag chat_image_path(message.conversation.public_id, message.id), alt: '送信された写真', class: 'chat-image', loading: 'lazy' %>
+  <% end %>
+<% end %>
