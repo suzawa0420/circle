@@ -7,9 +7,11 @@
           %option{:value => "/match/#{event.ruby}"}= event.name
       %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
-        - @prefectures.each do |prefecture|
-          - if prefecture.id != 50
-            %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if prefecture.id != 50
+                %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
     - elsif @path.is('matches#event_prefecture')
@@ -20,10 +22,12 @@
             %option{:value => "/match/#{event.ruby}"}= event.name
       %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @prefecture.name
-        - @prefectures.each do |prefecture|
-          - if prefecture.id != 50
-            - if prefecture.kana != @prefecture.kana
-              %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if prefecture.id != 50
+                - if prefecture.kana != @prefecture.kana
+                  %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
     - elsif  @path.is('matches#event')
@@ -34,9 +38,11 @@
             %option{:value => "/match/#{event.ruby}"}= event.name
       %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
-        - @prefectures.each do |prefecture|
-          - if prefecture.id != 50
-            %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if prefecture.id != 50
+                %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
     - elsif @path.is('matches#prefecture')
@@ -46,10 +52,12 @@
           %option{:value => "/match/#{event.ruby}/#{@prefecture.kana}"}= event.name
       %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"}= @prefecture.name
-        - @prefectures.each do |prefecture|
-          - if prefecture.id != 50
-            - if prefecture.kana != @prefecture.kana
-              %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if prefecture.id != 50
+                - if prefecture.kana != @prefecture.kana
+                  %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
     - else

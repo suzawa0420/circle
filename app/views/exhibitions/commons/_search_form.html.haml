@@ -30,13 +30,15 @@
           - else
             = "都道府県"
 
-        - prefectures.each do |prefecture|
-          - if @prefecture.present? && @prefecture.id == prefecture.id
+        - prefecture_option_groups(prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if @prefecture.present? && @prefecture.id == prefecture.id
 
-          - elsif @category.present?
-            %option{:value => "#{exhibitions_category_prefecture_path(@category.kana, prefecture.kana)}"}= prefecture.name
-          - else
-            %option{:value => "#{exhibitions_prefecture_path(prefecture.kana)}"}= prefecture.name
+              - elsif @category.present?
+                %option{:value => "#{exhibitions_category_prefecture_path(@category.kana, prefecture.kana)}"}= prefecture.name
+              - else
+                %option{:value => "#{exhibitions_prefecture_path(prefecture.kana)}"}= prefecture.name
 
 
 

@@ -15,8 +15,10 @@
               %option{:value => "/#{event.ruby}"}= event.name
       %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
-        - @prefectures.each do |prefecture|
-          %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
     - elsif @path.is('users#event_prefecture_city', 'tags#event_prefecture_city')
@@ -30,9 +32,11 @@
                   %option{:value => "/#{event.ruby}"}= event.name
         %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
-          - @prefectures.each do |prefecture|
-            - if prefecture.kana != @prefecture.kana
-              %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
+          - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+            %optgroup{ label: region }
+              - region_prefectures.each do |prefecture|
+                - if prefecture.kana != @prefecture.kana
+                  %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
         %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @city.name
           - @cities.each do |city|
@@ -51,9 +55,11 @@
                   %option{:value => "/#{event.ruby}"}= event.name
         %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
-          - @prefectures.each do |prefecture|
-            - if prefecture.kana != @prefecture.kana
-              %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
+          - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+            %optgroup{ label: region }
+              - region_prefectures.each do |prefecture|
+                - if prefecture.kana != @prefecture.kana
+                  %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
         %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"} 市区町村郡
           - @cities.each do |city|
@@ -70,8 +76,10 @@
                 %option{:value => "/#{event.ruby}"}= event.name
       %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
         %option{:value => "#"} 都道府県
-        - @prefectures.each do |prefecture|
-          %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              %option{:value => "/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
     - elsif @path.is('users#prefecture_city', 'tags#prefecture_city')
@@ -84,9 +92,11 @@
                 %option{:value => "/#{event.ruby}/#{@prefecture.kana}/#{@city.city_kana}"}= event.name
         %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
-          - @prefectures.each do |prefecture|
-            - if prefecture.kana != @prefecture.kana
-              %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
+          - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+            %optgroup{ label: region }
+              - region_prefectures.each do |prefecture|
+                - if prefecture.kana != @prefecture.kana
+                  %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
         %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @city.name
           - @cities.each do |city|
@@ -104,9 +114,11 @@
                 %option{:value => "/#{event.ruby}/#{@prefecture.kana}"}= event.name
         %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
           %option{:value => "#"}= @prefecture.name
-          - @prefectures.each do |prefecture|
-            - if prefecture.kana != @prefecture.kana
-              %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
+          - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+            %optgroup{ label: region }
+              - region_prefectures.each do |prefecture|
+                - if prefecture.kana != @prefecture.kana
+                  %option{:value => "/prefectures/#{prefecture.kana}"}= prefecture.name
         %select{"aria-label" => "市区町村", :name => "city_select", :onchange => "location.href=value;"}
           %option{:value => "#"} 市区町村郡
           - @cities.each do |city|

@@ -28,13 +28,15 @@
           - else
             = "都道府県"
 
-        - prefectures.each do |prefecture|
-          - if @prefecture.present? && @prefecture.id == prefecture.id
+        - prefecture_option_groups(prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if @prefecture.present? && @prefecture.id == prefecture.id
 
-          - elsif @event.present?
-            %option{:value => "#{blogs_event_prefecture_path(@event.ruby, prefecture.kana)}"}= prefecture.name
-          - else
-            %option{:value => "#{blogs_prefecture_path(prefecture.kana)}"}= prefecture.name
+              - elsif @event.present?
+                %option{:value => "#{blogs_event_prefecture_path(@event.ruby, prefecture.kana)}"}= prefecture.name
+              - else
+                %option{:value => "#{blogs_prefecture_path(prefecture.kana)}"}= prefecture.name
 
 
 

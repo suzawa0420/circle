@@ -47,12 +47,14 @@
           %option{:value => "#"}= @prefecture.name
         - else
           %option{:value => "#"} 都道府県
-        - @prefectures.each do |prefecture|
-          - if params[:pref] != prefecture.kana
-            - if params[:event].present?
-              %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?event=#{params[:event]}&pref=#{prefecture.kana}"}= prefecture.name
-            - else
-              %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?pref=#{prefecture.kana}"}= prefecture.name
+        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
+          %optgroup{ label: region }
+            - region_prefectures.each do |prefecture|
+              - if params[:pref] != prefecture.kana
+                - if params[:event].present?
+                  %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?event=#{params[:event]}&pref=#{prefecture.kana}"}= prefecture.name
+                - else
+                  %option{:value => "/dates/#{params[:year]}/#{params[:month]}/#{params[:day]}?pref=#{prefecture.kana}"}= prefecture.name
       .search_icon
         = lucide_icon "search"
   - else
