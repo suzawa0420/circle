@@ -1,9 +1,15 @@
 class Circles::SearchController < Circles::ApplicationController
-  before_action :set_search, only: [:index, :show]
+  before_action :set_search, only: [:index, :show, :landing]
 
 
 	def index
     params[:q] = params[:q].to_s.gsub("　"," ")
+
+    if (landing = CircleFilterLanding.from_search(params))
+      query = params.permit(:sort, :page).to_h
+      landing += "?#{query.to_query}" if query.present?
+      return redirect_to landing, status: :see_other
+    end
 
     if detailed_search?
       set_keyword_search
@@ -52,24 +58,57 @@ class Circles::SearchController < Circles::ApplicationController
 
 
 
+  def landing
+    # Path dimensions define this page; query filters cannot override them.
+    extra = request.query_parameters.keys - %w[sort page utm_source utm_medium utm_campaign utm_term utm_content gclid fbclid]
+    if extra.any?
+      query = params.permit(:sort, :page).to_h
+      url = request.path
+      url += "?#{query.to_query}" if query.present?
+      return redirect_to url, status: :moved_permanently
+    end
+    event = params[:activity] == 'all' ? nil : Event.find_by!(ruby: params[:activity])
+    prefecture = params[:region] == 'all' ? nil : Prefecture.find_by!(kana: params[:region])
+    group = params[:group] == 'all' ? nil : Group.find(params[:group])
+    age = params[:age] == 'all' ? nil : Age.find(params[:age])
+    unless group || age
+      return redirect_to CircleFilterLanding.path(event: event, prefecture: prefecture), status: :moved_permanently
+    end
+    @landing_filters = { detailed: '1', q: '', event_id: event&.id, prefecture_id: prefecture&.id,
+      group_ids: group ? [group.id.to_s] : [], age_ids: age ? [age.id.to_s] : [] }
+    @filtered_landing = true
+    set_keyword_search
+    if @users.to_a.empty?
+      raise ActiveRecord::RecordNotFound if params[:page].to_i > 1
+      set_meta_tags noindex: true
+    end
+    render :index
+  end
+
 private
   def detailed_search?
-    params[:detailed] == '1'
+    @filtered_landing || params[:detailed] == '1'
   end
 
   def apply_detailed_filters(users)
     return users unless detailed_search?
 
-    @event = Event.find(params[:event_id]) if params[:event_id].present?
-    @prefecture = Prefecture.find(params[:prefecture_id]) if params[:prefecture_id].present?
+    filters = @landing_filters || params
+    @event = Event.find(filters[:event_id]) if filters[:event_id].present?
+    @prefecture = Prefecture.find(filters[:prefecture_id]) if filters[:prefecture_id].present?
     users = users.where(event_id: @event.id) if @event
     users = users.where_pref(@prefecture.id) if @prefecture
-    users = users.where(category_id: params[:category_id]) if params[:category_id].present?
-    users = users.where_city(City.find(params[:city_id])) if params[:city_id].present?
-    users = users.where(id: UserTag.where(tag_id: params[:tag_id]).select(:user_id)) if params[:tag_id].present?
+    @category = Category.find(filters[:category_id]) if filters[:category_id].present?
+    users = users.where(category_id: @category.id) if @category
+    @city = City.find(filters[:city_id]) if filters[:city_id].present?
+    users = users.where_city(@city) if @city
+    @tag = Tag.find(filters[:tag_id]) if filters[:tag_id].present?
+    users = users.where(id: UserTag.where(tag_id: @tag.id).select(:user_id)) if @tag
 
-    group_ids = Array(params[:group_ids]).reject(&:blank?)
-    age_ids = Array(params[:age_ids]).reject(&:blank?)
+    group_ids = Array(filters[:group_ids]).reject(&:blank?)
+    age_ids = Array(filters[:age_ids]).reject(&:blank?)
+    @search_groups = Group.where(id: group_ids).order(:id).to_a
+    @search_ages = Age.where(id: age_ids).order(:id).to_a
     users = users.where(id: UsersGroup.where(group_id: group_ids).select(:user_id)) if group_ids.any?
     users = users.where(id: UsersAge.where(age_id: age_ids).select(:user_id)) if age_ids.any?
     users
@@ -80,7 +119,7 @@ private
       users = User.publicly_visible
 
       # キーワード分割
-      @keywords = params[:q].split(/[[:blank:]]+/).select(&:present?)
+      @keywords = (@landing_filters || params)[:q].to_s.split(/[[:blank:]]+/).select(&:present?)
 
       # 検索ワードの数だけand検索を行う
       @keywords.each do |keyword|

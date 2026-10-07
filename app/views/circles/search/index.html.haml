@@ -1,4 +1,6 @@
-- set_meta_tags noindex: true,title: circle_listing_title
+- set_meta_tags title: circle_listing_title
+- set_meta_tags noindex: true unless @filtered_landing
+- set_meta_tags description: "#{circle_listing_subject}。活動日・活動場所・募集内容を比較して、参加できるサークルを探せます。" if @filtered_landing
 - breadcrumb :circle_search_index, params[:q]
 
 .main.users-index

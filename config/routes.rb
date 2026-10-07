@@ -59,6 +59,9 @@ Rails.application.routes.draw do
       constraints: { name: /sitemap[1-9][0-9]*/ }, format: false
 
 
+  get 'circles/find/:activity/:region/:group/:age', to: 'circles/search#landing', as: :circle_filter_landing,
+    constraints: { group: /all|[1-9]\d*/, age: /all|[1-9]\d*/ }
+
   # サークル Circle = User
   namespace :circles do
     resources :search, only: [:index, :show], param: :q

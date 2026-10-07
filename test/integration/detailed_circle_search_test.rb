@@ -37,7 +37,7 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
     get circles_search_index_path, params: { detailed: '1', event_id: @circle.event.id, prefecture_id: @circle.prefecture.id,
       group_ids: [@beginner.id, @experienced.id], age_ids: [@twenties.id, @thirties.id], sort: '2' }
     assert_response :success
-    assert_select 'h1', text: '全1件条件で絞り込んだサークル・チーム検索結果'
+    assert_select 'h1', text: '全1件東京都の初心者・経験者／20代・30代向けのバスケサークル募集'
     assert_select 'details.cb-detailed-search[open]'
     assert_select 'input[name="group_ids[]"][checked]', count: 2
     assert_select 'input[name="age_ids[]"][checked]', count: 2
@@ -45,8 +45,10 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
     assert_equal count, DbKeyword.count
 
     get circles_search_index_path, params: { detailed: '1', group_ids: [@experienced.id], age_ids: [@twenties.id] }
-    assert_response :success
-    assert_select 'h1', text: '全0件条件で絞り込んだサークル・チーム検索結果'
+    assert_response :redirect
+    assert_redirected_to CircleFilterLanding.path(group: @experienced, age: @twenties)
+    follow_redirect!
+    assert_select 'h1', text: '全0件経験者／20代向けのサークル・チーム募集'
     assert_select 'details.cb-detailed-search[open]'
   end
 
@@ -56,12 +58,12 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
     options = { detailed: '1', q: 'サークル', prefecture_id: other.id, group_ids: [@beginner.id] }
     get circles_search_index_path, params: options
     assert_response :success
-    assert_select 'h1', text: '全1件「サークル」のサークル・チーム検索結果'
+    assert_select 'h1', text: '全1件神奈川県の初心者向けのサークル・チーム募集（「サークル」で検索）'
     get circles_search_index_path, params: options.merge(q: '見つからないキーワード')
-    assert_select 'h1', text: '全0件「見つからないキーワード」のサークル・チーム検索結果'
+    assert_select 'h1', text: '全0件神奈川県の初心者向けのサークル・チーム募集（「見つからないキーワード」で検索）'
     @circle.update_columns(publication_status: 'draft')
     SearchResultCountCache::STORE.clear
     get circles_search_index_path, params: options
-    assert_select 'h1', text: '全0件「サークル」のサークル・チーム検索結果'
+    assert_select 'h1', text: '全0件神奈川県の初心者向けのサークル・チーム募集（「サークル」で検索）'
   end
 end

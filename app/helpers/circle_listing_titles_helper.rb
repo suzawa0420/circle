@@ -19,7 +19,7 @@ module CircleListingTitlesHelper
 
   def circle_listing_subject
     if controller_path == 'circles/search'
-      return "条件で絞り込んだサークル・チーム検索結果" if params[:detailed] == "1" && params[:q].blank?
+      return detailed_circle_listing_subject if @filtered_landing || params[:detailed] == "1"
       return "「#{params[:q]}」のサークル・チーム検索結果"
     end
 
@@ -32,4 +32,31 @@ module CircleListingTitlesHelper
     condition = @tag && (@tag.text.presence || "#{@tag.name}の")
     "#{area}#{condition}#{activity}募集"
   end
+
+  def detailed_circle_listing_subject
+    area = [@prefecture&.name, @city&.name].compact.join
+    activity = @event&.txt.presence || (@event && "#{@event.name}サークル") ||
+      @category&.txt.presence || (@category && "#{@category.name}のサークル・チーム") || 'サークル・チーム'
+    activity = activity.sub(/サークル・クラブ\z/, 'サークル')
+    groups = Array(@search_groups).map(&:name).join('・')
+    ages = Array(@search_ages).map(&:name).join('・')
+    audience = [groups.presence, ages.presence].compact.join('／')
+    tag = @tag && (@tag.text.presence || "#{@tag.name}の")
+    subject = "#{area.present? ? "#{area}の" : ''}#{audience.present? ? "#{audience}向けの" : ''}#{tag}#{activity}募集"
+    subject += "（「#{params[:q]}」で検索）" if params[:q].present?
+    subject
+  end
+
+
+  def related_circle_filter_landings
+    return [] if params[:q].present? || @category || @city || @tag
+    return [] if Array(@search_groups).size > 1 || Array(@search_ages).size > 1
+    group = Array(@search_groups).first
+    age = Array(@search_ages).first
+    key = ['circle-filter-links-v1', @event&.id, @prefecture&.id, group&.id, age&.id]
+    Rails.cache.fetch(key, expires_in: 10.minutes) do
+      CircleFilterLanding.related(event: @event, prefecture: @prefecture, group: group, age: age)
+    end.reject { |_label, url| url == request.path }
+  end
+
 end

@@ -1,3 +1,4 @@
+- filters = @landing_filters || params
 .search_wrap
   = form_tag circles_search_index_path, method: :get, enforce_utf8: false, class: 'cb-circle-search-form' do
     = hidden_field_tag :detailed, '1'
@@ -6,13 +7,13 @@
       = hidden_field_tag key, params[key].presence || value if params[key].present? || value
     .search_word
       .cb-search-keyword
-        %input.search_area.change_font{ "aria-label" => "キーワードで検索", name: "q", placeholder: "例）バスケ　東京", type: "text", value: params[:q] }
+        %input.search_area.change_font{ "aria-label" => "キーワードで検索", name: "q", placeholder: "例）バスケ　東京", type: "text", value: filters[:q] }
         .search_icon
           = submit_tag '検索', name: nil
       .search_word_announce ※複数の単語はスペースで区切ってください
     .search_select
-      = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, params[:event_id].presence || @event&.id), include_blank: 'サークル・チーム', 'aria-label' => '種目・カテゴリー'
-      = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, params[:prefecture_id].presence || @prefecture&.id), include_blank: '都道府県', 'aria-label' => '都道府県'
+      = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, filters[:event_id].presence || @event&.id), include_blank: 'サークル・チーム', 'aria-label' => '種目・カテゴリー'
+      = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, filters[:prefecture_id].presence || @prefecture&.id), include_blank: '都道府県', 'aria-label' => '都道府県'
     = render "circles/commons/detailed_search"
   - @wdays =  ["日", "月", "火", "水", "木", "金", "土" ]
   .date_list_wrap
@@ -113,3 +114,5 @@
 
 - unless controller.action_name == "kw"
   = render "shared/listing_sort"
+
+= render "circles/commons/filter_landings"
