@@ -6,7 +6,9 @@
   <div class="wm-field"><%= label_tag :state, '利用状態' %><%= select_tag :state, options_for_select([['すべて', ''], ['利用停止中', 'suspended']], params[:state]) %></div><%= submit_tag '検索' %>
 <% end %>
 <section class="wm-section wm-list">
+<% if @kind == 'owner' && @accounts.any? %><%= render 'super_admin/circles/bulk_selection', form_id: 'bulk-account-owners' %><% end %>
 <% @accounts.each do |account| %><article class="webmaster-card">
+  <% if @kind == 'owner' %><label class="wm-selection"><%= check_box_tag 'owner_ids[]', account.id, false, id: "bulk-account-owner-#{account.id}", form: 'bulk-account-owners', data: { bulk_owner: true }, autocomplete: 'off' %>主催者 ID <%= account.id %>を削除対象に選択</label><% end %>
   <h2><%= account.nickname.presence || "#{@label} ID #{account.id}" %></h2><p class="wm-meta"><%= account.email %></p>
   <p><span class="wm-badge"><%= account.suspended? ? '利用停止中' : '利用中' %></span></p>
   <%= link_to '詳細を確認', super_admin_account_path(account, kind: @kind), class: 'wm-button' %>

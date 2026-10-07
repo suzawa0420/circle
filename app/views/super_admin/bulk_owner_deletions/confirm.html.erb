@@ -1,0 +1,18 @@
+<%= render 'webmasters/shared/page_header', title: '主催者の一括削除の確認', description: '削除する主催者と、すべての関連サークルを確認してください。' %>
+<section class="webmaster-card">
+  <h2>主催者 <%= @owners.size %>件を削除します</h2>
+  <p>選んだサークルだけでなく、以下の主催者が持つすべてのサークル・ブログ・予定・会話・メッセージ・通報・相互評価などの関連データを削除します。この操作は取り消せません。件数は表示時点のものです。</p>
+  <dl class="wm-details"><dt>サークル</dt><dd><%= @impact[:circles] %>件</dd><dt>会話</dt><dd><%= @impact[:conversations] %>件</dd><dt>メッセージ</dt><dd><%= @impact[:messages] %>件</dd><dt>受信口コミ</dt><dd><%= @impact[:reviews] %>件</dd></dl>
+  <div class="wm-list">
+    <% @owners.each do |owner| %>
+      <article class="webmaster-card">
+        <h3><%= owner.nickname.presence || "主催者 ID #{owner.id}" %></h3><p class="wm-meta"><%= owner.email %></p>
+        <ul><% owner.users.each do |circle| %><li><%= circle.name %>（ID <%= circle.id %>）</li><% end %></ul>
+      </article>
+    <% end %>
+  </div>
+  <%= form_with url: super_admin_bulk_owner_deletion_path, method: :delete, local: true do %>
+    <%= hidden_field_tag :confirmation, @confirmation %>
+    <div class="wm-actions"><%= submit_tag "内容を確認して主催者#{@owners.size}件を一括削除する", class: 'wm-button wm-button--danger', data: { disable_with: '削除中…' } %><%= link_to 'キャンセル', super_admin_circles_path, class: 'wm-button wm-button--secondary' %></div>
+  <% end %>
+</section>

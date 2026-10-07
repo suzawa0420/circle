@@ -1,0 +1,8 @@
+<%= form_with url: super_admin_bulk_owner_deletion_path, method: :post, local: true, id: form_id, class: 'wm-bulk-selection' do %>
+  <p>選択した主催者と、そのすべてのサークル・関連データを削除します（最大50主催者）。次の画面で対象を確認できます。</p>
+  <div class="wm-actions">
+    <label class="wm-selection"><%= check_box_tag nil, '1', false, id: "#{form_id}-all", data: { bulk_select_all: form_id }, 'aria-label': 'この一覧をすべて選択', autocomplete: 'off' %>この一覧をすべて選択</label>
+    <span data-bulk-count="<%= form_id %>" aria-live="polite">0件選択</span>
+    <%= submit_tag '選択した主催者の削除を確認', class: 'wm-button wm-button--danger' %>
+  </div>
+<% end %>

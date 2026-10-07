@@ -2,9 +2,12 @@
 <% [['確認待ちのサークル', @review_circles, 'circle', false], ['確認待ちのブログ', @review_blogs, 'blog', false], ['公開停止中のサークル', @blocked_circles, 'circle', true], ['公開停止中のブログ', @blocked_blogs, 'blog', true]].each do |title, records, kind, blocked| %>
 <details class="wm-disclosure" <%= "open" if records.any? %>>
   <summary><span><%= title %></span><span class="wm-badge"><%= records.size %>件</span></summary><div class="wm-disclosure-content">
+  <% form_id = blocked ? 'bulk-blocked-circles' : 'bulk-review-circles' %>
+  <% if kind == 'circle' && records.any? %><%= render 'bulk_selection', form_id: form_id %><% end %>
   <div class="wm-list">
     <% records.each do |record| %>
       <article class="webmaster-card">
+        <% if kind == 'circle' && record.admin_user_id.present? %><label class="wm-selection"><%= check_box_tag 'owner_ids[]', record.admin_user_id, false, id: "#{form_id}-#{record.id}", form: form_id, data: { bulk_owner: true }, autocomplete: 'off' %><%= record.name %>の主催者を削除対象に選択</label><% end %>
         <div class="wm-card-heading"><h3><%= link_to(kind == 'circle' ? record.name : record.title, kind == 'circle' ? circle_path(record) : circle_blog_path(record.user, record)) %></h3><span class="wm-badge <%= blocked ? 'wm-badge--danger' : 'wm-badge--pending' %>"><%= blocked ? '公開停止中' : '確認待ち' %></span></div>
         <% if kind == 'blog' %><p class="wm-meta"><%= record.user.name %></p><% end %>
         <div class="wm-actions">
@@ -29,8 +32,10 @@
 </div></details>
 <section class="wm-section">
   <div class="wm-section-heading"><h2>主催者一覧</h2></div>
+  <% if @admin_users.any? %><%= render 'bulk_selection', form_id: 'bulk-owners' %><% end %>
   <div class="wm-list"><% @admin_users.each do |admin_user| %>
     <article class="webmaster-card">
+      <label class="wm-selection"><%= check_box_tag 'owner_ids[]', admin_user.id, false, id: "bulk-owner-#{admin_user.id}", form: 'bulk-owners', data: { bulk_owner: true }, autocomplete: 'off' %>主催者 ID <%= admin_user.id %>を削除対象に選択</label>
       <div class="wm-card-heading"><h3><%= admin_user.nickname.presence || "主催者 ID #{admin_user.id}" %></h3><span class="wm-badge">サークル <%= admin_user.users.size %>件</span></div>
       <dl class="wm-details"><dt>メール</dt><dd><%= admin_user.email %></dd><dt>登録日</dt><dd><%= admin_user.created_at.strftime('%Y/%m/%d') %></dd></dl>
       <% admin_user.users.each do |circle| %><div class="wm-circle-row"><%= link_to circle.name, circle_path(circle) %><%= link_to '編集', edit_user_path(circle), class: 'wm-button wm-button--secondary' %></div><% end %>

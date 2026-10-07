@@ -189,6 +189,7 @@ Rails.application.routes.draw do
 
   # 管理画面（SuperAdmin）
   namespace :super_admin do
+    resource :bulk_owner_deletion, only: [:create, :destroy]
     resources :accounts, only: [:index, :show, :update] do
       get :confirm, on: :member
     end

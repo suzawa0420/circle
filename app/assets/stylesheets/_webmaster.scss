@@ -22,6 +22,9 @@
   .wm-section { margin: 28px 0; }
   .wm-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
   .wm-list { display: grid; gap: 14px; }
+  .wm-selection { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 0; cursor: pointer; overflow-wrap: anywhere; }
+  .wm-selection input[type=checkbox] { position: static; opacity: 1; appearance: auto; width: 22px; height: 22px; margin: 0; flex: 0 0 22px; }
+  .wm-bulk-selection { padding: 16px; margin-bottom: 16px; border: 1px solid #e6bbb7; border-radius: 10px; background: #fff; }
   .webmaster-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
   .webmaster-card, .webmaster-login { display: block; padding: 22px; border: 1px solid #dce7df; border-radius: 14px; background: #fff; color: #24362e; min-width: 0; }
   a.webmaster-card { text-decoration: none; } a.webmaster-card:hover { border-color: $cb-system; box-shadow: 0 3px 12px rgba(18,75,56,.06); }

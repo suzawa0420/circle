@@ -118,6 +118,73 @@ class WebmasterAccountsTest < ActionDispatch::IntegrationTest
     assert_not Conversation.exists?(@conversation.id)
   end
 
+  test 'bulk owner deletion confirms deduplicated owners and destroys related data only' do
+    other_owner = AdminUser.create!(email: 'bulk-other@example.test', password: 'test-password-123')
+    untouched_owner = AdminUser.create!(email: 'bulk-untouched@example.test', password: 'test-password-123')
+    login_master
+    @circle.update_columns(moderation_status: 'review')
+    get super_admin_circles_path
+    assert_select 'input[name="owner_ids[]"][form="bulk-review-circles"]', count: 1
+    assert_select 'form form', count: 0
+    get super_admin_accounts_path(kind: 'owner')
+    assert_select 'input[name="owner_ids[]"]', count: 3
+    assert_no_difference('AdminUser.count') do
+      post super_admin_bulk_owner_deletion_path, params: { owner_ids: [@owner.id, @owner.id, other_owner.id] }
+    end
+    assert_response :success
+    assert_includes response.headers['Cache-Control'], 'no-store'
+    assert_includes response.body, @circle.name
+    assert_includes response.body, other_owner.email
+    assert_not_includes response.body, untouched_owner.email
+    token = css_select('input[name="confirmation"]').first['value']
+    assert_difference('AdminUser.count', -2) do
+      delete super_admin_bulk_owner_deletion_path, params: { confirmation: token, owner_ids: [untouched_owner.id] }
+    end
+    assert AdminUser.exists?(untouched_owner.id)
+    assert_not User.exists?(@circle.id)
+    assert_not Conversation.exists?(@conversation.id)
+    assert_not ChatMessage.where(conversation_id: @conversation.id).exists?
+    assert Member.exists?(@member.id)
+  end
+
+  test 'bulk deletion requires webmaster and a valid unexpired confirmation' do
+    post super_admin_bulk_owner_deletion_path, params: { owner_ids: [@owner.id] }
+    assert_redirected_to new_webmaster_session_path
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    delete super_admin_bulk_owner_deletion_path
+    assert_redirected_to new_webmaster_session_path
+    login_master
+    [nil, [], ['invalid'], [0], [999999999], (1..51).to_a, @owner.id.to_s].each do |ids|
+      post super_admin_bulk_owner_deletion_path, params: { owner_ids: ids }
+      assert_redirected_to super_admin_circles_path
+    end
+    post super_admin_bulk_owner_deletion_path, params: { owner_ids: [@owner.id] }
+    token = css_select('input[name="confirmation"]').first['value']
+    [nil, token + 'tampered', @owner.signed_id(purpose: 'moderation:delete')].each do |invalid|
+      assert_no_difference('AdminUser.count') { delete super_admin_bulk_owner_deletion_path, params: { confirmation: invalid } }
+    end
+    travel 16.minutes do
+      assert_no_difference('AdminUser.count') { delete super_admin_bulk_owner_deletion_path, params: { confirmation: token } }
+    end
+  end
+
+  test 'bulk deletion rolls back earlier deletions when a later owner cannot be destroyed' do
+    other_owner = AdminUser.create!(email: 'bulk-failure@example.test', password: 'test-password-123')
+    login_master
+    post super_admin_bulk_owner_deletion_path, params: { owner_ids: [@owner.id, other_owner.id] }
+    token = css_select('input[name="confirmation"]').first['value']
+    callback = ->(owner) { throw(:abort) if owner.id == other_owner.id }
+    AdminUser.set_callback(:destroy, :before, callback)
+    begin
+      assert_no_difference('AdminUser.count') { delete super_admin_bulk_owner_deletion_path, params: { confirmation: token } }
+      assert User.exists?(@circle.id)
+      assert Conversation.exists?(@conversation.id)
+      assert_match '一括削除できませんでした', flash[:alert]
+    ensure
+      AdminUser.skip_callback(:destroy, :before, callback)
+    end
+  end
+
   private
   def login_master
     post webmaster_session_path, params: { webmaster: { email: @master.email, password: 'test-password-123' } }
