@@ -42,6 +42,16 @@ class ConversationConcurrencyTest < ActiveSupport::TestCase
     assert_equal 1, Conversation.where(user: @circle, member: @other_member).count
   end
 
+  test 'simultaneous approvals release only once and retain unread state' do
+    held = @conversation.send_message!('member', '性愛預約服務')
+    results = concurrently { ChatMessage.find(held.id).moderate!('approve') }
+    assert_equal [false, true], results.sort_by { |v| v ? 1 : 0 }
+    assert_equal 'approved', held.reload.moderation_status
+    assert held.released_at
+    assert_nil held.recipient_read_at
+    assert @conversation.reload.owner_notification_due_at
+  end
+
   private
   def concurrently
     ready, start = Queue.new, Queue.new

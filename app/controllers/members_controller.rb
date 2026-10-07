@@ -10,7 +10,7 @@ class MembersController < ApplicationController
   def show
     @bookmarked_circles = User.publicly_visible.where(id: @member.bookmarks.select(:user_id)).includes(:event, :prefecture).order(created_at: :desc).page(params[:page]).per(12)
     @conversations_count = @member.conversations.where(id: ChatMessage.select(:conversation_id)).count
-    @unread_count = @member.conversations.where('EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.id > conversations.member_read_message_id)', 'owner').count
+    @unread_count = @member.conversations.where('EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.moderation_status IN (?, ?) AND ((chat_messages.released_at IS NULL AND chat_messages.id > conversations.member_read_message_id) OR (chat_messages.released_at IS NOT NULL AND chat_messages.recipient_read_at IS NULL)))', 'owner', 'delivered', 'approved').count
     @recommended_circles = if @member.prefecture_id.present? && @member.events.exists?
       User.publicly_visible.where(prefecture_id: @member.prefecture_id).or(User.publicly_visible.where(prefecture_sub_id: @member.prefecture_id))
           .where(event_id: @member.events.select(:id)).where.not(id: @member.bookmarks.select(:user_id))

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_07_000000) do
+ActiveRecord::Schema.define(version: 2026_10_08_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,6 +120,13 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.string "txt"
   end
 
+  create_table "chat_spam_destinations", force: :cascade do |t|
+    t.string "destination", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["destination"], name: "index_chat_spam_destinations_on_destination", unique: true
+  end
+
   create_table "chat_messages", force: :cascade do |t|
     t.bigint "conversation_id", null: false
     t.string "sender_role", null: false
@@ -129,6 +136,16 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.string "image"
     t.index ["conversation_id", "id"], name: "index_chat_messages_on_conversation_id_and_id"
     t.index ["conversation_id"], name: "index_chat_messages_on_conversation_id"
+    t.string "moderation_status", default: "delivered", null: false
+    t.integer "spam_score", default: 0, null: false
+    t.jsonb "spam_reasons", default: [], null: false
+    t.string "spam_fingerprint"
+    t.datetime "reviewed_at"
+    t.datetime "released_at"
+    t.datetime "recipient_read_at"
+    t.index ["moderation_status", "created_at"], name: "index_chat_messages_on_moderation_status_and_created_at"
+    t.index ["spam_fingerprint"], name: "index_chat_messages_on_spam_fingerprint"
+    t.check_constraint "moderation_status::text = ANY (ARRAY['delivered'::character varying, 'held'::character varying, 'approved'::character varying, 'spam'::character varying]::text[])", name: "chat_messages_moderation_valid"
   end
 
   create_table "chat_reports", force: :cascade do |t|

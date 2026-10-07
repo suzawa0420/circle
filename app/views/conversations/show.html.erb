@@ -16,7 +16,7 @@
   </details>
   <section aria-label="メッセージ履歴" class="chat-history">
     <%= paginate @messages %>
-    <div id="chat-messages" class="chat-history" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if params[:page].blank? || params[:page] == '1' %>" data-accepted="<%= @conversation.accepted_at.present? %>">
+    <div id="chat-messages" class="chat-history" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if params[:page].blank? || params[:page] == '1' %>" data-accepted="<%= @conversation.accepted_at.present? %>">
       <%= render "messages" %>
     </div>
   </section>
@@ -52,7 +52,7 @@
     <% else %>
       <%= button_to '相手をブロック', block_conversation_path(@conversation), data: { confirm: '双方の送信を停止します。発生済みの評価権は残ります。よろしいですか？' } %>
     <% end %>
-    <% if @role == 'member' && !@conversation.accepted_at %>
+    <% if @role == 'member' && !@conversation.accepted_at && @conversation.chat_messages.deliverable.where(sender_role: 'member').exists? %>
       <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p><% else %>
         <%= button_to '返信がないことを報告', no_reply_conversation_path(@conversation), id: 'chat-no-reply', data: { confirm: '主催者から返信がないことを報告しますか？' } %>
       <% end %>

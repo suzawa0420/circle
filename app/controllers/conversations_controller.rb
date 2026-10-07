@@ -7,13 +7,19 @@ class ConversationsController < ApplicationController
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record
 
   def index
-    @conversations = accessible_conversations.where(id: ChatMessage.select(:conversation_id)).includes(:user, :member).order(Arel.sql('(SELECT MAX(chat_messages.id) FROM chat_messages WHERE chat_messages.conversation_id = conversations.id) DESC')).page(params[:page]).per(20)
+    inbox_scope = accessible_conversations
+    visible = ChatMessage.deliverable
+    visible = visible.or(ChatMessage.where(sender_role: 'member', conversation_id: Conversation.where(member_id: current_member.id).select(:id))) if member_signed_in?
+    # Automatic guidance alone must not expose an inquiry held before delivery.
+    latest = visible.where(conversation_id: inbox_scope.select(:id)).where.not(sender_role: 'system').select('conversation_id, MAX(COALESCE(released_at, created_at)) AS delivered_at, MAX(id) AS latest_id').group(:conversation_id)
+    @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
+      .includes(:user, :member).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
     ids = @conversations.map(&:id)
-    @latest_messages = ChatMessage.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id, id: :desc).index_by(&:conversation_id)
+    @latest_messages = visible.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id).delivery_order.index_by(&:conversation_id)
     @unread_counts = %w[member owner].index_with do |role|
       incoming = role == 'member' ? 'owner' : 'member'
-      ChatMessage.joins(:conversation).where(conversation_id: ids, sender_role: incoming)
-        .where("chat_messages.id > conversations.#{role}_read_message_id").group(:conversation_id).count
+      ChatMessage.deliverable.joins(:conversation).where(conversation_id: ids, sender_role: incoming)
+        .where("(chat_messages.released_at IS NULL AND chat_messages.id > conversations.#{role}_read_message_id) OR (chat_messages.released_at IS NOT NULL AND chat_messages.recipient_read_at IS NULL)").group(:conversation_id).count
     end
   end
 
@@ -33,24 +39,26 @@ class ConversationsController < ApplicationController
         raise Conversation::NotAllowed, '本日の問い合わせ上限に達しました。明日お試しください。'
       end
       @conversation = Conversation.for_member!(@user, current_member)
-      @conversation.send_message!('member', params.require(:message).permit(:body)[:body])
+      @sent_message = @conversation.send_message!('member', params.require(:message).permit(:body)[:body])
     end
-    redirect_to conversation_path(@conversation), notice: 'お問い合わせを送信しました。'
+    redirect_to conversation_path(@conversation), notice: @sent_message.delivered? ? 'お問い合わせを送信しました。' : '運営による確認後に配信します。相手にはまだ届いていません。'
   end
 
   def show
     @conversation.publish_reviews!
-    @messages = @conversation.chat_messages.order(id: :desc).page(params[:page]).per(50).load
+    @messages = @conversation.chat_messages.visible_to(@role).delivery_order.page(params[:page]).per(50).load
     mark_messages_read if params[:page].blank? || params[:page] == '1'
     @own_review = @conversation.conversation_reviews.find_by(author_role: @role)
     @public_reviews = @conversation.conversation_reviews.publicly_visible.order(:id)
   end
 
   def messages
-    @messages = @conversation.chat_messages.order(id: :desc).limit(50).load
+    @messages = @conversation.chat_messages.visible_to(@role).delivery_order.limit(50).load
     mark_messages_read
     render json: { latest_id: @messages.first&.id || 0,
                    html: render_to_string(partial: 'messages', formats: [:html]),
+                   history_version: history_version,
+                   receipts: @messages.reject(&:automatic?).select { |m| m.sender_role == @role }.to_h { |m| [m.id, m.receipt_text(@conversation)] },
                    recipient_read_id: @conversation.recipient_read_message_id(@role),
                    accepted: @conversation.accepted_at.present? }
   end
@@ -93,7 +101,7 @@ class ConversationsController < ApplicationController
 
   def report
     report = @conversation.chat_reports.new(reason: params.require(:report).permit(:reason)[:reason], reporter_role: @role)
-    report.chat_message = @conversation.chat_messages.find(params[:message_id]) if params[:message_id].present?
+    report.chat_message = @conversation.chat_messages.visible_to(@role).find(params[:message_id]) if params[:message_id].present?
     if params[:review_id].present?
       report.conversation_review = @conversation.conversation_reviews.publicly_visible.find(params[:review_id])
     end
@@ -104,6 +112,7 @@ class ConversationsController < ApplicationController
   def no_reply
     raise Conversation::NotAllowed, 'この操作はできません。' unless @role == 'member'
     @conversation.with_lock do
+      raise Conversation::NotAllowed, '配信済みのお問い合わせがありません。' unless @conversation.chat_messages.deliverable.where(sender_role: 'member').exists?
       raise Conversation::NotAllowed, '返信済みの問い合わせです。' if @conversation.accepted_at
       @conversation.update!(respond_check: 'NG')
       @conversation.refresh_circle_score!
@@ -116,7 +125,13 @@ class ConversationsController < ApplicationController
   def mark_messages_read
     return if webmaster_signed_in?
 
-    @conversation.mark_read!(@role, through: @messages.first&.id || 0)
+    @conversation.mark_read!(@role, through: @messages.map(&:id).max || 0, message_ids: @messages.map(&:id))
+    @messages.each { |m| m.reload if m.released_at }
+  end
+
+  helper_method :history_version
+  def history_version
+    Digest::SHA256.hexdigest(@messages.map { |m| [m.id, m.moderation_status, m.released_at&.iso8601(6)] }.to_json)
   end
 
   def private_page

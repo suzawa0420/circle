@@ -203,6 +203,7 @@ Rails.application.routes.draw do
     resources :support_requests, only: [:index, :show, :update]
     delete "evaluations/:id", to: "reviews#destroy_evaluation", as: :evaluation
     resources :places, only: :index
+    resources :chat_moderations, only: [:index, :update]
     resources :chat_reports, only: [:index, :show, :update]
     resources :circles, only: [:index, :destroy]
     patch 'circles/:id/moderation', to: 'moderation#circle', as: :circle_moderation

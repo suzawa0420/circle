@@ -50,8 +50,8 @@ module MobileNavigationHelper
       return 0
     end
     @mobile_navigation_unread_count = conversations.where(
-      "EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.id > conversations.#{role}_read_message_id)",
-      incoming
+      "EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.moderation_status IN (?, ?) AND ((chat_messages.released_at IS NULL AND chat_messages.id > conversations.#{role}_read_message_id) OR (chat_messages.released_at IS NOT NULL AND chat_messages.recipient_read_at IS NULL)))",
+      incoming, 'delivered', 'approved'
     ).count
   end
 end

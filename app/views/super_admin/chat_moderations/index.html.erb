@@ -1,0 +1,25 @@
+<%= render 'webmasters/shared/page_header', title: '宣伝スパムの確認', description: '5点以上の投稿を保留します。相手への表示・通知を止め、運営の判断を待ちます。' %>
+<div class="wm-actions">
+  <% %w[held approved spam].each do |status| %><%= link_to "#{ChatMessage::STATUSES.fetch(status)}#{status == 'held' ? "（#{@pending_count}件）" : ''}", super_admin_chat_moderations_path(status: status), class: 'wm-button wm-button--secondary', aria: { current: @status == status ? 'page' : nil } %><% end %>
+</div>
+<p class="wm-meta">スパムと確認した場合は、本文に含まれるURLのドメインとパスを今後の判定に使います。アカウントの停止・投稿の削除は行いません。閲覧しても既読はつきません。</p>
+<section class="wm-section wm-thread">
+  <% @messages.each do |message| %>
+    <article class="webmaster-card wm-message">
+      <div class="wm-card-heading"><strong><%= message.conversation.user.name %></strong><span class="wm-badge"><%= message.spam_score %>点</span></div>
+      <p class="wm-meta"><%= message.conversation.member.nickname %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= ChatMessage::STATUSES.fetch(message.moderation_status) %></p>
+      <ul><% message.spam_reasons.each do |reason| %><% label, points = ChatSpamDetector::REASONS.fetch(reason, ['その他', 0]) %><li><%= label %>（<%= points %>点）</li><% end %></ul>
+      <div class="wm-body"><%= render 'conversations/image', message: message %><%= chat_message_body(message.body) %></div>
+      <div class="wm-actions">
+        <%= link_to '会話を確認', super_admin_conversation_path(message.conversation), class: 'wm-button wm-button--secondary' %>
+        <% if message.moderation_status == 'held' %>
+          <%= button_to '配信を許可', super_admin_chat_moderation_path(message), method: :patch, params: { decision: 'approve' }, class: 'wm-button', data: { confirm: 'この投稿を相手に配信しますか？' } %>
+          <%= button_to 'スパムと確認', super_admin_chat_moderation_path(message), method: :patch, params: { decision: 'spam' }, class: 'wm-button wm-button--secondary', data: { confirm: '相手には配信せず、本文のURLを今後のスパム判定に使います。よろしいですか？' } %>
+        <% end %>
+      </div>
+    </article>
+  <% end %>
+  <% if @messages.empty? %><%= render 'webmasters/shared/empty', message: '該当する投稿はありません。' %><% end %>
+  <%= paginate @messages %>
+</section>
+<%= render 'conversations/image_viewer' %>

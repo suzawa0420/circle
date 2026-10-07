@@ -54,15 +54,16 @@
         .then(function (data) {
           if (!document.body.contains(container)) return;
           container.querySelectorAll('.chat-read-receipt').forEach(function (receipt) {
-            receipt.textContent = Number(receipt.dataset.messageId) <= data.recipient_read_id ? '既読' : '未読';
+            if (data.receipts && data.receipts[receipt.dataset.messageId]) receipt.textContent = data.receipts[receipt.dataset.messageId];
           });
-          if (String(data.latest_id) !== container.dataset.latestId) {
+          if (data.history_version !== container.dataset.historyVersion) {
             // Preserve any report the user is currently composing.
             if (!container.contains(document.activeElement) && !container.querySelector('details[open]')) {
               var atBottom = latest && latest.getBoundingClientRect().top <= window.innerHeight && latest.getBoundingClientRect().top >= 0;
               container.innerHTML = data.html;
               if (atBottom && latest) latest.scrollIntoView({ block: 'end' });
               container.dataset.latestId = String(data.latest_id);
+              container.dataset.historyVersion = data.history_version;
             }
           }
           if (data.accepted && container.dataset.accepted !== 'true') {
