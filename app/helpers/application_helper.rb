@@ -21,8 +21,14 @@ module ApplicationHelper
 
   def circle_listing_image_url(user, kind)
     uploader = user.public_send(ListingImage::MOUNTS.fetch(kind))
-    return "/images/listing-default-#{kind}-v1.jpg" if uploader.identifier.blank?
-    listing_image_path(kind: kind, id: user.id, fingerprint: ListingImage.fingerprint(uploader))
+    return "/images/listing-default-#{kind}-v2.webp" if uploader.identifier.blank?
+    listing_image_path(kind: kind, id: user.id, fingerprint: ListingImage.fingerprint(uploader), format: 'webp')
+  end
+
+  def circle_listing_preload_image
+    return unless fast_public_listing? && @listing_data
+    user = @listing_data.users.first
+    circle_listing_image_url(user, 'header') if user
   end
 
   def circle_listing_description

@@ -8,20 +8,22 @@ require 'uri'
 class ListingImage
   SIZES = { 'profile' => [160, 160], 'header' => [400, 160] }.freeze
   MOUNTS = { 'profile' => :pic_profile, 'header' => :pic_header }.freeze
+  CONTENT_TYPES = { 'jpg' => 'image/jpeg', 'webp' => 'image/webp' }.freeze
   MAX_BYTES = 20.megabytes
 
   def self.fingerprint(uploader)
     Digest::SHA256.hexdigest(uploader.identifier.to_s)[0, 24]
   end
 
-  def self.path(user, kind)
+  def self.path(user, kind, format: 'jpg')
+    CONTENT_TYPES.fetch(format)
     uploader = user.public_send(MOUNTS.fetch(kind))
-    Rails.root.join('tmp/cache/listing_images', "#{user.id}-#{kind}-#{fingerprint(uploader)}.jpg")
+    Rails.root.join('tmp/cache/listing_images', "#{user.id}-#{kind}-#{fingerprint(uploader)}.#{format}")
   end
 
-  def self.build(user, kind)
+  def self.build(user, kind, format: 'jpg')
     uploader = user.public_send(MOUNTS.fetch(kind))
-    destination = path(user, kind)
+    destination = path(user, kind, format: format)
     FileUtils.mkdir_p(destination.dirname)
     File.open("#{destination}.lock", File::RDWR | File::CREAT, 0o600) do |lock|
       lock.flock(File::LOCK_EX)
@@ -29,7 +31,12 @@ class ListingImage
 
       Tempfile.create(['listing-source', '.jpg']) do |source|
         source.binmode
-        if uploader.file.is_a?(CarrierWave::Storage::Fog::File)
+        jpeg_cache = path(user, kind)
+        if format == 'webp' && File.file?(jpeg_cache)
+          # Reuse existing bounded derivatives during rollout, avoiding a new
+          # remote download for every already-cached photograph.
+          File.open(jpeg_cache, 'rb') { |file| IO.copy_stream(file, source, MAX_BYTES + 1) }
+        elsif uploader.file.is_a?(CarrierWave::Storage::Fog::File)
           download(uploader.url, source)
         else
           File.open(uploader.file.path, 'rb') { |file| IO.copy_stream(file, source, MAX_BYTES + 1) }
@@ -41,19 +48,21 @@ class ListingImage
         raise IOError, 'Oversized image' if image.width > 4096 || image.height > 4096
         image.collapse! if image.type == 'GIF'
         width, height = SIZES.fetch(kind)
-        image.combine_options do |command|
-          command.auto_orient
-          command.thumbnail "#{width}x#{height}^"
-          command.gravity 'center'
-          command.extent "#{width}x#{height}"
-          command.strip
-          command.quality '78'
-          command.interlace 'Plane'
-        end
-        Tempfile.create(['listing-result', '.jpg'], destination.dirname) do |output|
+        Tempfile.create(['listing-result', ".#{format}"], destination.dirname) do |output|
           output.binmode
-          image.format('jpg')
-          image.write(output.path)
+          # Resize before encoding in one pass, avoiding an intermediate lossy
+          # conversion of the full-resolution source.
+          MiniMagick::Tool::Convert.new do |command|
+            command << image.path
+            command.auto_orient
+            command.thumbnail "#{width}x#{height}^"
+            command.gravity 'center'
+            command.extent "#{width}x#{height}"
+            command.strip
+            command.quality '78'
+            command.interlace 'Plane' if format == 'jpg'
+            command << "#{format}:#{output.path}"
+          end
           File.rename(output.path, destination)
         end
       end
