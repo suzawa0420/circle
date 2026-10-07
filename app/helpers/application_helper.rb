@@ -57,7 +57,7 @@ module ApplicationHelper
         icon: [
           { href: image_url("/images/favicon.ico?v=20260921-green-clean"), type: "image/x-icon", sizes: "16x16 32x32 48x48" },
           { href: image_url("/images/favicon-48.png?v=20260921-green-clean"), type: "image/png", sizes: "48x48" },
-          { href: image_url("/images/apple-touch-icon.png?v=20260921-green-clean"), rel: "apple-touch-icon", sizes: "180x180", type: "image/png" },
+          { href: "/apple-touch-icon.png", rel: "apple-touch-icon", sizes: "180x180", type: "image/png" },
         ],
         og: {
           site_name: :site,
