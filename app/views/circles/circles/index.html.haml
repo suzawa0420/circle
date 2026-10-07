@@ -6,7 +6,7 @@
   .container
 
     %img.lazyload.imege_title{"data-src" => "/images/top.png"}/
-    %h1.users-heading= circle_listing_title
+    %h1.users-heading.circle-listing-heading= circle_listing_heading
 
     .users-txt
       - if admin_user_signed_in? && current_admin_user.first_user

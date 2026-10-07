@@ -9,6 +9,14 @@ module CircleListingTitlesHelper
     end
   end
 
+  def circle_listing_heading
+    count, bracket, subject = circle_listing_title.partition('】')
+    safe_join([
+      content_tag(:span, count + bracket, class: 'circle-listing-heading__count'),
+      content_tag(:span, subject, class: 'circle-listing-heading__subject')
+    ])
+  end
+
   def circle_listing_subject
     if controller_path == 'circles/search'
       return "「#{params[:q]}」のサークル・チーム検索結果"

@@ -7,7 +7,7 @@
     .e_header_wrap
       %img{:src => "/images/search.jpg"}/
       .link_txt
-        %h1.e_header_title= circle_listing_title
+        %h1.e_header_title.circle-listing-heading= circle_listing_heading
 
     - if @users && @users.load.any?
       = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path

@@ -5,7 +5,7 @@
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/
       .link_txt
-        %h1.e_header_title= circle_listing_title
+        %h1.e_header_title.circle-listing-heading= circle_listing_heading
 
     = render "/users/search"
     - if @users.count != 0

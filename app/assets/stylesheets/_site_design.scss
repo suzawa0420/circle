@@ -28,6 +28,9 @@
     border: 0; border-radius: 0; background: transparent; box-shadow: none;
     color: $cb-text; text-align: left; overflow-wrap: anywhere;
   }
+  .circle-listing-heading { display: flex; flex-wrap: wrap; column-gap: 8px; row-gap: 4px; }
+  .circle-listing-heading__count { white-space: nowrap; }
+  .circle-listing-heading__subject { min-width: 0; max-width: 100%; }
   .users-txt { @include cb-type(compact); position: static; color: $cb-muted; margin: 0 0 cb-space(6); text-align: left; }
   .container > .imege_title { display: none; }
   .e_header_wrap { background: transparent; margin: 0 0 cb-space(6); }

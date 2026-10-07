@@ -5,7 +5,7 @@
     .e_header_wrap
       %img{:alt => "#{@category.name}", :src => "/images/categories/#{@category.kana}.jpg"}/
       .link_txt
-        %h1.e_header_title= circle_listing_title
+        %h1.e_header_title.circle-listing-heading= circle_listing_heading
 
     - if @users.count != 0
       = render "/categories/search"
