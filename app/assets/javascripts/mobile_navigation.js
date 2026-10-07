@@ -67,6 +67,7 @@
     }
   }, true);
   document.addEventListener('turbolinks:before-cache', function () { closeMenu(true); });
+  document.addEventListener('circle:close-mobile-menu', function () { closeMenu(true); });
   window.addEventListener('resize', function () {
     if (window.innerWidth >= 768) closeMenu(true);
   });

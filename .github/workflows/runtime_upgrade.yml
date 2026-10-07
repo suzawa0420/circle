@@ -78,6 +78,7 @@ jobs:
       - run: node test/security/registration_turnstile_js_test.js
       - run: node test/security/conversation_receipts_js_test.js
       - run: node test/security/chat_images_js_test.js
+      - run: node test/security/home_screen_install_js_test.js
       - run: bundle exec ruby test/uploaders/image_uploader_url_check.rb
       - run: bundle exec ruby test/performance/unicorn_readiness_test.rb
       - run: bundle exec rails assets:precompile

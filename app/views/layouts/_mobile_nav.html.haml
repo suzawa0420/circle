@@ -69,6 +69,9 @@
     .mobile-menu-panel__group.mobile-menu-panel__group--support
       %strong サポート
       = link_to "よくある質問", faq_path
+      %button.home-screen-install-button{ type: "button", hidden: true, "data-home-screen-install" => true, "aria-haspopup" => "dialog", "aria-controls" => "home-screen-install-dialog" }
+        = lucide_icon "plus"
+        ホーム画面に追加
     - if webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?
       .mobile-menu-panel__logout
         - if webmaster?

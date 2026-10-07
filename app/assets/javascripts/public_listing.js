@@ -2,6 +2,7 @@
 // gallery, datepicker, jQuery, or Bootstrap JavaScript bundles.
 //= require rails-ujs
 //= require mobile_navigation
+//= require home_screen_install
 
 (function () {
   function ready() {

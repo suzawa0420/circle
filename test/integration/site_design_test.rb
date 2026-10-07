@@ -23,6 +23,10 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
       assert_select 'html[lang=ja]', count: 1
       assert_select 'body.cb-site', count: 1
       assert_select 'h1', minimum: 1
+      assert_select 'link[rel=manifest][href="/manifest.webmanifest"]', count: 1
+      assert_select '[data-home-screen-install][aria-controls=home-screen-install-dialog]', count: 2
+      assert_select 'dialog#home-screen-install-dialog[aria-labelledby=home-screen-install-title]', count: 1
+      assert_select '[data-install-instructions=ios] li', count: 3
     end
   end
 

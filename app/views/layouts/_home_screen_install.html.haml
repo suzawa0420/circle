@@ -1,0 +1,48 @@
+%dialog#home-screen-install-dialog.home-screen-install-dialog{ "aria-labelledby" => "home-screen-install-title" }
+  .home-screen-install-header
+    %h2#home-screen-install-title ホーム画面に追加
+    %button{ type: "button", "data-install-close" => true, "aria-label" => "追加手順を閉じる", autofocus: true }
+      = lucide_icon "x"
+  %p アイコンをタップして、サークルブックをすぐに開けます。
+  %section{ "data-install-instructions" => "ios", hidden: true }
+    %h3 iPhone・iPadのSafariで追加
+    %ol.home-screen-install-steps
+      %li
+        .home-screen-install-illustration{ "aria-hidden" => "true" }
+          .home-screen-install-browser
+            %span circle-book.com
+            %svg{ viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width" => "2" }
+              %path{ d: "M12 16V3m-4 4 4-4 4 4M8 10H5v11h14V10h-3" }
+        %strong 共有ボタンをタップ
+        %p Safariのメニュー内、または画面の上・下にあります。
+      %li
+        .home-screen-install-illustration{ "aria-hidden" => "true" }
+          .home-screen-install-menu-row
+            = lucide_icon "plus"
+            %span ホーム画面に追加
+        %strong 「ホーム画面に追加」を選ぶ
+        %p 共有メニューを下へスクロールして探します。
+      %li
+        .home-screen-install-illustration{ "aria-hidden" => "true" }
+          .home-screen-install-preview
+            %img{ src: "/apple-touch-icon.png", alt: "", width: 44, height: 44 }
+            %span サークルブック
+            %span.home-screen-install-confirm 追加
+        %strong 最後に「追加」をタップ
+        %p 「Webアプリとして開く」がある場合はオンにします。
+  %section{ "data-install-instructions" => "android", hidden: true }
+    %h3 AndroidのChromeで追加
+    %ol.home-screen-install-steps
+      %li
+        %strong Chromeのメニューを開く
+        %p 画面右上の縦に3つの点が並んだボタンをタップします。
+      %li
+        %strong 「ホーム画面に追加」または「アプリをインストール」を選ぶ
+        %p 確認画面で「追加」または「インストール」をタップします。
+    %p.home-screen-install-note 追加の確認画面を直接開けるようになったら、このボタンから表示します。
+  %section{ "data-install-instructions" => "other", hidden: true }
+    %h3 ブラウザのメニューから追加
+    %p 「アプリをインストール」や「ホーム画面に追加」を選んでください。項目がない場合は、iPhoneではSafari、AndroidではChromeでサークルブックを開いてください。
+  %p.home-screen-install-note{ "data-install-browser-note" => true, hidden: true } Safariでこのページを開いてから操作してください。LINEなどのアプリ内では、メニューから外部ブラウザで開けます。
+  %p.home-screen-install-note{ "data-install-error" => true, hidden: true, role: "status" } 追加の確認画面を開けませんでした。ブラウザのメニューから追加してください。
+  %button.home-screen-install-done{ type: "button", "data-install-close" => true } 閉じる

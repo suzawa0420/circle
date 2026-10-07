@@ -15,6 +15,10 @@
       %a{:href => "/rules"} 利用規約
     %li
       %a{:href => "/privacypolicy"} プライバシーポリシー
+    %li
+      %button.home-screen-install-button{ type: "button", hidden: true, "data-home-screen-install" => true, "aria-haspopup" => "dialog", "aria-controls" => "home-screen-install-dialog" }
+        = lucide_icon "plus"
+        ホーム画面に追加
   .footer_copyright
     .footer_logo
       = link_to root_path do

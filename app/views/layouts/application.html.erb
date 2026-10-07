@@ -34,6 +34,9 @@
       <%= csp_meta_tag %>
       <meta name="viewport" content="width=device-width,initial-scale=1.0">
       <meta name="theme-color" content="#16835D">
+      <link rel="manifest" href="/manifest.webmanifest">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-title" content="サークルブック">
       <%= stylesheet_link_tag(fast_public_listing? ? 'public_listing' : 'application', media: 'all', 'data-turbolinks-track': 'reload') %>
 
 
@@ -78,6 +81,7 @@
         <%= render "layouts/account_access", anchor: "account-access" %>
       <% end %>
       <%= render "/layouts/mobile_nav" %>
+      <%= render "layouts/home_screen_install" %>
 
       <% if flash[:notice] %>
         <div class="flash time-limit cb-system-notice">
