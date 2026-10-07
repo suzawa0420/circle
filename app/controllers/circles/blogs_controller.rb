@@ -43,7 +43,7 @@ class Circles::BlogsController < Circles::ApplicationController
       raise ActiveRecord::RecordNotFound unless can_manage_circle?(@user)
       set_meta_tags noindex: true
     end
-    @blogs = @user.blogs.publicly_visible.where.not(id: params[:id])
+    @blogs = @user.blogs.publicly_visible.where.not(id: params[:id]).blog_sort
 
     if @user.blogs.exists?(id: @blog.id)
 

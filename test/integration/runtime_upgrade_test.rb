@@ -1,7 +1,36 @@
 require 'test_helper'
+require_relative '../support/chat_records'
 
 class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
   self.fixture_table_names = []
+  include ChatRecords
+
+  test 'related circle blogs show the five newest public posts in the same order as the blog index' do
+    create_chat_records
+    @circle.update!(recruitment: '初心者歓迎')
+    posts = 7.times.map do |index|
+      @circle.blogs.create!(title: "活動ブログ#{index}", content: "第#{index}回の活動を楽しみました。" * 10,
+                            created_at: (10 - index).days.ago, updated_at: (index + 1).days.ago)
+    end
+    hidden = @circle.blogs.create!(title: '非公開の活動ブログ', content: '活動の記録です。' * 20,
+                                  moderation_status: 'blocked')
+    current = posts[3]
+    expected = posts.reverse.reject { |post| post == current }.first(5)
+
+    get circle_blogs_path(@circle)
+    assert_response :success
+    assert_select 'h3.blog_title' do |titles|
+      assert_equal posts.reverse.map(&:title), titles.map(&:text)
+    end
+
+    get circle_blog_path(@circle, current)
+    assert_response :success
+    assert_select '.blog-list-wrap .blog_list a' do |links|
+      assert_equal expected.map { |post| circle_blog_path(@circle, post) }, links.map { |link| link['href'] }
+    end
+    assert_select '.blog-list-wrap a[href=?]', circle_blog_path(@circle, hidden), count: 0
+    assert_select '.blog-list-wrap a[href=?]', circle_blog_path(@circle, current), count: 0
+  end
 
   test 'public pages and all account forms render on the upgraded runtime' do
     %w[/ /health /privacypolicy /admin_users/sign_in /members/sign_in /exhibition_groups/sign_in /admin_users/sign_up /members/sign_up].each do |path|
