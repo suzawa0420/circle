@@ -27,6 +27,7 @@ class SitemapResponseTest < Minitest::Test
       assert_equal 200, status
       assert_includes headers['content-type'], 'application/xml'
       assert_includes headers['cache-control'], 'public'
+      assert_includes headers['cache-control'], 'max-age=300'
       refute headers.key?('location')
       assert_equal '<sitemapindex/>', body.each.to_a.join
       assert_equal 200, request.first

@@ -117,6 +117,11 @@ class CircleFilterLandingsTest < ActionDispatch::IntegrationTest
     require 'zlib'
     other = Group.create!(name: '経験者')
     empty_path = CircleFilterLanding.path(group: other, age: @age)
+    previous_cache = Rails.cache
+    Rails.cache = ActiveSupport::Cache::MemoryStore.new
+    Rails.cache.write('published-sitemap-v2/sitemap', 'old index')
+    Rails.cache.write('published-sitemap-v2/sitemap1', 'old child')
+    Rails.cache.write('unrelated-cache-check', 'preserved')
     previous_path = SitemapGenerator::Sitemap.public_path
     Dir.mktmpdir('circle-filter-sitemap') do |directory|
       SitemapGenerator::Sitemap.public_path = directory
@@ -125,12 +130,16 @@ class CircleFilterLandingsTest < ActionDispatch::IntegrationTest
       end
       xml = Nokogiri::XML(Zlib::GzipReader.open(File.join(directory, 'sitemaps/sitemap1.xml.gz'), &:read)).remove_namespaces!
       urls = xml.xpath('//url/loc').map(&:text)
+      assert_nil Rails.cache.read('published-sitemap-v2/sitemap')
+      assert_nil Rails.cache.read('published-sitemap-v2/sitemap1')
+      assert_equal 'preserved', Rails.cache.read('unrelated-cache-check')
       assert_includes urls, "https://circle-book.com#{@path}"
       refute_includes urls, "https://circle-book.com#{empty_path}"
       refute urls.any? { |url| url.include?('?') }
     end
   ensure
     SitemapGenerator::Sitemap.public_path = previous_path if previous_path
+    Rails.cache = previous_cache if previous_cache
     SitemapGenerator::Sitemap.reset!
   end
 

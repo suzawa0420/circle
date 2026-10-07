@@ -44,3 +44,8 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
   end
 
 end
+
+# Public XML uses a persistent cache. Invalidate only sitemap responses after
+# successful generation/upload on the generating server. Other app servers
+# refresh via the short cache TTL in SitemapsController.
+Rails.cache.delete_matched(/\Apublished-sitemap-v2\//)
