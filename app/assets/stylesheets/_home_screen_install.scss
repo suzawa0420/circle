@@ -26,6 +26,7 @@
   background: white;
   box-sizing: border-box;
   overscroll-behavior: contain;
+  text-align: left;
 }
 .home-screen-install-dialog::backdrop { background: rgba(0, 0, 0, .45); }
 .home-screen-install-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -33,9 +34,8 @@
 .home-screen-install-header button { background: transparent; border: 0; padding: 10px; cursor: pointer; }
 .home-screen-install-dialog h3 { font-size: 16px; margin: 20px 0 12px; }
 .home-screen-install-dialog p { font-size: 14px; line-height: 1.7; margin: 8px 0 16px; }
-.home-screen-install-steps { padding-left: 24px; margin: 0; }
-.home-screen-install-steps li { margin: 16px 0; padding-left: 4px; }
-.home-screen-install-steps li::marker { color: $cb-action; font-weight: 700; }
+.home-screen-install-dialog .home-screen-install-steps { padding: 0; margin: 0; list-style: none; }
+.home-screen-install-dialog .home-screen-install-steps li { margin: 16px 0; padding: 0; text-align: left; }
 .home-screen-install-steps strong { font-size: 15px; }
 .home-screen-install-illustration { padding: 14px; margin: 0 0 10px; border-radius: 12px; background: #f3f7f5; }
 .home-screen-install-browser,
