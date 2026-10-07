@@ -27,6 +27,9 @@
     <% elsif @role == 'owner' && !current_admin_user.email_verified? %>
       <p>メッセージを送信するにはメールアドレスの確認が必要です。</p>
       <%= link_to 'メールアドレスを確認する', admin_user_email_verification_path %>
+    <% elsif @role == 'member' && !current_member.japanese_profile? %>
+      <p>自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。</p>
+      <%= link_to '自己紹介を修正する', edit_member_path(current_member) %>
     <% elsif @conversation.blocked? %>
       <p>ブロック中のため、双方とも送信できません。履歴の閲覧・通報・評価は引き続き利用できます。</p>
     <% else %>

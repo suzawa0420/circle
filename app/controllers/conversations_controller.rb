@@ -3,6 +3,7 @@ class ConversationsController < ApplicationController
   before_action :private_page
   before_action :load_conversation, except: [:index, :new, :create]
   before_action :require_verified_chat_sender, only: [:new, :create, :message, :review]
+  before_action :require_japanese_member_profile, only: [:new, :create, :message]
   rescue_from Conversation::NotAllowed, with: :invalid_action
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record
 
@@ -149,6 +150,11 @@ class ConversationsController < ApplicationController
       store_location_for(:admin_user, request.fullpath) if request.get?
       redirect_to login_path, alert: 'メッセージを確認するにはログインしてください。'
     end
+  end
+
+  def require_japanese_member_profile
+    return if @role == 'owner' || !member_signed_in? || current_member.japanese_profile?
+    redirect_to edit_member_path(current_member), alert: '自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。'
   end
 
   def require_verified_chat_sender

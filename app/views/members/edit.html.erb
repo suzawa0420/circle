@@ -17,7 +17,7 @@
       <% @event_groups.each do |category, events| %><fieldset class="participant-interest-group"><legend><%= category&.name || 'その他' %></legend><div class="participant-interest-options"><%= f.collection_check_boxes :event_ids, events, :id, :name, include_hidden: false do |b| %><%= b.label(class: 'participant-interest') { b.check_box + content_tag(:span, b.text) } %><% end %></div></fieldset><% end %>
       <% if @event_groups.empty? %><p>種目を読み込めませんでした。時間をおいて再度お試しください。</p><% end %>
     </section>
-    <section class="participant-card"><div class="participant-field"><%= f.label :profile, '自己紹介' %><%= f.text_area :profile, rows: 5, maxlength: 2000, placeholder: '好きな活動や、参加してみたいサークルについて書いてみましょう。' %><p class="participant-help">公開プロフィールに表示されます。連絡先や住所などの個人情報は記載しないでください。</p></div></section>
+    <section class="participant-card"><div class="participant-field"><%= f.label :profile, '自己紹介' %><%= f.text_area :profile, rows: 5, maxlength: 2000, 'aria-describedby': 'profile-language-help profile-privacy-help', placeholder: '好きな活動や、参加してみたいサークルについて書いてみましょう。' %><p class="participant-help" id="profile-language-help"><strong>必ず日本語でお書きください。</strong>ひらがな・カタカナを含む文章で入力してください。</p><p class="participant-help" id="profile-privacy-help">公開プロフィールに表示されます。連絡先や住所などの個人情報は記載しないでください。</p></div></section>
     <div class="participant-form-actions"><%= f.submit '変更を保存する', class: 'participant-button', data: { disable_with: '保存中…' } %><%= link_to 'マイページへ戻る', member_path(@member) %></div>
   <% end %>
 </main>

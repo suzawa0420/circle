@@ -52,6 +52,9 @@ class Conversation < ApplicationRecord
     with_lock do
       raise NotAllowed, 'ブロック中はメッセージを送信できません。' if blocked?
       ensure_active_sender!(role)
+      if role == 'member' && !member.japanese_profile?
+        raise NotAllowed, '自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。'
+      end
       sender = role == 'owner' ? user.admin_user : member
       raise NotAllowed, 'メールアドレスを確認してください。' unless sender.email_verified?
       if chat_messages.where(sender_role: role).where('created_at > ?', 1.minute.ago).count >= 10

@@ -38,6 +38,16 @@ class Member < ApplicationRecord
   validates :nickname, :prefecture, :events, presence: true, on: :profile
   validates :profile, length: { maximum: 2000 }
   validate :valid_date_of_birth
+  validate :validate_profile_language, if: -> { will_save_change_to_profile? || validation_context == :profile }
+
+  def japanese_profile?
+    return true if profile.blank?
+    ActionView::Base.full_sanitizer.sanitize(profile.to_s).unicode_normalize(:nfkc).match?(User::JAPANESE_TEXT)
+  end
+
+  def validate_profile_language
+    errors.add(:profile, 'は必ず日本語（ひらがな・カタカナを含む文章）でお書きください') unless japanese_profile?
+  end
 
   # Calculate on each read so the displayed decade changes after birthdays.
   def age_group(on: Date.current)
