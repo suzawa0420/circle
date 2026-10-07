@@ -19,6 +19,7 @@ module CircleListingTitlesHelper
 
   def circle_listing_subject
     if controller_path == 'circles/search'
+      return "条件で絞り込んだサークル・チーム検索結果" if params[:detailed] == "1" && params[:q].blank?
       return "「#{params[:q]}」のサークル・チーム検索結果"
     end
 

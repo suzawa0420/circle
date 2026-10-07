@@ -1,6 +1,13 @@
 .search_wrap
   .search_word
     = form_tag(circles_search_index_path, method: :get, enforce_utf8: false) do
+      - if params[:detailed] == '1'
+        = hidden_field_tag :detailed, '1'
+        - %w[event_id prefecture_id category_id city_id tag_id sort].each do |key|
+          = hidden_field_tag key, params[key] if params[key].present?
+        - %w[group_ids age_ids].each do |key|
+          - Array(params[key]).each do |value|
+            = hidden_field_tag "#{key}[]", value
       %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
       .search_icon
         = submit_tag("検索", :name => nil)
@@ -50,6 +57,7 @@
 
     .search_icon
       = lucide_icon "search"
+  = render "circles/commons/detailed_search", categories: categories, prefectures: prefectures
   - @wdays =  ["日", "月", "火", "水", "木", "金", "土" ]
   .date_list_wrap
     - if path.is('schedules#day')

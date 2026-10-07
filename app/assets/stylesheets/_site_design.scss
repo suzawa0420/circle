@@ -517,3 +517,47 @@
 .cb-site .chat-shell.cb-participant .chat-evaluation-link,
 .cb-site .chat-shell.cb-participant .chat-person a,
 .cb-site .chat-shell.cb-participant .chat-evaluation a { color: $cb-participant-hover; }
+
+.cb-site .cb-detailed-search {
+  --cb-role-action: #{$cb-participant};
+  --cb-role-ink: #{$cb-participant-hover};
+  --cb-role-soft: #{$cb-participant-soft};
+  margin-top: cb-space(4);
+  border-top: 1px solid $cb-border;
+  summary {
+    @include cb-focus;
+    display: flex; align-items: center; gap: cb-space(2);
+    min-height: $cb-touch-height; padding: cb-space(3) 0;
+    color: $cb-participant; font-weight: 700; cursor: pointer; list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+  .cb-detailed-search__chevron { margin-left: auto; }
+  &[open] .cb-detailed-search__chevron { transform: rotate(180deg); }
+  form { margin: cb-space(2) 0 0; }
+  .cb-detailed-search__fields {
+    display: grid; gap: cb-space(3);
+    label { display: grid; gap: cb-space(2); margin: 0; }
+    input, select {
+      width: 100%; min-width: 0; min-height: $cb-control-height; margin: 0;
+      border: 1px solid $cb-input-border; border-radius: $cb-radius-control;
+      background: $cb-surface; padding: cb-space(3); font-size: 16px; color: $cb-text;
+    }
+  }
+  fieldset { min-width: 0; margin: cb-space(4) 0 0; padding: 0; border: 0; }
+  legend { margin-bottom: cb-space(2); padding: 0; border: 0; font-size: 14px; font-weight: 700; color: $cb-text; }
+  .cb-detailed-search__choices {
+    display: flex; flex-wrap: wrap; gap: cb-space(2);
+    label {
+      display: flex; align-items: center; gap: cb-space(2); min-height: $cb-touch-height;
+      padding: cb-space(2) cb-space(3); margin: 0; border: 1px solid $cb-input-border;
+      border-radius: $cb-radius-control; cursor: pointer; font-size: 14px;
+      &:has(input:checked) { background: $cb-participant-soft; border-color: $cb-participant; }
+    }
+    input[type=checkbox] { position: static; width: 18px; height: 18px; margin: 0; accent-color: $cb-participant; }
+  }
+  .cb-detailed-search__hint { @include cb-type(helper); margin: cb-space(3) 0; color: $cb-muted; }
+  .cb-detailed-search__actions { display: flex; flex-wrap: wrap; gap: cb-space(2); }
+  @media (min-width: $cb-breakpoint-desktop) {
+    .cb-detailed-search__fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+}

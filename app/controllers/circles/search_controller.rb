@@ -5,7 +5,9 @@ class Circles::SearchController < Circles::ApplicationController
 	def index
     params[:q] = params[:q].to_s.gsub("　"," ")
 
-    if params[:q] == nil || params[:q] == ""
+    if detailed_search?
+      set_keyword_search
+    elsif params[:q] == nil || params[:q] == ""
       redirect_to circles_path
 
     elsif DbKeyword.find_by(keyword: params[:q])
@@ -51,6 +53,28 @@ class Circles::SearchController < Circles::ApplicationController
 
 
 private
+  def detailed_search?
+    params[:detailed] == '1'
+  end
+
+  def apply_detailed_filters(users)
+    return users unless detailed_search?
+
+    @event = Event.find(params[:event_id]) if params[:event_id].present?
+    @prefecture = Prefecture.find(params[:prefecture_id]) if params[:prefecture_id].present?
+    users = users.where(event_id: @event.id) if @event
+    users = users.where_pref(@prefecture.id) if @prefecture
+    users = users.where(category_id: params[:category_id]) if params[:category_id].present?
+    users = users.where_city(City.find(params[:city_id])) if params[:city_id].present?
+    users = users.where(id: UserTag.where(tag_id: params[:tag_id]).select(:user_id)) if params[:tag_id].present?
+
+    group_ids = Array(params[:group_ids]).reject(&:blank?)
+    age_ids = Array(params[:age_ids]).reject(&:blank?)
+    users = users.where(id: UsersGroup.where(group_id: group_ids).select(:user_id)) if group_ids.any?
+    users = users.where(id: UsersAge.where(age_id: age_ids).select(:user_id)) if age_ids.any?
+    users
+  end
+
   def set_keyword_search
       # Userモデルオブジェクト作成
       users = User.publicly_visible
@@ -76,7 +100,7 @@ private
         or(users.where(id: tag_user_ids))
       end
 
-      users = users.list
+      users = apply_detailed_filters(users).list
 
       case params[:sort]
       when "1", nil
