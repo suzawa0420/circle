@@ -6,8 +6,25 @@ root = File.expand_path('..', __dir__)
 [
   ['default.png', 'listing-default-profile-v1.jpg', '160x160^', '160x160', '78'],
   ['default.png', 'listing-default-header-v1.jpg', '400x160^', '400x160', '78'],
-  ['logo.png', 'listing-logo-v1.webp', '640x', nil, '90']
+  ['logo.png', 'listing-logo-v1.webp', '640x', nil, '90'],
+  ['default.png', 'listing-default-profile-v2.webp', '160x160^', '160x160', '78'],
+  ['default.png', 'listing-default-header-v2.webp', '400x160^', '400x160', '78'],
+  ['logo.png', 'listing-logo-320-v2.webp', '320x', nil, '82'],
+  ['logo.png', 'listing-logo-640-v2.webp', '640x', nil, '82']
 ].each do |source, destination, size, extent, quality|
+  if destination.include?('-v2.webp')
+    MiniMagick::Tool::Convert.new do |command|
+      command << File.join(root, 'public/images', source)
+      command.thumbnail size
+      command.gravity 'center'
+      command.extent extent if extent
+      command.strip
+      command.quality quality
+      command << File.join(root, 'public/images', destination)
+    end
+    File.chmod(0o644, File.join(root, 'public/images', destination))
+    next
+  end
   image = MiniMagick::Image.open(File.join(root, 'public/images', source))
   image.combine_options do |command|
     command.thumbnail size

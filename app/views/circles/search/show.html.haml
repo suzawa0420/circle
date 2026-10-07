@@ -9,9 +9,8 @@
       .link_txt
         %h1.e_header_title.circle-listing-heading= circle_listing_heading
 
+    = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path
     - if @users && @users.load.any?
-      = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path
       = render "/circles/commons/users_list", users: @users, listing_data: @listing_data
-
     - else
       = render "/circles/commons/no_hit"

@@ -39,4 +39,13 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
     next if prefecture.kana.blank? || prefecture.kana == 'nil'
     add prefecture_path(prefecture.kana), lastmod: nil, changefreq: 'daily', priority: 0.8
   end
+  CircleFilterLanding.each_populated_path do |path|
+    add path, lastmod: nil, changefreq: 'daily', priority: 0.6
+  end
+
 end
+
+# Public XML uses a persistent cache. Invalidate only sitemap responses after
+# successful generation/upload on the generating server. Other app servers
+# refresh via the short cache TTL in SitemapsController.
+Rails.cache.delete_matched(/\Apublished-sitemap-v2\//)

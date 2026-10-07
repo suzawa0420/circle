@@ -61,7 +61,7 @@ jobs:
       - name: Test runtime integration
         run: bundle exec rails test test/integration/runtime_upgrade_test.rb
       - name: Test invalid public URLs
-        run: bundle exec rails test test/integration/public_invalid_urls_test.rb test/integration/public_search_seo_test.rb test/integration/listing_images_test.rb test/models/public_listing_styles_test.rb
+        run: bundle exec rails test test/integration/public_invalid_urls_test.rb test/integration/public_search_seo_test.rb test/integration/detailed_circle_search_test.rb test/integration/circle_filter_landings_test.rb test/integration/listing_images_test.rb test/models/public_listing_styles_test.rb
       - name: Test circle owner permissions
         run: bundle exec rails test test/integration/circle_owner_permissions_test.rb test/controllers/reviews_controller_test.rb test/integration/schedule_copy_test.rb
       - name: Test shared site design and navigation

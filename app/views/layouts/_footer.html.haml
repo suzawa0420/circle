@@ -24,7 +24,7 @@
       = link_to root_path do
         %picture
           - if fast_public_listing?
-            %source{ srcset: "/images/listing-logo-v1.webp", type: "image/webp" }
+            %source{ srcset: "/images/listing-logo-320-v2.webp 320w, /images/listing-logo-640-v2.webp 640w", sizes: "(max-width: 767px) 120px, 160px", type: "image/webp" }
           %img.footer_logo_img{:alt => "サークルブック", :src => "/images/logo.png?v=20260921-green-clean", :width => 960, :height => 251}/
     .footer_copyright_address
       Copyright (c) #{link_to "サークルブック", root_path}

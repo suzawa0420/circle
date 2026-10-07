@@ -42,7 +42,7 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
       end
     end
     assert_select 'input[name=q][aria-label]'
-    assert_select 'select[name=event_select][aria-label]'
+    assert_select 'select[name=event_id][aria-label]'
   end
 
   test 'circle editing has one named heading and retains the circle switcher' do

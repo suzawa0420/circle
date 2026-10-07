@@ -1,0 +1,25 @@
+- filters = @landing_filters || params
+- detailed = Array(filters[:group_ids]).any?(&:present?) || Array(filters[:age_ids]).any?(&:present?)
+%details.cb-detailed-search.cb-role-participant{ open: detailed }
+  %summary
+    = lucide_icon 'search'
+    %span 詳しく絞り込む
+    = lucide_icon 'chevron-down', class: 'cb-detailed-search__chevron'
+  %fieldset
+    %legend 募集内容
+    .cb-detailed-search__choices
+      - Group.order(:id).each do |group|
+        %label
+          = check_box_tag 'group_ids[]', group.id, Array(filters[:group_ids]).include?(group.id.to_s), id: "filter-group-#{group.id}"
+          %span= group.name
+  %fieldset
+    %legend 年齢層
+    .cb-detailed-search__choices
+      - Age.order(:id).each do |age|
+        %label
+          = check_box_tag 'age_ids[]', age.id, Array(filters[:age_ids]).include?(age.id.to_s), id: "filter-age-#{age.id}"
+          %span= age.name
+  %p.cb-detailed-search__hint 募集内容・年齢層は複数選択できます。各項目内では、選んだいずれかに当てはまるサークルを表示します。
+  .cb-detailed-search__actions
+    = submit_tag 'この条件で検索', name: nil, class: 'cb-button'
+    = link_to '条件をクリア', circles_path, class: 'cb-button cb-button--secondary'

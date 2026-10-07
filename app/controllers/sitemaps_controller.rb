@@ -11,10 +11,10 @@ class SitemapsController < ActionController::Base
   private
 
   def serve(name)
-    xml = Rails.cache.fetch("published-sitemap-v1/#{name}", expires_in: 1.hour) do
+    xml = Rails.cache.fetch("published-sitemap-v2/#{name}", expires_in: 5.minutes) do
       PublishedSitemap.fetch(name)
     end
-    expires_in 1.hour, public: true
+    expires_in 5.minutes, public: true
     render body: xml, content_type: 'application/xml; charset=utf-8'
   rescue PublishedSitemap::NotFound
     head :not_found

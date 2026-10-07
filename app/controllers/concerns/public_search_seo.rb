@@ -9,7 +9,7 @@ module PublicSearchSeo
 
   def public_search_listing?
     return true if controller_path == 'circles/circles' && action_name == 'index'
-    return true if controller_path == 'circles/search' && %w[index show].include?(action_name)
+    return true if controller_path == 'circles/search' && %w[index show landing].include?(action_name)
     return true if controller_path.start_with?('circles/events/', 'circles/prefectures/', 'circles/tags/') && action_name == 'show'
     return true if controller_path == 'tags' && %w[event event_prefecture event_prefecture_city prefecture prefecture_city].include?(action_name)
     false
@@ -57,7 +57,7 @@ module PublicSearchSeo
     url = 'https://circle-book.com' + request.path
     url += '?' + query.to_query if query.present?
     set_meta_tags canonical: url
-    if controller_path == 'circles/search' && !SearchLandingPolicy.indexable?(params[:q])
+    if controller_path == 'circles/search' && action_name != 'landing' && !SearchLandingPolicy.indexable?(params[:q])
       set_meta_tags noindex: true
     end
   end
