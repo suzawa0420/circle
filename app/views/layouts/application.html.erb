@@ -37,6 +37,9 @@
       <link rel="manifest" href="/manifest.webmanifest">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-title" content="サークルブック">
+      <% if (leading_image = circle_listing_preload_image) %>
+        <%= tag.link rel: 'preload', as: 'image', href: leading_image, type: 'image/webp', fetchpriority: 'high' %>
+      <% end %>
       <%= stylesheet_link_tag(fast_public_listing? ? 'public_listing' : 'application', media: 'all', 'data-turbolinks-track': 'reload') %>
 
 

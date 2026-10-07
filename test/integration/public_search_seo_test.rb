@@ -40,6 +40,10 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_select 'title', text: "【全1件】#{subject} | サークルブック"
       assert_select 'h1', text: "【全1件】#{subject}"
+      unless path.start_with?('/categories/')
+        first_image = css_select('img.header_imege_user_list[fetchpriority=high]').first
+        assert_select 'link[rel=preload][as=image][type="image/webp"][fetchpriority=high][href=?]', first_image['src'], count: 1
+      end
     end
   end
 
@@ -47,10 +51,12 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     get @path
     assert_select 'title', text: '【全1件】東京都のバスケチーム募集 | サークルブック'
     assert_select 'h1', text: '【全1件】東京都のバスケチーム募集'
+    assert_select '.mobile-site-heading source[sizes="150px"][srcset*="320w"]', count: 1
     @circle.update_columns(publication_status: 'draft')
     SearchResultCountCache::STORE.clear
     get @path
     assert_select 'title', text: '【全0件】東京都のバスケチーム募集 | サークルブック'
+    assert_select 'link[rel=preload][as=image]', count: 0
   end
 
   test 'genre and tag conditions distinguish titles and keep counts filtered' do
