@@ -56,6 +56,48 @@ jobs:
             cd /var/www/circle
             git diff --quiet -- db/schema.rb
             git diff --cached --quiet -- db/schema.rb
+      - name: Check requested commit is checked out
+        if: always() && inputs.target == 'check-al2023'
+        continue-on-error: true
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd /var/www/circle
+            test "$(git rev-parse HEAD)" = 3a91bcbe8bada4cfa676552bbe604c8e1f00cdc0
+      - name: Check deployed brand assets
+        if: always() && inputs.target == 'check-al2023'
+        continue-on-error: true
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd /var/www/circle
+            /opt/circle/ruby-3.3.12/bin/ruby bin/verify_brand_assets >/dev/null 2>&1
+      - name: Check moderation migration is installed
+        if: always() && inputs.target == 'check-al2023'
+        continue-on-error: true
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            cd /var/www/circle
+            PATH=/opt/circle/ruby-3.3.12/bin:$PATH RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true bundle exec rails runner 'exit(User.column_names.include?("moderation_reasons") && Blog.column_names.include?("moderation_reasons") ? 0 : 1)' >/dev/null 2>&1
   checks:
     if: inputs.target != 'check-al2023'
     uses: ./.github/workflows/runtime_upgrade.yml
