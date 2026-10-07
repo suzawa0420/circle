@@ -331,6 +331,9 @@ Rails.application.routes.draw do
 
 
 
+  # Match genre/tag listings before the generic three-segment legacy redirect.
+  get ':ruby/tag/:id', to: 'tags#event'
+
   # 301リダイレクト
   get 'users', to: redirect('circles')
   get 'users/kw/:q', to: redirect('/circles/search/%{q}')
@@ -356,7 +359,6 @@ Rails.application.routes.draw do
 
 
   # 通常のルーティング
-	get ':ruby/tag/:id' , to: 'tags#event'
 	get ':ruby/:kana/tag/:id' , to: 'tags#event_prefecture'
 	get ':ruby/:kana/:city_kana/:id' , to: 'users#event_prefecture_city_station'
 	get ':ruby/:kana/:city_kana/tag/:id' , to: 'tags#event_prefecture_city'

@@ -5,9 +5,68 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
   self.fixture_table_names = []
   include ChatRecords
   setup do
+    SearchResultCountCache::STORE.clear
     create_chat_records
-    @circle.update!(cost: '一回５００円', average_age: '２０代中心')
+    @circle.event.update!(txt: 'バスケチーム')
+    @circle.update!(cost: '一回５００円', average_age: '２０代中心', recruitment: '初心者歓迎')
     @path = event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana)
+  end
+
+  test 'national regional city category and tag listings share title conventions' do
+    event = @circle.event.ruby
+    prefecture = @circle.prefecture.kana
+    category = @circle.category
+    category.update!(txt: '球技のサークル・チーム')
+    city = City.create!(name: '世田谷区', city_kana: 'title-setagaya', prefecture: @circle.prefecture)
+    UsersCity.create!(user: @circle, city: city)
+    tag = Tag.create!(name: '社会人サークル', text: '社会人の')
+    UserTag.create!(user: @circle, tag: tag)
+    paths = {
+      '/circles' => 'サークル・チーム募集',
+      "/events/#{event}" => 'バスケチーム募集',
+      "/prefectures/#{prefecture}" => '東京都のサークル・チーム募集',
+      "/prefectures/#{prefecture}/cities/#{city.city_kana}" => '東京都世田谷区のサークル・チーム募集',
+      "#{@path}/cities/#{city.city_kana}" => '東京都世田谷区のバスケチーム募集',
+      "/tags/#{tag.id}" => '社会人のサークル・チーム募集',
+      "/#{event}/tag/#{tag.id}" => '社会人のバスケチーム募集',
+      "/#{event}/#{prefecture}/#{city.city_kana}/tag/#{tag.id}" => '東京都世田谷区の社会人のバスケチーム募集',
+      "/prefectures/#{prefecture}/tag/#{tag.id}" => '東京都の社会人のサークル・チーム募集',
+      "/prefectures/#{prefecture}/#{city.city_kana}/tag/#{tag.id}" => '東京都世田谷区の社会人のサークル・チーム募集',
+      "/categories/#{category.kana}" => '球技のサークル・チーム募集',
+      "/categories/#{category.kana}/#{prefecture}" => '東京都の球技のサークル・チーム募集'
+    }
+    paths.each do |path, subject|
+      get path
+      assert_response :success
+      assert_select 'title', text: "【全1件】#{subject} | サークルブック"
+      assert_select 'h1', text: "【全1件】#{subject}"
+    end
+  end
+
+  test 'listing titles show filtered totals without year or unrelated conditions' do
+    get @path
+    assert_select 'title', text: '【全1件】東京都のバスケチーム募集 | サークルブック'
+    assert_select 'h1', text: '【全1件】東京都のバスケチーム募集'
+    @circle.update_columns(publication_status: 'draft')
+    SearchResultCountCache::STORE.clear
+    get @path
+    assert_select 'title', text: '【全0件】東京都のバスケチーム募集 | サークルブック'
+  end
+
+  test 'genre and tag conditions distinguish titles and keep counts filtered' do
+    tag = Tag.create!(name: '初心者歓迎', text: '初心者歓迎の')
+    UserTag.create!(user: @circle, tag: tag)
+    UserTag.create!(user: @circle, tag: tag)
+    @circle.event.update!(name: 'バドミントン', txt: 'バドミントンサークル・クラブ')
+    @circle.update!(prefecture_sub: @circle.prefecture)
+    get "/#{@circle.event.ruby}/#{@circle.prefecture.kana}/tag/#{tag.id}"
+    assert_response :success
+    assert_select 'title', text: '【全1件】東京都の初心者歓迎のバドミントンサークル募集 | サークルブック'
+    assert_select 'h1', text: '【全1件】東京都の初心者歓迎のバドミントンサークル募集'
+    other = Tag.create!(name: '50代', text: '50代の')
+    get "/#{@circle.event.ruby}/#{@circle.prefecture.kana}/tag/#{other.id}"
+    assert_response :success
+    assert_select 'title', text: '【全0件】東京都の50代のバドミントンサークル募集 | サークルブック'
   end
 
   test 'public landing page prioritizes first image and omits editing scripts' do
@@ -41,6 +100,8 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     get @path, params: { page: '2', sort: '3' }
     assert_response :success
     assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{@path}?page=2"
+    assert_select 'title', text: "【全#{count + 1}件】東京都のバスケチーム募集（2ページ目） | サークルブック"
+    assert_select 'h1', text: "【全#{count + 1}件】東京都のバスケチーム募集（2ページ目）"
     json = css_select('script[type="application/ld+json"]').map { |node| JSON.parse(node.text) }.find { |item| item['@type'] == 'ItemList' }
     assert_equal count + 1, json['itemListElement'].first['position']
   end

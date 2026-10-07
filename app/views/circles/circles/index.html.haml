@@ -1,4 +1,4 @@
-- set_meta_tags title: "【#{@time.strftime("%Y")}年版】47都道府県のサークルやチーム、団体一覧｜メンバー募集サイト"
+- set_meta_tags title: circle_listing_title
 - breadcrumb :circle_index
 = render "circles/markups/circles_list", users: @users
 
@@ -6,7 +6,8 @@
   .container
 
     %img.lazyload.imege_title{"data-src" => "/images/top.png"}/
-    %h1.users-heading サークル検索
+    %h1.users-heading= circle_listing_title
+
     .users-txt
       - if admin_user_signed_in? && current_admin_user.first_user
         = link_to("活動日の登録", user_schedules_path(current_admin_user.first_user) )

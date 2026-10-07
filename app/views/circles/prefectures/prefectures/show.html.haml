@@ -1,4 +1,4 @@
-- set_meta_tags title: "【#{@time.strftime("%Y")}年版】#{@prefecture.name}の社会人サークル・学生サークル一覧｜メンバー募集",description: circle_listing_description,keywords: "#{@prefecture.name},サークル,チーム,団体"
+- set_meta_tags title: circle_listing_title,description: circle_listing_description,keywords: "#{@prefecture.name},サークル,チーム,団体"
 - breadcrumb :prefecture_show, @prefecture
 = render "circles/markups/circles_list", users: @users
 
@@ -8,12 +8,7 @@
     .e_header_wrap
       %img{:src => "/images/top.png", :alt => ""}/
       .link_txt
-        %h1.e_header_title
-          = "#{@prefecture.name}で活動している"
-          %br
-          = "メンバー募集中の"
-          %br
-          = "サークルやチーム"
+        %h1.e_header_title= circle_listing_title
 
     - if @users&.size.to_i != 0
       = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path

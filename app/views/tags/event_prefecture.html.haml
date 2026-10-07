@@ -1,16 +1,12 @@
-- set_meta_tags title: "#{@prefecture.name}の#{@tag.text}#{@event.txt}｜メンバー募集サイト",keywords: "#{@event.name},#{@prefecture.name},#{@tag.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
+- set_meta_tags title: circle_listing_title,keywords: "#{@event.name},#{@prefecture.name},#{@tag.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
 = render "users/parts/local_business_user_list"
 .main.users-index
   .container
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/
       .link_txt
-        %h1.e_header_title
-          = @prefecture.name
-          で活動している
-          %br/
-          = @tag.text
-          = @event.txt
+        %h1.e_header_title= circle_listing_title
+
     = render "/users/search"
     - if @users.count != 0
       = render "/users/users_list"

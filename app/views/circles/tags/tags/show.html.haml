@@ -1,4 +1,4 @@
-- set_meta_tags title: "#{@tag.text}サークルやチーム一覧｜メンバー募集サイト",keywords: "#{@tag.name},サークル,チーム"
+- set_meta_tags title: circle_listing_title,keywords: "#{@tag.name},サークル,チーム"
 - breadcrumb :tag_show, @tag
 = render "circles/markups/circles_list", users: @users
 
@@ -8,10 +8,7 @@
     .e_header_wrap
       %img{:src => "/images/top.png"}/
       .link_txt
-        %h1.e_header_title
-          = "#{@tag.text}"
-          %br
-          = "サークルやチーム"
+        %h1.e_header_title= circle_listing_title
 
     - if @users&.size.to_i != 0
       = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path

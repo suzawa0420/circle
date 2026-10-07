@@ -1,15 +1,12 @@
-- set_meta_tags title: "【#{@time.strftime("%Y")}年版】#{@category.txt}｜メンバー募集サイト",description: "【完全無料／登録不要】#{@category.txt}の募集サイトです！10代〜60代、社会人や学生、初心者、経験者など、誰でも参加可能！無料で簡単にメンバーの募集ができます！",keywords: "#{@category.name},サークル,チーム",og: {image:image_url("/images/categories/#{@category.kana}.jpg")}
+- set_meta_tags title: circle_listing_title,description: "【完全無料／登録不要】#{@category.txt}の募集サイトです！10代〜60代、社会人や学生、初心者、経験者など、誰でも参加可能！無料で簡単にメンバーの募集ができます！",keywords: "#{@category.name},サークル,チーム",og: {image:image_url("/images/categories/#{@category.kana}.jpg")}
 = render "users/parts/local_business_user_list"
 .main.users-index
   .container
     .e_header_wrap
       %img{:alt => "#{@category.name}", :src => "/images/categories/#{@category.kana}.jpg"}/
       .link_txt
-        %h1.e_header_title
-          メンバー募集中の
-          %br/
-          = @category.txt
-          の一覧
+        %h1.e_header_title= circle_listing_title
+
     - if @users.count != 0
       = render "/categories/search"
       = render "/users/users_list"

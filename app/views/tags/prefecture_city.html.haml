@@ -1,17 +1,12 @@
-- set_meta_tags title: "#{@prefecture.name}#{@city.name}の#{@tag.text}サークルやチーム、団体の一覧｜メンバー募集サイト",keywords: "#{@prefecture.name},#{@city.name},#{@tag.name},サークル,チーム"
+- set_meta_tags title: circle_listing_title,keywords: "#{@prefecture.name},#{@city.name},#{@tag.name},サークル,チーム"
 = render "users/parts/local_business_user_list"
 .main.users-index
   .container
     .e_header_wrap
       %img{:src => "/images/top.png"}/
       .link_txt
-        %h1.e_header_title
-          = @prefecture.name
-          = @city.name
-          で活動している
-          %br/
-          = @tag.text
-          サークル
+        %h1.e_header_title= circle_listing_title
+
     = render "/users/search"
     - if @users.count != 0
       = render "/users/users_list"

@@ -1,4 +1,4 @@
-- set_meta_tags noindex: true,title: "「#{params[:q]}」のサークルやチームの検索結果｜メンバー募集サイト"
+- set_meta_tags noindex: true,title: circle_listing_title
 - breadcrumb :circle_search_index, params[:q]
 
 .main.users-index
@@ -7,10 +7,7 @@
     .e_header_wrap
       %img{:src => "/images/search.jpg"}/
       .link_txt
-        %h1.e_header_title
-          = "「#{params[:q].truncate(18)}」の"
-          %br
-          = "サークル検索結果"
+        %h1.e_header_title= circle_listing_title
 
     - if @users && @users.load.any?
       = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path

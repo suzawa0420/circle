@@ -1,4 +1,4 @@
-- set_meta_tags title: "【#{@time.strftime("%Y")}年版】#{@prefecture.name}の#{@event.txt}｜メンバー募集サイト",description: circle_listing_description,keywords: "#{@event.name},#{@prefecture.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
+- set_meta_tags title: circle_listing_title,description: circle_listing_description,keywords: "#{@event.name},#{@prefecture.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
 - breadcrumb :event_prefecture_show, @event, @prefecture
 = render "circles/markups/circles_list", users: @users
 
@@ -8,13 +8,7 @@
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/
       .link_txt
-        %h1.e_header_title
-          = "#{@prefecture.name}で活動している"
-          %br
-          = "メンバー募集中の"
-          %br
-          = "#{@event.txt}の一覧"
-
+        %h1.e_header_title= circle_listing_title
 
     - if @users&.size.to_i != 0
       = render "/circles/commons/search_form", categories: @categories, prefectures: @prefectures, path: @path
