@@ -32,6 +32,7 @@
   .circle-listing-heading__count { white-space: nowrap; }
   .circle-listing-heading__subject { min-width: 0; max-width: 100%; }
   .users-txt { @include cb-type(compact); position: static; color: $cb-muted; margin: 0 0 cb-space(6); text-align: left; }
+  .no-hit-message { margin: 16px 0 8px; text-align: center; font-weight: 700; }
   .container > .imege_title { display: none; }
   .e_header_wrap { background: transparent; margin: 0 0 cb-space(6); }
   .e_header_wrap > img { display: none; }

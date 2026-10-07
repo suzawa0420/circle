@@ -58,7 +58,7 @@
 
 - if blogs.empty?
   .no_hit_wrap.blog_no_hit
-    %img.imege_sorry{:src => "/images/sorry.png"}/
+    = render "shared/empty_search", message: "該当するブログがありません"
     = link_to(root_path) do
       .no_hit_top トップページに戻る
     = link_to(new_admin_user_registration_path) do

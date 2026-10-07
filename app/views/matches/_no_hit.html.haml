@@ -1,6 +1,6 @@
 = render "/matches/search"
 .no_hit_wrap
-  %img.imege_sorry{:src => "/images/sorry.png"}/
+  = render "shared/empty_search", message: "該当する対戦相手の募集がありません"
   = link_to(matches_path) do
     .no_hit_top トップページに戻る
   = link_to(new_admin_user_registration_path) do

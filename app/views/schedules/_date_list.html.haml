@@ -85,7 +85,7 @@
   = paginate @schedules
 - else
   .no_hit_wrap
-    %img.imege_sorry{:src => "/images/sorry.png"}/
+    = render "shared/empty_search", message: "該当する活動日がありません"
     = link_to(root_path) do
       .no_hit_top トップページに戻る
     = link_to(new_admin_user_registration_path) do
