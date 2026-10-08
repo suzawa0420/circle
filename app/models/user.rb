@@ -89,10 +89,15 @@ class User < ApplicationRecord
 	before_validation :flag_suspicious_profile
 
 	scope :publicly_visible, -> {
-		where(publication_status: "published", moderation_status: "clear")
-			.where(ng_account: [nil, "OK"])
+		# Keep these fixed policy values literal so even generic prepared plans
+		# can use index_users_on_public_visibility without rescanning profile HTML.
+		where(<<~SQL.squish)
+			users.publication_status = 'published' AND users.moderation_status = 'clear'
+			AND (users.ng_account IS NULL OR users.ng_account = 'OK')
+			AND (REGEXP_REPLACE(COALESCE(users.name, ''), '<[^>]*>', '', 'g') ~ '[ぁ-んァ-ヶ]'
+			OR REGEXP_REPLACE(COALESCE(users.appeal, ''), '<[^>]*>', '', 'g') ~ '[ぁ-んァ-ヶ]')
+		SQL
 			.where(admin_user_id: AdminUser.publicly_visible.select(:id))
-			.where("REGEXP_REPLACE(COALESCE(users.name, ''), '<[^>]*>', '', 'g') ~ :kana OR REGEXP_REPLACE(COALESCE(users.appeal, ''), '<[^>]*>', '', 'g') ~ :kana", kana: '[ぁ-んァ-ヶ]')
 	}
 
 	def missing_publication_fields

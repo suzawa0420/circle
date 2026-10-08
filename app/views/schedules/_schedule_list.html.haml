@@ -1,10 +1,11 @@
-- schedules = @schedules.includes(:name_schedules)
-- past_schedules = @past_schedules.includes(:name_schedules)
-- if schedules.where.not(id: @schedule.id).present? && params[:page] == nil
+- listing = ScheduleListingData.new(upcoming: @schedules, past: @past_schedules, excluded_id: @schedule.id, show_upcoming: params[:page].nil?)
+- schedules = listing.upcoming
+- past_schedules = listing.past
+- if schedules.any?
   .schedule_list_wrap
     - schedules.each do |schedule|
       - if schedule.present? && @schedule.id != schedule.id
-        - accepted_count = schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
+        - accepted_count = listing.accepted_count(schedule)
         - if @schedule_month != Time.parse(schedule.day).strftime("%-m")
           %h2.schedule_m
             = lucide_icon "calendar-days"
@@ -59,12 +60,12 @@
 - if params[:page] == nil
   = render "/layouts/ad_square"
   .ad_space
-- if past_schedules.where.not(id: @schedule.id).present?
+- if past_schedules.any?
   %h2.past_schedule 開催が終了したスケジュール
   .schedule_list_wrap
     - past_schedules.each do |past_schedule|
       - if past_schedule.present? && @schedule.id != past_schedule.id
-        - accepted_count = past_schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
+        - accepted_count = listing.accepted_count(past_schedule)
         - if @past_schedule_month != Time.parse(past_schedule.day).strftime("%-m")
           %h3.schedule_m
             = lucide_icon "calendar-days"
@@ -106,4 +107,4 @@
                 = past_schedule.title
   = render "/layouts/ad_square"
   .ad_space
-  = paginate past_schedules
+  = paginate listing.past_page

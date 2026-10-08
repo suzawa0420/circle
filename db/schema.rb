@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_09_000000) do
+ActiveRecord::Schema.define(version: 2026_10_10_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -790,6 +790,7 @@ ActiveRecord::Schema.define(version: 2026_10_09_000000) do
     t.string "moderation_status", default: "clear", null: false
     t.index ["admin_user_id"], name: "index_users_on_admin_user_id"
     t.index ["event_id"], name: "index_users_on_event_id"
+    t.index ["id", "admin_user_id"], name: "index_users_on_public_visibility", where: "(((publication_status)::text = 'published'::text) AND ((moderation_status)::text = 'clear'::text) AND ((ng_account IS NULL) OR ((ng_account)::text = 'OK'::text)) AND ((regexp_replace((COALESCE(name, ''::character varying))::text, '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text) OR (regexp_replace(COALESCE(appeal, ''::text), '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text)))"
     t.index "switch, LEAST((100)::numeric, GREATEST((0)::numeric, floor(round((cb_point)::numeric, 1)))) DESC, last_post DESC, id DESC", name: "index_users_on_circle_level_order"
     t.index ["last_post"], name: "index_users_on_last_post"
     t.index ["ng_account"], name: "index_users_on_ng_account"
