@@ -1,5 +1,10 @@
 module ApplicationHelper
 
+  def default_user_avatar_path(gender)
+    variant = { '1' => 'male', '2' => 'female' }.fetch(gender.to_s, 'other')
+    "/images/avatars/default-#{variant}-v1.png"
+  end
+
   def circle_avatar_tag(circle, **options)
     return lazysizes_image_tag(circle.pic_profile.url, options) if circle.pic_profile.present?
 

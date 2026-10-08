@@ -2,7 +2,7 @@
 <main class="participant-shell public-member-profile">
   <section class="participant-card public-profile-card">
     <div class="public-profile-identity">
-      <% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'public-profile-avatar', alt: "#{@member.nickname}さんのプロフィール画像" %><% else %><span class="public-profile-avatar public-profile-avatar--empty" aria-hidden="true"><%= @member.nickname.to_s.first.presence || '？' %></span><% end %>
+      <% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'public-profile-avatar', alt: "#{@member.nickname}さんのプロフィール画像" %><% else %><%= image_tag default_user_avatar_path(@member.gender), class: 'public-profile-avatar', alt: '' %><% end %>
       <div class="public-profile-identity__text">
         <p class="participant-eyebrow">サークル参加者</p>
         <h1><%= @member.nickname.presence || '参加者' %><small>さん</small></h1>
