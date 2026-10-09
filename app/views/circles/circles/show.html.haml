@@ -102,6 +102,7 @@
         = render "users/parts/admin_user_check", admin_user: @user.admin_user
 
         %h1.user_name= @user.name
+        = render "conversations/no_reply_notice", user: @user
         = render "mobile_contact"
 
 

@@ -15,6 +15,20 @@ class Conversation < ApplicationRecord
     end
   end
 
+  NO_REPLY_WAIT = 3.days
+  scope :reported_unanswered, -> {
+    delivered_inquiries = ChatMessage.deliverable.where(sender_role: 'member')
+      .where('COALESCE(chat_messages.released_at, chat_messages.created_at) <= ?', NO_REPLY_WAIT.ago)
+      .select(:conversation_id)
+    where(respond_check: 'NG', accepted_at: nil, id: delivered_inquiries)
+  }
+
+  def no_reply_reportable_at
+    first_inquiry = chat_messages.deliverable.where(sender_role: 'member')
+      .order(Arel.sql('COALESCE(chat_messages.released_at, chat_messages.created_at) ASC, id ASC')).first
+    (first_inquiry.released_at || first_inquiry.created_at) + NO_REPLY_WAIT if first_inquiry
+  end
+
   ROLES = %w[member owner].freeze
   belongs_to :user
   belongs_to :member

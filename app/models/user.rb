@@ -71,6 +71,10 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  def unanswered_report_count
+    Conversation.reported_unanswered.where(user_id: id).count
+  end
+
   # Ransack 4+ requires an explicit public search surface. Never expose
   # account/contact fields or allow searches through the owner association.
   def self.ransackable_attributes(_auth_object = nil)

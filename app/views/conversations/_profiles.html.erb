@@ -16,6 +16,10 @@
           <span class="chat-profile__stars" aria-hidden="true"><span>★★★★★</span><span class="chat-profile__stars-fill" style="width: <%= (score.clamp(0, 5) * 20).round(2) %>%">★★★★★</span></span>
           <span class="chat-profile__score"><%= count.positive? ? "#{format('%.2f', score)}（#{count}件）" : '評価はまだありません' %></span>
         </span>
+        <% no_reply_count = person_role == 'owner' ? person.unanswered_report_count : 0 %>
+        <% if no_reply_count.positive? %>
+          <span class="chat-profile__no-reply">初回返信なしの報告：<%= no_reply_count %>人</span>
+        <% end %>
       <% end %>
       <% if viewer_role.present? && viewer_role != person_role %>
         <%= link_to '評価する', '#evaluation', class: 'chat-profile__evaluate', data: { open_evaluation: true }, aria: { label: "#{name}を評価する" } %>

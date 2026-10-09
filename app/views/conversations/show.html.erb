@@ -52,8 +52,11 @@
       <%= button_to '相手をブロック', block_conversation_path(@conversation), data: { confirm: '双方の送信を停止します。発生済みの評価権は残ります。よろしいですか？' } %>
     <% end %>
     <% if @role == 'member' && !@conversation.accepted_at && @conversation.chat_messages.deliverable.where(sender_role: 'member').exists? %>
-      <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p><% else %>
+      <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p>
+      <% elsif @conversation.no_reply_reportable_at && Time.current >= @conversation.no_reply_reportable_at %>
         <%= button_to '返信がないことを報告', no_reply_conversation_path(@conversation), id: 'chat-no-reply', data: { confirm: '主催者から返信がないことを報告しますか？' } %>
+      <% else %>
+        <p>問い合わせが届いてから3日以上、主催者の初回返信がない場合に報告できます。スパム確認中の未配信メッセージは対象外です。</p>
       <% end %>
     <% end %>
   </details>

@@ -115,6 +115,9 @@ class ConversationsController < ApplicationController
     @conversation.with_lock do
       raise Conversation::NotAllowed, '配信済みのお問い合わせがありません。' unless @conversation.chat_messages.deliverable.where(sender_role: 'member').exists?
       raise Conversation::NotAllowed, '返信済みの問い合わせです。' if @conversation.accepted_at
+      if Time.current < @conversation.no_reply_reportable_at
+        raise Conversation::NotAllowed, '未返信の報告は、お問い合わせが届いてから3日後にできます。'
+      end
       @conversation.update!(respond_check: 'NG')
       @conversation.refresh_circle_score!
     end

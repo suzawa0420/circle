@@ -1,0 +1,7 @@
+<% count = user.unanswered_report_count %>
+<% if count.positive? %>
+  <aside class="circle-reply-notice" aria-label="主催者の返信状況">
+    <strong><%= count %>人から、初回返信がないとの報告があります</strong>
+    <p>問い合わせが届いてから3日以上返信がなく、参加者が報告した件数です。主催者が返信すると件数から外れます。</p>
+  </aside>
+<% end %>

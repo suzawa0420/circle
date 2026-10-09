@@ -180,3 +180,8 @@
 .chat-profile__evaluate { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; max-width: calc(100% - 16px); padding: 5px 14px; border: 1px solid $cb-action; border-radius: 8px; color: $cb-action; background: #fff; font-size: 12px; text-align: center; }
 .chat-profile__evaluate--disabled { border-color: transparent; color: $cb-muted; font-size: 11px; }
 @media (max-width: 374px) { .chat-profiles { gap: 8px; } .chat-profile__link { padding: 12px 8px; } .chat-profile__name { font-size: 13px; } .chat-profile__stars { font-size: 18px; } }
+
+.circle-reply-notice { margin: 16px 0; padding: 14px 16px; border: 1px solid #e4cc94; border-radius: 10px; background: #fff8e8; color: #654b17; overflow-wrap: anywhere; }
+.circle-reply-notice strong { display: block; font-size: 14px; line-height: 1.7; }
+.circle-reply-notice p { margin: 6px 0 0; font-size: 12px; line-height: 1.7; }
+.chat-profile__no-reply { color: #654b17; font-size: 11px; line-height: 1.6; }
