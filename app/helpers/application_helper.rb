@@ -1,8 +1,22 @@
 module ApplicationHelper
 
   def default_user_avatar_path(gender)
-    variant = { '1' => 'male', '2' => 'female' }.fetch(gender.to_s, 'other')
-    "/images/avatars/default-#{variant}-v1.png"
+    "/images/avatars/default-#{default_user_avatar_variant(gender)}-v1.png"
+  end
+
+  def default_user_avatar_variant(gender)
+    { '1' => 'male', '2' => 'female' }.fetch(gender.to_s, 'other')
+  end
+
+  def default_user_avatar_tag(gender, **options)
+    variant = default_user_avatar_variant(gender)
+    options[:class] = [options[:class], 'default-user-avatar', "default-user-avatar--#{variant}"].compact.join(' ')
+    options.delete(:alt)
+    options.delete(:loading)
+    options['aria-hidden'] = 'true'
+    content_tag(:span, options) do
+      image_tag(default_user_avatar_path(gender), alt: '', loading: 'lazy')
+    end
   end
 
   def circle_avatar_tag(circle, **options)

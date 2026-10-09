@@ -4,7 +4,7 @@
   <%= render 'members/navigation', active: 'home' %>
   <%= render 'help_center/context_link', article: 'contact-circle', label: '参加方法・メッセージで困ったときはこちら' %>
   <section class="participant-card participant-identity">
-    <% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'participant-avatar', alt: '' %><% else %><%= image_tag default_user_avatar_path(@member.gender), class: 'participant-avatar', alt: '' %><% end %>
+    <% if @member.image_profile.present? %><%= image_tag @member.image_profile.url, class: 'participant-avatar', alt: '' %><% else %><%= default_user_avatar_tag @member.gender, class: 'participant-avatar', alt: '' %><% end %>
     <div class="participant-identity__text"><h2><%= @member.nickname %><small>さん</small></h2><p><%= @member.prefecture&.name || '活動エリア未設定' %><% if @member.age_group %>・<%= @member.age_group %><% end %></p></div>
     <%= link_to '公開プロフィール', member_profile_path(@member), class: 'participant-text-link' %>
   </section>

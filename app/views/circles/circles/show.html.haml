@@ -388,7 +388,7 @@
                 - if @user.admin_user.image_profile.present?
                   = lazysizes_image_tag @user.admin_user.image_profile.url , class:'admin_user_icon'
                 - else
-                  = image_tag default_user_avatar_path(@user.admin_user.gender), class: 'admin_user_icon', alt: '', loading: 'lazy'
+                  = default_user_avatar_tag @user.admin_user.gender, class: 'admin_user_icon', alt: '', loading: 'lazy'
               .admin_user_name_wrap
                 %h3.admin_user_name
                   = @user.admin_user.nickname
