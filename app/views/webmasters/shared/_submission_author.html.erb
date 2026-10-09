@@ -1,0 +1,17 @@
+<div class="wm-submission-author">
+  <strong>投稿者（投稿時のログインアカウント）：</strong>
+  <% if submission.member_id.nil? && submission.admin_user_id.nil? %>
+    <span>未ログイン・投稿者情報なし</span>
+  <% else %>
+    <% if submission.member %>
+      <%= link_to "参加者：#{submission.member.nickname.presence || '名前未設定'}（ID：#{submission.member_id}）", super_admin_account_path(submission.member, kind: 'member') %>
+    <% elsif submission.member_id %>
+      <span>参加者 ID：<%= submission.member_id %>（削除済み・確認不可）</span>
+    <% end %>
+    <% if submission.admin_user %>
+      <%= link_to "主催者：#{submission.admin_user.nickname.presence || '名前未設定'}（ID：#{submission.admin_user_id}）", super_admin_account_path(submission.admin_user, kind: 'owner') %>
+    <% elsif submission.admin_user_id %>
+      <span>主催者 ID：<%= submission.admin_user_id %>（削除済み・確認不可）</span>
+    <% end %>
+  <% end %>
+</div>

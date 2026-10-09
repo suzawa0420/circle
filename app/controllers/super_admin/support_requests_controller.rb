@@ -3,7 +3,7 @@ class SuperAdmin::SupportRequestsController < ApplicationController
 
   def index
     @status = SupportRequest::STATUSES.key?(params[:status]) ? params[:status] : 'pending'
-    @requests = SupportRequest.where(status: @status).where.not(kind: 'suggestion')
+    @requests = SupportRequest.includes(:member, :admin_user).where(status: @status).where.not(kind: 'suggestion')
       .order(Arel.sql("CASE WHEN kind = 'safety' THEN 0 ELSE 1 END"), created_at: :asc, id: :asc).page(params[:page]).per(30)
     @suggestion_count = SupportRequest.where(kind: 'suggestion', status: 'pending').count
     events = HelpEvent.where('created_at >= ?', 30.days.ago)

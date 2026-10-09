@@ -128,6 +128,57 @@ class SupportRequestsTest < ActionDispatch::IntegrationTest
     assert_response :too_many_requests
   end
 
+  test 'signed in submitters are recorded from session and linked in webmaster lists and details' do
+    post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+    get new_support_request_path(step: 'form')
+    token = css_select('form[action="/support"] input[name=spam_form_token]').first['value']
+    payload = request_params(token)
+    payload[:support_request].merge!(member_id: @other_member.id, admin_user_id: @owner.id)
+    post support_requests_path, params: payload
+    inquiry = SupportRequest.last
+    assert_equal @member.id, inquiry.member_id
+    assert_nil inquiry.admin_user_id
+    delete destroy_member_session_path
+
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get new_support_request_path(kind: 'suggestion', step: 'form')
+    token = css_select('form[action="/support"] input[name=spam_form_token]').first['value']
+    payload = request_params(token)
+    payload[:support_request].merge!(kind: 'suggestion', email: '', member_id: @member.id)
+    post support_requests_path, params: payload
+    suggestion = SupportRequest.last
+    assert_equal @owner.id, suggestion.admin_user_id
+    assert_nil suggestion.member_id
+    delete destroy_admin_user_session_path
+
+    login_master
+    get super_admin_support_requests_path
+    assert_select ".wm-submission-author a[href='#{super_admin_account_path(@member, kind: 'member')}']", text: /参加者さくら/
+    get super_admin_support_request_path(inquiry)
+    assert_select ".wm-submission-author a[href='#{super_admin_account_path(@member, kind: 'member')}']"
+    get super_admin_account_path(@member, kind: 'member')
+    assert_response :success
+    get super_admin_opinions_path
+    assert_select ".wm-submission-author a[href='#{super_admin_account_path(@owner, kind: 'owner')}']", text: /ID：#{@owner.id}/
+    get super_admin_support_request_path(suggestion)
+    assert_select ".wm-submission-author a[href='#{super_admin_account_path(@owner, kind: 'owner')}']"
+    get super_admin_account_path(@owner, kind: 'owner')
+    assert_response :success
+  end
+
+  test 'anonymous identity is not inferred from email and removed accounts have no broken links' do
+    anonymous = SupportRequest.create!(kind: 'inquiry', category: 'account', audience: 'member', email: @member.email, body: 'ログインできない状況を確認してください。')
+    removed = SupportRequest.create!(kind: 'suggestion', category: 'other', audience: 'member', member: @other_member, body: '今後の機能について改善をお願いします。')
+    @other_member.destroy!
+    login_master
+    get super_admin_support_request_path(anonymous)
+    assert_select '.wm-submission-author', text: /未ログイン・投稿者情報なし/
+    assert_select '.wm-submission-author a', count: 0
+    get super_admin_support_request_path(removed)
+    assert_select '.wm-submission-author', text: /削除済み・確認不可/
+    assert_select '.wm-submission-author a', count: 0
+  end
+
   private
 
   def request_params(token)

@@ -41,6 +41,8 @@ class WebmasterOpinionsTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
     assert_select "article a[href='#{circle_path(@circle)}']", text: @circle.name
+    assert_select ".wm-submission-author a[href='#{super_admin_account_path(@owner, kind: 'owner')}']"
+    assert_select '.wm-submission-author', text: /投稿元サークルの現在の主催者/
     assert_includes response.body, '2026/10/01 12:34'
     assert_includes response.body, '長い本文です。' * 100
     assert_select '.wm-body br', minimum: 1
