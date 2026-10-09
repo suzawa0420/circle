@@ -62,6 +62,10 @@ case "$mode" in
     # Help center: additive private requests and anonymous search/answer counters.
     bundle exec rails db:migrate:up VERSION=20261005000000
     bundle exec rails db:migrate:up VERSION=20261007000000
+    bundle exec rails db:migrate:up VERSION=20261008000000
+    bundle exec rails db:migrate:up VERSION=20261009000000
+    # Preserve publication policy while avoiding repeated profile-HTML scans.
+    bundle exec rails db:migrate:up VERSION=20261010000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

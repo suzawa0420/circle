@@ -9,6 +9,23 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     @master = Webmaster.create!(id: 1, email: 'webmaster@example.test', password: 'test-password-123')
   end
 
+  test 'webmaster sees both profile cards without evaluation controls or read updates' do
+    before = @conversation.reload.attributes
+    login_master
+    get super_admin_conversation_path(@conversation)
+    assert_response :success
+    assert_select '.chat-profiles .chat-profile', count: 2
+    assert_select '.chat-profile--member a[href=?]', member_profile_path(@member)
+    assert_select '.chat-profile--owner a[href=?]', circle_path(@circle)
+    assert_select '.chat-profiles a.chat-profile__evaluate', count: 0
+    assert_select '.chat-profile--owner a.chat-profile__manage[href=?]', super_admin_account_path(@owner, kind: 'owner'), text: '主催者の管理'
+    assert_select '.chat-profile--member a.chat-profile__manage[href=?]', super_admin_account_path(@member), text: '参加者の管理'
+    assert_select '.chat-profile__evaluate--disabled', count: 0
+    assert_select '.wm-details', count: 0
+    assert_includes response.body, '相手の既読状態には反映されません。'
+    assert_equal before, @conversation.reload.attributes
+  end
+
   test 'webmaster conversation history links message URLs safely' do
     @conversation.send_message!('member', "https://example.test/contact?a=1&b=2\n<img src=x onerror=alert(1)>")
     login_master

@@ -6,6 +6,11 @@
     - if !@blog.publicly_visible?
       .attention_content このブログは現在、一般には公開されていません。
 
+    - if webmaster?
+      = render "webmasters/shared/moderation_reasons", record: @blog
+      - if !@user.publicly_visible?
+        = render "webmasters/shared/moderation_reasons", record: @user
+
     .form.users-form.cb-blog-article
       .form-body.blog_show
         .post-body
@@ -95,7 +100,7 @@
                     = "：" if @user.area.present?
                     = @user.area
                 .list_04
-                  %span.user_recruitment= @user.recruitment.truncate(110)
+                  %span.user_recruitment= @user.recruitment.to_s.truncate(110)
 
 
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_07_000000) do
+ActiveRecord::Schema.define(version: 2026_10_10_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.string "moderation_status", default: "clear", null: false
     t.index ["moderation_status"], name: "index_blogs_on_moderation_status"
     t.index ["user_id"], name: "index_blogs_on_user_id"
+    t.jsonb "moderation_reasons", default: [], null: false
+    t.datetime "moderation_checked_at"
   end
 
   create_table "bookmarks", force: :cascade do |t|
@@ -120,6 +122,13 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.string "txt"
   end
 
+  create_table "chat_spam_destinations", force: :cascade do |t|
+    t.string "destination", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["destination"], name: "index_chat_spam_destinations_on_destination", unique: true
+  end
+
   create_table "chat_messages", force: :cascade do |t|
     t.bigint "conversation_id", null: false
     t.string "sender_role", null: false
@@ -129,6 +138,16 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.string "image"
     t.index ["conversation_id", "id"], name: "index_chat_messages_on_conversation_id_and_id"
     t.index ["conversation_id"], name: "index_chat_messages_on_conversation_id"
+    t.string "moderation_status", default: "delivered", null: false
+    t.integer "spam_score", default: 0, null: false
+    t.jsonb "spam_reasons", default: [], null: false
+    t.string "spam_fingerprint"
+    t.datetime "reviewed_at"
+    t.datetime "released_at"
+    t.datetime "recipient_read_at"
+    t.index ["moderation_status", "created_at"], name: "index_chat_messages_on_moderation_status_and_created_at"
+    t.index ["spam_fingerprint"], name: "index_chat_messages_on_spam_fingerprint"
+    t.check_constraint "moderation_status::text = ANY (ARRAY['delivered'::character varying, 'held'::character varying, 'approved'::character varying, 'spam'::character varying]::text[])", name: "chat_messages_moderation_valid"
   end
 
   create_table "chat_reports", force: :cascade do |t|
@@ -771,6 +790,7 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.string "moderation_status", default: "clear", null: false
     t.index ["admin_user_id"], name: "index_users_on_admin_user_id"
     t.index ["event_id"], name: "index_users_on_event_id"
+    t.index ["id", "admin_user_id"], name: "index_users_on_public_visibility", where: "(((publication_status)::text = 'published'::text) AND ((moderation_status)::text = 'clear'::text) AND ((ng_account IS NULL) OR ((ng_account)::text = 'OK'::text)) AND ((regexp_replace((COALESCE(name, ''::character varying))::text, '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text) OR (regexp_replace(COALESCE(appeal, ''::text), '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text)))"
     t.index "switch, LEAST((100)::numeric, GREATEST((0)::numeric, floor(round((cb_point)::numeric, 1)))) DESC, last_post DESC, id DESC", name: "index_users_on_circle_level_order"
     t.index ["last_post"], name: "index_users_on_last_post"
     t.index ["ng_account"], name: "index_users_on_ng_account"
@@ -782,6 +802,8 @@ ActiveRecord::Schema.define(version: 2026_10_07_000000) do
     t.index ["switch", "last_post"], name: "index_users_on_switch_and_last_post_desc", order: { last_post: :desc }
     t.index ["switch", "cb_point", "last_post"], name: "index_users_on_switch_popularity_and_last_post", order: { cb_point: :desc, last_post: :desc }
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+    t.jsonb "moderation_reasons", default: [], null: false
+    t.datetime "moderation_checked_at"
   end
 
   create_table "users_ages", force: :cascade do |t|

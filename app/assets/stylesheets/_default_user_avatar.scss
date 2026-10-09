@@ -1,0 +1,34 @@
+// Only the connected outer white background is masked; interior colors stay intact.
+.default-user-avatar {
+  display: inline-flex;
+  overflow: hidden;
+  background-color: #fff0b5;
+
+  &--male { background-color: #c9edf9; }
+  &--female { background-color: #ffd9e5; }
+  &--other { background-color: #fff0b5; }
+
+  > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    mask-mode: alpha;
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+  }
+}
+
+.chat-avatar > .default-user-avatar {
+  width: 100%;
+  height: 100%;
+}
+
+@each $variant in male, female, other {
+  .default-user-avatar--#{$variant} > img {
+    mask-image: url("/images/avatars/default-#{$variant}-mask-v1.svg");
+    -webkit-mask-image: url("/images/avatars/default-#{$variant}-mask-v1.svg");
+  }
+}

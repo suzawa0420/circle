@@ -15,6 +15,20 @@ class Conversation < ApplicationRecord
     end
   end
 
+  NO_REPLY_WAIT = 3.days
+  scope :reported_unanswered, -> {
+    delivered_inquiries = ChatMessage.deliverable.where(sender_role: 'member')
+      .where('COALESCE(chat_messages.released_at, chat_messages.created_at) <= ?', NO_REPLY_WAIT.ago)
+      .select(:conversation_id)
+    where(respond_check: 'NG', accepted_at: nil, id: delivered_inquiries)
+  }
+
+  def no_reply_reportable_at
+    first_inquiry = chat_messages.deliverable.where(sender_role: 'member')
+      .order(Arel.sql('COALESCE(chat_messages.released_at, chat_messages.created_at) ASC, id ASC')).first
+    (first_inquiry.released_at || first_inquiry.created_at) + NO_REPLY_WAIT if first_inquiry
+  end
+
   ROLES = %w[member owner].freeze
   belongs_to :user
   belongs_to :member
@@ -39,16 +53,28 @@ class Conversation < ApplicationRecord
     member_blocked? || owner_blocked?
   end
 
+  # Serialize initial inquiries across different circles for the same sender.
   def send_message!(role, body, image: nil)
+    if role == 'member'
+      member.with_lock { send_message_locked!(role, body, image: image) }
+    else
+      send_message_locked!(role, body, image: image)
+    end
+  end
+
+  def send_message_locked!(role, body, image: nil)
     with_lock do
       raise NotAllowed, 'ブロック中はメッセージを送信できません。' if blocked?
       ensure_active_sender!(role)
+      if role == 'member' && !member.japanese_profile?
+        raise NotAllowed, '自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。'
+      end
       sender = role == 'owner' ? user.admin_user : member
       raise NotAllowed, 'メールアドレスを確認してください。' unless sender.email_verified?
       if chat_messages.where(sender_role: role).where('created_at > ?', 1.minute.ago).count >= 10
         raise NotAllowed, '送信が続いています。少し待ってからお試しください。'
       end
-      if role == 'owner' && !chat_messages.where(sender_role: 'member').exists?
+      if role == 'owner' && !chat_messages.deliverable.where(sender_role: 'member').exists?
         raise NotAllowed, '参加者からの問い合わせを受けてから返信できます。'
       end
       if role == 'member' && !chat_messages.exists?
@@ -56,7 +82,14 @@ class Conversation < ApplicationRecord
           chat_messages.create!(sender_role: 'system', body: guidance)
         end
       end
-      message = chat_messages.create!(sender_role: role, body: body.to_s, image: image)
+      attributes = { sender_role: role, body: body.to_s, image: image }
+      if role == 'member' && accepted_at.nil?
+        result = ChatSpamDetector.evaluate(self, body)
+        attributes.merge!(spam_score: result.score, spam_reasons: result.reasons, spam_fingerprint: result.fingerprint,
+                          moderation_status: result.held? ? 'held' : 'delivered')
+      end
+      message = chat_messages.create!(attributes)
+      return message unless message.delivered?
       if role == 'owner' && accepted_at.nil?
         self.accepted_at = Time.current
         self.review_deadline = 14.days.from_now
@@ -73,19 +106,24 @@ class Conversation < ApplicationRecord
     end
   end
 
+  private :send_message_locked!
+
   def recipient_read_message_id(sender_role)
     self[sender_role == 'owner' ? 'member_read_message_id' : 'owner_read_message_id']
   end
 
   def message_read?(message)
-    !message.automatic? && message.conversation_id == id && message.id <= recipient_read_message_id(message.sender_role)
+    return false if message.automatic? || message.conversation_id != id || !message.delivered?
+    message.released_at ? message.recipient_read_at.present? : message.id <= recipient_read_message_id(message.sender_role)
   end
 
-  def mark_read!(role, through:)
+  def mark_read!(role, through:, message_ids: [])
     with_lock do
       self["#{role}_read_message_id"] = [self["#{role}_read_message_id"], through].max
       incoming_role = role == 'member' ? 'owner' : 'member'
-      unless chat_messages.where(sender_role: incoming_role).where('id > ?', self["#{role}_read_message_id"]).exists?
+      chat_messages.deliverable.where(id: message_ids, sender_role: incoming_role, recipient_read_at: nil)
+        .where.not(released_at: nil).update_all(recipient_read_at: Time.current)
+      unless chat_messages.unread_by(role, self["#{role}_read_message_id"]).exists?
         self["#{role}_notification_due_at"] = nil
       end
       update_columns("#{role}_read_message_id" => self["#{role}_read_message_id"],

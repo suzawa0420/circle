@@ -25,6 +25,10 @@ class CircleLevelRankingTest < ActionDispatch::IntegrationTest
   test 'popular ordering has a matching database index' do
     connection = ActiveRecord::Base.connection
     connection.execute('SET LOCAL enable_seqscan = off')
+    # This checks index/order compatibility, not the planner's cost choice for
+    # a handful of fixtures, where sorting a different index can be cheaper.
+    connection.execute('SET LOCAL enable_sort = off')
+    connection.execute('SET LOCAL enable_incremental_sort = off')
     plan = connection.select_values('EXPLAIN ' + User.sort_2.limit(20).select(:id).to_sql).join("\n")
     assert_includes plan, 'index_users_on_circle_level_order'
   end

@@ -1,0 +1,9 @@
+<% report = moderation_reason_report(record) %>
+<% if report[:messages].any? || report[:notes].any? %>
+<section class="wm-moderation-reasons" aria-label="判定理由">
+  <h4><%= record.moderation_status == 'clear' && report[:saved] ? '過去の判定理由（現在は確認済み）' : '判定理由' %></h4>
+  <% if report[:checked_at] %><p class="wm-meta">判定日時：<%= report[:checked_at].strftime('%Y/%m/%d %H:%M') %> ／ 判定時の理由を保存</p><% end %>
+  <% report[:notes].each do |note| %><p class="wm-meta"><%= note %></p><% end %>
+  <% if report[:messages].any? %><ul><% report[:messages].each do |message| %><li><%= message %></li><% end %></ul><% end %>
+</section>
+<% end %>

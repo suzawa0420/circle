@@ -11,6 +11,10 @@ class SuperAdmin::AccountsController < ApplicationController
     end
     @accounts = @accounts.where.not(suspended_at: nil) if params[:state] == 'suspended'
     @accounts = @accounts.page(params[:page]).per(30)
+    if @kind == 'owner'
+      @accounts = @accounts.includes(:users)
+      @moderation_reason_reports = ModerationReasonReport.for_records(@accounts.flat_map(&:users))
+    end
   end
 
   def show

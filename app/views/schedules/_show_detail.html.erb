@@ -233,7 +233,7 @@
 </div>
 
 <% if @path.is('schedules#show') %>
-  <% if @schedules.where.not(id: @schedule.id).present? %>
+  <% if @schedules.where.not(id: @schedule.id).exists? %>
     <%= render "/layouts/ad_square" %>
 
     <div class="users-index-item">

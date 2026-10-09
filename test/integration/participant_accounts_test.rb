@@ -65,6 +65,43 @@ class ParticipantAccountsTest < ActionDispatch::IntegrationTest
     assert_equal [@circle.event_id, extra.id].sort, @member.event_ids.sort
   end
 
+  test 'self introduction requires Japanese kana and keeps invalid input for correction' do
+    get edit_member_path(@member)
+    assert_select '#profile-language-help', text: /必ず日本語でお書きください/
+    assert_select 'textarea[aria-describedby="profile-language-help profile-privacy-help"]'
+    ['台灣外送茶推薦服務', 'Hello, please contact me', '<span title="あ">中文宣傳</span>'].each do |profile|
+      patch member_path(@member), params: { member: { profile: profile, prefecture_id: @circle.prefecture_id, event_ids: [@circle.event_id] } }
+      assert_response :unprocessable_entity
+      assert_select '[role=alert]', text: /必ず日本語/
+      assert_nil @member.reload.profile
+    end
+    ['週末に運動したいです。', 'よろしくおねがいします。', 'テニス', 'ﾃﾆｽ', ''].each do |profile|
+      patch member_path(@member), params: { member: { profile: profile, prefecture_id: @circle.prefecture_id, event_ids: [@circle.event_id] } }
+      assert_redirected_to member_path(@member)
+      assert_equal profile, @member.reload.profile
+    end
+  end
+
+  test 'legacy non Japanese introductions cannot send messages until corrected' do
+    @member.update_column(:profile, '台灣外送茶推薦服務')
+    get new_user_conversation_path(@circle)
+    assert_redirected_to edit_member_path(@member)
+    assert_no_difference 'ChatMessage.count' do
+      post message_conversation_path(@conversation), params: { message: { body: '参加できますか？' } }
+    end
+    assert_redirected_to edit_member_path(@member)
+    assert_raises(Conversation::NotAllowed) { @conversation.send_message!('member', '参加希望です。') }
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select 'a', text: '自己紹介を修正する'
+    assert_select '.chat-compose-form', count: 0
+    @member.reload.update!(profile: '週末に参加したいです。')
+    assert_difference 'ChatMessage.count', 1 do
+      post message_conversation_path(@conversation), params: { message: { body: '参加できますか？' } }
+    end
+    assert_redirected_to conversation_path(@conversation)
+  end
+
   test 'private pages reject other participants and favorites are visible on own dashboard' do
     @member.bookmarks.create!(user: @circle)
     get member_path(@member)

@@ -25,7 +25,7 @@ class ChatMaintenance
       due = conversation["#{role}_notification_due_at"]
       return unless due && due <= Time.current
       incoming = role == 'member' ? 'owner' : 'member'
-      unread = conversation.chat_messages.where(sender_role: incoming).where('id > ?', conversation["#{role}_read_message_id"]).exists?
+      unread = conversation.chat_messages.unread_by(role, conversation["#{role}_read_message_id"]).exists?
       if unread && !conversation.blocked?
         ChatMailer.new_messages(conversation, role).deliver_now
         conversation["#{role}_notified_at"] = Time.current

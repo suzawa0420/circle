@@ -11,6 +11,10 @@
   <% if @kind == 'owner' %><label class="wm-selection"><%= check_box_tag 'owner_ids[]', account.id, false, id: "bulk-account-owner-#{account.id}", form: 'bulk-account-owners', data: { bulk_owner: true }, autocomplete: 'off' %>主催者 ID <%= account.id %>を削除対象に選択</label><% end %>
   <h2><%= account.nickname.presence || "#{@label} ID #{account.id}" %></h2><p class="wm-meta"><%= account.email %></p>
   <p><span class="wm-badge"><%= account.suspended? ? '利用停止中' : '利用中' %></span></p>
+  <% if @kind == 'owner' %>
+    <% if account.suspended? %><p class="wm-meta">利用停止理由：<%= account.suspension_reason.presence || '未記録' %></p><% end %>
+    <% account.users.each do |circle| %><h3><%= link_to circle.name, circle_path(circle) %></h3><%= render 'webmasters/shared/moderation_reasons', record: circle %><% end %>
+  <% end %>
   <%= link_to '詳細を確認', super_admin_account_path(account, kind: @kind), class: 'wm-button' %>
 </article><% end %>
 <% if @accounts.empty? %><%= render 'webmasters/shared/empty', message: '条件に一致するアカウントはありません。' %><% end %>

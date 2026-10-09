@@ -8,6 +8,105 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     create_chat_records
   end
 
+  test 'unanswered reports require three days and are publicly visible until an owner replies' do
+    sign_in @member
+    post no_reply_conversation_path(@conversation)
+    assert_nil @conversation.reload.respond_check
+    assert_equal 0, @circle.unanswered_report_count
+    get conversation_path(@conversation)
+    assert_select '#chat-no-reply', count: 0
+    @conversation.chat_messages.where(sender_role: 'member').update_all(created_at: 4.days.ago)
+    get conversation_path(@conversation)
+    assert_select '#chat-no-reply', count: 1
+    post no_reply_conversation_path(@conversation)
+    assert_equal 'NG', @conversation.reload.respond_check
+    assert_equal 1, @circle.unanswered_report_count
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.circle-reply-notice strong', text: '1人から、初回返信がないとの報告があります'
+    assert_select '.circle-reply-notice', text: /3日以上/
+    assert_select '.circle-reply-notice', text: /参加者さくら/, count: 0
+    get new_user_conversation_path(@circle)
+    assert_redirected_to conversation_path(@conversation)
+    get conversation_path(@conversation)
+    assert_select '.chat-profile__no-reply', text: '初回返信なしの報告：1人'
+    sign_out @member
+    accept_conversation
+    assert_equal 0, @circle.unanswered_report_count
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.circle-reply-notice', count: 0
+  end
+
+  test 'undelivered or recently released inquiries do not count as unanswered reports' do
+    message = @conversation.chat_messages.where(sender_role: 'member').sole
+    message.update_columns(moderation_status: 'held', created_at: 10.days.ago)
+    @conversation.update!(respond_check: 'NG')
+    assert_equal 0, @circle.unanswered_report_count
+    sign_in @member
+    post no_reply_conversation_path(@conversation)
+    assert_equal 0, @circle.unanswered_report_count
+    message.update_columns(moderation_status: 'approved', released_at: Time.current)
+    assert_equal 0, @circle.unanswered_report_count
+    @conversation.update!(respond_check: nil)
+    post no_reply_conversation_path(@conversation)
+    assert_nil @conversation.reload.respond_check
+    travel 3.days + 1.second do
+      post no_reply_conversation_path(@conversation)
+      assert_equal 1, @circle.unanswered_report_count
+    end
+  end
+
+  test 'first inquiry page warns another participant before sending and reports are counted once' do
+    @conversation.chat_messages.where(sender_role: 'member').update_all(created_at: 4.days.ago)
+    sign_in @member
+    2.times { post no_reply_conversation_path(@conversation) }
+    assert_equal 1, @circle.unanswered_report_count
+    sign_out @member
+    sign_in @other_member
+    get new_user_conversation_path(@circle)
+    assert_response :success
+    assert_select '.circle-reply-notice strong', text: '1人から、初回返信がないとの報告があります'
+    assert_not_includes css_select('.circle-reply-notice').first.text, @member.nickname
+  end
+
+  test 'profile cards link both people and only allow evaluating the other party' do
+    accept_conversation
+    @member.update!(prefecture: @circle.prefecture, gender: '1', date_of_birth: Date.new(1996, 1, 1))
+    @conversation.submit_review!('member', member_evaluation)
+    @conversation.submit_review!('owner', owner_evaluation)
+    sign_in @member
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '.chat-profiles .chat-profile', count: 2
+    assert_select '.chat-profile__manage', count: 0
+    assert_select '.chat-profile--member a.chat-profile__link[href=?]', member_profile_path(@member)
+    assert_select '.chat-profile--owner a.chat-profile__link[href=?]', circle_path(@circle)
+    assert_select '.chat-profile--member .chat-profile__attributes', text: '東京都・30代・男性'
+    assert_select '.chat-profile--member .chat-profile__score', text: '0.00（1件）'
+    assert_select '.chat-profile--owner .chat-profile__score', text: '5.00（1件）'
+    assert_select '.chat-profile--owner a.chat-profile__evaluate[href="#evaluation"]', text: '評価する'
+    assert_select '.chat-profile--member a.chat-profile__evaluate', count: 0
+    sign_out @member
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_select '.chat-profile--member a.chat-profile__evaluate[href="#evaluation"]', count: 1
+    assert_select '.chat-profile--owner a.chat-profile__evaluate', count: 0
+    assert_select '.chat-profile__manage', count: 0
+  end
+
+  test 'profile cards do not expose unpublished evaluations or raw profile markup' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation)
+    @member.update!(nickname: '<img src=x onerror=alert(1)>')
+    sign_in @member
+    get conversation_path(@conversation)
+    assert_select '.chat-profile__score', text: '評価はまだありません', count: 2
+    assert_select '.chat-profiles [onerror]', count: 0
+    assert_select '.chat-profiles a a', count: 0
+    assert_includes response.body, '&lt;img src=x onerror=alert(1)&gt;'
+  end
+
   test 'message URLs are linked safely for participants owners and polling' do
     accept_conversation
     @conversation.send_message!('owner', "ご案内：https://example.test/join?a=1&b=2\n<script>alert(1)</script> javascript:alert(2)")
@@ -293,6 +392,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
   end
 
   test 'reports are private, message targets are scoped, no reply flag clears on owner reply' do
+    @conversation.chat_messages.where(sender_role: 'member').update_all(created_at: 4.days.ago)
     sign_in @member
     post no_reply_conversation_path(@conversation)
     assert_equal 'NG', @conversation.reload.respond_check

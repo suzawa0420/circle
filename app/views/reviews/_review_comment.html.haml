@@ -1,22 +1,10 @@
 .review_contents
   .review_l
-    - if review.member.present?
-      - if review.member.image_profile.present?
-        = lazysizes_image_tag review.member.image_profile.url , class:'member_icon'
-      - else
-        - if review.member.gender == "1"
-          %img.member_icon{:src => "/images/icon/icon_member_blue.png"}/
-        - elsif review.member.gender == "2"
-          %img.member_icon{:src => "/images/icon/icon_member_pink.png"}/
-        - else
-          %img.member_icon{:src => "/images/icon/icon_member.png"}/
+    - if review.member.present? && review.member.image_profile.present?
+      = lazysizes_image_tag review.member.image_profile.url, class: 'member_icon'
     - else
-      - if review.gender == "1"
-        %img.member_icon{:src => "/images/icon/icon_member_blue.png"}/
-      - elsif review.gender == "2"
-        %img.member_icon{:src => "/images/icon/icon_member_pink.png"}/
-      - else
-        %img.member_icon{:src => "/images/icon/icon_member.png"}/
+      - gender = review.member.present? ? review.member.gender : review.gender
+      = default_user_avatar_tag gender, class: 'member_icon', alt: '', loading: 'lazy'
   .review_r
     .speech_title
       - if review.review == 1

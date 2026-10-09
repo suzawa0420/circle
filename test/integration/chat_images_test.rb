@@ -120,6 +120,31 @@ class ChatImagesTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test 'held photo is private to sender and master until approved' do
+    held = @conversation.send_message!('member', '性愛預約服務', image: upload)
+    @stored_images << held.image
+    assert_equal 'held', held.moderation_status
+    path = chat_image_path(@conversation.public_id, held.id)
+    login(@owner)
+    assert_raises(ActiveRecord::RecordNotFound) { get path }
+    delete destroy_admin_user_session_path
+    login(@member)
+    get path
+    assert_response :success
+    master = Webmaster.create!(id: 1, email: 'photo-moderator@example.test', password: 'test-password-123')
+    post webmaster_session_path, params: { webmaster: { email: master.email, password: 'test-password-123' } }
+    get path
+    assert_response :success
+    assert_equal 0, @conversation.reload.owner_read_message_id
+    delete destroy_webmaster_session_path
+    delete destroy_member_session_path
+    login(@owner)
+    held.moderate!('approve')
+    get path
+    assert_response :success
+    assert_nil held.reload.recipient_read_at
+  end
+
   private
 
   def upload

@@ -1,22 +1,18 @@
 <main class="chat-shell chat-thread <%= "cb-participant" if @role == "member" %>">
   <header class="chat-thread-heading">
     <%= link_to '‹ 一覧', conversations_path, class: 'chat-back', aria: { label: 'メッセージ一覧へ戻る' } %>
-    <%= render 'avatar', conversation: @conversation, role: @role == 'member' ? 'owner' : 'member' %>
-    <h1><%= @role == 'member' ? @conversation.user.name : "#{@conversation.member.nickname}さん" %></h1>
-    <a href="#evaluation" class="chat-evaluation-link">口コミ</a>
+    <h1>メッセージ</h1>
   </header>
+  <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
-  <details class="chat-context"><summary>相手の情報・受付状況</summary>
+  <details class="chat-context"><summary>受付状況</summary>
   <div class="chat-card chat-person">
-    <%= link_to "#{@conversation.member.nickname}さんのプロフィール", member_profile_path(@conversation.member) %>
-    <% count = @conversation.member.received_conversation_reviews.count %>
-    <p>参加者の評価：<%= count.positive? ? "#{format('%.2f', @conversation.member.received_review_score)} / 5（#{count}件）" : 'まだありません' %></p>
     <p id="chat-acceptance-status" class="cb-system-notice"><strong class="cb-system-notice__label">システム通知</strong><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>
   </div>
   </details>
   <section aria-label="メッセージ履歴" class="chat-history">
     <%= paginate @messages %>
-    <div id="chat-messages" class="chat-history" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if params[:page].blank? || params[:page] == '1' %>" data-accepted="<%= @conversation.accepted_at.present? %>">
+    <div id="chat-messages" class="chat-history" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if params[:page].blank? || params[:page] == '1' %>" data-accepted="<%= @conversation.accepted_at.present? %>">
       <%= render "messages" %>
     </div>
   </section>
@@ -27,6 +23,9 @@
     <% elsif @role == 'owner' && !current_admin_user.email_verified? %>
       <p>メッセージを送信するにはメールアドレスの確認が必要です。</p>
       <%= link_to 'メールアドレスを確認する', admin_user_email_verification_path %>
+    <% elsif @role == 'member' && !current_member.japanese_profile? %>
+      <p>自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。</p>
+      <%= link_to '自己紹介を修正する', edit_member_path(current_member) %>
     <% elsif @conversation.blocked? %>
       <p>ブロック中のため、双方とも送信できません。履歴の閲覧・通報・評価は引き続き利用できます。</p>
     <% else %>
@@ -52,9 +51,12 @@
     <% else %>
       <%= button_to '相手をブロック', block_conversation_path(@conversation), data: { confirm: '双方の送信を停止します。発生済みの評価権は残ります。よろしいですか？' } %>
     <% end %>
-    <% if @role == 'member' && !@conversation.accepted_at %>
-      <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p><% else %>
+    <% if @role == 'member' && !@conversation.accepted_at && @conversation.chat_messages.deliverable.where(sender_role: 'member').exists? %>
+      <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p>
+      <% elsif @conversation.no_reply_reportable_at && Time.current >= @conversation.no_reply_reportable_at %>
         <%= button_to '返信がないことを報告', no_reply_conversation_path(@conversation), id: 'chat-no-reply', data: { confirm: '主催者から返信がないことを報告しますか？' } %>
+      <% else %>
+        <p>問い合わせが届いてから3日以上、主催者の初回返信がない場合に報告できます。スパム確認中の未配信メッセージは対象外です。</p>
       <% end %>
     <% end %>
   </details>

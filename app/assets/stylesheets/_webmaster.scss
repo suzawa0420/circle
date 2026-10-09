@@ -103,3 +103,9 @@
 
 .webmaster-page .webmaster-login .webmaster-remember { display: flex; align-items: center; gap: 10px; min-height: 44px; }
 .webmaster-page .webmaster-login .webmaster-remember input[type=checkbox] { width: 20px; height: 20px; flex: 0 0 20px; margin: 0; }
+
+// Also used on circle/blog details while a webmaster views the public layout.
+.wm-moderation-reasons { margin: 12px 0; padding: 14px 16px; border: 1px solid #dce7df; border-radius: 10px; background: #f4f7f5; color: #24362e; overflow-wrap: anywhere; line-height: 1.65; }
+.wm-moderation-reasons h4 { font-size: 14px; font-weight: 700; margin: 0 0 8px; }
+.wm-moderation-reasons p { font-size: 13px; color: #5c6d63; margin: 6px 0; }
+.wm-moderation-reasons ul { margin: 8px 0 0; padding-left: 20px; font-size: 14px; }

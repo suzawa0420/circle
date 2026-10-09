@@ -17,6 +17,9 @@
         - elsif @user.publication_status != "draft"
           このサークルは一般には公開されていません。
 
+    - if webmaster?
+      = render "webmasters/shared/moderation_reasons", record: @user
+
     .user-profile
       .header-wrapper.ribbon-wrapper
         .ribbon-content
@@ -99,6 +102,7 @@
         = render "users/parts/admin_user_check", admin_user: @user.admin_user
 
         %h1.user_name= @user.name
+        = render "conversations/no_reply_notice", user: @user
         = render "mobile_contact"
 
 
@@ -385,7 +389,7 @@
                 - if @user.admin_user.image_profile.present?
                   = lazysizes_image_tag @user.admin_user.image_profile.url , class:'admin_user_icon'
                 - else
-                  = circle_avatar_tag @user, class:'admin_user_icon'
+                  = default_user_avatar_tag @user.admin_user.gender, class: 'admin_user_icon', alt: '', loading: 'lazy'
               .admin_user_name_wrap
                 %h3.admin_user_name
                   = @user.admin_user.nickname

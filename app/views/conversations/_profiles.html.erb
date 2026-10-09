@@ -1,0 +1,34 @@
+<section class="chat-profiles" aria-label="やり取りしている参加者と主催者">
+  <% %w[member owner].each do |person_role| %>
+    <% person = person_role == 'member' ? conversation.member : conversation.user %>
+    <% reviews = person_role == 'member' ? person.received_conversation_reviews : person.reviews %>
+    <% count = reviews.count %>
+    <% score = count.positive? ? reviews.average(person_role == 'member' ? :score : :review).to_f * 5 : 0 %>
+    <% name = person_role == 'member' ? "#{person.nickname}さん" : person.name %>
+    <% attributes = person_role == 'member' ? [person.prefecture&.name, person.age_group, { '1' => '男性', '2' => '女性' }[person.gender.to_s]] : [person.prefecture&.name, person.area.presence, person.event&.name] %>
+    <% attributes_text = attributes.compact.join('・').presence || '活動エリア未設定' %>
+    <article class="chat-profile chat-profile--<%= person_role %>">
+      <%= link_to(person_role == 'member' ? member_profile_path(person) : circle_path(person), class: 'chat-profile__link', aria: { label: "#{name}のプロフィールを見る" }) do %>
+        <span class="chat-profile__role"><%= person_role == 'member' ? '参加者' : '主催者・サークル' %></span>
+        <%= render 'conversations/avatar', conversation: conversation, role: person_role %>
+        <strong class="chat-profile__name" title="<%= name %>"><%= name %></strong>
+        <span class="chat-profile__attributes" title="<%= attributes_text %>"><%= attributes_text %></span>
+        <span class="chat-profile__rating" aria-label="<%= count.positive? ? "評価5点満点中#{format('%.2f', score)}、#{count}件" : '評価はまだありません' %>">
+          <span class="chat-profile__stars" aria-hidden="true"><span>★★★★★</span><span class="chat-profile__stars-fill" style="width: <%= (score.clamp(0, 5) * 20).round(2) %>%">★★★★★</span></span>
+          <span class="chat-profile__score"><%= count.positive? ? "#{format('%.2f', score)}（#{count}件）" : '評価はまだありません' %></span>
+        </span>
+        <% no_reply_count = person_role == 'owner' ? person.unanswered_report_count : 0 %>
+        <% if no_reply_count.positive? %>
+          <span class="chat-profile__no-reply">初回返信なしの報告：<%= no_reply_count %>人</span>
+        <% end %>
+      <% end %>
+      <% if local_assigns[:manage_accounts] && webmaster? %>
+        <%= link_to(person_role == 'owner' ? '主催者の管理' : '参加者の管理', person_role == 'owner' ? super_admin_account_path(person.admin_user, kind: 'owner') : super_admin_account_path(person), class: 'chat-profile__manage wm-button wm-button--secondary') %>
+      <% elsif viewer_role.present? && viewer_role != person_role %>
+        <%= link_to '評価する', '#evaluation', class: 'chat-profile__evaluate', data: { open_evaluation: true }, aria: { label: "#{name}を評価する" } %>
+      <% else %>
+        <span class="chat-profile__evaluate chat-profile__evaluate--disabled"><%= viewer_role.present? ? 'あなたのプロフィール' : '評価は当事者のみ' %></span>
+      <% end %>
+    </article>
+  <% end %>
+</section>

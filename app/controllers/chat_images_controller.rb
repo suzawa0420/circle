@@ -16,7 +16,8 @@ class ChatImagesController < ApplicationController
     end
     conversation = scope.find_by!(public_id: params[:conversation_id])
     message = conversation.chat_messages.find(params[:id])
-    raise ActiveRecord::RecordNotFound unless message.image?
+    role = member_signed_in? && conversation.member_id == current_member.id ? 'member' : 'owner'
+    raise ActiveRecord::RecordNotFound unless message.image? && (webmaster? || message.delivered? || message.sender_role == role)
 
     send_data message.image.decrypted_image, type: 'image/jpeg', disposition: 'inline', filename: "photo-#{message.id}.jpg"
   end

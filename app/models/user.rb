@@ -71,6 +71,10 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  def unanswered_report_count
+    Conversation.reported_unanswered.where(user_id: id).count
+  end
+
   # Ransack 4+ requires an explicit public search surface. Never expose
   # account/contact fields or allow searches through the owner association.
   def self.ransackable_attributes(_auth_object = nil)
@@ -89,10 +93,15 @@ class User < ApplicationRecord
 	before_validation :flag_suspicious_profile
 
 	scope :publicly_visible, -> {
-		where(publication_status: "published", moderation_status: "clear")
-			.where(ng_account: [nil, "OK"])
+		# Keep these fixed policy values literal so even generic prepared plans
+		# can use index_users_on_public_visibility without rescanning profile HTML.
+		where(<<~SQL.squish)
+			users.publication_status = 'published' AND users.moderation_status = 'clear'
+			AND (users.ng_account IS NULL OR users.ng_account = 'OK')
+			AND (REGEXP_REPLACE(COALESCE(users.name, ''), '<[^>]*>', '', 'g') ~ '[ぁ-んァ-ヶ]'
+			OR REGEXP_REPLACE(COALESCE(users.appeal, ''), '<[^>]*>', '', 'g') ~ '[ぁ-んァ-ヶ]')
+		SQL
 			.where(admin_user_id: AdminUser.publicly_visible.select(:id))
-			.where("REGEXP_REPLACE(COALESCE(users.name, ''), '<[^>]*>', '', 'g') ~ :kana OR REGEXP_REPLACE(COALESCE(users.appeal, ''), '<[^>]*>', '', 'g') ~ :kana", kana: '[ぁ-んァ-ヶ]')
 	}
 
 	def missing_publication_fields
@@ -110,6 +119,10 @@ class User < ApplicationRecord
 		publication_status == "published" && moderation_status == "clear" &&
 			[ nil, "OK" ].include?(ng_account) && japanese_profile? && admin_user.present? && admin_user.publicly_visible?
 	end
+
+  def moderation_rule_reasons
+    japanese_profile? ? [] : ['non_japanese_profile']
+  end
 
 	private
 
@@ -129,7 +142,12 @@ class User < ApplicationRecord
 
 		# Category and location labels are supplied by the site; only owner-written
 		# name and introduction count toward the Japanese-language check.
-		self.moderation_status = "review" unless japanese_profile?
+    reasons = moderation_rule_reasons
+    if reasons.any?
+      self.moderation_status = "review"
+      self.moderation_reasons = ModerationReasonReport.snapshot(reasons)
+      self.moderation_checked_at = Time.current
+    end
 	end
 
 	public
