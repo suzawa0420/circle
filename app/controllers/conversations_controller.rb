@@ -9,6 +9,12 @@ class ConversationsController < ApplicationController
 
   def index
     inbox_scope = accessible_conversations
+    if admin_user_signed_in? && !member_signed_in?
+      inbox_scope = inbox_scope.where(user_id: params[:circle_id]) if params[:circle_id].present?
+      @penalty_count = inbox_scope.reported_unanswered.count
+      @penalty_only = params[:penalty] == '1'
+      inbox_scope = inbox_scope.reported_unanswered if @penalty_only
+    end
     visible = ChatMessage.deliverable
     visible = visible.or(ChatMessage.where(sender_role: 'member', conversation_id: Conversation.where(member_id: current_member.id).select(:id))) if member_signed_in?
     # Automatic guidance alone must not expose an inquiry held before delivery.
@@ -16,6 +22,7 @@ class ConversationsController < ApplicationController
     @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
       .includes(:user, :member).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
     ids = @conversations.map(&:id)
+    @penalty_ids = Conversation.reported_unanswered.where(id: ids).pluck(:id)
     @latest_messages = visible.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id).delivery_order.index_by(&:conversation_id)
     @unread_counts = %w[member owner].index_with do |role|
       incoming = role == 'member' ? 'owner' : 'member'

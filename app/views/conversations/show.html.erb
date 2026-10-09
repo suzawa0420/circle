@@ -5,6 +5,12 @@
   </header>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
+  <% if @role == 'owner' && Conversation.reported_unanswered.exists?(@conversation.id) %>
+    <aside class="chat-card chat-penalty-summary">
+      <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
+      <p>このお問い合わせは初回返信がないと報告されています。メッセージを返信すると減点が解除されます。</p>
+    </aside>
+  <% end %>
   <details class="chat-context"><summary>受付状況</summary>
   <div class="chat-card chat-person">
     <p id="chat-acceptance-status" class="cb-system-notice"><strong class="cb-system-notice__label">システム通知</strong><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>

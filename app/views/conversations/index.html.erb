@@ -1,9 +1,18 @@
 <main class="chat-shell chat-inbox <%= "cb-participant" if member_signed_in? && !admin_user_signed_in? %>">
   <h1>メッセージ</h1>
   <p class="chat-muted"><%= member_signed_in? ? 'サークルへの問い合わせ・参加の相談' : '参加希望者からのお問い合わせ・メッセージ' %></p>
+  <% if @penalty_count.to_i.positive? || @penalty_only %>
+    <aside class="chat-card chat-penalty-summary">
+      <strong>未返信報告の減点対象：<%= @penalty_count %>件（1件につき30ポイント）</strong>
+      <p>配信から3日以上、初回返信がなく参加者から報告されたメッセージです。返信すると減点が解除されます。旧お問い合わせは対象外です。</p>
+      <%= link_to(@penalty_only ? 'すべてのメッセージを見る' : '減点対象だけを見る', conversations_path(circle_id: params[:circle_id], penalty: @penalty_only ? nil : '1')) %>
+    </aside>
+  <% end %>
   <% if @conversations.empty? %>
     <div class="chat-card">
-      <% if member_signed_in? %>
+      <% if @penalty_only %>
+        <p>現在、減点対象のメッセージはありません。</p>
+      <% elsif member_signed_in? %>
         <p>メッセージはまだありません。気になるサークルに問い合わせると、ここでやり取りできます。</p>
         <%= link_to 'サークルを探す', circles_path %>
       <% else %>
@@ -24,6 +33,9 @@
         <span class="chat-talk__content">
           <strong class="chat-talk__name"><%= role == 'member' ? conversation.user.name : "#{conversation.member.nickname}さん" %></strong>
           <% if role == 'owner' %><span class="chat-talk__circle"><%= conversation.user.name %></span><% end %>
+          <% if role == 'owner' && @penalty_ids.include?(conversation.id) %>
+            <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
+          <% end %>
           <span class="chat-talk__preview"><%= 'あなた：' if latest&.sender_role == role %><%= latest&.preview_text %></span>
           <span class="chat-talk__status"><%= conversation.accepted_at ? '受付済み' : '返信待ち' %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
           <% if role == 'owner' %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>

@@ -188,3 +188,6 @@
 .chat-profile__no-reply { color: #654b17; font-size: 11px; line-height: 1.6; }
 
 .chat-profile .chat-profile__manage { display: inline-flex; justify-content: center; align-items: center; min-height: 36px; max-width: calc(100% - 16px); padding: 6px 10px; margin: 0; font-size: 12px; white-space: nowrap; }
+
+.chat-penalty-badge { display: inline-flex; padding: 4px 8px; margin-top: 6px; border: 1px solid #e5aaa4; border-radius: 6px; background: #fff0ee; color: #9a251d; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.chat-penalty-summary { border-color: #e5aaa4; background: #fff8f7; }
