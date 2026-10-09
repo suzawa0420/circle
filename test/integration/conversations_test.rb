@@ -79,6 +79,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     get conversation_path(@conversation)
     assert_response :success
     assert_select '.chat-profiles .chat-profile', count: 2
+    assert_select '.chat-profile__manage', count: 0
     assert_select '.chat-profile--member a.chat-profile__link[href=?]', member_profile_path(@member)
     assert_select '.chat-profile--owner a.chat-profile__link[href=?]', circle_path(@circle)
     assert_select '.chat-profile--member .chat-profile__attributes', text: '東京都・30代・男性'
@@ -91,6 +92,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     get conversation_path(@conversation)
     assert_select '.chat-profile--member a.chat-profile__evaluate[href="#evaluation"]', count: 1
     assert_select '.chat-profile--owner a.chat-profile__evaluate', count: 0
+    assert_select '.chat-profile__manage', count: 0
   end
 
   test 'profile cards do not expose unpublished evaluations or raw profile markup' do

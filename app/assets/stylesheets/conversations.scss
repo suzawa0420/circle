@@ -186,3 +186,5 @@
 .circle-reply-notice strong { display: block; font-size: 14px; line-height: 1.7; }
 .circle-reply-notice p { margin: 6px 0 0; font-size: 12px; line-height: 1.7; }
 .chat-profile__no-reply { color: #654b17; font-size: 11px; line-height: 1.6; }
+
+.chat-profile .chat-profile__manage { display: inline-flex; justify-content: center; align-items: center; min-height: 36px; max-width: calc(100% - 16px); padding: 6px 10px; margin: 0; font-size: 12px; white-space: nowrap; }

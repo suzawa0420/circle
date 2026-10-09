@@ -22,7 +22,9 @@
           <span class="chat-profile__no-reply">初回返信なしの報告：<%= no_reply_count %>人</span>
         <% end %>
       <% end %>
-      <% if viewer_role.present? && viewer_role != person_role %>
+      <% if local_assigns[:manage_accounts] && webmaster? %>
+        <%= link_to(person_role == 'owner' ? '主催者の管理' : '参加者の管理', person_role == 'owner' ? super_admin_account_path(person.admin_user, kind: 'owner') : super_admin_account_path(person), class: 'chat-profile__manage wm-button wm-button--secondary') %>
+      <% elsif viewer_role.present? && viewer_role != person_role %>
         <%= link_to '評価する', '#evaluation', class: 'chat-profile__evaluate', data: { open_evaluation: true }, aria: { label: "#{name}を評価する" } %>
       <% else %>
         <span class="chat-profile__evaluate chat-profile__evaluate--disabled"><%= viewer_role.present? ? 'あなたのプロフィール' : '評価は当事者のみ' %></span>

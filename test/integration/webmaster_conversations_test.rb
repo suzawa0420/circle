@@ -18,7 +18,11 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     assert_select '.chat-profile--member a[href=?]', member_profile_path(@member)
     assert_select '.chat-profile--owner a[href=?]', circle_path(@circle)
     assert_select '.chat-profiles a.chat-profile__evaluate', count: 0
-    assert_select '.chat-profile__evaluate--disabled', text: '評価は当事者のみ', count: 2
+    assert_select '.chat-profile--owner a.chat-profile__manage[href=?]', super_admin_account_path(@owner, kind: 'owner'), text: '主催者の管理'
+    assert_select '.chat-profile--member a.chat-profile__manage[href=?]', super_admin_account_path(@member), text: '参加者の管理'
+    assert_select '.chat-profile__evaluate--disabled', count: 0
+    assert_select '.wm-details', count: 0
+    assert_includes response.body, '相手の既読状態には反映されません。'
     assert_equal before, @conversation.reload.attributes
   end
 
