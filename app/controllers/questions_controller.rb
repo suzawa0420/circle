@@ -105,7 +105,10 @@ class QuestionsController < ApplicationController
 			@user.save
 
 			flash[:notice] = '更新しました！'
-			redirect_to user_question_path
+			redirect_to user_question_path(@user, @question)
+    else
+      @questions = @user.questions.order(id: :desc).page(params[:page])
+      render :show, status: :unprocessable_entity
 		end
 
 	end

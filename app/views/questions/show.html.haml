@@ -29,7 +29,7 @@
         - if webmaster? || admin_user_signed_in?
           - if can_manage_circle?(@user)
             .q_delete
-              = link_to(user_question_path, method: :delete, data: {confirm: "質問を削除しますか？"}) do
+              = link_to(user_question_path(@user, @question), method: :delete, data: {confirm: "質問を削除しますか？"}) do
                 = lucide_icon "trash-2"
                 質問を削除する
               - if @question.ip_address.present?
@@ -41,8 +41,11 @@
                     = link_to("/users/#{@user.id}/questions/#{@question.id}/block", method: :update, data: {confirm: "質問者を通報しますか？"}) do
                       = lucide_icon "ban"
                       質問者を通報する
-            .qa_answer_form
+            .qa_answer_form#question-answer
+              %h2 回答を入力する
               = form_for ([@user,@question]) do |f|
+                = render "layouts/error_messages", model: f.object
+                = f.label :answer, "回答"
                 = f.text_area :answer, class: 'form-control form-note change_question' ,placeholder: "回答を書いてください！"
                 - if @question.answer.present?
                   %input.submit_btn{"data-disable-with" => "編集する", :name => "commit", :type => "submit", :value => "編集する"}/
@@ -93,14 +96,3 @@
                       .user_slide_qa_content_wrap
                         %h2= question.content
     = paginate @questions
-/ 半角 => 全角　変換
-:javascript
-  $(function(){
-      $(".change_question").change(function(){
-          var str = $(this).val();
-          str = str.replace( /[!-~]/g, function(s) {
-              return String.fromCharCode(input.charCodeAt(0)+0xFEE0);
-          });
-          $(this).val(str);
-      }).change();
-  });

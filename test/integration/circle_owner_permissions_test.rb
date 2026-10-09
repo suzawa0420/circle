@@ -61,6 +61,63 @@ class CircleOwnerPermissionsTest < ActionDispatch::IntegrationTest
     assert User.exists?(@other_circle.id)
   end
 
+  test 'owner can find the answer form save ASCII text and edit an existing answer' do
+    sign_in_as(@owner)
+    get user_questions_path(@circle)
+    assert_select "a[href='#{user_question_path(@circle, @question, anchor: 'question-answer')}']", text: '回答する'
+    get edit_user_question_path(@circle, @question)
+    assert_redirected_to user_question_path(@circle, @question)
+    follow_redirect!
+    assert_select '#question-answer form' do
+      assert_select "label[for='question_answer']", text: '回答'
+      assert_select "textarea[name='question[answer]']"
+      assert_select "input[type='submit'][value='回答する']"
+    end
+    assert_not_includes response.body, 'input.charCodeAt'
+    patch user_question_path(@circle, @question), params: { question: { answer: 'OK! 10:00 https://example.test' } }
+    assert_redirected_to user_question_path(@circle, @question)
+    follow_redirect!
+    assert_select '#question-answer textarea', text: 'OK! 10:00 https://example.test'
+    get user_questions_path(@circle)
+    assert_select "a[href='#{user_question_path(@circle, @question, anchor: 'question-answer')}']", text: '回答を編集する'
+  end
+
+  test 'failed answer validation displays errors and retains the entered answer' do
+    @question.update_column(:content, '古い質問' * 30)
+    sign_in_as(@owner)
+    patch user_question_path(@circle, @question), params: { question: { answer: '入力した回答' } }
+    assert_response :unprocessable_entity
+    assert_select '#question-answer textarea', text: '入力した回答'
+    assert_select '#question-answer', text: /80/
+    assert_nil @question.reload.answer
+  end
+
+  test 'public visitors and other owners cannot see or use the answer form' do
+    [nil, @other].each do |account|
+      sign_in_as(account) if account
+      get user_questions_path(@circle)
+      assert_select "a[href='#{user_question_path(@circle, @question, anchor: 'question-answer')}']", count: 0
+      get user_question_path(@circle, @question)
+      assert_select '#question-answer', count: 0
+      patch user_question_path(@circle, @question), params: { question: { answer: '不正な回答' } }
+      account ? assert_response(:forbidden) : assert_redirected_to(new_admin_user_session_path)
+      assert_nil @question.reload.answer
+    end
+  end
+
+  test 'owner can log out from desktop menu and dashboard account settings' do
+    sign_in_as(@owner)
+    get circle_path(@circle)
+    assert_select ".circle-desktop-menu__links a[href='#{destroy_admin_user_session_path}'][data-method='delete']", text: 'ログアウト'
+    get "/users/#{@circle.id}/mypage"
+    assert_response :success
+    assert_select ".dashboard-account-settings a[href='#{destroy_admin_user_session_path}'][data-method='delete']", text: /ログアウト/
+    delete destroy_admin_user_session_path
+    assert_response :redirect
+    get "/users/#{@circle.id}/mypage"
+    assert_redirected_to new_admin_user_session_path
+  end
+
   test 'another owner cannot change or delete the circle or its content' do
     assert_not_equal @other.id, @circle.admin_user_id
     assert_not @other.master_account?

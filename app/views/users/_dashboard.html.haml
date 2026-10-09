@@ -114,6 +114,7 @@
   .dashboard-section__heading
     %h2 アカウント設定
   .dashboard-action-list
+    = render "dashboard_action", title: "ログアウト", description: "別のアカウントでログインする", icon: "lock-keyhole", path: destroy_admin_user_session_path, link_options: { method: :delete }
     = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock-keyhole", path: edit_admin_user_registration_path
     = render "dashboard_action", title: "サークルを削除する", description: "ブログ・スケジュールなどもすべて削除されます", icon: "trash-2", path: user_path(@user), link_options: { method: :delete, data: { confirm: circle_deletion_confirmation(@user) } }
 

@@ -36,3 +36,11 @@
         - elsif !admin_user_signed_in?
           = render "layouts/account_access", in_menu: true
         = link_to "よくある質問", faq_path
+        - if webmaster?
+          = link_to "運営ログアウト", destroy_webmaster_session_path, method: :delete
+        - elsif admin_user_signed_in?
+          = link_to "ログアウト", destroy_admin_user_session_path, method: :delete
+        - elsif member_signed_in?
+          = link_to "ログアウト", destroy_member_session_path, method: :delete
+        - elsif exhibition_group_signed_in?
+          = link_to "ログアウト", destroy_exhibition_group_session_path, method: :delete

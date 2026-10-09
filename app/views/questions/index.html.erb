@@ -95,6 +95,10 @@
               </div>
 						<% end %>
 
+            <% if can_manage_circle?(@user) %>
+              <%= link_to(question.answer.present? ? "回答を編集する" : "回答する", user_question_path(@user, question, anchor: "question-answer"), class: "cb-text-link") %>
+            <% end %>
+
 					</li>
 				<% end %>
 			<% end %>
