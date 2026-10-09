@@ -1,16 +1,12 @@
 <main class="chat-shell chat-thread <%= "cb-participant" if @role == "member" %>">
   <header class="chat-thread-heading">
     <%= link_to '‹ 一覧', conversations_path, class: 'chat-back', aria: { label: 'メッセージ一覧へ戻る' } %>
-    <%= render 'avatar', conversation: @conversation, role: @role == 'member' ? 'owner' : 'member' %>
-    <h1><%= @role == 'member' ? @conversation.user.name : "#{@conversation.member.nickname}さん" %></h1>
-    <a href="#evaluation" class="chat-evaluation-link">口コミ</a>
+    <h1>メッセージ</h1>
   </header>
+  <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
-  <details class="chat-context"><summary>相手の情報・受付状況</summary>
+  <details class="chat-context"><summary>受付状況</summary>
   <div class="chat-card chat-person">
-    <%= link_to "#{@conversation.member.nickname}さんのプロフィール", member_profile_path(@conversation.member) %>
-    <% count = @conversation.member.received_conversation_reviews.count %>
-    <p>参加者の評価：<%= count.positive? ? "#{format('%.2f', @conversation.member.received_review_score)} / 5（#{count}件）" : 'まだありません' %></p>
     <p id="chat-acceptance-status" class="cb-system-notice"><strong class="cb-system-notice__label">システム通知</strong><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>
   </div>
   </details>

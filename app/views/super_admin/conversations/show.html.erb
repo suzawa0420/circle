@@ -1,5 +1,6 @@
 <%= render 'webmasters/shared/page_header', title: 'メッセージのやり取り', description: '発言者と日時を確認しながら、会話を閲覧できます。' %>
 <%= link_to 'メッセージ一覧に戻る', super_admin_conversations_path, class: 'wm-button wm-button--secondary' %>
+<%= render 'conversations/profiles', conversation: @conversation, viewer_role: nil %>
 <section class="wm-section webmaster-card">
   <h2><%= link_to @conversation.user.name, circle_path(@conversation.user) %></h2>
   <dl class="wm-details"><dt>主催者</dt><dd><%= @conversation.user.admin_user.nickname.presence || 'ニックネーム未登録' %></dd><dt>参加者</dt><dd><%= link_to @conversation.member.nickname, member_profile_path(@conversation.member) %></dd><dt>会話の状態</dt><dd><%= @conversation.blocked? ? 'ブロック中' : (@conversation.accepted_at ? '受付済み' : '主催者の初回返信前') %></dd></dl>

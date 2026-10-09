@@ -22,6 +22,12 @@
         if (evaluation) evaluation.open = true;
       }
     }
+    var evaluationLinks = document.querySelectorAll('[data-open-evaluation]');
+    function revealEvaluation() {
+      var evaluation = document.getElementById('evaluation');
+      if (evaluation) evaluation.open = true;
+    }
+    evaluationLinks.forEach(function (link) { link.addEventListener('click', revealEvaluation); });
     if (input) input.addEventListener('input', resize);
     window.addEventListener('resize', resize);
     window.addEventListener('hashchange', openEvaluation);
@@ -29,6 +35,7 @@
     resize();
     openEvaluation();
     cleanup = function () {
+      evaluationLinks.forEach(function (link) { link.removeEventListener('click', revealEvaluation); });
       if (input) input.removeEventListener('input', resize);
       window.removeEventListener('resize', resize);
       window.removeEventListener('hashchange', openEvaluation);

@@ -8,6 +8,41 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     create_chat_records
   end
 
+  test 'profile cards link both people and only allow evaluating the other party' do
+    accept_conversation
+    @member.update!(prefecture: @circle.prefecture, gender: '1', date_of_birth: Date.new(1996, 1, 1))
+    @conversation.submit_review!('member', member_evaluation)
+    @conversation.submit_review!('owner', owner_evaluation)
+    sign_in @member
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '.chat-profiles .chat-profile', count: 2
+    assert_select '.chat-profile--member a.chat-profile__link[href=?]', member_profile_path(@member)
+    assert_select '.chat-profile--owner a.chat-profile__link[href=?]', circle_path(@circle)
+    assert_select '.chat-profile--member .chat-profile__attributes', text: '東京都・30代・男性'
+    assert_select '.chat-profile--member .chat-profile__score', text: '0.00（1件）'
+    assert_select '.chat-profile--owner .chat-profile__score', text: '5.00（1件）'
+    assert_select '.chat-profile--owner a.chat-profile__evaluate[href="#evaluation"]', text: '評価する'
+    assert_select '.chat-profile--member a.chat-profile__evaluate', count: 0
+    sign_out @member
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_select '.chat-profile--member a.chat-profile__evaluate[href="#evaluation"]', count: 1
+    assert_select '.chat-profile--owner a.chat-profile__evaluate', count: 0
+  end
+
+  test 'profile cards do not expose unpublished evaluations or raw profile markup' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation)
+    @member.update!(nickname: '<img src=x onerror=alert(1)>')
+    sign_in @member
+    get conversation_path(@conversation)
+    assert_select '.chat-profile__score', text: '評価はまだありません', count: 2
+    assert_select '.chat-profiles [onerror]', count: 0
+    assert_select '.chat-profiles a a', count: 0
+    assert_includes response.body, '&lt;img src=x onerror=alert(1)&gt;'
+  end
+
   test 'message URLs are linked safely for participants owners and polling' do
     accept_conversation
     @conversation.send_message!('owner', "ご案内：https://example.test/join?a=1&b=2\n<script>alert(1)</script> javascript:alert(2)")
