@@ -100,34 +100,6 @@
   font-size: 12px;
   font-weight: 700;
 }
-.participant-signup__guide {
-  margin: 24px 0;
-  h2 { margin-bottom: 12px; font-size: 16px; }
-}
-.participant-signup__steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li { min-width: 0; padding: 12px 8px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface; text-align: center; }
-  strong { display: block; margin-top: 8px; color: $cb-participant-hover; font-size: 13px; }
-  p { margin: 6px 0 0; color: $cb-muted; font-size: 12px; line-height: 1.6; }
-}
-.participant-signup__number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: $cb-participant-soft;
-  color: $cb-participant-hover;
-  font-size: 13px;
-  font-weight: 700;
-}
 .participant-signup__verification {
   margin-bottom: 28px;
   .registration-turnstile-status { margin-top: 8px; color: $cb-muted; font-size: 12px; line-height: 1.8; }
@@ -141,17 +113,10 @@
     h2 { font-size: 18px; }
     img { width: 76px; height: 100px; }
   }
-  .participant-signup__steps { gap: 6px; }
 }
 @media (max-width: 370px) {
   .participant-signup__welcome img { width: 58px; }
-  .participant-signup__steps {
-    grid-template-columns: 1fr;
-    li { display: grid; grid-template-columns: 26px 1fr; column-gap: 10px; text-align: left; }
-    .participant-signup__number { grid-row: 1 / 3; align-self: center; }
-    strong { margin-top: 0; }
-    p { grid-column: 2; margin-top: 3px; }
-  }
+
 }
 .participant-danger { background: #fff; color: $cb-danger; border: 1px solid $cb-danger; border-radius: $cb-radius-control; min-height: 44px; padding: 10px 14px; }
 @media (max-width: 767px) {
