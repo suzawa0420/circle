@@ -63,17 +63,15 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'AdMax has one public placement and does not run on account forms or policy pages' do
-    get '/'
-    assert_response :success
-    assert_select '.admax-switch[data-admax-id="8c416c3bb0ba1614046f01a5e3f43ca0"]', count: 1
-    assert_select 'script[src="https://adm.shinobi.jp/st/t.js"][async]', count: 1
-    assert_select 'meta[name="turbolinks-visit-control"][content="reload"]', count: 1
-    %w[/admin_users/sign_in /admin_users/sign_up /privacypolicy].each do |path|
+  test 'public pages no longer load Ninja AdMax' do
+    %w[/ /circles /admin_users/sign_in /admin_users/sign_up /privacypolicy].each do |path|
       get path
       assert_response :success
-      assert_select '.admax-switch', count: 0
+      assert_select '.admax-switch, [data-deferred-listing-ad]', count: 0
+      assert_not_includes response.body, 'adm.shinobi.jp'
+      assert_not_includes response.body, '忍者AdMax'
     end
+    assert_equal "google.com, pub-7744112029922449, DIRECT, f08c47fec0942fa0\n", Rails.root.join('public/ads.txt').read
   end
 
   test 'populated circle listings and profile render' do

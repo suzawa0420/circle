@@ -43,7 +43,7 @@ module ApplicationHelper
       %w[new create].include?(action_name)
   end
 
-  def admax_public_page?
+  def public_ad_page?
     return false if webmaster?
     public_controller = %w[home categories matches schedules questions tags events prefectures places columns].include?(controller_path) ||
                         controller_path.start_with?('circles/', 'blogs/')

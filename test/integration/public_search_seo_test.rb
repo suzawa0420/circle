@@ -87,7 +87,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'script[src*=adsbygoogle]', count: 0
     assert_select 'script', text: /GTM-MD88D9HB/
     assert_select 'script[src*=jquery-ui]', count: 0
-    assert_select '[data-deferred-listing-ad] .admax-switch', count: 1
+    assert_select '[data-deferred-listing-ad], .admax-switch', count: 0
     assert_select 'script[src="https://adm.shinobi.jp/st/t.js"]', count: 0
     assert_select 'script[src*=application-]', count: 0
     assert_select 'img.header_imege_user_list[loading=eager][fetchpriority=high]', count: 1

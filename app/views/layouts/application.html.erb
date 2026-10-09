@@ -10,7 +10,7 @@
       })(window,document,'script','dataLayer','GTM-MD88D9HB');</script>
       <!-- End Google Tag Manager -->
       <% end %>
-      <% if admax_public_page? %>
+      <% if public_ad_page? %>
         <%# Third-party ad frames need a fresh document on each public-page visit. %>
         <meta name="turbolinks-visit-control" content="reload">
       <% end %>
@@ -102,7 +102,6 @@
         <%= render "circles/circles/mobile_summary", active_tab: circle_tab %>
       <% end %>
       <%= yield %>
-      <%= render "layouts/admax" if admax_public_page? %>
 
       <footer>
         <%= render "/layouts/footer" %>
