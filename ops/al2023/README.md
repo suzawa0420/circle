@@ -67,11 +67,70 @@ server5 predates later application fixes; restoration requires applying the
 current tested Git revision and rechecking configuration, origin guard, assets,
 health and the singleton sitemap timer before attachment.
 
-The remaining sections are **historical migration notes**. Earlier topology,
-rollback state and approval requests are superseded by this section and live AWS
-state. Never start the obsolete `circle-unicorn` service on the new runtime.
+The Ruby update section describes the pending change. Sections explicitly marked
+historical describe the earlier migration; their topology, rollback state and
+approval requests are superseded by current production state. Never start the
+obsolete `circle-unicorn` service on the new runtime.
 
-## Versions and compatibility
+## Ruby 3.4.11 update (prepared locally; production cutover pending)
+
+The repository now targets Ruby 3.4.11. The historical installation records below
+still describe Ruby 3.3.12; they are not evidence that production was upgraded.
+Rails remains 8.1.4 and `config.load_defaults` remains 6.0.
+
+Pushes to `master` trigger deployment. The workflow runs tests first, then
+installs Ruby alongside the existing runtime on both servers before preparing
+and activating the tested revision. Activation performs a full Puma restart
+only when the running interpreter differs from the target version, and verifies
+the running interpreter afterward. Server4's scheduler service units are updated
+as well. Ruby 3.3 and its gems remain available for rollback.
+
+The workflow restarts servers one at a time, but does not detach them from the
+load balancer. A runtime restart can briefly cause failed requests on that
+server until it boots or the load balancer detects it. If uninterrupted traffic
+is required, drain each server before activation through a separately approved
+load-balancer operation.
+
+For a manually drained cutover, use these steps before automatic activation:
+
+1. Run `bash ops/al2023/install_ruby.sh` on each AL2023 server to install Ruby
+   3.4.11 alongside 3.3.12 at `/opt/circle/ruby-3.4.11`. The script verifies the
+   official archive SHA256 and installs Bundler 2.5.23. Rebuild the locked
+   gems for Ruby 3.4 (`vendor/bundle/ruby/3.4.0`). Keep the old Ruby and gems for
+   rollback. Do not reuse Ruby 3.3 native extensions.
+2. Run the runtime checks with synthetic test settings, including PostgreSQL,
+   uploads, authentication, asset compilation and production-mode boot.
+3. Drain one server from the load balancer, install the updated `circle-puma`
+   systemd unit, run `systemctl daemon-reload`, and restart Puma with the new
+   Ruby. A USR2 hot restart alone keeps the old Ruby interpreter and does not
+   perform this runtime upgrade. Verify health and Ruby version before restoring
+   traffic; repeat on the second server.
+4. On server4 only, update both sitemap and chat-maintenance service units,
+   reload systemd and verify the singleton timers. Keep server5 timers disabled.
+5. Deploy the matching tested revision. Existing deployment scripts include
+   database migrations and asset compilation; their execution needs to be
+   included in the production approval. This Ruby update adds no migration.
+
+For rollback, drain the affected server, restore the previous tested revision
+and the Ruby 3.3.12 service units, reload systemd, restart, verify health and
+restore traffic. Restore scheduler units on server4 as well. Retain both sets
+of compiled gems and assets until the cutover is verified.
+
+Local validation (2026-10-11): Ruby 3.4.11 / Rails 8.1.4, isolated PostgreSQL,
+155 tests / 1,955 assertions passed. Zeitwerk, production-mode boot with stubbed
+SES, asset precompilation and brand asset verification passed. The lockfile
+changes only the Ruby version; all gem versions and Bundler 2.5.23 are retained.
+
+Local macOS build note: on machines whose Command Line Tools do not find C++
+standard headers, install gems with `MAKEFLAGS='-j4 CXX=clang++'` and
+`CPATH="$(xcrun --show-sdk-path)/usr/include/c++/v1"`. These are local compiler
+settings; the Linux runtime uses its system compiler normally.
+
+Source: https://www.ruby-lang.org/en/downloads/
+Ruby 3.4.11 tar.gz SHA256:
+`5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de`
+
+## Versions and compatibility (historical 3.3 migration)
 
 - Ruby 3.3.12 (security-supported 3.3 series; plan its next update before March 2027).
 - Rails 8.1.4, Bundler 2.5.23.

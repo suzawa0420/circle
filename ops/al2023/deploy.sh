@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-export PATH=/opt/circle/ruby-3.3.12/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin
+export PATH=/opt/circle/ruby-3.4.11/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin
 export RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true
 cd /var/www/circle
 umask 0007
@@ -73,12 +73,24 @@ case "$mode" in
     ;;
   activate)
     test "$(git rev-parse HEAD)" = "$revision"
-    # Puma hot restart retains the listening socket and drains active requests.
-    sudo -n systemctl kill --kill-whom=main --signal=USR2 circle-puma
+    puma_pid=$(systemctl show circle-puma --property MainPID --value)
+    current_ruby=$(readlink -f "/proc/$puma_pid/exe")
+    expected_ruby=$(readlink -f /opt/circle/ruby-3.4.11/bin/ruby)
+    if [[ "$current_ruby" != "$expected_ruby" ]]; then
+      # USR2 re-execs the old interpreter. A runtime change needs the new unit
+      # and a full restart; the workflow activates only one server at a time.
+      sudo -n install -m 0644 ops/al2023/circle-puma.service /etc/systemd/system/circle-puma.service
+      sudo -n systemctl daemon-reload
+      sudo -n systemctl restart circle-puma
+    else
+      # Ordinary application deployments retain the listening socket.
+      sudo -n systemctl kill --kill-whom=main --signal=USR2 circle-puma
+    fi
     python3 ops/al2023/warm_public_pages.py
     CIRCLE_PUMA_SOCKET=/var/www/circle/tmp/sockets/unicorn.sock bundle exec ruby bin/verify_turnstile_readiness
     # A single scheduler serves the shared DB. Never install it on server5.
     if [[ "${3:-}" == server4 ]]; then
+      sudo -n install -m 0644 ops/al2023/circle-sitemap.service /etc/systemd/system/circle-sitemap.service
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.service /etc/systemd/system/circle-chat-maintenance.service
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.timer /etc/systemd/system/circle-chat-maintenance.timer
       sudo -n systemctl daemon-reload
@@ -86,6 +98,9 @@ case "$mode" in
       systemctl is-active circle-chat-maintenance.timer
     fi
     systemctl is-active circle-puma nginx
+    puma_pid=$(systemctl show circle-puma --property MainPID --value)
+    test "$(readlink -f "/proc/$puma_pid/exe")" = "$expected_ruby"
+    /proc/"$puma_pid"/exe --version
     ;;
   *) exit 2 ;;
 esac

@@ -38,7 +38,8 @@ jobs:
           script: |
             set -eu
             cd /var/www/circle
-            /opt/circle/ruby-3.3.12/bin/ruby --version
+            puma_pid=$(systemctl show circle-puma --property MainPID --value)
+            /proc/"$puma_pid"/exe --version
             /opt/circle/node-v24.21.0-linux-x64/bin/node --version
             systemctl is-active circle-puma nginx
             git rev-parse --short HEAD
@@ -72,11 +73,12 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           key: ${{ secrets.DEPLOY_KEY }}
           envs: DEPLOY_SHA,DEPLOY_REF
-          command_timeout: 30m
+          command_timeout: 45m
           script: |
             set -euo pipefail
             cd /var/www/circle
             git fetch --no-tags origin "$DEPLOY_REF"
+            git show "$DEPLOY_SHA:ops/al2023/install_ruby.sh" | bash
             git show "$DEPLOY_SHA:ops/al2023/deploy.sh" | sudo -n runuser -u ec2-user -g nginx -- bash -s -- prepare "$DEPLOY_SHA"
   activate:
     needs: prepare

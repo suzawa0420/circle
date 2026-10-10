@@ -28,6 +28,14 @@ require 'dotenv/rails'
 Dir.mktmpdir('circle-production-boot-') do |directory|
   # Redirect Dotenv before Application is defined (before_configuration).
   Dotenv::Rails.files = [File.join(directory, 'absent-dotenv')]
+  # The production initializer normally reads ~/.config/circle/turnstile.json.
+  # Redirect it as well so this isolated check never reads real credentials.
+  require_relative '../../lib/registration_turnstile'
+  RegistrationTurnstile.singleton_class.prepend(Module.new do
+    define_method(:load_configuration) do |production:, path:, **options|
+      super(production: production, path: File.join(directory, 'absent-turnstile.json'), **options)
+    end
+  end)
   require_relative '../../config/application'
   # Override file paths before initialize!; never decrypt real credentials.
   Rails.application.config.credentials.content_path = File.join(directory, 'absent.enc')

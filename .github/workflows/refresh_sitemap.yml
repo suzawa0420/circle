@@ -46,7 +46,7 @@ jobs:
           script: |
             set -eu
             cd /var/www/circle
-            sudo -n runuser -u ec2-user -g nginx -- env RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true PATH=/opt/circle/ruby-3.3.12/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin /opt/circle/ruby-3.3.12/bin/bundle exec ruby ops/al2023/check_listing_images.rb || true
+            sudo -n runuser -u ec2-user -g nginx -- env RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true PATH=/opt/circle/ruby-3.4.11/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin /opt/circle/ruby-3.4.11/bin/bundle exec ruby ops/al2023/check_listing_images.rb || true
       - name: Publish only validated image diagnostic metadata
         id: image_result
         if: inputs.task == 'check-listing-images'
