@@ -116,4 +116,6 @@
   document.addEventListener('turbolinks:load', start);
   document.addEventListener('turbolinks:before-cache', stop);
   document.addEventListener('DOMContentLoaded', start);
+  // A deferred bundle added during navigation may run after the load events.
+  if (document.readyState !== 'loading') start();
 })();

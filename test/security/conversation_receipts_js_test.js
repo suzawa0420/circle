@@ -32,6 +32,31 @@ async function checkPolling({ hidden = false, focused = false, latestId = 10, re
   await new Promise(resolve => setImmediate(resolve));
   return { receipt, requests, replacements };
 }
+function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = false, alignment = 'start' } = {}) {
+  const events = {}, windowEvents = {}, frames = new Map();
+  const calls = [];
+  let frameId = 0;
+  const target = { scrollIntoView: options => calls.push(options) };
+  const thread = { dataset: { chatJumpTarget: 'chat-message-10', chatJumpAlignment: alignment }, querySelectorAll: () => [] };
+  const document = {
+    readyState, body: { contains: () => true },
+    querySelector: selector => selector === '[data-chat-jump-target]' ? thread : null,
+    getElementById: id => id === 'chat-message-10' ? target : null,
+    addEventListener: (name, callback) => { events[name] = callback; }
+  };
+  const window = {
+    location: { hash }, clearTimeout() {},
+    requestAnimationFrame(callback) { frames.set(++frameId, callback); return frameId; },
+    cancelAnimationFrame(id) { frames.delete(id); },
+    addEventListener: (name, callback) => { windowEvents[name] = callback; },
+    removeEventListener: name => { delete windowEvents[name]; }
+  };
+  vm.runInNewContext(source, { window, document });
+  if (event) events[event]();
+  if (cancel) windowEvents.touchstart();
+  frames.forEach(callback => callback());
+  return calls;
+}
 (async () => {
   const sameMessage = await checkPolling();
   assert.equal(sameMessage.receipt.textContent, '既読', 'receipt updates without a new message');
@@ -46,5 +71,10 @@ async function checkPolling({ hidden = false, focused = false, latestId = 10, re
   assert.equal(released.replacements, 1, 'moderation change refreshes history even when latest ID stays the same');
   const held = await checkPolling({ receiptText: '運営確認中' });
   assert.equal(held.receipt.textContent, '運営確認中', 'held status is preserved when polling');
-  console.log('Conversation receipt polling: 8 assertions passed');
+  assert.equal(checkInitialJump().length, 1, 'a bundle loaded after DOMContentLoaded still initializes the master jump');
+  assert.equal(checkInitialJump({ readyState: 'loading' }).length, 0, 'wait for the DOM while it is loading');
+  assert.equal(checkInitialJump({ readyState: 'loading', event: 'DOMContentLoaded', alignment: 'end' })[0].block, 'end', 'all-read conversations align the latest message');
+  assert.equal(checkInitialJump({ hash: '#evaluation' }).length, 0, 'explicit anchor links take priority');
+  assert.equal(checkInitialJump({ cancel: true }).length, 0, 'user scrolling cancels pending automatic movement');
+  console.log('Conversation receipt polling and initial jump: 13 assertions passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -34,6 +34,29 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     assert_select '.wm-conversation[data-chat-jump-target=""]'
   end
 
+  test 'master opens a native jump link on the selected page without changing receipts' do
+    ChatMessage.insert_all!(70.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    login_master
+    before = @conversation.reload.attributes
+    get super_admin_conversations_path
+    assert_select 'a[href=?][data-turbolinks="false"]', super_admin_conversation_path(@conversation, jump: 1)
+    jump = ConversationJump.new(@conversation).call
+    get super_admin_conversation_path(@conversation, jump: 1)
+    assert_redirected_to super_admin_conversation_path(@conversation, page: jump[:page], anchor: "chat-message-#{jump[:message_id]}")
+    follow_redirect!
+    assert_response :success
+    assert_select "#chat-message-#{jump[:message_id]}"
+    assert_equal before, @conversation.reload.attributes
+    @conversation.mark_read!('owner', through: @conversation.chat_messages.maximum(:id))
+    before = @conversation.reload.attributes
+    jump = ConversationJump.new(@conversation).call
+    get super_admin_conversation_path(@conversation, jump: 1)
+    assert_redirected_to super_admin_conversation_path(@conversation, page: jump[:page], anchor: "chat-message-#{jump[:message_id]}")
+    follow_redirect!
+    assert_select "#chat-message-#{jump[:message_id]}"
+    assert_equal before, @conversation.reload.attributes
+  end
+
   test 'webmaster sees both profile cards without evaluation controls or read updates' do
     before = @conversation.reload.attributes
     login_master
@@ -93,7 +116,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     get super_admin_conversations_path
     assert_response :success
     links = css_select('.wm-actions a').map { |a| a['href'] }
-    assert_equal [super_admin_conversation_path(another), super_admin_conversation_path(@conversation)], links
+    assert_equal [super_admin_conversation_path(another, jump: 1), super_admin_conversation_path(@conversation, jump: 1)], links
     get super_admin_conversations_path, params: { q: @other_member.nickname }
     assert_select '.wm-actions a', count: 1
     assert_includes response.body, '別の参加者からの新しい問い合わせです。'

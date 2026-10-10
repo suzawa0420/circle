@@ -20,7 +20,11 @@ class SuperAdmin::ConversationsController < ApplicationController
 
   def show
     @conversation = Conversation.includes(:member, user: :admin_user).find_by!(public_id: params[:id])
-    @initial_jump = ConversationJump.new(@conversation).call if params[:page].blank?
+    @initial_jump = ConversationJump.new(@conversation).call if params[:page].blank? || params[:jump] == '1'
+    if params[:jump] == '1'
+      redirect_to super_admin_conversation_path(@conversation, page: @initial_jump&.fetch(:page), anchor: ("chat-message-#{@initial_jump[:message_id]}" if @initial_jump))
+      return
+    end
     scope = @conversation.chat_messages.order(:id)
     @messages = scope.page(params[:page].presence || @initial_jump&.fetch(:page)).per(ConversationJump::PAGE_SIZE)
   end
