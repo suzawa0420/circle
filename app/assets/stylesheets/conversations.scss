@@ -191,3 +191,6 @@
 
 .chat-penalty-badge { display: inline-flex; padding: 4px 8px; margin-top: 6px; border: 1px solid #e5aaa4; border-radius: 6px; background: #fff0ee; color: #9a251d; font-size: 12px; font-weight: 700; line-height: 1.5; }
 .chat-penalty-summary { border-color: #e5aaa4; background: #fff8f7; }
+
+.chat-history [id^="chat-message-"] { scroll-margin-top: 80px; scroll-margin-bottom: calc(var(--chat-composer-height, 85px) + 20px); }
+.wm-conversation [id^="chat-message-"] { scroll-margin-top: 80px; scroll-margin-bottom: 100px; }

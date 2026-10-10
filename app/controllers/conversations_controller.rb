@@ -54,7 +54,8 @@ class ConversationsController < ApplicationController
 
   def show
     @conversation.publish_reviews!
-    @messages = @conversation.chat_messages.visible_to(@role).delivery_order.page(params[:page]).per(50).load
+    @initial_jump = ConversationJump.new(@conversation, role: @role).call if params[:page].blank?
+    @messages = @conversation.chat_messages.visible_to(@role).delivery_order.page(params[:page].presence || @initial_jump&.fetch(:page)).per(ConversationJump::PAGE_SIZE).load
     mark_messages_read(advance_cursor: params[:page].blank? || params[:page] == '1')
     @own_review = @conversation.conversation_reviews.find_by(author_role: @role)
     @public_reviews = @conversation.conversation_reviews.publicly_visible.order(:id)

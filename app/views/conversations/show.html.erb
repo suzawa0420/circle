@@ -18,7 +18,7 @@
   </details>
   <section aria-label="メッセージ履歴" class="chat-history">
     <%= paginate @messages %>
-    <div id="chat-messages" class="chat-history" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if params[:page].blank? || params[:page] == '1' %>" data-accepted="<%= @conversation.accepted_at.present? %>">
+    <div id="chat-messages" class="chat-history" data-chat-jump-target="<%= "chat-message-#{@initial_jump[:message_id]}" if @initial_jump %>" data-chat-jump-alignment="<%= @initial_jump&.fetch(:alignment) %>" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if @messages.current_page == 1 %>" data-accepted="<%= @conversation.accepted_at.present? %>">
       <%= render "messages" %>
     </div>
   </section>

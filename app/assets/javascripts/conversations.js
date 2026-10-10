@@ -44,13 +44,40 @@
       root.style.removeProperty('--chat-composer-height');
     };
   }
+  function setupInitialJump() {
+    var thread = document.querySelector('[data-chat-jump-target]');
+    if (!thread || !thread.dataset.chatJumpTarget || window.location.hash || thread.dataset.chatJumpFinished) return function () {};
+    var target = document.getElementById(thread.dataset.chatJumpTarget);
+    if (!target) return function () {};
+    var cancelled = false;
+    function jump() {
+      if (!cancelled && document.body.contains(target) && !window.location.hash) {
+        target.scrollIntoView({ block: thread.dataset.chatJumpAlignment || 'start', behavior: 'auto' });
+      }
+    }
+    function cancel() { cancelled = true; thread.dataset.chatJumpFinished = 'true'; }
+    var images = thread.querySelectorAll('img');
+    var events = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+    images.forEach(function (img) { if (!img.complete) img.addEventListener('load', jump); });
+    events.forEach(function (event) { window.addEventListener(event, cancel, { passive: true }); });
+    window.addEventListener('load', jump);
+    var frame = window.requestAnimationFrame(jump);
+    var composerCleanup = cleanup;
+    cleanup = function () {
+      composerCleanup();
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('load', jump);
+      images.forEach(function (img) { img.removeEventListener('load', jump); });
+      events.forEach(function (event) { window.removeEventListener(event, cancel); });
+    };
+  }
   function start() {
     stop();
     setupComposer();
+    setupInitialJump();
     var container = document.getElementById('chat-messages');
     if (!container || !container.dataset.pollUrl) return;
     var latest = document.getElementById('chat-latest');
-    if (!window.location.hash && latest) latest.scrollIntoView({ block: 'end' });
     function poll() {
       if (document.hidden || !document.body.contains(container)) {
         if (document.body.contains(container)) timer = window.setTimeout(poll, 15000);

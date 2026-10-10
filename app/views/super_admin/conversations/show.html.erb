@@ -1,11 +1,11 @@
 <%= render 'webmasters/shared/page_header', title: 'メッセージのやり取り', description: '運営による閲覧です。相手の既読状態には反映されません。' %>
 <%= link_to 'メッセージ一覧に戻る', super_admin_conversations_path, class: 'wm-button wm-button--secondary' %>
 <%= render 'conversations/profiles', conversation: @conversation, viewer_role: nil, manage_accounts: true %>
-<section class="wm-section wm-thread wm-conversation">
+<section class="wm-section wm-thread wm-conversation" data-chat-jump-target="<%= "chat-message-#{@initial_jump[:message_id]}" if @initial_jump %>" data-chat-jump-alignment="<%= @initial_jump&.fetch(:alignment) %>">
   <div class="wm-section-heading"><h2>会話履歴</h2><span class="wm-badge"><%= @conversation.blocked? ? 'ブロック中' : (@conversation.accepted_at ? '受付済み' : '主催者の初回返信前') %></span><span class="wm-badge"><%= @messages.total_count %>件</span></div>
   <%= paginate @messages %>
   <% @messages.each do |message| %>
-    <article class="webmaster-card wm-message wm-message--<%= message.sender_role %>">
+    <article id="chat-message-<%= message.id %>" class="webmaster-card wm-message wm-message--<%= message.sender_role %>">
       <div class="wm-card-heading"><span class="message-role message-role--<%= message.automatic? ? "owner" : message.sender_role %>"><%= message.automatic? ? "サークルからの自動案内" : message.sender_label %></span><time class="wm-meta" datetime="<%= message.created_at.iso8601 %>"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div>
       <% unless message.delivered? %><p class="wm-meta"><%= ChatMessage::STATUSES.fetch(message.moderation_status) %>（<%= message.spam_score %>点）／<%= link_to '判定理由・配信を確認', super_admin_chat_moderations_path %></p><% end %>
       <% unless message.automatic? %><p class="wm-meta wm-read-receipt"><%= message.sender_role == 'owner' ? '参加者' : '主催者' %>：<%= message.receipt_text(@conversation) %></p><% end %>

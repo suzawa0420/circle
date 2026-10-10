@@ -20,8 +20,8 @@ class SuperAdmin::ConversationsController < ApplicationController
 
   def show
     @conversation = Conversation.includes(:member, user: :admin_user).find_by!(public_id: params[:id])
+    @initial_jump = ConversationJump.new(@conversation).call if params[:page].blank?
     scope = @conversation.chat_messages.order(:id)
-    @messages = scope.page(params[:page]).per(50)
-    @messages = scope.page([@messages.total_pages, 1].max).per(50) if params[:page].blank?
+    @messages = scope.page(params[:page].presence || @initial_jump&.fetch(:page)).per(ConversationJump::PAGE_SIZE)
   end
 end

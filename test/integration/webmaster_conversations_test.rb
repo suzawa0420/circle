@@ -9,6 +9,31 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     @master = Webmaster.create!(id: 1, email: 'webmaster@example.test', password: 'test-password-123')
   end
 
+  test 'master jumps to the earliest message unread by either party without marking it read' do
+    first = @conversation.chat_messages.where(sender_role: 'member').sole
+    ChatMessage.insert_all!(110.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "長い履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    login_master
+    before = @conversation.reload.attributes
+    get super_admin_conversation_path(@conversation)
+    assert_response :success
+    assert_select '.wm-conversation[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{first.id}"
+    assert_select "#chat-message-#{first.id}"
+    assert_select '.wm-message', count: 50
+    assert_equal before, @conversation.reload.attributes
+    @conversation.mark_read!('owner', through: @conversation.chat_messages.maximum(:id))
+    accept_conversation
+    reply = @conversation.chat_messages.where(sender_role: 'owner').sole
+    before = @conversation.reload.attributes
+    get super_admin_conversation_path(@conversation)
+    assert_select '.wm-conversation[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{reply.id}"
+    assert_equal before, @conversation.reload.attributes
+    @conversation.mark_read!('member', through: reply.id)
+    get super_admin_conversation_path(@conversation)
+    assert_select '.wm-conversation[data-chat-jump-target=?][data-chat-jump-alignment="end"]', "chat-message-#{reply.id}"
+    get super_admin_conversation_path(@conversation), params: { page: 1 }
+    assert_select '.wm-conversation[data-chat-jump-target=""]'
+  end
+
   test 'webmaster sees both profile cards without evaluation controls or read updates' do
     before = @conversation.reload.attributes
     login_master
@@ -93,9 +118,10 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     assert_select 'form[action*="/message"]', count: 0
   end
 
-  test 'latest page opens by default and older history can be paged in chronological order' do
+  test 'latest page opens when all messages are read and older history can be paged' do
     messages = 55.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "履歴メッセージ #{i}", created_at: Time.current, updated_at: Time.current } }
     ChatMessage.insert_all!(messages)
+    @conversation.update!(owner_read_message_id: @conversation.chat_messages.maximum(:id))
     login_master
     get super_admin_conversation_path(@conversation)
     assert_select '.wm-message', count: 7

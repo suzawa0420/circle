@@ -8,6 +8,43 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     create_chat_records
   end
 
+  test 'owner opens the page of the first unread message before the read cursor advances' do
+    first = @conversation.chat_messages.where(sender_role: 'member').sole
+    ChatMessage.insert_all!(110.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "未読の長い履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    newest = @conversation.chat_messages.maximum(:id)
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '#chat-messages[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{first.id}"
+    assert_select "#chat-message-#{first.id}"
+    assert_select '#chat-messages[data-poll-url=""]'
+    assert_operator @conversation.reload.owner_read_message_id, :<, newest
+    @conversation.mark_read!('owner', through: newest)
+    get conversation_path(@conversation)
+    assert_select '#chat-messages[data-chat-jump-target=?][data-chat-jump-alignment="end"]', "chat-message-#{newest}"
+    assert_select '#chat-messages[data-poll-url=?]', messages_conversation_path(@conversation)
+    get conversation_path(@conversation), params: { page: 2 }
+    assert_select '#chat-messages[data-chat-jump-target=""]'
+  end
+
+  test 'member jumps to unread owner messages and treats released old messages as unread' do
+    accept_conversation
+    reply = @conversation.chat_messages.where(sender_role: 'owner').sole
+    ChatMessage.insert_all!(60.times.map { |i| { conversation_id: @conversation.id, sender_role: 'owner', body: "主催者の履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    sign_in @member
+    get conversation_path(@conversation)
+    assert_select '#chat-messages[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{reply.id}"
+    assert_select "#chat-message-#{reply.id}"
+    newest = @conversation.chat_messages.maximum(:id)
+    @conversation.mark_read!('member', through: newest)
+    reply.update_columns(moderation_status: 'approved', released_at: Time.current, recipient_read_at: nil)
+    get conversation_path(@conversation)
+    assert_select '#chat-messages[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{reply.id}"
+    assert reply.reload.recipient_read_at
+    get conversation_path(@conversation)
+    assert_select '#chat-messages[data-chat-jump-target=?][data-chat-jump-alignment="end"]', "chat-message-#{reply.id}"
+  end
+
   test 'unanswered reports require three days and are publicly visible until an owner replies' do
     sign_in @member
     post no_reply_conversation_path(@conversation)
