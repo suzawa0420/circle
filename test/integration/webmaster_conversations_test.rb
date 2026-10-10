@@ -14,9 +14,9 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     ChatMessage.insert_all!(110.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "長い履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
     login_master
     before = @conversation.reload.attributes
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_response :success
-    assert_select '.wm-conversation[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{first.id}"
+    assert_equal "chat-message-#{first.id}", URI(@thread_jump_location).fragment
     assert_select "#chat-message-#{first.id}"
     assert_select '.wm-message', count: 50
     assert_equal before, @conversation.reload.attributes
@@ -24,13 +24,13 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     accept_conversation
     reply = @conversation.chat_messages.where(sender_role: 'owner').sole
     before = @conversation.reload.attributes
-    get super_admin_conversation_path(@conversation)
-    assert_select '.wm-conversation[data-chat-jump-target=?][data-chat-jump-alignment="start"]', "chat-message-#{reply.id}"
+    get_thread super_admin_conversation_path(@conversation)
+    assert_equal "chat-message-#{reply.id}", URI(@thread_jump_location).fragment
     assert_equal before, @conversation.reload.attributes
     @conversation.mark_read!('member', through: reply.id)
-    get super_admin_conversation_path(@conversation)
-    assert_select '.wm-conversation[data-chat-jump-target=?][data-chat-jump-alignment="end"]', "chat-message-#{reply.id}"
-    get super_admin_conversation_path(@conversation), params: { page: 1 }
+    get_thread super_admin_conversation_path(@conversation)
+    assert_equal "chat-message-#{reply.id}", URI(@thread_jump_location).fragment
+    get_thread super_admin_conversation_path(@conversation), params: { page: 1 }
     assert_select '.wm-conversation[data-chat-jump-target=""]'
   end
 
@@ -41,7 +41,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     get super_admin_conversations_path
     assert_select 'a[href=?][data-turbolinks="false"]', super_admin_conversation_path(@conversation, jump: 1)
     jump = ConversationJump.new(@conversation).call
-    get super_admin_conversation_path(@conversation, jump: 1)
+    get super_admin_conversation_path(@conversation)
     assert_redirected_to super_admin_conversation_path(@conversation, page: jump[:page], anchor: "chat-message-#{jump[:message_id]}")
     follow_redirect!
     assert_response :success
@@ -60,7 +60,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
   test 'webmaster sees both profile cards without evaluation controls or read updates' do
     before = @conversation.reload.attributes
     login_master
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_response :success
     assert_select '.chat-profiles .chat-profile', count: 2
     assert_select '.chat-profile--member a[href=?]', member_profile_path(@member)
@@ -77,7 +77,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
   test 'webmaster conversation history links message URLs safely' do
     @conversation.send_message!('member', "https://example.test/contact?a=1&b=2\n<img src=x onerror=alert(1)>")
     login_master
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_response :success
     assert_select '.wm-body a.message-url[href="https://example.test/contact?a=1&b=2"]', count: 1
     assert_select '.message-role--member', minimum: 1
@@ -92,7 +92,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
       assert_redirected_to new_webmaster_session_path
     end
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_redirected_to new_webmaster_session_path
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     get super_admin_conversations_path
@@ -101,7 +101,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     get super_admin_conversations_path
     assert_response :success
     assert_includes response.body, @circle.name
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_response :success
     assert_includes response.body, 'はじめまして。参加できますか？'
     assert_includes response.headers['Cache-Control'], 'no-store'
@@ -132,7 +132,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     before = @conversation.reload.attributes
     login_master
     assert_no_difference('ChatMessage.count') do
-      assert_no_difference('ActionMailer::Base.deliveries.size') { get super_admin_conversation_path(@conversation) }
+      assert_no_difference('ActionMailer::Base.deliveries.size') { get_thread super_admin_conversation_path(@conversation) }
     end
     assert_response :success
     assert_includes response.body, 'お問い合わせありがとうございます。'
@@ -146,13 +146,13 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     ChatMessage.insert_all!(messages)
     @conversation.update!(owner_read_message_id: @conversation.chat_messages.maximum(:id))
     login_master
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_select '.wm-message', count: 7
     assert_includes response.body, '履歴メッセージ 54'
-    get super_admin_conversation_path(@conversation), params: { page: 1 }
+    get_thread super_admin_conversation_path(@conversation), params: { page: 1 }
     assert_select '.wm-message', count: 50
     assert_includes response.body, 'はじめまして。参加できますか？'
-    assert_raises(ActiveRecord::RecordNotFound) { get super_admin_conversation_path('missing-public-id') }
+    assert_raises(ActiveRecord::RecordNotFound) { get_thread super_admin_conversation_path('missing-public-id') }
   end
 
   test 'webmaster sees recipient read status on messages and the latest preview without changing it' do
@@ -162,7 +162,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     login_master
     get super_admin_conversations_path
     assert_select '.wm-read-receipt', text: '参加者：未読'
-    get super_admin_conversation_path(@conversation)
+    get_thread super_admin_conversation_path(@conversation)
     assert_select '.wm-read-receipt', text: '主催者：既読'
     assert_select '.wm-read-receipt', text: '参加者：未読'
     assert_equal 0, @conversation.reload.member_read_message_id
@@ -172,6 +172,14 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
   end
 
   private
+  def get_thread(path, **options)
+    get path, **options
+    if response.redirect? && URI(response.location).fragment&.start_with?('chat-message-')
+      @thread_jump_location = response.location
+      follow_redirect!
+    end
+  end
+
   def login_master
     post webmaster_session_path, params: { webmaster: { email: @master.email, password: 'test-password-123' } }
   end
