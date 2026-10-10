@@ -60,6 +60,8 @@ class ChatImagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal before, @conversation.reload.attributes
     get super_admin_conversation_path(@conversation)
+    assert_response :redirect
+    follow_redirect!
     assert_select '.chat-image-link img', count: 1
   end
 

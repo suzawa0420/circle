@@ -80,6 +80,8 @@ class ChatModerationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '成人向け'
     assert_select '.wm-badge', text: '8点'
     get super_admin_conversation_path(@conversation)
+    assert_response :redirect
+    follow_redirect!
     assert_equal before, @conversation.reload.owner_read_message_id
     patch super_admin_chat_moderation_path(held), params: { decision: 'spam' }
     assert_redirected_to super_admin_chat_moderations_path

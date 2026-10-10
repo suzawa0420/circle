@@ -99,6 +99,8 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     master = Webmaster.create!(id: 1, email: 'master-guidance@example.test', password: 'test-password-123')
     post webmaster_session_path, params: { webmaster: { email: master.email, password: 'test-password-123' } }
     get super_admin_conversation_path(conversation)
+    assert_response :redirect
+    follow_redirect!
     assert_response :success
     assert_select '.wm-message--system .message-role--owner', text: 'サークルからの自動案内', count: 2
     assert_includes response.body, '参加希望日'
