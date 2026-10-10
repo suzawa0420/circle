@@ -27,6 +27,33 @@ class HelpCenterTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) { get help_article_path('missing') }
   end
 
+  test 'long answers have semantic headings steps and searchable section text' do
+    get help_article_path('reviews')
+    assert_select '.help-answer h2', text: '現在の口コミ（メッセージでやり取りした参加者の投稿）'
+    assert_select '.help-answer h2', text: '旧口コミ（以前の匿名投稿）'
+    assert_select '.help-answer p', minimum: 3
+    assert_select '.help-answer ol li', count: 3
+    get help_article_path('owner-reply')
+    assert_select '.help-answer h2', text: '現在のお問い合わせへの返信手順'
+    assert_select '.help-answer ol li', count: 3
+    get faq_path(help_query: '旧口コミ 匿名')
+    assert_select "a[href='#{help_article_path('reviews')}']"
+    get faq_path(help_query: '現在のお問い合わせへの返信手順')
+    assert_select "a[href='#{help_article_path('owner-reply')}']"
+  end
+
+  test 'answer headings paragraphs and steps escape HTML' do
+    html = ApplicationController.render(partial: 'help_center/answer', locals: { article: { content: [
+      { heading: '<script>bad()</script>' }, { paragraph: '<img src=x onerror=bad()>' },
+      { steps: ['<script>bad()</script>'] }
+    ] } })
+    fragment = Nokogiri::HTML.fragment(html)
+    assert_empty fragment.css('script, img, [onerror]')
+    assert_equal '<script>bad()</script>', fragment.at_css('h2').text
+    assert_equal '<img src=x onerror=bad()>', fragment.at_css('p').text
+    assert_equal '<script>bad()</script>', fragment.at_css('li').text
+  end
+
   test 'search is normalized and audience/category filters and no-result guidance work without javascript' do
     get faq_path
     token = css_select('input[name=spam_form_token]').first['value']

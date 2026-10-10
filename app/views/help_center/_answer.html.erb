@@ -1,0 +1,11 @@
+<div class="help-answer">
+  <% article[:content].each do |block| %>
+    <% if block[:heading] %>
+      <h2><%= block[:heading] %></h2>
+    <% elsif block[:paragraph] %>
+      <p><%= block[:paragraph] %></p>
+    <% elsif block[:steps] %>
+      <ol><% block[:steps].each do |step| %><li><%= step %></li><% end %></ol>
+    <% end %>
+  <% end %>
+</div>
