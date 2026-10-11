@@ -74,7 +74,7 @@ case "$mode" in
   activate)
     test "$(git rev-parse HEAD)" = "$revision"
     puma_pid=$(systemctl show circle-puma --property MainPID --value)
-    current_ruby=$(readlink -f "/proc/$puma_pid/exe")
+    current_ruby=$(sudo -n runuser -u ec2-user -g nginx -- readlink -f "/proc/$puma_pid/exe")
     expected_ruby=$(readlink -f /opt/circle/ruby-3.4.11/bin/ruby)
     if [[ "$current_ruby" != "$expected_ruby" ]]; then
       # USR2 re-execs the old interpreter. A runtime change needs the new unit
@@ -99,8 +99,8 @@ case "$mode" in
     fi
     systemctl is-active circle-puma nginx
     puma_pid=$(systemctl show circle-puma --property MainPID --value)
-    test "$(readlink -f "/proc/$puma_pid/exe")" = "$expected_ruby"
-    /proc/"$puma_pid"/exe --version
+    test "$(sudo -n runuser -u ec2-user -g nginx -- readlink -f "/proc/$puma_pid/exe")" = "$expected_ruby"
+    "$expected_ruby" --version
     ;;
   *) exit 2 ;;
 esac

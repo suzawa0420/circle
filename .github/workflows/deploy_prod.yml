@@ -39,7 +39,9 @@ jobs:
             set -eu
             cd /var/www/circle
             puma_pid=$(systemctl show circle-puma --property MainPID --value)
-            /proc/"$puma_pid"/exe --version
+            running_ruby=$(sudo -n runuser -u ec2-user -g nginx -- readlink -f /proc/"$puma_pid"/exe)
+            case "$running_ruby" in /opt/circle/ruby-*/bin/ruby) ;; *) exit 1 ;; esac
+            "$running_ruby" --version
             /opt/circle/node-v24.21.0-linux-x64/bin/node --version
             systemctl is-active circle-puma nginx
             git rev-parse --short HEAD
