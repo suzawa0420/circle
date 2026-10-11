@@ -14,10 +14,12 @@
 //= require activestorage
 
 //= require turbolinks
-//= require jquery
+//= require jquery3
 //= require moment
 //= require moment/ja.js
 //= require bootstrap-sprockets
+//= require jquery-ui-datepicker
+//= require datepicker-ja
 //= require trix
 
 //= require_tree .

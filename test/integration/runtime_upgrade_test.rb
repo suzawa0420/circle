@@ -47,6 +47,19 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'mailto:circlebook26@gmail.com?subject=【お問い合わせ】サークルブック'
   end
 
+  test 'account pages serve the calendar locally while listings keep the lean bundle' do
+    get '/admin_users/sign_in'
+    assert_response :success
+    assert_select 'link[href*="/assets/jquery-ui-"]', count: 1
+    assert_select 'script[src*="/assets/application-"]', count: 1
+    assert_select 'script[src*="rawgit.com"], script[src*="/jqueryui/"], link[href*="/jqueryui/"]', count: 0
+
+    get '/circles'
+    assert_response :success
+    assert_select 'script[src*="/assets/public_listing-"]', count: 1
+    assert_select 'script[src*="/assets/application-"], link[href*="/assets/jquery-ui-"]', count: 0
+  end
+
   test 'public pages load the new GTM container and AdSense code' do
     %w[/ /privacypolicy].each do |path|
       get path

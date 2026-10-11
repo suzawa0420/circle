@@ -6,7 +6,7 @@ ruby '3.4.11'
 gem 'rails', '~> 8.1.4'
 gem 'puma', '~> 7.0'
 gem 'sprockets-rails'
-gem 'sassc-rails'
+gem 'dartsass-sprockets', '~> 3.2'
 gem 'terser'
 
 gem 'execjs'
@@ -35,7 +35,7 @@ gem 'devise-i18n-views'
 gem 'kaminari'
 gem 'jquery-rails'
 
-gem 'bootstrap-sass', '~> 3.3.7'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'momentjs-rails'
 gem "rack-cors"
 
