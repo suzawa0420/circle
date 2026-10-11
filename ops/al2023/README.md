@@ -67,16 +67,24 @@ server5 predates later application fixes; restoration requires applying the
 current tested Git revision and rechecking configuration, origin guard, assets,
 health and the singleton sitemap timer before attachment.
 
-The Ruby update section describes the pending change. Sections explicitly marked
+The Ruby update section records the completed 2026-10-11 deployment. Sections explicitly marked
 historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
-## Ruby 3.4.11 update (prepared locally; production cutover pending)
+## Ruby 3.4.11 update (deployed 2026-10-11)
 
-The repository now targets Ruby 3.4.11. The historical installation records below
-still describe Ruby 3.3.12; they are not evidence that production was upgraded.
-Rails remains 8.1.4 and `config.load_defaults` remains 6.0.
+Both production servers now run Ruby 3.4.11. Deployment of `cd2f2fc7f` succeeded
+on server4 and server5, including runtime checks, preparation, activation,
+running-interpreter verification, public-page warm-up and registration-form
+readiness. Server4's sitemap and chat-maintenance units use the new runtime.
+Public home, health and admin sign-in returned HTTP 200 after the rollout.
+
+Deployment record: https://github.com/suzawa0420/circle/actions/runs/38098057486
+
+The historical installation records below still describe Ruby 3.3.12. The old
+runtime and gems were retained for rollback. Rails remains 8.1.4 and
+`config.load_defaults` remains 6.0.
 
 Pushes to `master` trigger deployment. The workflow runs tests first, then
 installs Ruby alongside the existing runtime on both servers before preparing
