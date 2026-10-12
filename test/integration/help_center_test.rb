@@ -35,11 +35,34 @@ class HelpCenterTest < ActionDispatch::IntegrationTest
     assert_select '.help-answer ol li', count: 3
     get help_article_path('owner-reply')
     assert_select '.help-answer h2', text: '現在のお問い合わせへの返信手順'
-    assert_select '.help-answer ol li', count: 3
+    assert_select '.help-answer ol li', count: 5
     get faq_path(help_query: '旧口コミ 匿名')
     assert_select "a[href='#{help_article_path('reviews')}']"
     get faq_path(help_query: '現在のお問い合わせへの返信手順')
     assert_select "a[href='#{help_article_path('owner-reply')}']"
+  end
+
+  test 'message help separates roles and links to login and missing reply guidance' do
+    get help_article_path('message-notification')
+    assert_response :success
+    assert_select '.help-answer h2', text: '主催者：参加希望者からのメッセージを確認・返信する'
+    assert_select '.help-answer h2', text: '参加者：主催者からのメッセージを確認・返信する'
+    assert_select '.help-answer ol', count: 2
+    assert_select '.help-answer ol li', count: 10
+    assert_select ".help-links a[href='#{new_admin_user_session_path}']"
+    assert_select ".help-links a[href='#{new_member_session_path}']"
+    assert_select ".help-links a[href='#{help_article_path('message-reply-missing')}']"
+    get help_article_path('owner-reply')
+    assert_select ".help-links a[href='#{help_article_path('message-reply-missing')}']"
+    get help_article_path('message-reply-missing')
+    assert_response :success
+    assert_select '.help-answer h2', count: 5
+    assert_select '.help-answer', text: /メールアドレス.*ブロック中.*利用停止中/m
+    assert_select ".help-links a[href='#{help_article_path('message-notification')}']"
+    get faq_path(help_query: '返信欄 出ない', audience: 'owner')
+    assert_select "a[href='#{help_article_path('message-reply-missing')}']"
+    get faq_path(help_query: '返信欄 出ない', audience: 'member')
+    assert_select "a[href='#{help_article_path('message-reply-missing')}']"
   end
 
   test 'answer headings paragraphs and steps escape HTML' do
