@@ -15,6 +15,7 @@
     <%= f.submit '対応状況とメモを保存' %>
   <% end %>
 </article></section>
+<%= render 'conversations/profiles', conversation: @report.conversation, viewer_role: nil, manage_accounts: true %>
 <section class="wm-section wm-thread"><div class="wm-section-heading"><h2>会話履歴</h2></div>
   <% @messages.each do |message| %><article class="webmaster-card wm-message wm-message--<%= message.sender_role %>"><div class="wm-card-heading"><span class="message-role message-role--<%= message.automatic? ? "owner" : message.sender_role %>"><%= message.automatic? ? "サークルからの自動案内" : message.sender_label %></span><time class="wm-meta"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div><div class="wm-body"><%= render 'conversations/image', message: message %><%= message.automatic? ? automatic_message_body(message.body) : chat_message_body(message.body) %></div></article><% end %>
   <%= paginate @messages %>

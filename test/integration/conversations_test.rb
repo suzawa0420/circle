@@ -565,6 +565,11 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, '口コミの削除を強要されました。'
     assert_includes response.body, 'はじめまして。参加できますか？'
+    assert_select '.chat-profiles .chat-profile', count: 2
+    assert_select '.chat-profile--member a[href=?]', member_profile_path(@member)
+    assert_select '.chat-profile--owner a[href=?]', circle_path(@circle)
+    assert_select '.chat-profile--member a.chat-profile__manage[href=?]', super_admin_account_path(@member), text: '参加者の管理'
+    assert_select '.chat-profile--owner a.chat-profile__manage[href=?]', super_admin_account_path(@owner, kind: 'owner'), text: '主催者の管理'
     patch super_admin_chat_report_path(report)
     assert report.reload.resolved_at
   end
