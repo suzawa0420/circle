@@ -1,0 +1,11 @@
+- stars = review_star_score(review_score, reviews_count: reviews_count)
+%span.star{ "aria-hidden" => "true" }
+  - 5.times do |index|
+    - if stars >= index + 1
+      = lucide_icon "star", class: "orange"
+    - elsif stars > index
+      %span.review-half-star
+        = lucide_icon "star", class: "gray"
+        = lucide_icon "star", class: "orange review-half-star__fill"
+    - else
+      = lucide_icon "star", class: "gray"

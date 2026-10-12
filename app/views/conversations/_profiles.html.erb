@@ -14,7 +14,7 @@
         <strong class="chat-profile__name" title="<%= name %>"><%= name %></strong>
         <span class="chat-profile__attributes" title="<%= attributes_text %>"><%= attributes_text %></span>
         <span class="chat-profile__rating" aria-label="<%= count.positive? ? "評価5点満点中#{format('%.2f', score)}、#{count}件" : '評価はまだありません' %>">
-          <span class="chat-profile__stars" aria-hidden="true"><span>★★★★★</span><span class="chat-profile__stars-fill" style="width: <%= (score.clamp(0, 5) * 20).round(2) %>%">★★★★★</span></span>
+          <span class="chat-profile__stars" aria-hidden="true"><span>★★★★★</span><span class="chat-profile__stars-fill" style="width: <%= review_star_score(score, reviews_count: count) * 20 %>%">★★★★★</span></span>
           <span class="chat-profile__score"><%= count.positive? ? "#{format('%.2f', score)}（#{count}件）" : '評価はまだありません' %></span>
         </span>
         <% no_reply_count = person_role == 'owner' ? person.unanswered_report_count : 0 %>

@@ -49,3 +49,14 @@
 // Datepicker arrows use the same icon family.
 .ui-datepicker .ui-datepicker-prev .ui-icon { background-image: none; background-color: currentColor; mask: url("data:image/svg+xml,%3C%21--%20%40license%20lucide-static%20v1.52.0%20-%20ISC%20--%3E%0A%3Csvg%0A%20%20class%3D%22lucide%20lucide-chevron-left%22%0A%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%0A%20%20width%3D%2224%22%0A%20%20height%3D%2224%22%0A%20%20viewBox%3D%220%200%2024%2024%22%0A%20%20fill%3D%22none%22%0A%20%20stroke%3D%22currentColor%22%0A%20%20stroke-width%3D%222%22%0A%20%20stroke-linecap%3D%22round%22%0A%20%20stroke-linejoin%3D%22round%22%0A%3E%0A%20%20%3Cpath%20d%3D%22m15%2018-6-6%206-6%22%20%2F%3E%0A%3C%2Fsvg%3E%0A") center / contain no-repeat; }
 .ui-datepicker .ui-datepicker-next .ui-icon { background-image: none; background-color: currentColor; mask: url("data:image/svg+xml,%3C%21--%20%40license%20lucide-static%20v1.52.0%20-%20ISC%20--%3E%0A%3Csvg%0A%20%20class%3D%22lucide%20lucide-chevron-right%22%0A%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%0A%20%20width%3D%2224%22%0A%20%20height%3D%2224%22%0A%20%20viewBox%3D%220%200%2024%2024%22%0A%20%20fill%3D%22none%22%0A%20%20stroke%3D%22currentColor%22%0A%20%20stroke-width%3D%222%22%0A%20%20stroke-linecap%3D%22round%22%0A%20%20stroke-linejoin%3D%22round%22%0A%3E%0A%20%20%3Cpath%20d%3D%22m9%2018%206-6-6-6%22%20%2F%3E%0A%3C%2Fsvg%3E%0A") center / contain no-repeat; }
+
+.review-half-star {
+  display: inline-flex;
+  position: relative;
+}
+.review-half-star > .review-half-star__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: inset(0 50% 0 0);
+}
