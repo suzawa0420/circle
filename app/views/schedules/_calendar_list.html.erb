@@ -55,7 +55,7 @@
       <%= render partial: 'schedules/calendar_event', collection: calendar.past, as: :schedule, locals: { calendar: calendar } %>
       <%= paginate calendar.past_page, params: { past: '1', anchor: 'past-activities' } %>
     <% else %>
-      <%= link_to user_schedules_path(@user, month: calendar.month.strftime('%Y-%m'), date: calendar.selected_date&.iso8601, past: '1', anchor: 'past-activities'), class: 'schedule-calendar__archive-link' do %><%= lucide_icon 'clock' %><span>過去に開催したスケジュールを見る</span><%= lucide_icon 'chevron-right' %><% end %>
+      <%= render 'schedules/archive_link', url: user_schedules_path(@user, month: calendar.month.strftime('%Y-%m'), date: calendar.selected_date&.iso8601, past: '1', anchor: 'past-activities') %>
     <% end %>
   </section>
 </div>

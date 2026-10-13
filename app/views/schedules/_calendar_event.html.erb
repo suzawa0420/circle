@@ -3,8 +3,10 @@
 <%= link_to user_schedule_path(@user, schedule), class: 'schedule-calendar__event' do %>
   <div class="schedule-calendar__date"><span><%= date.year %>年<%= date.month %>月</span><strong><%= date.day %></strong><span><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %>曜日</span></div>
   <div class="schedule-calendar__event-body">
+    <div class="schedule-calendar__event-heading">
     <div class="schedule-calendar__time"><%= calendar_schedule_time(schedule) %></div>
     <span class="schedule-calendar__status status-<%= status[:key] %>"><span aria-hidden="true"><%= status[:mark] %></span> <%= status[:label] %></span>
+    </div>
     <div class="schedule-calendar__venue"><%= lucide_icon 'map-pin' %><%= schedule.venue %></div>
     <div class="schedule-calendar__title"><%= schedule.title %></div>
     <% if schedule.recruitment_numbers.present? %><div class="schedule-calendar__capacity">募集人数：<%= schedule.recruitment_numbers.zero? ? '制限なし' : "#{schedule.recruitment_numbers}名" %></div><% end %>

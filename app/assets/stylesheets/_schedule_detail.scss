@@ -62,6 +62,9 @@
   &__related > h2 { font-size: 16px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
   &__related .schedule_m { display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 1.5; margin: 18px 0 10px; }
   &__related .schedule_m svg { width: 17px; height: 17px; flex-shrink: 0; }
+  &__related .schedule-calendar__archive { margin-top: 24px; }
+  &__related .schedule-calendar__close { display: inline-block; padding: 8px 0; font-size: 12px; }
+  &__related #past-activities { scroll-margin-top: 120px; }
   &__related .past_schedule { font-size: 16px; margin: 24px 0 10px; }
   a:focus-visible, summary:focus-visible { outline: 3px solid #487aab; outline-offset: 3px; }
   @media (max-width: 360px) { &__heading, &__summary, &__section { padding-left: 13px; padding-right: 13px; } &__image { margin-left: 13px; margin-right: 13px; } &__title { font-size: 16px; } &__facts > div { grid-template-columns: 16px 58px minmax(0,1fr); font-size: 13px; } }

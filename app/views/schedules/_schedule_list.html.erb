@@ -1,7 +1,8 @@
-<% listing = ScheduleListingData.new(upcoming: @schedules, past: @past_schedules, excluded_id: @schedule.id, show_upcoming: params[:page].nil?) %>
+<% show_past = params[:past] == '1' || params[:page].present? %>
+<% listing = ScheduleListingData.new(upcoming: @schedules, past: show_past ? @past_schedules : @past_schedules.none, excluded_id: @schedule.id, show_upcoming: params[:page].nil?) %>
 <% [[listing.upcoming, false], [listing.past, true]].each do |schedules, past| %>
   <% next if schedules.empty? %>
-  <% if past %><h3 class="past_schedule">開催が終了したスケジュール</h3><% end %>
+  <% if past %><section id="past-activities"><h3 class="past_schedule">過去に開催したスケジュール</h3><%= link_to '過去の一覧を閉じる', user_schedule_path(@user, @schedule, anchor: 'past-activities'), class: 'schedule-calendar__close' %><% end %>
   <% schedules.group_by { |schedule| schedule.day[0, 7] }.each do |month, entries| %>
     <% date = Date.iso8601("#{month}-01") %>
     <h3 class="schedule_m"><%= lucide_icon 'calendar-days' %><%= date.year %>年<%= date.month %>月のスケジュール</h3>
@@ -12,5 +13,10 @@
       <% end %>
     </ul>
   <% end %>
-  <% if past %><%= paginate listing.past_page %><% end %>
+  <% if past %><%= paginate listing.past_page, params: { past: '1', anchor: 'past-activities' } %></section><% end %>
+<% end %>
+<% if show_past && listing.past.empty? %>
+  <section id="past-activities"><h3 class="past_schedule">過去に開催したスケジュール</h3><p>過去のスケジュールはありません。</p><%= link_to '過去の一覧を閉じる', user_schedule_path(@user, @schedule, anchor: 'past-activities'), class: 'schedule-calendar__close' %></section>
+<% elsif !show_past %>
+  <div id="past-activities" class="schedule-calendar__archive"><%= render 'schedules/archive_link', url: user_schedule_path(@user, @schedule, past: '1', anchor: 'past-activities') %></div>
 <% end %>
