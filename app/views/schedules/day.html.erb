@@ -6,14 +6,16 @@
       <% if @relative_day %><p><%= @day %></p><% end %>
       <p>時間・場所・募集状況を見比べて、気になるイベントへ。</p>
     </header>
-    <nav class="event-results__shortcuts" aria-label="今日と明日のイベント">
+    <nav class="event-results__shortcuts" aria-label="期間からイベントを探す">
       <%= link_to '今日', today_events_path(@filter_query), aria: { current: action_name == 'today' ? 'page' : nil } %>
       <%= link_to '明日', tomorrow_events_path(@filter_query), aria: { current: action_name == 'tomorrow' ? 'page' : nil } %>
-      <%= link_to '日付で探す', dates_path %>
+      <%= link_to '今週', this_week_events_path(@filter_query), aria: { current: action_name == 'this_week' ? 'page' : nil } %>
+      <%= link_to '来週', next_week_events_path(@filter_query), aria: { current: action_name == 'next_week' ? 'page' : nil } %>
+      <%= link_to '日付で探す', dates_path(@filter_query) %>
     </nav>
-    <nav class="event-results__days" aria-label="開催日を選ぶ">
-      <% (@event_date - 2..@event_date + 2).each do |date| %>
-        <%= link_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : ''), class: date == @event_date ? 'is-selected' : nil, aria: { current: date == @event_date ? 'date' : nil } do %>
+    <nav class="event-results__days <%= 'event-results__days--week' if @event_end_date %>" aria-label="開催日を選ぶ">
+      <% (@event_end_date ? (@event_date..@event_end_date) : (@event_date - 2..@event_date + 2)).each do |date| %>
+        <%= link_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : ''), class: !@event_end_date && date == @event_date ? 'is-selected' : nil, aria: { current: !@event_end_date && date == @event_date ? 'date' : nil } do %>
           <span><%= date.month %>/<%= date.day %></span><small><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %></small>
         <% end %>
       <% end %>
@@ -24,7 +26,7 @@
       <label>並び順<%= form.select :sort, options_for_select([['おすすめ（日替わり）', '1'], ['新着順', '2'], ['開始時間順', '3']], params[:sort] || '1') %></label>
       <%= form.submit '絞り込む', name: nil %>
     <% end %>
-    <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件のイベント</h2><p>募集中を優先<% unless %w[2 3].include?(params[:sort]) %>・同じ条件では日替わり表示<% end %></p></div>
+    <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件のイベント</h2><p><%= '開催日順・' if @event_end_date %>募集中を優先<% unless %w[2 3].include?(params[:sort]) %>・同じ条件では日替わり表示<% end %></p></div>
     <% if @schedules.empty? %>
       <div class="event-results__empty"><h2>この条件のイベントはまだありません</h2><p>別の日付やエリア・ジャンルでも探してみてください。</p><%= link_to '今日のイベントを見る', today_events_path %></div>
     <% else %>
@@ -32,7 +34,7 @@
         <% @schedules.each_with_index do |schedule, index| %>
           <% key, label = @day_listing.status(schedule) %>
           <li>
-            <%= render 'schedules/event_card', schedule: schedule, user: schedule.user, status: { key: key, label: label }, eager: index.zero? %>
+            <%= render 'schedules/event_card', schedule: schedule, user: schedule.user, status: { key: key, label: label }, eager: index.zero?, show_date: @event_end_date.present? %>
           </li>
         <% end %>
       </ul>

@@ -21,6 +21,9 @@ class EventDaySitemap
       bases = [EventDayListing.path(date)]
       bases << '/dates/today' if date == today
       bases << '/dates/tomorrow' if date == today + 1
+      week_start = today.beginning_of_week(:monday)
+      bases << '/dates/this_week' if (week_start..week_start + 6).cover?(date)
+      bases << '/dates/next_week' if (week_start + 7..week_start + 13).cover?(date)
       event = events[event_id].presence
       pref = prefectures[prefecture_id].presence
       filters = [{}]

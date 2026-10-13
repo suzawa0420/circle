@@ -4,8 +4,8 @@ include Circlebook
 
 before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :update, :destroy]
 before_action :ensure_correct_user, only: [:new, :create, :edit, :update, :destroy]
-before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :today, :tomorrow, :year, :month]}
-before_action :set_dates, {only: [:dates, :day, :today, :tomorrow]}
+before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :today, :tomorrow, :this_week, :next_week, :year, :month]}
+before_action :set_dates, {only: [:dates, :day, :today, :tomorrow, :this_week, :next_week]}
 
 
 	def index
@@ -241,17 +241,31 @@ def tomorrow
   render :day
 end
 
+def this_week
+  start = Time.current.in_time_zone('Tokyo').to_date.beginning_of_week(:monday)
+  prepare_event_day(start, relative: '今週', end_date: start + 6)
+  render :day
+end
+
+def next_week
+  start = Time.current.in_time_zone('Tokyo').to_date.beginning_of_week(:monday) + 7
+  prepare_event_day(start, relative: '来週', end_date: start + 6)
+  render :day
+end
+
 private
-  def prepare_event_day(date, relative: nil)
+  def prepare_event_day(date, relative: nil, end_date: nil)
     @event_date = date
     @date = date.iso8601
     @day = "#{date.year}年#{date.month}月#{date.day}日（#{@wdays[date.wday]}）"
     @relative_day = relative
+    @event_end_date = end_date
+    @day += "〜#{end_date.year}年#{end_date.month}月#{end_date.day}日（#{@wdays[end_date.wday]}）" if end_date
     @events = Event.order(:order)
     @prefectures = Prefecture.order(:order)
     @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
     @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
-    @day_listing = EventDayListing.new(date: date, event: @event, prefecture: @prefecture, sort: params[:sort])
+    @day_listing = EventDayListing.new(date: date, event: @event, prefecture: @prefecture, sort: params[:sort], end_date: end_date)
     @schedules = @day_listing.schedules.page(params[:page]).per(20)
     @result_count = @day_listing.total_count
     @filter_query = { event: @event&.ruby, pref: @prefecture&.kana }.compact

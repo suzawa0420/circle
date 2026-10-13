@@ -9,12 +9,13 @@ class EventDayListing
     Schedule.where(user_id: User.publicly_visible.select(:id))
   end
 
-  def initialize(date:, event: nil, prefecture: nil, sort: nil, now: Time.current, upcoming: false)
+  def initialize(date:, event: nil, prefecture: nil, sort: nil, now: Time.current, upcoming: false, end_date: nil)
     @date = date
     @now = now.in_time_zone('Tokyo')
     @sort = sort
-    @upcoming = upcoming
-    @base = self.class.public_schedules.where(day: upcoming ? date.iso8601..'2100-12-31' : date.iso8601)
+    @upcoming = upcoming || end_date.present?
+    days = end_date ? date.iso8601..end_date.iso8601 : (upcoming ? date.iso8601..'2100-12-31' : date.iso8601)
+    @base = self.class.public_schedules.where(day: days)
     @base = @base.where(user_id: User.where(event_id: event.id).select(:id)) if event
     @base = @base.where(user_id: User.where(prefecture_id: prefecture.id).select(:id)) if prefecture
   end

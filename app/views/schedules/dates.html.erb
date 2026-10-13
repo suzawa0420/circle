@@ -5,9 +5,11 @@
       <h1><%= @event_hub_title %></h1>
       <p>時間・場所・募集状況を見比べて、気になるイベントへ。</p>
     </header>
-    <nav class="event-results__shortcuts" aria-label="今日と明日のイベント">
+    <nav class="event-results__shortcuts" aria-label="期間からイベントを探す">
       <%= link_to '今日のイベント', today_events_path(@filter_query) %>
       <%= link_to '明日のイベント', tomorrow_events_path(@filter_query) %>
+      <%= link_to '今週のイベント', this_week_events_path(@filter_query) %>
+      <%= link_to '来週のイベント', next_week_events_path(@filter_query) %>
     </nav>
     <nav class="event-results__days" aria-label="開催日を選ぶ">
       <% (@event_date..@event_date + 4).each do |date| %>
@@ -19,7 +21,7 @@
     <%= form_with url: dates_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
       <label>エリア<%= form.select :pref, options_from_collection_for_select(@prefectures, :kana, :name, @prefecture&.kana), include_blank: '全国' %></label>
       <label>ジャンル<%= form.select :event, options_from_collection_for_select(@events, :ruby, :name, @event&.ruby), include_blank: 'すべて' %></label>
-      <label>日付を指定（任意）<%= form.date_field :date, min: '1900-01-01', max: '2100-12-31' %></label>
+      <label class="event-results__date-field">日付を指定（任意）<%= form.date_field :date, min: '1900-01-01', max: '2100-12-31' %></label>
       <%= form.submit '検索する', name: nil %>
     <% end %>
     <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件の開催予定</h2><p>開催日順・同じ日は募集中を優先して日替わり表示</p></div>

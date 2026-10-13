@@ -275,6 +275,8 @@ Rails.application.routes.draw do
   get 'dates' , to: 'schedules#dates'
   get 'dates/today', to: 'schedules#today', as: :today_events
   get 'dates/tomorrow', to: 'schedules#tomorrow', as: :tomorrow_events
+  get 'dates/this_week', to: 'schedules#this_week', as: :this_week_events
+  get 'dates/next_week', to: 'schedules#next_week', as: :next_week_events
   get 'dates/:year' , to: 'schedules#year'
   get 'dates/:year/:month' , to: 'schedules#month'
   get 'dates/:year/:month/:day' , to: 'schedules#day'

@@ -181,12 +181,68 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_operator ids.index(morning.id), :<, ids.index(evening.id)
   end
 
+  test 'weekly results include exactly Monday through Sunday and preserve SEO filters' do
+    monday = activity('月曜の活動', day: '2026-10-12')
+    sunday = activity('日曜の活動', day: '2026-10-18')
+    following = activity('翌週の活動', day: '2026-10-19')
+    activity('翌々週の活動', day: '2026-10-26')
+    query = { event: @circle.event.ruby, pref: @circle.prefecture.kana }
+    get '/dates/this_week', params: query.merge(utm_source: 'test')
+    assert_response :success
+    assert_select 'h1', text: /今週・東京都のバスケ/
+    assert_select '.event-results__header p', text: /2026年10月12日（月）〜2026年10月18日（日）/
+    assert_select '.event-results__days a', count: 7
+    assert_select '.event-results__card', count: 8
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, monday)}']", count: 1
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, sunday)}'] .event-results__time", text: /10月18日.*日/m
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, following)}']", count: 0
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates/this_week?' + query.to_query
+    assert_select 'meta[name="description"]', content: /今週.*10月12日.*10月18日.*バスケ/
+    assert_select 'meta[name="robots"][content*="noindex"]', count: 0
+    assert_select 'a[href="/dates/next_week?' + query.to_query + '"]'
+    assert_select 'script[type="application/ld+json"]', text: /ItemList/
+    get '/dates/next_week', params: query
+    assert_response :success
+    assert_select '.event-results__card', count: 1
+    assert_select 'h1', text: /来週・東京都のバスケ/
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates/next_week?' + query.to_query
+    get '/dates/next_week', params: { sort: '3' }
+    assert_select 'meta[name="robots"][content*="noindex"]'
+    assert_raises(ActiveRecord::RecordNotFound) { get '/dates/next_week', params: { page: 9 } }
+    assert_raises(ActiveRecord::RecordNotFound) { get '/dates/this_week', params: { sort: 'invalid' } }
+  end
+
+  test 'week boundaries roll over at Japan Monday and empty or hidden weeks are not indexed' do
+    activity('日曜の夜', day: '2026-10-18')
+    activity('月曜の朝', day: '2026-10-19')
+    travel_to Time.utc(2026, 10, 18, 14, 59)
+    get '/dates/this_week'
+    assert_select '.event-results__header p', text: /10月12日（月）〜2026年10月18日（日）/
+    travel_to Time.utc(2026, 10, 18, 15, 0)
+    get '/dates/this_week'
+    assert_select '.event-results__header p', text: /10月19日（月）〜2026年10月25日（日）/
+    assert_select '.event-results__card', count: 1
+    get '/dates/next_week'
+    assert_select 'meta[name="robots"][content*="noindex"]'
+    @circle.update_columns(publication_status: 'draft')
+    get '/dates/this_week'
+    assert_select '.event-results__card', count: 0
+    assert_select 'meta[name="robots"][content*="noindex"]'
+    assert_empty EventDaySitemap.each_path.to_a
+  end
+
   test 'sitemap lists populated canonical dates and filtered relative pages only' do
     activity('過去のバスケ', day: '2026-10-12')
     paths = EventDaySitemap.each_path.to_a
     assert_includes paths, '/dates/2026/10/13'
     assert_includes paths, '/dates/today'
     assert_includes paths, '/dates/tomorrow'
+    assert_includes paths, '/dates/this_week'
+    assert_not_includes paths, '/dates/next_week'
+    activity('来週の日曜', day: '2026-10-25')
+    paths = EventDaySitemap.each_path.to_a
+    assert_includes paths, '/dates/next_week'
+    assert_includes paths, '/dates/next_week?' + { event: @circle.event.ruby, pref: @circle.prefecture.kana }.to_query
     assert_includes paths, '/dates/today?' + { event: @circle.event.ruby, pref: @circle.prefecture.kana }.to_query
     assert_not_includes paths, '/dates/2026/10/12'
     assert_not_includes paths, '/dates/2026/10/15'
