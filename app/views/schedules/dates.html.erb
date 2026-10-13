@@ -1,0 +1,48 @@
+<main class="event-results event-results--hub">
+  <div class="event-results__container">
+    <header class="event-results__header">
+      <p class="event-results__eyebrow">日付から、参加したい活動を見つけよう</p>
+      <h1><%= @event_hub_title %></h1>
+      <p>時間・場所・募集状況を見比べて、気になるイベントへ。</p>
+    </header>
+    <nav class="event-results__shortcuts" aria-label="今日と明日のイベント">
+      <%= link_to '今日のイベント', today_events_path(@filter_query) %>
+      <%= link_to '明日のイベント', tomorrow_events_path(@filter_query) %>
+    </nav>
+    <nav class="event-results__days" aria-label="開催日を選ぶ">
+      <% (@event_date..@event_date + 4).each do |date| %>
+        <%= link_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : '') do %>
+          <span><%= date.month %>/<%= date.day %></span><small><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %></small>
+        <% end %>
+      <% end %>
+    </nav>
+    <%= form_with url: dates_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
+      <label>エリア<%= form.select :pref, options_from_collection_for_select(@prefectures, :kana, :name, @prefecture&.kana), include_blank: '全国' %></label>
+      <label>ジャンル<%= form.select :event, options_from_collection_for_select(@events, :ruby, :name, @event&.ruby), include_blank: 'すべて' %></label>
+      <label>日付を指定（任意）<%= form.date_field :date, min: '1900-01-01', max: '2100-12-31' %></label>
+      <%= form.submit '検索する', name: nil %>
+    <% end %>
+    <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件の開催予定</h2><p>開催日順・同じ日は募集中を優先して日替わり表示</p></div>
+    <% if @schedules.empty? %>
+      <div class="event-results__empty"><h2>この条件のイベントはまだありません</h2><p>エリアやジャンルを変えて探してみてください。</p><%= link_to '全国のイベントを見る', dates_path %></div>
+    <% else %>
+      <% @schedules.to_a.group_by(&:day).each do |day, schedules| %>
+        <% date = Date.iso8601(day) %>
+        <section class="event-results__date-group">
+          <h2><%= lucide_icon 'calendar-days' %><%= "#{date.year}年" if date.year != @event_date.year %><%= calendar_schedule_date(date) %></h2>
+          <ul class="event-results__list">
+            <% schedules.each do |schedule| %>
+              <% key, label = @day_listing.status(schedule) %>
+              <li><%= render 'schedules/event_card', schedule: schedule, user: schedule.user, status: { key: key, label: label }, accepted_count: schedule[:accepted_count].to_i, show_date: true %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+      <%= paginate @schedules %>
+    <% end %>
+    <% if @user %>
+      <div class="event-results__organizer-link"><%= link_to '活動スケジュールを追加する', new_user_schedule_path(@user) %></div>
+    <% end %>
+    <p class="event-results__note">募集状況は変更されることがあります。参加条件・会場の詳細は各イベントでご確認ください。</p>
+  </div>
+</main>

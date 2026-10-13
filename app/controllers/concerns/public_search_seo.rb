@@ -25,7 +25,7 @@ module PublicSearchSeo
         raise ActiveRecord::RecordNotFound if params[:page].to_i > 1
         set_meta_tags noindex: true
       end
-    elsif controller_path == 'schedules' && %w[day today tomorrow].include?(action_name) && @schedules
+    elsif controller_path == 'schedules' && %w[dates day today tomorrow].include?(action_name) && @schedules
       if @schedules.empty?
         raise ActiveRecord::RecordNotFound if params[:page].to_i > 1
         set_meta_tags noindex: true
@@ -37,7 +37,7 @@ module PublicSearchSeo
   private
 
   def validate_public_search_parameters
-    return unless public_search_listing? || (controller_path == 'schedules' && %w[day today tomorrow].include?(action_name))
+    return unless public_search_listing? || (controller_path == 'schedules' && %w[dates day today tomorrow].include?(action_name))
     if params.key?(:page)
       value = params[:page].to_s
       raise ActiveRecord::RecordNotFound unless value.match?(/\A[1-9]\d{0,4}\z/)
@@ -48,7 +48,7 @@ module PublicSearchSeo
   end
 
   def set_public_search_metadata
-    return unless public_search_listing? || (controller_path == 'schedules' && %w[day today tomorrow].include?(action_name)) ||
+    return unless public_search_listing? || (controller_path == 'schedules' && %w[dates day today tomorrow].include?(action_name)) ||
                   (controller_path == 'circles/circles' && action_name == 'show')
     query = request.query_parameters.reject do |key, _|
       key == 'sort' || key.start_with?('utm_') || %w[gclid fbclid].include?(key)

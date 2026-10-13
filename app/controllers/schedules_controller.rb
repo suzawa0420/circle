@@ -183,10 +183,35 @@ before_action :set_dates, {only: [:dates, :day, :today, :tomorrow]}
 
 # スケジュール
 def dates
-  @schedules = Schedule.where("day > ?", DateTime.yesterday).order(:day => :asc, :time_s => :asc).page(params[:page]).per(20)
-
-  @b1_name = "イベント一覧"
-  @b1_url = ""
+  @event_date = Time.current.in_time_zone('Tokyo').to_date
+  @events = Event.order(:order)
+  @prefectures = Prefecture.order(:order)
+  @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
+  @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
+  @filter_query = { event: @event&.ruby, pref: @prefecture&.kana }.compact
+  if params[:date].present?
+    raise ActiveRecord::RecordNotFound unless params[:date].is_a?(String) && params[:date].match?(/\A[0-9]{4}-[0-9]{2}-[0-9]{2}\z/)
+    begin
+      date = Date.iso8601(params[:date])
+    rescue Date::Error
+      raise ActiveRecord::RecordNotFound
+    end
+    raise ActiveRecord::RecordNotFound unless (1900..2100).cover?(date.year)
+    return redirect_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : '')
+  end
+  @day_listing = EventDayListing.new(date: @event_date, event: @event, prefecture: @prefecture, upcoming: true)
+  @schedules = @day_listing.schedules.page(params[:page]).per(20)
+  @result_count = @day_listing.total_count
+  @event_hub_title = "#{@prefecture&.name || '全国'}の#{@event&.name || 'イベント'}・サークル活動一覧"
+  query = @filter_query.dup
+  query[:page] = params[:page].to_i if params[:page].to_i > 1
+  canonical = 'https://circle-book.com/dates' + (query.present? ? '?' + query.to_query : '')
+  set_meta_tags title: @event_hub_title,
+    description: "#{@prefecture&.name || '全国'}の#{@event&.name || 'イベント'}の開催予定を一覧で探せます。日付・エリア・ジャンルから絞り込み、時間・場所・募集状況を比較できます。",
+    canonical: canonical, noindex: @result_count.zero? || params[:sort].present?,
+    og: { image: 'https://circle-book.com/images/dates.jpg' }
+  @b1_name = 'イベント一覧'
+  @b1_url = ''
 end
 
 def year

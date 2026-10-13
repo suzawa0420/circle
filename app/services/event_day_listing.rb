@@ -9,11 +9,12 @@ class EventDayListing
     Schedule.where(user_id: User.publicly_visible.select(:id))
   end
 
-  def initialize(date:, event: nil, prefecture: nil, sort: nil, now: Time.current)
+  def initialize(date:, event: nil, prefecture: nil, sort: nil, now: Time.current, upcoming: false)
     @date = date
     @now = now.in_time_zone('Tokyo')
     @sort = sort
-    @base = self.class.public_schedules.where(day: date.iso8601)
+    @upcoming = upcoming
+    @base = self.class.public_schedules.where(day: upcoming ? date.iso8601..'2100-12-31' : date.iso8601)
     @base = @base.where(user_id: User.where(event_id: event.id).select(:id)) if event
     @base = @base.where(user_id: User.where(prefecture_id: prefecture.id).select(:id)) if prefecture
   end
@@ -31,14 +32,10 @@ class EventDayListing
     start_clock = "(schedules.time_s + interval '9 hours')::time"
     end_clock = "(schedules.time_e + interval '9 hours')::time"
     closed = "schedules.recruitment IN ('中止', '募集終了') OR (schedules.recruitment_numbers > 0 AND COALESCE(attendance.accepted_count, 0) >= schedules.recruitment_numbers)"
-    ended = if date < now.to_date
-      'TRUE'
-    elsif date == now.to_date
-      # An end earlier than the start is an overnight event, not an ended event.
-      "schedules.time_e IS NOT NULL AND (schedules.time_s IS NULL OR #{end_clock} >= #{start_clock}) AND #{end_clock} <= #{connection.quote(now.strftime('%H:%M:%S'))}::time"
-    else
-      'FALSE'
-    end
+    today = connection.quote(now.to_date.iso8601)
+    # Compare end times only for today's rows. Future morning events remain open.
+    # An end earlier than the start belongs to an overnight event.
+    ended = "schedules.day < #{today} OR (schedules.day = #{today} AND schedules.time_e IS NOT NULL AND (schedules.time_s IS NULL OR #{end_clock} >= #{start_clock}) AND #{end_clock} <= #{connection.quote(now.strftime('%H:%M:%S'))}::time)"
     order = case @sort
     when '2' then 'schedules.created_at DESC, schedules.id DESC'
     when '3' then "#{start_clock} ASC NULLS LAST, schedules.id ASC"
@@ -49,7 +46,7 @@ class EventDayListing
     @base.joins("LEFT JOIN (#{counts}) attendance ON attendance.schedule_id = schedules.id")
       .select(*columns, 'COALESCE(attendance.accepted_count, 0) AS accepted_count', "(#{ended}) AS event_ended")
       .preload(user: [{ event: :category }, :prefecture])
-      .order(Arel.sql("CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC, #{order}"))
+      .order(Arel.sql([@upcoming ? 'schedules.day ASC' : nil, "CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC", order].compact.join(', ')))
   end
 
   def status(schedule)

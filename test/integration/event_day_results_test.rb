@@ -19,6 +19,58 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'all dates hub uses common cards and chronological days without loading attendance records' do
+    activity('過去の活動', day: '2026-10-12')
+    morning = activity('明日の朝の活動', day: '2026-10-14', time_s: '07:00', time_e: '09:00')
+    records = Hash.new(0)
+    ActiveSupport::Notifications.subscribed(->(*args) { p = args.last; records[p[:class_name]] += p[:record_count] }, 'instantiation.active_record') do
+      get '/dates'
+    end
+    assert_response :success
+    assert_select '.event-results--hub', count: 1
+    assert_select '.event-results__card', count: 7
+    assert_select '.event-results__date-group', count: 2
+    assert_select '.event-results__days a', count: 5
+    assert_select '.event-results__shortcuts a[href="/dates/today"]'
+    assert_select '.event-results__shortcuts a[href="/dates/tomorrow"]'
+    assert_select '.schedule_item_wrap, .e_header_wrap', count: 0
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, morning)}'] .status-open", text: '募集中'
+    assert_equal 0, records['NameSchedule']
+    assert_not response.body.include?('過去の活動'), 'Past activities must not appear in the upcoming hub'
+    assert_select 'link[rel="canonical"][href="https://circle-book.com/dates"]'
+    assert_select 'meta[name="robots"][content*="noindex"]', count: 0
+  end
+
+  test 'hub filters preserve canonical URLs and date input opens the corresponding day' do
+    query = { event: @circle.event.ruby, pref: @circle.prefecture.kana }
+    get '/dates', params: query.merge(utm_source: 'test')
+    assert_response :success
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates?' + query.to_query
+    assert_select 'h1', text: /東京都のバスケ/
+    assert_select 'form[method="get"][action="/dates"] input[type="date"][name="date"]'
+    get '/dates', params: query.merge(date: '2026-10-14')
+    assert_redirected_to '/dates/2026/10/14?' + query.to_query
+    follow_redirect!
+    assert_select '.event-results__text h3', text: '明日のバスケ'
+    assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { date: '2026-02-30' } }
+    assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { page: '-1' } }
+    assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { event: 'not-found' } }
+  end
+
+  test 'hub pagination and hidden circles preserve complete bounded result pages' do
+    30.times { |i| activity("来週の活動#{i}", day: '2026-10-20') }
+    get '/dates', params: { page: 2 }
+    assert_response :success
+    assert_select '.event-results__card', count: 16
+    assert_select 'link[rel="canonical"][href="https://circle-book.com/dates?page=2"]'
+    @circle.update_columns(publication_status: 'draft')
+    get '/dates'
+    assert_response :success
+    assert_select '.event-results__card', count: 0
+    assert_select 'meta[name="robots"][content*="noindex"]'
+    assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { page: 2 } }
+  end
+
   test 'missing photos use existing sport images and category fallback across result pages' do
     @circle.update!(recruitment: '初心者歓迎')
     @circle.event.update!(ruby: 'basketball', txt: 'バスケサークル')
@@ -26,7 +78,7 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_select '.event-results__image[src="/images/events/basketball.jpg"]', count: 5
     assert_not_includes response.body, '/images/default.png'
     get '/dates'
-    assert_select 'img[data-src="/images/events/basketball.jpg"]', minimum: 1
+    assert_select '.event-results__image[src="/images/events/basketball.jpg"]', minimum: 1
     get user_schedule_path(@circle, @open)
     assert_select '.schedule_top_image > img.top_img[src="/images/events/basketball.jpg"]', count: 1
 
