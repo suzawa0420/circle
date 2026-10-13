@@ -20,7 +20,7 @@
                 .add_schedule_btn
                   = lucide_icon "calendar-plus"
                   活動日を追加する
-      = render "/schedules/schedule_list"
+      = render "/schedules/calendar_list", calendar: @calendar
 / text copy 01
 :javascript
   function copyText () {
@@ -34,7 +34,8 @@
     alert('コピーしました！');
     return false;
   }
-    document.querySelector('.copyBtn01').addEventListener('click', copyText, false);
+    var copyButton01 = document.querySelector('.copyBtn01');
+    if (copyButton01) { copyButton01.addEventListener('click', copyText, false); }
 / text copy 02
 :javascript
   function copyText () {
@@ -48,4 +49,5 @@
     alert('コピーしました！');
     return false;
   }
-    document.querySelector('.copyBtn02').addEventListener('click', copyText, false);
+    var copyButton02 = document.querySelector('.copyBtn02');
+    if (copyButton02) { copyButton02.addEventListener('click', copyText, false); }

@@ -1,0 +1,63 @@
+<div class="schedule-calendar-page">
+  <section id="schedule-calendar" class="schedule-calendar" aria-label="月間活動カレンダー">
+    <div class="schedule-calendar__month">
+      <% if calendar.month > Date.new(1900, 1, 1) %>
+        <%= link_to user_schedules_path(@user, month: (calendar.month - 1.month).strftime('%Y-%m'), anchor: 'schedule-calendar'), class: 'schedule-calendar__arrow schedule-calendar__previous', aria: { label: '前の月' } do %><%= lucide_icon 'chevron-right' %><% end %>
+      <% else %><span></span><% end %>
+      <h2><%= calendar.month.strftime('%Y年 %-m月') %></h2>
+      <% if calendar.month < Date.new(2100, 12, 1) %>
+        <%= link_to user_schedules_path(@user, month: (calendar.month + 1.month).strftime('%Y-%m'), anchor: 'schedule-calendar'), class: 'schedule-calendar__arrow', aria: { label: '次の月' } do %><%= lucide_icon 'chevron-right' %><% end %>
+      <% else %><span></span><% end %>
+    </div>
+    <% if calendar.month != calendar.today.beginning_of_month %>
+      <div class="schedule-calendar__current"><%= link_to '今月に戻る', user_schedules_path(@user, anchor: 'schedule-calendar') %></div>
+    <% end %>
+    <div class="schedule-calendar__grid">
+      <% SchedulesHelper::SCHEDULE_WEEKDAYS.each do |weekday| %><span class="schedule-calendar__weekday"><%= weekday %></span><% end %>
+      <% calendar.month.wday.times do %><span aria-hidden="true"></span><% end %>
+      <% (calendar.month..calendar.month.end_of_month).each do |date| %>
+        <% schedules = calendar.by_day.fetch(date, []) %>
+        <% classes = ['schedule-calendar__day', ('is-today' if date == calendar.today), ('is-past' if date < calendar.today), ('is-selected' if date == calendar.selected_date)].compact.join(' ') %>
+        <% if schedules.any? %>
+          <% statuses = schedules.map { |schedule| calendar_schedule_status(schedule, calendar) } %>
+          <%= link_to user_schedules_path(@user, month: calendar.month.strftime('%Y-%m'), date: date.iso8601, anchor: 'activity-list'), class: "#{classes} has-activities", aria: { label: "#{calendar_schedule_date(date)} #{schedules.size}件 #{statuses.map { |status| status[:label] }.uniq.join('、')}", current: (date == calendar.selected_date ? 'date' : nil) } do %>
+            <span class="schedule-calendar__number"><%= date.day %></span>
+            <span class="schedule-calendar__marks" aria-hidden="true"><% statuses.first(2).each do |status| %><span class="status-<%= status[:key] %>"><%= status[:mark] %></span><% end %><% if statuses.size > 2 %><small>+<%= statuses.size - 2 %></small><% end %></span>
+          <% end %>
+        <% else %>
+          <span class="<%= classes %>" <%= 'aria-current="date"'.html_safe if date == calendar.today %>><span class="schedule-calendar__number"><%= date.day %></span><span class="schedule-calendar__none" aria-hidden="true">・</span></span>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="schedule-calendar__legend"><span>○ 募集中</span><span>△ 残りわずか</span><span>満 満員</span><span>× 中止</span><span>済 開催終了</span><span>・活動なし</span></div>
+    <p class="schedule-calendar__hint">活動日をタップすると、その日の予定を表示</p>
+  </section>
+
+  <section id="activity-list" aria-labelledby="activity-list-title">
+    <div class="schedule-calendar__list-heading">
+      <h2 id="activity-list-title"><%= calendar.selected_date ? calendar_schedule_date(calendar.selected_date) : "#{calendar.month.month}月の活動一覧" %></h2>
+      <% if calendar.selected_date %><%= link_to '月の一覧に戻す', user_schedules_path(@user, month: calendar.month.strftime('%Y-%m'), anchor: 'activity-list') %><% end %>
+    </div>
+    <p class="schedule-calendar__count"><%= calendar.visible.size %>件の予定<%= '（本日以降）' if !calendar.selected_date && calendar.month == calendar.today.beginning_of_month %></p>
+    <% if calendar.visible.empty? %>
+      <p class="schedule-calendar__empty"><%= calendar.selected_date ? 'この日の活動予定はありません。' : 'この月の活動予定はありません。' %></p>
+      <% next_schedule = @schedules.where('day > ?', calendar.month.end_of_month.iso8601).first unless calendar.selected_date %>
+      <% if next_schedule %><%= link_to "次の活動予定（#{calendar_schedule_date(Date.iso8601(next_schedule.day))}）を見る", user_schedules_path(@user, month: next_schedule.day.first(7), anchor: 'schedule-calendar'), class: 'schedule-calendar__next' %><% end %>
+    <% end %>
+    <div class="schedule-calendar__events"><%= render partial: 'schedules/calendar_event', collection: calendar.visible, as: :schedule, locals: { calendar: calendar } %></div>
+  </section>
+
+  <section id="past-activities" class="schedule-calendar__archive" aria-label="過去の活動">
+    <% if calendar.past_page %>
+      <h2>過去に開催したスケジュール</h2>
+      <%= link_to '過去の一覧を閉じる', user_schedules_path(@user, month: calendar.month.strftime('%Y-%m'), date: calendar.selected_date&.iso8601, anchor: 'past-activities'), class: 'schedule-calendar__close' %>
+      <% if calendar.past.empty? %><p class="schedule-calendar__empty">過去のスケジュールはありません。</p><% end %>
+      <%= render partial: 'schedules/calendar_event', collection: calendar.past, as: :schedule, locals: { calendar: calendar } %>
+      <%= paginate calendar.past_page, params: { past: '1', anchor: 'past-activities' } %>
+    <% else %>
+      <%= link_to user_schedules_path(@user, month: calendar.month.strftime('%Y-%m'), date: calendar.selected_date&.iso8601, past: '1', anchor: 'past-activities'), class: 'schedule-calendar__archive-link' do %><%= lucide_icon 'clock' %><span>過去に開催したスケジュールを見る</span><%= lucide_icon 'chevron-right' %><% end %>
+    <% end %>
+  </section>
+</div>
+<%= render '/layouts/ad_square' %>
+<div class="ad_space"></div>

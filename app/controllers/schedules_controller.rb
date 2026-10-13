@@ -10,6 +10,8 @@ before_action :set_dates, {only: [:dates, :day]}
 
 	def index
 		@schedule = @user.schedules.build
+    @calendar = ScheduleCalendarData.new(user: @user, month: params[:month], date: params[:date],
+      past: params[:past] == '1' || params[:page].present?, page: params[:page])
 
 		@b1_name = @user.name
 		@b1_url = "/users/#{@user.id}"
