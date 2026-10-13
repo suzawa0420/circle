@@ -45,6 +45,65 @@ jobs:
             /opt/circle/node-v24.21.0-linux-x64/bin/node --version
             systemctl is-active circle-puma nginx
             git rev-parse --short HEAD
+      - name: Diagnose public routes without raw logs or exception messages
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
+        with:
+          host: ${{ matrix.host }}
+          fingerprint: ${{ matrix.fingerprint }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 5m
+          script: |
+            set -eu
+            cd /var/www/circle
+            export PATH=/opt/circle/ruby-3.4.11/bin:$PATH RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true
+            revision=$(git rev-parse HEAD)
+            printf '::notice title=Schedule diagnostic::revision=%s\n' "$revision"
+            for path in /health /dates/2026/10/17 /dates/today /dates/tomorrow; do
+              status=$(curl --unix-socket /var/www/circle/tmp/sockets/unicorn.sock -s --max-time 30 -o /dev/null -w '%{http_code}' -H 'Host: circle-book.com' -H 'X-Forwarded-Proto: https' "http://localhost$path") || status=000
+              printf '::notice title=Schedule diagnostic::path=%s status=%s\n' "$path" "$status"
+            done
+            diagnostic=$(mktemp /tmp/circle-schedule-diagnostic.XXXXXX.rb)
+            trap 'rm -f "$diagnostic"' EXIT
+            cat > "$diagnostic" <<'RUBY'
+            require 'stringio'
+            original_output = $stdout
+            $stdout = StringIO.new
+            emit = lambda do |value|
+              original_output.puts "::notice title=Schedule diagnostic::#{value}"
+              original_output.flush
+            end
+            begin
+              require File.join(Dir.pwd, 'config/environment')
+              Rails.logger = ActiveSupport::Logger.new(File::NULL)
+              Rails.application.env_config['action_dispatch.show_exceptions'] = :none
+              session = ActionDispatch::Integration::Session.new(Rails.application)
+              session.host! 'circle-book.com'
+              session.https!
+              ['/health', '/dates/2026/10/17', '/dates/today', '/dates/tomorrow'].each do |path|
+                begin
+                  session.get(path)
+                  emit.call("fresh_path=#{path} status=#{session.response.status}")
+                rescue StandardError => error
+                  klass = error.class.name
+                  emit.call("error_class=#{klass}") if klass.match?(/\A[A-Za-z:]+\z/)
+                  error.backtrace.to_a.first(12).each do |frame|
+                    match = frame.match(%r{\A/var/www/circle/((?:app|lib)/[A-Za-z0-9_./-]+:[0-9]+)})
+                    emit.call("source=#{match[1]}") if match
+                  end
+                  if error.cause && error.cause.class.name.match?(/\A[A-Za-z:]+\z/)
+                    emit.call("cause_class=#{error.cause.class.name}")
+                  end
+                end
+              end
+            rescue StandardError => error
+              klass = error.class.name
+              emit.call("boot_error_class=#{klass}") if klass.match?(/\A[A-Za-z:]+\z/)
+              exit 1
+            end
+            RUBY
+            bundle exec ruby "$diagnostic" 2>/dev/null
   checks:
     if: inputs.target != 'check-al2023'
     uses: ./.github/workflows/runtime_upgrade.yml
@@ -111,21 +170,3 @@ jobs:
           script: |
             set -eu
             bash /var/www/circle/ops/al2023/deploy.sh activate "$DEPLOY_SHA" "${{ matrix.server }}"
-  publish-sitemap:
-    needs: activate
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Publish populated canonical URLs after both servers are ready
-        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
-        with:
-          host: 18.176.169.209
-          fingerprint: SHA256:5yMF6WivFltL/XBEmk8sCKgIVr3zYRArbaPfIJFfKO4
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          command_timeout: 35m
-          script: |
-            set -eu
-            sudo -n systemctl start circle-sitemap.service
-            test "$(systemctl show circle-sitemap.service --property Result --value)" = success
-            printf 'Public sitemap refresh succeeded\n'
