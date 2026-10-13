@@ -20,6 +20,7 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
   end
 
   test 'public detail keeps every related upcoming date and aggregates accepted answers without loading them' do
+    @future.first.update!(note: '関連一覧に表示しない本文')
     records = Hash.new(0)
     queries = []
     listener = ->(*args) { payload = args.last; records[payload[:class_name]] += payload[:record_count] }
@@ -34,7 +35,13 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
     @past.first(5).each { |schedule| assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, schedule)}']", count: 1 }
     @past.drop(5).each { |schedule| assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, schedule)}']", count: 0 }
     assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, @current)}']", count: 0
-    assert_select '.schedule_list .schedule_member', text: /参加人数：2/, count: 17
+    assert_select '.event-results__card .event-results__capacity', text: /参加人数：2/, count: 17
+    assert_select '.schedule-detail__related .event-results__card', count: 17
+    assert_select '.schedule-detail__related .event-results__image', count: 17
+    assert_select '.schedule-detail__related .event-results__text h4', text: @future.first.title
+    assert_select '.schedule-detail__related .event-results__time', text: /#{Regexp.escape(SchedulesController.helpers.calendar_schedule_date(Date.current + 1))}/
+    assert_select '.schedule-detail__related .status-ended', count: 5
+    assert_not response.body.include?('関連一覧に表示しない本文'), 'Related activity bodies must not be rendered'
     assert_equal 0, records['NameSchedule'], 'Participant rows and comments must not be loaded for counts'
     assert_equal 1, queries.count { |sql| sql.include?('GROUP BY "name_schedules"."schedule_id"') }
   end
@@ -44,7 +51,7 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
     assert_response :success
     @future.each { |schedule| assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, schedule)}']", count: 0 }
     @past.drop(5).each { |schedule| assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, schedule)}']", count: 1 }
-    assert_select '.schedule_list .schedule_member', text: /参加人数：2/, count: 3
+    assert_select '.event-results__card .event-results__capacity', text: /参加人数：2/, count: 3
   end
 
   test 'excluding the viewed past schedule does not move the pagination boundary' do
@@ -57,6 +64,24 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
     assert_equal 2, listing.past_page.total_pages
     assert listing.past.none? { |schedule| schedule.has_attribute?(:note) || schedule.has_attribute?(:member_venue) }
     assert_equal [2], listing.past.map { |schedule| listing.accepted_count(schedule) }.uniq
+  end
+
+  test 'related cards preserve uploaded images with their cache version and shared status display' do
+    uploaded = @future.first
+    File.open(Rails.root.join('public/images/events/basketball.jpg')) do |file|
+      uploaded.top_image = file
+      uploaded.save!
+    end
+    @future[1].update!(recruitment: '中止')
+    @future[2].update!(recruitment: '募集終了')
+    get user_schedule_path(@circle, @current)
+    assert_response :success
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, uploaded)}'] img[src=?]", uploaded.top_image.url
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, @future[1])}'] .status-cancelled", text: '中止'
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, @future[2])}'] .status-full", text: '満員'
+    assert_select '.schedule-detail__related .status-few', count: 10
+  ensure
+    uploaded&.top_image&.remove!
   end
 
   private

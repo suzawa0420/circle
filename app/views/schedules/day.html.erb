@@ -32,18 +32,7 @@
         <% @schedules.each_with_index do |schedule, index| %>
           <% key, label = @day_listing.status(schedule) %>
           <li>
-            <%= link_to user_schedule_path(schedule.user_id, schedule.id), class: 'event-results__card' do %>
-              <div class="event-results__card-top"><span><%= schedule.user.event&.name %></span><span class="event-results__status status-<%= key %>"><%= label %></span></div>
-              <div class="event-results__body">
-                <div class="event-results__text">
-                  <h3><%= schedule.title.presence || "#{schedule.user.event&.name}の活動" %></h3>
-                  <p class="event-results__time"><%= lucide_icon 'clock' %><%= calendar_schedule_time(schedule) %></p>
-                  <p class="event-results__location"><%= lucide_icon 'map-pin' %><%= [schedule.user.prefecture&.name, schedule.venue.presence].compact.join('・') %></p>
-                </div>
-                <%= image_tag(schedule_image_source(schedule), alt: '', width: 76, height: 76, loading: index.zero? ? 'eager' : 'lazy', class: 'event-results__image') %>
-              </div>
-              <div class="event-results__card-bottom"><span><%= schedule.recruitment_numbers.to_i.positive? ? "募集人数 #{schedule.recruitment_numbers}名" : '詳細で参加条件を確認' %></span><span>詳細を見る <%= lucide_icon 'chevron-right' %></span></div>
-            <% end %>
+            <%= render 'schedules/event_card', schedule: schedule, user: schedule.user, status: { key: key, label: label }, eager: index.zero? %>
           </li>
         <% end %>
       </ul>

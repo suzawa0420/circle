@@ -3,18 +3,19 @@
 # or large schedule bodies just to display a date, title and participant count.
 class ScheduleListingData
   COLUMNS = %i[id user_id day time_s time_e recruitment recruitment_numbers venue title].freeze
+  CARD_COLUMNS = (COLUMNS + %i[top_image updated_at]).freeze
 
   attr_reader :past_page
 
   def initialize(upcoming:, past:, excluded_id:, show_upcoming:)
     @upcoming_relation = upcoming
-    @past_page = past.select(*COLUMNS)
+    @past_page = past.select(*CARD_COLUMNS)
     @excluded_id = excluded_id
     @show_upcoming = show_upcoming
   end
 
   def upcoming
-    @upcoming ||= @show_upcoming ? visible(@upcoming_relation.select(*COLUMNS)) : []
+    @upcoming ||= @show_upcoming ? visible(@upcoming_relation.select(*CARD_COLUMNS)) : []
   end
 
   def past

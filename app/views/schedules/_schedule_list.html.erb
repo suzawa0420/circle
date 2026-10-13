@@ -1,0 +1,16 @@
+<% listing = ScheduleListingData.new(upcoming: @schedules, past: @past_schedules, excluded_id: @schedule.id, show_upcoming: params[:page].nil?) %>
+<% [[listing.upcoming, false], [listing.past, true]].each do |schedules, past| %>
+  <% next if schedules.empty? %>
+  <% if past %><h3 class="past_schedule">開催が終了したスケジュール</h3><% end %>
+  <% schedules.group_by { |schedule| schedule.day[0, 7] }.each do |month, entries| %>
+    <% date = Date.iso8601("#{month}-01") %>
+    <h3 class="schedule_m"><%= lucide_icon 'calendar-days' %><%= date.year %>年<%= date.month %>月のスケジュール</h3>
+    <ul class="schedule_list_wrap event-results__list">
+      <% entries.each do |schedule| %>
+        <% accepted_count = listing.accepted_count(schedule) %>
+        <li><%= render 'schedules/event_card', schedule: schedule, user: @user, status: public_schedule_status(schedule, accepted_count: accepted_count), accepted_count: accepted_count, show_date: true, heading_tag: :h4 %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if past %><%= paginate listing.past_page %><% end %>
+<% end %>
