@@ -68,6 +68,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261010000000
     # Align stored scores with delivered, reported first inquiries only.
     bundle exec rails db:migrate:up VERSION=20261010010000
+    # Public keyword searches: avoid profile-HTML checks in ordered scans.
+    bundle exec rails db:migrate:up VERSION=20261013020000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

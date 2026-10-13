@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_10_010000) do
+ActiveRecord::Schema.define(version: 2026_10_13_020000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -802,6 +802,8 @@ ActiveRecord::Schema.define(version: 2026_10_10_010000) do
     t.index ["switch", "last_post"], name: "index_users_on_switch_and_last_post_desc", order: { last_post: :desc }
     t.index ["switch", "cb_point", "last_post"], name: "index_users_on_switch_popularity_and_last_post", order: { cb_point: :desc, last_post: :desc }
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+    t.index ["switch", "created_at"], name: "index_users_public_on_switch_created_at", order: { created_at: :desc }, where: "(((publication_status)::text = 'published'::text) AND ((moderation_status)::text = 'clear'::text) AND ((ng_account IS NULL) OR ((ng_account)::text = 'OK'::text)) AND ((regexp_replace((COALESCE(name, ''::character varying))::text, '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text) OR (regexp_replace(COALESCE(appeal, ''::text), '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text)))"
+    t.index ["switch", "last_post"], name: "index_users_public_on_switch_last_post", order: { last_post: :desc }, where: "(((publication_status)::text = 'published'::text) AND ((moderation_status)::text = 'clear'::text) AND ((ng_account IS NULL) OR ((ng_account)::text = 'OK'::text)) AND ((regexp_replace((COALESCE(name, ''::character varying))::text, '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text) OR (regexp_replace(COALESCE(appeal, ''::text), '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text)))"
     t.jsonb "moderation_reasons", default: [], null: false
     t.datetime "moderation_checked_at"
   end
