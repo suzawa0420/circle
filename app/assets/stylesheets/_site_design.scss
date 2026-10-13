@@ -231,9 +231,6 @@
   .chat-talk { min-width: 0; }
   .chat-talk__meta { max-width: 64px; }
   .chat-talk-list:empty { display: none; }
-  .pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: cb-space(2); margin: cb-space(6) 0; }
-  .pagination > span > a, .pagination > span.current { display: inline-flex; align-items: center; justify-content: center; min-width: $cb-touch-height; min-height: $cb-touch-height; padding: cb-space(2); border-radius: $cb-radius-control; }
-  .pagination .current { background: $cb-action; color: $cb-surface; }
   .footer_wrap { font-size: 12px; border-top-color: $cb-border; }
   .footer_wrap .footer_links { display: flex; flex-wrap: wrap; justify-content: center; gap: cb-space(2) cb-space(4); }
   .footer_wrap .footer_links a { min-height: $cb-touch-height; display: inline-flex; align-items: center; font-size: 12px; }
