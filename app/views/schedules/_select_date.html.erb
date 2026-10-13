@@ -1,0 +1,9 @@
+<% filter_query = { event: @event&.ruby.presence, pref: @prefecture&.kana.presence }.compact.reject { |_, value| value == 'nil' } %>
+<section class="event-results event-results--hub event-date-search" aria-label="日付からイベントを探す">
+  <h2><%= lucide_icon 'calendar-days' %>日付からイベントを探す</h2>
+  <%= render 'schedules/event_date_navigation', date: Time.current.in_time_zone('Tokyo').to_date, filter_query: filter_query %>
+  <%= form_with url: dates_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
+    <% filter_query.each do |key, value| %><%= form.hidden_field key, value: value %><% end %>
+    <%= render 'schedules/event_date_input', form: form %>
+  <% end %>
+</section>

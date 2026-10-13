@@ -16,6 +16,9 @@
     = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
       = lucide_icon "search", **{ "aria-hidden" => "true" }
       %span サークル検索
+    = link_to dates_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'schedules' && %w[dates day today tomorrow this_week next_week].include?(action_name)}" do
+      = lucide_icon "calendar-days", **{ "aria-hidden" => "true" }
+      %span イベント検索
     = render "layouts/mobile_message_link"
     = link_to member_path(current_member, anchor: "favorites"), class: "mobile-bottom-nav__item cb-participant" do
       = lucide_icon "bookmark", **{ "aria-hidden" => "true" }
@@ -24,6 +27,9 @@
     = link_to circles_path, class: "mobile-bottom-nav__item #{'is-active' if @path == 'circles/circles#index'}" do
       = lucide_icon "search", **{ "aria-hidden" => "true" }
       %span サークル検索
+    = link_to dates_path, class: "mobile-bottom-nav__item #{'is-active' if controller_path == 'schedules' && %w[dates day today tomorrow this_week next_week].include?(action_name)}" do
+      = lucide_icon "calendar-days", **{ "aria-hidden" => "true" }
+      %span イベント検索
     = link_to login_path, class: "mobile-bottom-nav__item mobile-bottom-nav__item--register" do
       = lucide_icon "user-round-plus", **{ "aria-hidden" => "true" }
       %span 無料登録・ログイン
@@ -44,6 +50,7 @@
     .mobile-menu-panel__group
       %strong 探す
       = link_to "サークルを探す", circles_path
+      = link_to "イベントを探す", dates_path
       = link_to "活動ブログを探す", blogs_path
       = link_to "対戦相手を探す", matches_path
       = link_to "コート・体育館", "/places"

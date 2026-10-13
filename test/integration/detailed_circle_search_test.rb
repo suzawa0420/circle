@@ -32,6 +32,27 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'circle date selection shares event controls and preserves selected event and area' do
+    travel_to Time.zone.local(2026, 10, 13, 12) do
+      get event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana)
+      query = { event: @circle.event.ruby, pref: @circle.prefecture.kana }
+      assert_response :success
+      assert_select '.date_list_wrap', count: 0
+      assert_select '.event-date-search .event-results__days a', count: 5
+      assert_select '.event-date-search .event-results__days a:first-child', text: /10\/13.*火/m
+      assert_select '.event-date-search a[href=?]', '/dates/2026/10/13?' + query.to_query
+      assert_select '.event-date-search a[href=?]', '/dates/this_week?' + query.to_query
+      assert_select '.event-date-search form[method=get][action="/dates"]' do
+        assert_select 'input[type=date][name=date]', count: 1
+        assert_select 'input[type=hidden][name=event][value=?]', @circle.event.ruby
+        assert_select 'input[type=hidden][name=pref][value=?]', @circle.prefecture.kana
+        assert_select 'input[type=submit][value="検索する"]'
+      end
+      get '/dates'
+      assert_select '.event-results__days a:first-child', text: /10\/13.*火/m
+    end
+  end
+
   test 'filters combine dimensions and retain selections without creating keyword records' do
     count = DbKeyword.count
     get circles_search_index_path, params: { detailed: '1', event_id: @circle.event.id, prefecture_id: @circle.prefecture.id,

@@ -11,6 +11,7 @@ class PublicListingStyles
     app/views/circles/events/**/*.haml app/views/circles/prefectures/**/*.haml
     app/views/circles/tags/**/*.haml app/views/tags/*.haml
     app/views/users/_users_list* app/helpers/* app/assets/javascripts/mobile_navigation.js
+    app/views/schedules/_event_date* app/views/schedules/_select_date*
   ].freeze
   # Kaminari generates these classes outside application templates.
   GENERATED_CLASSES = %w[pagination page current gap next prev first last disabled
@@ -23,7 +24,7 @@ class PublicListingStyles
     root = Rails.root
     files = SOURCE_GLOBS.flat_map { |glob| Dir[root.join(glob)] }.select { |path| File.file?(path) }.sort
     files.each { |path| context.depend_on(path) }
-    %w[app/views/circles app/views/layouts app/views/shared app/views/tags app/views/users app/helpers app/assets/javascripts].each do |directory|
+    %w[app/views/circles app/views/layouts app/views/shared app/views/tags app/views/users app/views/schedules app/helpers app/assets/javascripts].each do |directory|
       ([root.join(directory).to_s] + Dir[root.join(directory, '**/')]).uniq.each { |path| context.depend_on(path) }
     end
     context.depend_on(__FILE__)

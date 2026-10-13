@@ -476,3 +476,7 @@
   padding: 10px 0;
   font-size: 14px;
 }
+
+@media only screen and (max-width: 767px) {
+  .mobile-bottom-nav__item--register > span { max-width: 100%; padding: 0 2px; white-space: normal; font-size: 11px; }
+}

@@ -19,7 +19,7 @@
   &__filters select { display: block; box-sizing: border-box; width: 100%; min-width: 0; height: 44px; margin: 5px 0 0; background: #fff; border: 1px solid #cddbd4; border-radius: 6px; padding: 6px; color: #284a3e; font-size: 16px; }
   &__filters input[type="date"] { display: block; box-sizing: border-box; -webkit-appearance: none; appearance: none; width: 100%; max-width: 100%; min-width: 0; height: 44px; min-height: 44px; margin: 5px 0 0; padding: 8px 10px; border: 1px solid #cddbd4; border-radius: 6px; background: #fff; color: #284a3e; font-size: 16px; line-height: 24px; text-align: left; }
   &__filters input[type="date"]::-webkit-date-and-time-value { min-height: 24px; text-align: left; }
-  &__filters input[type="submit"] { display: block; box-sizing: border-box; -webkit-appearance: none; appearance: none; align-self: end; width: 100%; min-width: 0; height: 44px; min-height: 44px; margin: 0; padding: 8px 12px; border: 0; border-radius: 6px; background: #187f60; color: #fff; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer; }
+  &__filters input[type="submit"], .cb-site & &__filters input[type="submit"]:not(.search_area) { display: block; box-sizing: border-box; -webkit-appearance: none; appearance: none; align-self: end; width: 100%; min-width: 0; height: 44px; min-height: 44px; margin: 0; padding: 8px 12px; border: 0; border-radius: 6px; background: #187f60; color: #fff; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer; }
   &--hub &__date-field, &--hub &__filters input[type="submit"] { grid-column: 1 / -1; }
   &__summary { margin: 22px 0 12px; }
   &__summary h2 { font-size: 14px; margin: 0; font-weight: 500; }
@@ -57,3 +57,11 @@
   @media (max-width: 360px) { &__days a { font-size: 16px; } }
 }
 .event-day-discovery { display: flex; justify-content: center; gap: 20px; padding: 18px; }
+
+.event-results.event-date-search { padding: 16px 0 0; background: transparent; }
+.event-date-search > h2 { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; }
+@media (min-width: 700px) {
+  .event-date-search .event-results__filters { grid-template-columns: minmax(0, 1fr) minmax(0, .6fr); }
+}
+
+@media (max-width: 360px) { .event-date-search .event-results__days a { font-size: 14px; } }

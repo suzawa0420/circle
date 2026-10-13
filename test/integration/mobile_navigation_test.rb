@@ -7,6 +7,23 @@ class MobileNavigationTest < ActionDispatch::IntegrationTest
 
   setup { create_chat_records }
 
+  test 'public event discovery follows circle search in navigation and menus' do
+    get '/dates'
+    assert_response :success
+    assert_select '.mobile-bottom-nav > a', count: 3
+    assert_select '.mobile-bottom-nav > a:nth-child(2)[href="/dates"].is-active', text: /イベント検索/ do
+      assert_select 'svg', count: 1
+    end
+    assert_select '#mobile-menu-dialog .mobile-menu-panel__group:first-child > a' do |links|
+      assert_equal [circles_path, dates_path, blogs_path], links.first(3).map { |link| link['href'] }
+    end
+    assert_select '.circle-desktop-menu__links > a' do |links|
+      assert_equal [circles_path, dates_path, blogs_path], links.first(3).map { |link| link['href'] }
+    end
+    get '/dates/this_week'
+    assert_select '.mobile-bottom-nav > a[href="/dates"].is-active'
+  end
+
   test 'owner navigation prioritizes messages, schedules and blog posting' do
     login(@owner)
     get conversations_path
@@ -26,8 +43,9 @@ class MobileNavigationTest < ActionDispatch::IntegrationTest
     login(@member)
     get conversations_path
     assert_select ".mobile-bottom-nav > a:nth-child(1)[href='#{circles_path}']", text: 'サークル検索'
-    assert_select '.mobile-bottom-nav > a:nth-child(2)', text: 'メッセージ'
-    assert_select ".mobile-bottom-nav > a:nth-child(3)[href='#{member_path(@member, anchor: 'favorites')}']", text: 'お気に入り'
+    assert_select '.mobile-bottom-nav > a:nth-child(2)[href="/dates"]', text: /イベント検索/
+    assert_select '.mobile-bottom-nav > a:nth-child(3)', text: 'メッセージ'
+    assert_select ".mobile-bottom-nav > a:nth-child(4)[href='#{member_path(@member, anchor: 'favorites')}']", text: 'お気に入り'
     assert_select '.mobile-bottom-nav > button', text: 'メニュー'
     assert_select '.mobile-bottom-nav__badge', count: 0
     accept_conversation

@@ -11,6 +11,14 @@ class PublicListingStylesTest < ActiveSupport::TestCase
     assert_match(/\.cb-sort__item\.is-selected\{[^}]*background:/, css)
   end
 
+  test 'compiled listing asset retains shared event date controls' do
+    css = Rails.application.assets.find_asset('public_listing.css').to_s
+    assert_match(/\.event-results__days\{[^}]*display:\s*grid/, css)
+    assert_match(/\.event-results__filters\{[^}]*display:\s*grid/, css)
+    assert_match(/\.event-results__filters input\[type=["']?date["']?\]\{[^}]*height:\s*44px/, css)
+    assert_includes css, '.event-date-search'
+  end
+
   test 'retains responsive rules aliases pseudo states and important declarations' do
     input = '@font-face{font-family:icon;src:url(icon.woff2)}' \
       '@media(min-width:768px){.used:hover,.unused{color:red!important}.editor{padding:1px}}' \
