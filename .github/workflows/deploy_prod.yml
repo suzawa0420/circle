@@ -11,7 +11,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: circle-production
+  group: circle-event-results-diagnostic
   cancel-in-progress: false
 jobs:
   verify-al2023:
