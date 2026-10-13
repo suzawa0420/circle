@@ -1,0 +1,17 @@
+<h1>リンク設置申請</h1>
+<nav class="wm-actions" aria-label="申請状況">
+  <% BacklinkRequest::STATUSES.each do |key, label| %>
+    <%= link_to "#{label}（#{BacklinkRequest.where(status: key).count}）", super_admin_backlink_requests_path(status: key), aria: { current: @status == key ? 'page' : nil } %>
+  <% end %>
+</nav>
+<h2><%= BacklinkRequest::STATUSES[@status] %></h2>
+<% if @requests.empty? %><p>該当する申請はありません。</p><% end %>
+<% @requests.each do |request| %>
+  <article class="wm-card">
+    <h2><%= link_to request.user.name, super_admin_backlink_request_path(request) %></h2>
+    <p>申請日時：<%= l request.submitted_at, format: :short %></p>
+    <p class="backlink-placement"><%= request.placement_url %></p>
+    <%= link_to '申請を確認する', super_admin_backlink_request_path(request) %>
+  </article>
+<% end %>
+<%= paginate @requests %>

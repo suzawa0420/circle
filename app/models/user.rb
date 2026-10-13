@@ -71,6 +71,7 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  has_one :backlink_request, dependent: :destroy
   def unanswered_report_count
     Conversation.reported_unanswered.where(user_id: id).count
   end

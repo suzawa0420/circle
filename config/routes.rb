@@ -174,6 +174,10 @@ Rails.application.routes.draw do
 	resources :matches, except: [:new, :create]
 	resources :links, except: [:new, :create, :show]
 
+  resources :circles, only: [] do
+    resource :backlink_request, only: [:show, :create]
+  end
+
   # Webmaster
   resources :invalid_emails, only: [:index, :create, :destroy]
   # resources :db_searches, only: [:index]
@@ -193,6 +197,7 @@ Rails.application.routes.draw do
 
   # 管理画面（SuperAdmin）
   namespace :super_admin do
+    resources :backlink_requests, only: [:index, :show, :update]
     resource :bulk_owner_deletion, only: [:create, :destroy]
     resources :accounts, only: [:index, :show, :update] do
       get :confirm, on: :member

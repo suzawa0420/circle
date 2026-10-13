@@ -1,0 +1,30 @@
+<%= link_to '申請一覧へ戻る', super_admin_backlink_requests_path %>
+<h1>リンク設置申請の確認</h1>
+<div class="wm-card">
+  <% if @backlink_request.errors.any? %><p role="alert"><%= @backlink_request.errors.full_messages.join('。') %></p><% end %>
+  <h2><%= @backlink_request.user.name %></h2>
+  <p>状況：<strong><%= BacklinkRequest::STATUSES[@backlink_request.status] %></strong></p>
+  <p>申請日時：<%= l @backlink_request.submitted_at, format: :short %></p>
+  <p>掲載先：<%= link_to @backlink_request.placement_url, @backlink_request.placement_url, target: '_blank', rel: 'noopener noreferrer', class: 'backlink-placement' %></p>
+  <p>リンク先：<%= link_to backlink_destination(@backlink_request.user), backlink_destination(@backlink_request.user), target: '_blank', rel: 'noopener noreferrer' %></p>
+  <p>付与ポイント：10（サークルごとに1回）</p>
+  <% if @backlink_request.approved_at %><p>承認日時：<%= l @backlink_request.approved_at, format: :short %></p><% end %>
+  <% if @backlink_request.revoked_at %><p>取り消し日時：<%= l @backlink_request.revoked_at, format: :short %></p><% end %>
+  <% if @backlink_request.reviewed_by %><p>最終審査者：管理者 #<%= @backlink_request.reviewed_by_id %></p><% end %>
+  <% if @backlink_request.review_note.present? %><p>理由・連絡事項：<%= @backlink_request.review_note %></p><% end %>
+  <% if @backlink_request.status.in?(%w[pending approved]) %>
+    <p>掲載先を開き、このサークルへのバナーまたは文字リンクが公開されていることを確認してください。</p>
+    <%= form_with url: super_admin_backlink_request_path(@backlink_request), method: :patch, local: true do |f| %>
+      <%= f.label :review_note, '理由・連絡事項（主催者にも表示されます。差し戻し・取り消し時は必須）' %>
+      <%= f.text_area :review_note, value: @backlink_request.review_note, rows: 4, maxlength: 2000 %>
+      <div class="wm-actions">
+      <% if @backlink_request.status == 'pending' %>
+        <%= button_tag '承認して10ポイント付与', name: 'decision', value: 'approve', data: { confirm: '掲載内容を確認し、10ポイントを付与しますか？' } %>
+        <%= button_tag '差し戻す', name: 'decision', value: 'reject' %>
+      <% else %>
+        <%= button_tag '10ポイントの付与を取り消す', name: 'decision', value: 'revoke', data: { confirm: 'この特典の10ポイントを取り消しますか？' } %>
+      <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

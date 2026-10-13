@@ -1,0 +1,12 @@
+ja:
+  activerecord:
+    models:
+      backlink_request: リンク設置申請
+    attributes:
+      backlink_request:
+        user: サークル
+        user_id: サークル
+        placement_url: 掲載先URL
+        status: 申請状況
+        submitted_at: 申請日時
+        review_note: 理由・連絡事項

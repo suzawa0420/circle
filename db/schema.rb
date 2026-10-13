@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_13_020000) do
+ActiveRecord::Schema.define(version: 2026_10_13_100000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,23 @@ ActiveRecord::Schema.define(version: 2026_10_13_020000) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["member_id"], name: "index_applications_on_member_id"
+  end
+
+  create_table "backlink_requests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "placement_url", limit: 2048, null: false
+    t.string "status", default: "pending", null: false
+    t.text "review_note"
+    t.bigint "reviewed_by_id"
+    t.datetime "submitted_at", null: false
+    t.datetime "approved_at"
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reviewed_by_id"], name: "index_backlink_requests_on_reviewed_by_id"
+    t.index ["status", "submitted_at"], name: "index_backlink_requests_on_status_and_submitted_at"
+    t.index ["user_id"], name: "index_backlink_requests_on_user_id", unique: true
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'rejected'::character varying, 'revoked'::character varying]::text[])", name: "backlink_requests_status"
   end
 
   create_table "blogs", force: :cascade do |t|
@@ -836,6 +853,8 @@ ActiveRecord::Schema.define(version: 2026_10_13_020000) do
   end
 
   add_foreign_key "applications", "members"
+  add_foreign_key "backlink_requests", "users"
+  add_foreign_key "backlink_requests", "webmasters", column: "reviewed_by_id"
   add_foreign_key "blogs", "users"
   add_foreign_key "circle_activity_fingerprints", "users", on_delete: :cascade
   add_foreign_key "bookmarks", "members"

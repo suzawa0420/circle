@@ -1,0 +1,26 @@
+.backlink-page {
+  max-width: 720px; margin: 24px auto; padding: 28px 24px;
+  background: #fff; border: 1px solid #dce8e5; border-radius: 16px;
+  color: #263b36; line-height: 1.85;
+  h1 { font-size: 26px; line-height: 1.45; margin: 20px 0; font-weight: 700; }
+  h2 { font-size: 20px; margin: 0 0 16px; font-weight: 700; }
+  section { margin-top: 32px; }
+  p { margin: 12px 0; }
+  ol { padding-left: 24px; } li { list-style: decimal; padding: 5px 0; }
+  input[type=text], input[type=url], textarea {
+    display: block; width: 100%; padding: 14px; border: 1px solid #bccdc8;
+    border-radius: 8px; background: #f7faf9; font-size: 16px; color: #263b36;
+  }
+  textarea { resize: vertical; overflow-wrap: anywhere; }
+  label { display: block; }
+  .backlink-button {
+    display: block; width: 100%; padding: 14px; margin-top: 12px; text-align: center;
+    background: #16755f; color: #fff; border: 0; border-radius: 10px;
+    font-size: 16px; font-weight: 700; cursor: pointer; white-space: normal;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #263b36; outline-offset: 3px; }
+}
+.backlink-logo { border: 1px solid #e0e9e6; border-radius: 12px; padding: 24px; img { width: 100%; height: auto; } }
+.backlink-status { background: #edf7f3; border: 1px solid #bdddd0; border-radius: 10px; padding: 20px; }
+.backlink-placement { overflow-wrap: anywhere; word-break: break-word; }
+@media (max-width: 767px) { .backlink-page { margin: 16px 12px; padding: 24px 18px; h1 { font-size: 23px; } } }
