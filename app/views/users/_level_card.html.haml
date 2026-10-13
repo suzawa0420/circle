@@ -17,24 +17,18 @@
       %strong= "あと#{format('%.1f', status[:remaining])}"
   %progress.dashboard-level__progress{ max: 100, value: status[:progress], "aria-label" => status[:maximum] ? "最高レベル達成" : "次のレベルへの進捗" }
     = "#{status[:progress]}%"
-  %p.dashboard-level__description
-    - if status[:maximum]
-      同じレベルでは、対象となる活動が新しいサークルから表示されます。
-    - else
-      活動日の登録やブログの投稿、質問への回答、参加者からの高評価の口コミでレベルアップ。
-  .dashboard-level__ranking
-    %strong レベルが高いほど、人気順で上位に表示されやすくなります
-    %p 募集中などの掲載条件が同じ場合に優先されます。同じレベルでは、対象となる活動が新しい順です。
-  %p.dashboard-level__description
-    %strong まずは活動日を登録しましょう。
-    参加希望者は活動日を確認してから申し込むことが多いため、日程・場所を登録しておくと参加の予定を立てやすくなり、お問い合わせにつながりやすくなります。
-  .dashboard-level__actions
-    = link_to "活動日を追加", new_user_schedule_path(user), class: "dashboard-primary"
-    = link_to "ブログを書く", new_circle_blog_path(user), class: "dashboard-primary"
-  .dashboard-level__actions
-    = link_to "特別ポイントを獲得する（リンク設置で10ポイント）", circle_backlink_request_path(user), class: "dashboard-primary"
+  .dashboard-level__actions.dashboard-level__reward
+    = link_to "リンク設置で10ポイント獲得", circle_backlink_request_path(user), class: "dashboard-copy"
   %details.dashboard-level__guide
-    %summary レベルの上がり方
+    %summary
+      レベルの上がり方
+      = lucide_icon "chevron-down", **{ "aria-hidden" => "true" }
+    .dashboard-level__ranking
+      %strong レベルが高いほど、人気順で上位に表示されやすくなります
+      %p 掲載条件が同じ場合に優先され、同じレベルでは対象の活動が新しい順です。
+    %p.dashboard-level__description
+      %strong まずは活動日を登録しましょう。
+      日程・場所があると、参加希望者が予定を立てやすくなります。
     %p 合計が1増えると1レベル上がり、小数部分が次のレベルへの進捗になります。
     %ul
       %li スケジュール登録：0.1
@@ -48,7 +42,9 @@
 
   - if local_assigns[:breakdown].present?
     %details.dashboard-level__breakdown
-      %summary レベルの内訳を見る
+      %summary
+        ポイントの内訳を見る
+        = lucide_icon "chevron-down", **{ "aria-hidden" => "true" }
       %table
         %caption 現在の加算・減点の内訳
         %thead
@@ -72,8 +68,10 @@
       - elsif user.user_time.blank? || user.user_time.to_time <= Time.zone.now.ago(1.year)
         %p 直近1年の更新がないため、現在の合計は0です。サークル情報を更新すると投稿等の内訳が再反映されます。
   - if local_assigns.key?(:rivals)
-    .dashboard-level__rivals
-      %h3 ライバルサークル
+    %details.dashboard-level__rivals
+      %summary
+        ライバルサークルを見る
+        = lucide_icon "chevron-down", **{ "aria-hidden" => "true" }
       %p 同じ都道府県・種目で活動するサークルです。
       - if rivals.present?
         %ul

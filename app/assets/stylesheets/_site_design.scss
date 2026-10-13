@@ -548,3 +548,47 @@
   .cb-detailed-search__hint { @include cb-type(helper); margin: cb-space(3) 0; color: $cb-muted; }
   .cb-detailed-search__actions { display: flex; flex-wrap: wrap; gap: cb-space(2); }
 }
+
+// Keep everyday actions ahead of the optional level explanations.
+.cb-site .organizer-dashboard {
+  .mypage_wrap { padding-top: 14px; }
+  .dashboard-heading { margin-bottom: 12px; }
+  .dashboard-heading h1 { margin: 0; font-size: 22px; }
+  .dashboard-circle { padding: 14px; }
+  .dashboard-circle__top { flex-wrap: wrap; gap: 10px; }
+  .dashboard-circle__information { flex-basis: 100%; }
+  .dashboard-circle__tools { width: 100%; flex-direction: row; gap: 8px; }
+  .dashboard-circle__tools .dashboard-copy { width: auto; min-height: 40px; padding: 7px 10px; }
+  .dashboard-circle__location { margin-top: 4px; }
+  .dashboard-circle .management-circle-trigger__label { font-size: 10px; }
+  .dashboard-circle__status { margin-top: 10px; }
+  .dashboard-circle__url { margin-top: 10px; padding: 0; border: 0; border-radius: 0; background: transparent; }
+  .dashboard-circle__url h3 { display: none; }
+  .dashboard-circle__url-row { gap: 8px; }
+  .dashboard-circle__url-value { font-size: 12px; }
+  .dashboard-circle__url-row .dashboard-copy { min-height: 40px; padding: 7px 10px; }
+  .dashboard-section { margin-top: 18px; }
+  .dashboard-section__heading p { display: none; }
+  .dashboard-action-grid .dashboard-action { flex-direction: row; align-items: center; min-height: 70px; padding: 12px; gap: 8px; }
+  .dashboard-action-grid .dashboard-action__icon { width: 30px; height: 30px; }
+  .dashboard-level { padding: 14px; margin: 16px 0 18px; }
+  .dashboard-level__value { margin-top: 6px; }
+  .dashboard-level__value strong { font-size: 34px; }
+  .dashboard-level__value > span { font-size: 16px; }
+  .dashboard-level__message { margin: 4px 0 8px; font-size: 12px; }
+  .dashboard-level__progress { height: 6px; }
+  .dashboard-level__actions { margin-top: 12px; gap: 10px; }
+  .dashboard-level__actions + .dashboard-level__actions { margin-top: 10px; }
+  .dashboard-level__reward .dashboard-copy { color: $cb-action-hover; background: $cb-mint-soft; border-color: transparent; }
+  .dashboard-level__guide, .dashboard-level__breakdown, .dashboard-level__rivals {
+    margin-top: 0; padding-top: 0; border-top: 1px solid $cb-border;
+    > summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 10px 0; font-size: 13px; font-weight: 700; text-decoration: none; color: $cb-text; cursor: pointer; list-style: none; }
+    > summary::-webkit-details-marker { display: none; }
+    > summary:focus-visible { outline: 2px solid $cb-action; outline-offset: 2px; }
+    > summary .cb-icon { flex: none; color: $cb-muted; }
+    &[open] > summary .cb-icon { transform: rotate(180deg); }
+  }
+  .dashboard-level__guide { margin-top: 14px; }
+  .dashboard-level__ranking { padding: 12px; margin: 4px 0 10px; }
+  .dashboard-level__rival { padding: 8px 0; }
+}

@@ -16,6 +16,11 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     get "/users/#{@circle.id}/mypage"
     assert_response :success
     assert_select '.dashboard-stats', count: 0
+    assert_select '.dashboard-level > details', count: 3
+    assert_select '.dashboard-level > details[open]', count: 0
+    assert_select '.dashboard-level__rivals > summary', text: /ライバルサークルを見る/
+    assert_select '.dashboard-level__reward a', text: 'リンク設置で10ポイント獲得'
+    assert_operator response.body.index('活動を管理'), :<, response.body.index('id="circle-level-title"')
     assert_select '.dashboard-level__value strong', text: '0'
     assert_select 'progress[value="10"]'
     assert_select '.dashboard-level__message', text: /あと0.9/
@@ -24,8 +29,8 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level__breakdown th', text: 'メッセージ未返信'
     assert_select '.dashboard-level__guide', text: /旧お問い合わせは減点対象外/
     assert_select '.dashboard-level__breakdown tfoot td', text: '0.1'
-    assert_select ".dashboard-level__actions a.dashboard-primary[href='#{new_user_schedule_path(@circle)}']", text: '活動日を追加'
-    assert_select ".dashboard-level__actions a.dashboard-primary[href='#{new_circle_blog_path(@circle)}']", text: 'ブログを書く'
+    assert_select ".dashboard-action-grid a[href='#{user_schedules_path(@circle)}']", text: /スケジュール/
+    assert_select ".dashboard-action-grid a[href='#{new_circle_blog_path(@circle)}']", text: /ブログを書く/
     assert_select '.dashboard-level__description', text: /まずは活動日を登録/
     assert_select '.dashboard-level__actions a', text: '口コミを依頼する', count: 0
     get user_reviews_path(@circle)
