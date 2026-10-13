@@ -38,8 +38,23 @@
   &__avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; object-fit: cover; }
   &__links { display: flex; flex-wrap: wrap; gap: 12px 18px; margin-top: 13px; font-size: 13px; }
   &__links a { color: #187f60; overflow-wrap: anywhere; }
-  &__management { padding: 15px 16px; font-size: 13px; }
-  &__management summary { cursor: pointer; color: #42665a; }
+  &__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+  &__button {
+    --schedule-button-ink: #{$cb-action-hover}; --schedule-button-soft: #{$cb-mint-soft}; --schedule-button-border: #{$cb-action};
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    min-height: 48px; min-width: 0; padding: 10px; border: 1px solid var(--schedule-button-border);
+    border-radius: $cb-radius-control; background: var(--schedule-button-soft); color: var(--schedule-button-ink);
+    font-size: 13px; font-weight: 700; line-height: 1.5; text-align: center; text-decoration: none;
+    span { min-width: 0; overflow-wrap: anywhere; }
+    svg { width: 18px; height: 18px; flex-shrink: 0; }
+    &:hover, &:focus { color: var(--schedule-button-ink); text-decoration: none; }
+    &:focus-visible { outline-color: var(--schedule-button-ink); }
+  }
+  &__button--participant { --schedule-button-ink: #{$cb-participant-hover}; --schedule-button-soft: #{$cb-participant-soft}; --schedule-button-border: #{$cb-participant}; }
+  &__button--danger { --schedule-button-ink: #{$cb-danger}; --schedule-button-soft: #{$cb-danger-soft}; --schedule-button-border: #{$cb-danger}; }
+  &__button--wide { grid-column: 1 / -1; }
+  &__share { margin-top: 16px; }
+
   &__notice { font-size: 12px; line-height: 1.8; color: #60746b; margin: 16px 0 0; }
   &__related { margin-top: 22px; }
   &__related > h2 { font-size: 16px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }

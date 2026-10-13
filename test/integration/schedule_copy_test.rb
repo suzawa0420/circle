@@ -15,6 +15,25 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
   end
 
+  test 'public detail exposes icon buttons only to its organizer and retains destructive confirmation' do
+    get user_schedule_path(@circle, @source)
+    assert_response :success
+    assert_select 'section.schedule-detail__management', count: 1
+    assert_select 'details.schedule-detail__management', count: 0
+    assert_select '.schedule-detail__management .schedule-detail__button', count: 4
+    assert_select '.schedule-detail__management a[data-method=delete][data-confirm="投稿を削除しますか？"] svg.cb-icon--trash-2', count: 1
+    assert_select ".schedule-detail__management a[href='#{edit_user_schedule_path(@circle, @source)}'] svg.cb-icon--square-pen"
+    assert_select ".schedule-detail__management a[href='#{new_user_schedule_path(@circle, copy: @source.id)}'] svg.cb-icon--copy"
+    assert_select '.schedule-detail__management a[href*=copy_mode] svg.cb-icon--calendar-plus'
+    assert_select '.schedule-detail__share a[target=_blank][rel=noopener] svg.cb-icon--share-2'
+    assert_select ".schedule-detail__actions a[href='#{circle_path(@circle)}'].schedule-detail__button svg.cb-icon--info"
+    assert_select ".schedule-detail__actions a[href='#{user_schedules_path(@circle)}'].schedule-detail__button svg.cb-icon--calendar-days"
+    delete destroy_admin_user_session_path
+    get user_schedule_path(@circle, @source)
+    assert_select '.schedule-detail__management', count: 0
+    assert_select '.schedule-detail__share .schedule-detail__button', count: 1
+  end
+
   test 'creation and owner detail provide both copy actions' do
     get new_user_schedule_path(@circle)
     assert_response :success

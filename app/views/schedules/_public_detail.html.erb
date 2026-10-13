@@ -60,23 +60,28 @@
     <%= circle_avatar_tag @user, class: 'schedule-detail__avatar' %>
     <div><h3><%= @user.name %></h3><p><%= @user.prefecture.name %> · <%= @user.event.name %></p></div><%= lucide_icon 'chevron-right' %>
   <% end %>
-  <div class="schedule-detail__links"><%= link_to 'サークルの詳細を見る', circle_path(@user) %><%= link_to 'ほかの活動日を見る', user_schedules_path(@user) %></div>
+  <div class="schedule-detail__actions">
+    <%= link_to circle_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'info' %><span>サークルの詳細を見る</span><% end %>
+    <%= link_to user_schedules_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'calendar-days' %><span>ほかの活動日を見る</span><% end %>
+  </div>
 </section>
 
 <% if can_manage_circle?(@user) %>
-  <details class="schedule-detail__card schedule-detail__management">
-    <summary>主催者向けの操作</summary>
-    <div class="schedule-detail__links">
-      <%= link_to '編集', edit_user_schedule_path(@user, @schedule) %>
-      <%= link_to '削除', user_schedule_path(@user, @schedule), method: :delete, data: { confirm: '投稿を削除しますか？' } %>
-      <%= link_to '同じ内容でコピー', new_user_schedule_path(@user, copy: @schedule.id) %>
-      <%= link_to '1週間後に同じ内容で作成', new_user_schedule_path(@user, copy: @schedule.id, copy_mode: :next_week) %>
+  <section class="schedule-detail__card schedule-detail__section schedule-detail__management" aria-labelledby="schedule-management-title">
+    <h2 id="schedule-management-title">主催者向けの操作</h2>
+    <div class="schedule-detail__actions">
+      <%= link_to edit_user_schedule_path(@user, @schedule), class: 'schedule-detail__button' do %><%= lucide_icon 'square-pen' %><span>編集</span><% end %>
+      <%= link_to user_schedule_path(@user, @schedule), class: 'schedule-detail__button schedule-detail__button--danger', method: :delete, data: { confirm: '投稿を削除しますか？' } do %><%= lucide_icon 'trash-2' %><span>削除</span><% end %>
+      <%= link_to new_user_schedule_path(@user, copy: @schedule.id), class: 'schedule-detail__button schedule-detail__button--wide' do %><%= lucide_icon 'copy' %><span>同じ内容でコピー</span><% end %>
+      <%= link_to new_user_schedule_path(@user, copy: @schedule.id, copy_mode: :next_week), class: 'schedule-detail__button schedule-detail__button--wide' do %><%= lucide_icon 'calendar-plus' %><span>1週間後に同じ内容で作成</span><% end %>
     </div>
-  </details>
+  </section>
 <% end %>
 
 <p class="schedule-detail__notice">募集状況は変更されることがあります。参加前に主催者からの案内をご確認ください。</p>
-<div class="schedule-detail__links"><%= link_to 'この活動を共有', 'https://twitter.com/intent/tweet?' + { url: request.original_url, text: "#{@user.name}の活動｜#{@schedule.title}" }.to_query, target: '_blank', rel: 'noopener' %></div>
+<div class="schedule-detail__share">
+  <%= link_to 'https://twitter.com/intent/tweet?' + { url: request.original_url, text: "#{@user.name}の活動｜#{@schedule.title}" }.to_query, class: 'schedule-detail__button schedule-detail__button--participant', target: '_blank', rel: 'noopener' do %><%= lucide_icon 'share-2' %><span>この活動を共有</span><% end %>
+</div>
 
 <% if @schedules.where.not(id: @schedule.id).exists? || @past_schedules.where.not(id: @schedule.id).exists? %>
   <section class="schedule-detail__related">
