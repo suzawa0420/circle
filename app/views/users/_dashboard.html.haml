@@ -87,8 +87,6 @@
   .dashboard-section__heading
     %h2 参加者とのやりとり
   .dashboard-action-list
-    - if @user.user_contacts.present?
-      = render "dashboard_action", title: "お問い合わせ管理", description: "応募・問い合わせを確認", icon: "mail", path: "/users/#{@user.id}/contact_list", badge: (@respond_check_count > 0 ? "要確認 #{@respond_check_count}" : nil)
     = render "dashboard_action", title: "質問コーナー", description: "質問の確認・回答", icon: "circle-help", path: user_questions_path(@user), badge: (unanswered_count > 0 ? "未回答 #{unanswered_count}" : nil)
     = render "dashboard_action", title: "口コミ・評価", description: "参加者の声を確認", icon: "message-circle", path: user_reviews_path(@user)
 
@@ -125,3 +123,7 @@
     = link_to "ヘルプセンター・よくある質問", faq_path
     = link_to "ご意見・改善提案（原則返信なし）", new_support_request_path(kind: "suggestion", category: "other")
     = link_to "FAQで解決しない問い合わせ", new_support_request_path
+
+%section.dashboard-section{ "aria-label" => "過去のお問い合わせ" }
+  .dashboard-action-list
+    = render "dashboard_action", title: "旧お問い合わせ管理", description: "以前に届いたお問い合わせを確認", icon: "mail", path: "/users/#{@user.id}/contact_list", badge: (@respond_check_count > 0 ? "要確認 #{@respond_check_count}" : nil)
