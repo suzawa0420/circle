@@ -273,6 +273,8 @@ Rails.application.routes.draw do
 
   # イベント一覧
   get 'dates' , to: 'schedules#dates'
+  get 'dates/today', to: 'schedules#today', as: :today_events
+  get 'dates/tomorrow', to: 'schedules#tomorrow', as: :tomorrow_events
   get 'dates/:year' , to: 'schedules#year'
   get 'dates/:year/:month' , to: 'schedules#month'
   get 'dates/:year/:month/:day' , to: 'schedules#day'

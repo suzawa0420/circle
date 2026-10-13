@@ -43,6 +43,10 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
     add path, lastmod: nil, changefreq: 'daily', priority: 0.6
   end
 
+  EventDaySitemap.each_path do |path|
+    add path, lastmod: nil, changefreq: 'daily', priority: 0.7
+  end
+
 end
 
 # Public XML uses a persistent cache. Invalidate only sitemap responses after

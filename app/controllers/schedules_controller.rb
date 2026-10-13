@@ -4,8 +4,8 @@ include Circlebook
 
 before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :update, :destroy]
 before_action :ensure_correct_user, only: [:new, :create, :edit, :update, :destroy]
-before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :year, :month]}
-before_action :set_dates, {only: [:dates, :day]}
+before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :today, :tomorrow, :year, :month]}
+before_action :set_dates, {only: [:dates, :day, :today, :tomorrow]}
 
 
 	def index
@@ -198,50 +198,56 @@ def month
 end
 
 def day
-  # Reject malformed dates before Time.parse can raise a server error or normalize them.
   parts = params.values_at(:year, :month, :day)
-  unless parts.all? { |part| part.to_s.match?(/\A[0-9]+\z/) } &&
-         Date.valid_date?(*parts.map(&:to_i))
+  unless parts.all? { |part| part.to_s.match?(/\A[0-9]{1,4}\z/) } &&
+         (1900..2100).cover?(parts.first.to_i) && Date.valid_date?(*parts.map(&:to_i))
     raise ActiveRecord::RecordNotFound
   end
-  @date = Date.new(*parts.map(&:to_i)).iso8601
-  @day = Time.parse(@date).strftime("%Y年%-m月%-d日(#{@wdays[Time.parse(@date).wday]})")
-  @categories = Category.all.order(:id => :asc)
-  @events = Event.all.order(:order => :asc)
-  @prefectures = Prefecture.all.order(:order => :asc)
-  @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
-  @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
+  prepare_event_day(Date.new(*parts.map(&:to_i)))
+end
 
-  if params[:event].present? && params[:pref].present?
-    @users = User.event(@event.id).prefecture(@prefecture.id)
-    @user_ids = @users.select(:id)
-    @schedules = Schedule.joins(:user).includes(:user).where(day: @date, user_id: @user_ids).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
+def today
+  prepare_event_day(Time.current.in_time_zone('Tokyo').to_date, relative: '今日')
+  render :day
+end
 
-  elsif params[:event].present?
-    @users = User.event(@event.id)
-    @user_ids = @users.select(:id)
-    @schedules = Schedule.joins(:user).includes(:user).where(day: @date, user_id: @user_ids).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
-
-  elsif params[:pref].present?
-    @users = User.prefecture(@prefecture.id)
-    @user_ids = @users.select(:id)
-    @schedules = Schedule.joins(:user).includes(:user).where(day: @date, user_id: @user_ids).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
-
-  else
-    @schedules = Schedule.joins(:user).includes(:user).where(day: @date).order(:day => :asc).order("users.last_post desc").page(params[:page]).per(20)
-  end
-
-  @b1_name = "イベント一覧"
-  @b1_url = "/dates"
-  @b2_name = "#{Time.parse(@date).strftime("%Y年")}"
-  @b2_url = "/dates/#{params[:year]}"
-  @b3_name = "#{Time.parse(@date).strftime("%-m月")}"
-  @b3_url = "/dates/#{params[:year]}/#{params[:month]}"
-  @b4_name = "#{@day}に開催予定のイベント一覧"
-  @b4_url = ""
+def tomorrow
+  prepare_event_day(Time.current.in_time_zone('Tokyo').to_date + 1, relative: '明日')
+  render :day
 end
 
 private
+  def prepare_event_day(date, relative: nil)
+    @event_date = date
+    @date = date.iso8601
+    @day = "#{date.year}年#{date.month}月#{date.day}日（#{@wdays[date.wday]}）"
+    @relative_day = relative
+    @events = Event.order(:order)
+    @prefectures = Prefecture.order(:order)
+    @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
+    @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
+    @day_listing = EventDayListing.new(date: date, event: @event, prefecture: @prefecture, sort: params[:sort])
+    @schedules = @day_listing.schedules.page(params[:page]).per(20)
+    @result_count = @day_listing.total_count
+    @filter_query = { event: @event&.ruby, pref: @prefecture&.kana }.compact
+    @event_day_path = relative ? "/dates/#{action_name}" : EventDayListing.path(date)
+    query = @filter_query.dup
+    query[:page] = params[:page].to_i if params[:page].to_i > 1
+    @event_day_canonical = 'https://circle-book.com' + @event_day_path
+    @event_day_canonical += '?' + query.to_query if query.present?
+    @event_day_title = "#{relative || @day}#{@prefecture ? '・' + @prefecture.name : ''}の#{@event&.name || 'イベント'}・サークル活動一覧"
+    set_meta_tags title: @event_day_title,
+      description: "#{relative ? relative + '（' + @day + '）' : @day}に開催予定の#{@prefecture&.name}#{@event&.name || 'イベント'}を探せます。開催時間・場所・募集状況を比較して、気になるサークルの活動詳細を確認できます。",
+      canonical: @event_day_canonical,
+      noindex: @result_count.zero? || %w[2 3].include?(params[:sort]),
+      og: { title: @event_day_title, url: @event_day_canonical }
+    raise ActiveRecord::RecordNotFound if params[:page].to_i > 1 && @schedules.empty?
+    @b1_name = 'イベント一覧'
+    @b1_url = '/dates'
+    @b2_name = @event_day_title
+    @b2_url = ''
+  end
+
   def set_copy_schedules
     @copy_schedules = @user.schedules.order(:day => :asc, :time_s => :asc).last(10)
   end

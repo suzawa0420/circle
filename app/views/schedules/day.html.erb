@@ -1,0 +1,55 @@
+<main class="event-results">
+  <div class="event-results__container">
+    <header class="event-results__header">
+      <p class="event-results__eyebrow">日付から、参加したい活動を見つけよう</p>
+      <h1><%= @event_day_title %></h1>
+      <% if @relative_day %><p><%= @day %></p><% end %>
+      <p>時間・場所・募集状況を見比べて、気になるイベントへ。</p>
+    </header>
+    <nav class="event-results__shortcuts" aria-label="今日と明日のイベント">
+      <%= link_to '今日', today_events_path(@filter_query), aria: { current: action_name == 'today' ? 'page' : nil } %>
+      <%= link_to '明日', tomorrow_events_path(@filter_query), aria: { current: action_name == 'tomorrow' ? 'page' : nil } %>
+      <%= link_to '日付で探す', dates_path %>
+    </nav>
+    <nav class="event-results__days" aria-label="開催日を選ぶ">
+      <% (@event_date - 2..@event_date + 2).each do |date| %>
+        <%= link_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : ''), class: date == @event_date ? 'is-selected' : nil, aria: { current: date == @event_date ? 'date' : nil } do %>
+          <span><%= date.month %>/<%= date.day %></span><small><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %></small>
+        <% end %>
+      <% end %>
+    </nav>
+    <%= form_with url: @event_day_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
+      <label>エリア<%= form.select :pref, options_from_collection_for_select(@prefectures, :kana, :name, @prefecture&.kana), include_blank: '全国' %></label>
+      <label>ジャンル<%= form.select :event, options_from_collection_for_select(@events, :ruby, :name, @event&.ruby), include_blank: 'すべて' %></label>
+      <label>並び順<%= form.select :sort, options_for_select([['おすすめ（日替わり）', '1'], ['新着順', '2'], ['開始時間順', '3']], params[:sort] || '1') %></label>
+      <%= form.submit '絞り込む', name: nil %>
+    <% end %>
+    <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件のイベント</h2><p>募集中を優先<% unless %w[2 3].include?(params[:sort]) %>・同じ条件では日替わり表示<% end %></p></div>
+    <% if @schedules.empty? %>
+      <div class="event-results__empty"><h2>この条件のイベントはまだありません</h2><p>別の日付やエリア・ジャンルでも探してみてください。</p><%= link_to '今日のイベントを見る', today_events_path %></div>
+    <% else %>
+      <ul class="event-results__list">
+        <% @schedules.each_with_index do |schedule, index| %>
+          <% key, label = @day_listing.status(schedule) %>
+          <li>
+            <%= link_to user_schedule_path(schedule.user_id, schedule.id), class: 'event-results__card' do %>
+              <div class="event-results__card-top"><span><%= schedule.user.event&.name %></span><span class="event-results__status status-<%= key %>"><%= label %></span></div>
+              <div class="event-results__body">
+                <div class="event-results__text">
+                  <h3><%= schedule.title.presence || "#{schedule.user.event&.name}の活動" %></h3>
+                  <p class="event-results__time"><%= lucide_icon 'clock' %><%= calendar_schedule_time(schedule) %></p>
+                  <p class="event-results__location"><%= lucide_icon 'map-pin' %><%= [schedule.user.prefecture&.name, schedule.venue.presence].compact.join('・') %></p>
+                </div>
+                <%= image_tag(schedule.top_image.present? ? schedule.top_image.url : schedule.user.pic_header.url, alt: '', width: 76, height: 76, loading: index.zero? ? 'eager' : 'lazy', class: 'event-results__image') %>
+              </div>
+              <div class="event-results__card-bottom"><span><%= schedule.recruitment_numbers.to_i.positive? ? "募集人数 #{schedule.recruitment_numbers}名" : '詳細で参加条件を確認' %></span><span>詳細を見る <%= lucide_icon 'chevron-right' %></span></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+      <%= paginate @schedules %>
+      <script type="application/ld+json"><%= raw json_escape({ '@context' => 'https://schema.org', '@type' => 'ItemList', name: @event_day_title, itemListElement: @schedules.each_with_index.map { |s, i| { '@type' => 'ListItem', position: @schedules.offset_value + i + 1, url: "https://circle-book.com#{user_schedule_path(s.user_id, s.id)}", name: s.title.presence || "#{s.user.event&.name}の活動" } } }.to_json) %></script>
+    <% end %>
+    <p class="event-results__note">募集状況は変更されることがあります。参加条件・会場の詳細は各イベントでご確認ください。</p>
+  </div>
+</main>

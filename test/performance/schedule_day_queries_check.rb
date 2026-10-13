@@ -1,54 +1,30 @@
-# Uses only the guarded disposable PostgreSQL database and synthetic fixtures.
-require_relative 'search_queries_check'
-require_relative '../../app/controllers/schedules_controller'
+# Run with: bundle exec rails test test/performance/schedule_day_queries_check.rb
+# Uses the normal isolated Rails test database, never a production connection.
+require_relative '../test_helper'
+require_relative '../support/chat_records'
 
-class Schedule
-  belongs_to :user
-end
+class ScheduleDayQueriesTest < ActiveSupport::TestCase
+  self.fixture_table_names = []
+  include ChatRecords
 
-class ScheduleDayQueriesTest < SearchQueriesTest
-  def test_day_filters_keep_order_pages_and_count_without_loading_all_users
-    @users.each do |user|
-      2.times { Schedule.create!(user_id: user.id, day: '2026-09-26') }
-      Schedule.create!(user_id: user.id, day: '2026-09-27')
+  test 'day filtering and attendance aggregation only instantiate a single results page' do
+    create_chat_records
+    45.times do |i|
+      @circle.schedules.create!(day: '2026-10-17', title: "検証イベント#{i}", venue: '公開体育館')
     end
-    Schedule.create!(user_id: @nationwide.id, day: '2026-09-26')
-    Schedule.create!(user_id: nil, day: '2026-09-26')
-    [{}, { event: 'basketball' }, { pref: 'tokyo' },
-     { event: 'basketball', pref: 'tokyo' }].each do |filters|
-      [1, 2, 5, 6].each do |page|
-        controller = SchedulesController.new
-        controller.params = ActionController::Parameters.new(
-          { year: '2026', month: '09', day: '26', page: page }.merge(filters))
-        controller.instance_variable_set(:@wdays, %w[日 月 火 水 木 金 土])
-        sql, records = capture { controller.day }
-        assert_equal 0, records['User'], 'Filtering must not materialize matching circles'
-        refute sql.any? { |statement| statement.include?('FROM "users"') }
-
-        old_users = User.all
-        old_users = old_users.event(@event.id) if filters[:event]
-        old_users = old_users.prefecture(@pref.id) if filters[:pref]
-        expected = Schedule.joins(:user).where(day: '2026-09-26')
-        expected = expected.where(user_id: old_users.map(&:id)) unless filters.empty?
-        expected = expected.order(day: :asc).order('users.last_post desc').page(page).per(20)
-        actual = controller.instance_variable_get(:@schedules).except(:includes)
-        # Multiple schedules for one user have equal sort keys; compare the
-        # user sequence and selected IDs without imposing a new tie-breaker.
-        assert_equal expected.pluck(:user_id), actual.pluck(:user_id)
-        assert_equal expected.total_count, actual.total_count
-        assert_equal expected.except(:limit, :offset, :order).pluck(:id).sort,
-          actual.except(:limit, :offset, :order).pluck(:id).sort
-        if filters.any?
-          assert_kind_of ActiveRecord::Relation, controller.instance_variable_get(:@user_ids)
-        end
-      end
+    listing = EventDayListing.new(date: Date.new(2026, 10, 17), event: @circle.event, prefecture: @circle.prefecture)
+    records = Hash.new(0)
+    schedules = nil
+    ActiveSupport::Notifications.subscribed(->(*args) { p = args.last; records[p[:class_name]] += p[:record_count] }, 'instantiation.active_record') do
+      schedules = listing.schedules.page(2).per(20).to_a
+      assert_equal 45, listing.total_count
     end
-    old_queries, old_records = capture { User.event(@event.id).map(&:id) }
-    new_queries, new_records = capture { User.event(@event.id).select(:id) }
-    assert_operator old_records['User'], :>=, 45
-    assert_equal 0, new_records['User']
-    assert_equal 1, old_queries.length
-    assert_empty new_queries
-    puts "Day filter: #{old_records['User']} User objects -> 0; preparation SELECTs 1 -> 0"
+    assert_equal 20, schedules.size
+    assert_equal 20, records['Schedule']
+    assert_equal 1, records['User']
+    assert_equal 0, records['NameSchedule']
+    assert_not schedules.first.has_attribute?(:note)
+    assert_not schedules.first.has_attribute?(:member_venue)
+    assert_not schedules.first.has_attribute?(:venue_address)
   end
 end

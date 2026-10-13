@@ -150,6 +150,8 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
   end
 
   test 'sitemap always emits an index and truthful canonical landings' do
+    today = Time.current.in_time_zone('Tokyo').to_date
+    @circle.schedules.create!(day: today.iso8601, title: '本日のバスケ', venue: '公開体育館')
     require 'sitemap_generator'
     require 'aws-sdk-s3'
     require 'minitest/mock'
@@ -167,6 +169,9 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
       urls = child.xpath('//url/loc').map(&:text)
       assert_includes urls, "https://circle-book.com#{@path}"
       assert_includes urls, "https://circle-book.com#{circle_path(@circle)}"
+      assert_includes urls, "https://circle-book.com#{EventDayListing.path(today)}"
+      assert_includes urls, 'https://circle-book.com/dates/today'
+      assert_includes urls, 'https://circle-book.com/dates/today?' + { event: @circle.event.ruby, pref: @circle.prefecture.kana }.to_query
       refute urls.any? { |url| url.include?('/kw/') || url.include?('/search/') }
       landing = child.xpath('//url').find { |node| node.at_xpath('loc').text == "https://circle-book.com#{@path}" }
       assert_nil landing.at_xpath('lastmod')
