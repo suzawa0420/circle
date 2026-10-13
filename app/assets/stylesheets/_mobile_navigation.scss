@@ -100,6 +100,14 @@
     min-width: 0;
   }
 
+  // The guest navigation includes a longer registration label.
+  .mobile-bottom-nav:has(.mobile-bottom-nav__item--register) {
+    > .mobile-bottom-nav__item--register { flex-grow: 1.6; }
+    > .mobile-menu-trigger { flex-grow: .65; }
+    .mobile-bottom-nav__item { font-size: clamp(10.5px, 3vw, 12px); }
+    .mobile-bottom-nav__item > span { white-space: nowrap; }
+  }
+
   .mobile-bottom-nav__item {
     display: flex;
     min-height: 58px;
@@ -478,5 +486,5 @@
 }
 
 @media only screen and (max-width: 767px) {
-  .mobile-bottom-nav__item--register > span { max-width: 100%; padding: 0 2px; white-space: normal; font-size: 11px; }
+  .mobile-bottom-nav__item--register > span { max-width: 100%; padding: 0 3px; white-space: nowrap; font-size: inherit; }
 }
