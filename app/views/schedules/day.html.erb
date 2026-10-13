@@ -13,13 +13,7 @@
       <%= link_to '来週', next_week_events_path(@filter_query), aria: { current: action_name == 'next_week' ? 'page' : nil } %>
       <%= link_to '日付で探す', dates_path(@filter_query) %>
     </nav>
-    <nav class="event-results__days <%= 'event-results__days--week' if @event_end_date %>" aria-label="開催日を選ぶ">
-      <% (@event_end_date ? (@event_date..@event_end_date) : (@event_date - 2..@event_date + 2)).each do |date| %>
-        <%= link_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : ''), class: !@event_end_date && date == @event_date ? 'is-selected' : nil, aria: { current: !@event_end_date && date == @event_date ? 'date' : nil } do %>
-          <span><%= date.month %>/<%= date.day %></span><small><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %></small>
-        <% end %>
-      <% end %>
-    </nav>
+    <%= render 'schedules/event_date_strip', dates: (@event_end_date ? (@event_date..@event_end_date) : (@event_date - 2..@event_date + 2)), filter_query: @filter_query, selected_date: (@event_end_date ? nil : @event_date) %>
     <%= form_with url: @event_day_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
       <label>エリア<%= form.select :pref, options_from_collection_for_select(@prefectures, :kana, :name, @prefecture&.kana), include_blank: '全国' %></label>
       <label>ジャンル<%= form.select :event, options_from_collection_for_select(@events, :ruby, :name, @event&.ruby), include_blank: 'すべて' %></label>

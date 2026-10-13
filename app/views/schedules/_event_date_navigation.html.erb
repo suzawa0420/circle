@@ -1,13 +1,10 @@
+<% compact = local_assigns.fetch(:compact, false) %>
+<% unless compact %>
     <nav class="event-results__shortcuts" aria-label="期間からイベントを探す">
       <%= link_to '今日のイベント', today_events_path(filter_query) %>
       <%= link_to '明日のイベント', tomorrow_events_path(filter_query) %>
       <%= link_to '今週のイベント', this_week_events_path(filter_query) %>
       <%= link_to '来週のイベント', next_week_events_path(filter_query) %>
     </nav>
-    <nav class="event-results__days" aria-label="開催日を選ぶ">
-      <% (date..date + 4).each do |date| %>
-        <%= link_to EventDayListing.path(date) + (filter_query.present? ? '?' + filter_query.to_query : '') do %>
-          <span><%= date.month %>/<%= date.day %></span><small><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %></small>
-        <% end %>
-      <% end %>
-    </nav>
+<% end %>
+<%= render 'schedules/event_date_strip', dates: (date..date + (compact ? 11 : 4)), filter_query: filter_query %>

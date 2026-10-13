@@ -19,6 +19,23 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'circle search has twelve consecutive date links without duplicate period or date forms' do
+    travel_to Time.zone.local(2026, 12, 29, 12)
+    get event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana)
+    assert_response :success
+    assert_select '.event-date-search' do
+      assert_select 'h2', text: '日付からイベントを探す'
+      assert_select '.event-results__shortcuts, form, input[type=date]', count: 0
+      assert_select '.event-results__days a', count: 12 do |links|
+        links.each_with_index do |link, index|
+          uri = URI.parse(link['href'])
+          assert_equal EventDayListing.path(Date.current + index), uri.path
+          assert_equal({ 'event' => @circle.event.ruby, 'pref' => @circle.prefecture.kana }, Rack::Utils.parse_nested_query(uri.query))
+        end
+      end
+    end
+  end
+
   test 'all dates hub uses common cards and chronological days without loading attendance records' do
     activity('過去の活動', day: '2026-10-12')
     morning = activity('明日の朝の活動', day: '2026-10-14', time_s: '07:00', time_e: '09:00')
