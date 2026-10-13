@@ -13,7 +13,7 @@
   <% if @backlink_request.reviewed_by %><p>最終審査者：管理者 #<%= @backlink_request.reviewed_by_id %></p><% end %>
   <% if @backlink_request.review_note.present? %><p>理由・連絡事項：<%= @backlink_request.review_note %></p><% end %>
   <% if @backlink_request.status.in?(%w[pending approved]) %>
-    <p>掲載先を開き、このサークルへのバナーまたは文字リンクが公開されていることを確認してください。</p>
+    <p>掲載先を開き、主催者自身が管理するサークル・団体のWebサイトに、このサークルへのバナーまたは文字リンクが公開されていることを確認してください。SNS（Instagram・X〈旧Twitter〉・Threadsなど）や、Linktreeなどのリンクまとめサービスへの掲載は対象外です。</p>
     <%= form_with url: super_admin_backlink_request_path(@backlink_request), method: :patch, local: true do |f| %>
       <%= f.label :review_note, '理由・連絡事項（主催者にも表示されます。差し戻し・取り消し時は必須）' %>
       <%= f.text_area :review_note, value: @backlink_request.review_note, rows: 4, maxlength: 2000 %>

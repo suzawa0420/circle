@@ -36,6 +36,7 @@
   <p id="backlink-copy-status" role="status" aria-live="polite"></p>
   <section>
     <h2>リンクの設置を報告</h2>
+    <p><strong>対象は、ご自身で管理するサークル・団体のWebサイトのみです。</strong><br>SNS（Instagram・X〈旧Twitter〉・Threadsなど）や、Linktreeなどのリンクまとめサービスへの掲載は対象外です。</p>
     <% if @backlink_request.errors.any? %>
       <div class="backlink-status" role="alert"><%= @backlink_request.errors.full_messages.join('。') %></div>
     <% end %>
@@ -52,8 +53,8 @@
     <% if @backlink_request.new_record? || @backlink_request.status == 'rejected' %>
       <%= form_with model: @backlink_request, url: circle_backlink_request_path(@user), method: :post, local: true do |f| %>
         <%= f.label :placement_url, 'リンクを設置したページのURL' %>
-        <%= f.url_field :placement_url, required: true, maxlength: 2048, placeholder: 'https://example.com/', autocomplete: 'url' %>
-        <p>リンク先のサークルページではなく、ご自身のサイトの掲載ページを入力してください。</p>
+        <%= f.url_field :placement_url, required: true, maxlength: 2048, placeholder: 'https://example.com/', autocomplete: 'url', aria: { describedby: 'backlink-placement-help' } %>
+        <p id="backlink-placement-help">ご自身のWebサイトで、リンクを設置したページのURLを入力してください。SNS・リンクまとめサービスのURLや、リンク先のサークルブックのURLは入力しないでください。</p>
         <%= f.submit 'リンクの設置を報告する', class: 'backlink-button', data: { disable_with: '申請中…' } %>
       <% end %>
     <% end %>
