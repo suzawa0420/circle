@@ -79,7 +79,7 @@
 <div class="schedule-detail__links"><%= link_to 'この活動を共有', 'https://twitter.com/intent/tweet?' + { url: request.original_url, text: "#{@user.name}の活動｜#{@schedule.title}" }.to_query, target: '_blank', rel: 'noopener' %></div>
 
 <% if @schedules.where.not(id: @schedule.id).exists? || @past_schedules.where.not(id: @schedule.id).exists? %>
-  <section class="schedule-detail__card schedule-detail__section schedule-detail__related">
+  <section class="schedule-detail__related">
     <h2>このサークルのほかの活動日</h2>
     <%= render 'schedules/schedule_list' %>
   </section>

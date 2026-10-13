@@ -42,6 +42,7 @@
   &__management summary { cursor: pointer; color: #42665a; }
   &__notice { font-size: 12px; line-height: 1.8; color: #60746b; margin: 16px 0 0; }
   &__related { margin-top: 22px; }
+  &__related > h2 { font-size: 16px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
   &__related .schedule_m { display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 1.5; margin: 18px 0 10px; }
   &__related .schedule_m svg { width: 17px; height: 17px; flex-shrink: 0; }
   &__related .past_schedule { font-size: 16px; margin: 24px 0 10px; }
