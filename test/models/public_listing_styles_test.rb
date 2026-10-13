@@ -13,7 +13,9 @@ class PublicListingStylesTest < ActiveSupport::TestCase
 
   test 'compiled listing asset retains shared event date controls' do
     css = Rails.application.assets.find_asset('public_listing.css').to_s
-    assert_match(/\.event-results__days\{[^}]*display:\s*grid/, css)
+    assert_match(/\.event-results__days\{[^}]*display:\s*flex/, css)
+    assert_match(/\.event-results__days\{[^}]*overflow-x:\s*auto/, css)
+    assert_match(/\.event-results__days\{[^}]*flex-wrap:\s*nowrap/, css)
     assert_match(/\.event-results__filters\{[^}]*display:\s*grid/, css)
     assert_match(/\.event-results__filters input\[type=["']?date["']?\]\{[^}]*height:\s*44px/, css)
     assert_includes css, '.event-date-search'
