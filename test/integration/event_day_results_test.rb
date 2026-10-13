@@ -19,6 +19,17 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'uploaded schedule images retain their cache version with the narrow projection' do
+    @open.update_column(:top_image, 'event-photo.jpg')
+    schedule = EventDayListing.new(date: Date.current).schedules.find(@open.id)
+    file = Struct.new(:location) do
+      def url(*) = location
+      def empty? = false
+    end.new('/uploads/event-photo.jpg')
+    schedule.top_image.instance_variable_set(:@file, file)
+    assert_equal "/uploads/event-photo.jpg?v=#{@open.updated_at.utc.to_i}", schedule.top_image.url
+  end
+
   test 'compact server rendered results show status and exclude private fields' do
     instantiated = Hash.new(0)
     ActiveSupport::Notifications.subscribed(->(*args) { p = args.last; instantiated[p[:class_name]] += p[:record_count] }, 'instantiation.active_record') do
