@@ -19,6 +19,26 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'missing photos use existing sport images and category fallback across result pages' do
+    @circle.update!(recruitment: '初心者歓迎')
+    @circle.event.update!(ruby: 'basketball', txt: 'バスケサークル')
+    get '/dates/today'
+    assert_select '.event-results__image[src="/images/events/basketball.jpg"]', count: 5
+    assert_not_includes response.body, '/images/default.png'
+    get '/dates'
+    assert_select 'img[data-src="/images/events/basketball.jpg"]', minimum: 1
+    get user_schedule_path(@circle, @open)
+    assert_select '.schedule_top_image > img.top_img[src="/images/events/basketball.jpg"]', count: 1
+
+    @circle.event.update!(ruby: 'unknown-sport')
+    @circle.event.category.update!(kana: 'ball-sports')
+    get '/dates/today'
+    assert_select '.event-results__image[src="/images/categories/ball-sports.jpg"]', count: 5
+    @circle.event.category.update!(kana: '../../missing')
+    get '/dates/today'
+    assert_select '.event-results__image[src="/images/events/event.jpg"]', count: 5
+  end
+
   test 'uploaded schedule images retain their cache version with the narrow projection' do
     @open.update_column(:top_image, 'event-photo.jpg')
     schedule = EventDayListing.new(date: Date.current).schedules.find(@open.id)
@@ -28,6 +48,7 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     end.new('/uploads/event-photo.jpg')
     schedule.top_image.instance_variable_set(:@file, file)
     assert_equal "/uploads/event-photo.jpg?v=#{@open.updated_at.utc.to_i}", schedule.top_image.url
+    assert_equal schedule.top_image.url, SchedulesController.helpers.schedule_image_source(schedule)
   end
 
   test 'compact server rendered results show status and exclude private fields' do

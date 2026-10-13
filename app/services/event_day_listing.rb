@@ -48,7 +48,7 @@ class EventDayListing
     columns = (ScheduleListingData::COLUMNS + [:top_image, :updated_at]).map { |column| "schedules.#{column}" }
     @base.joins("LEFT JOIN (#{counts}) attendance ON attendance.schedule_id = schedules.id")
       .select(*columns, 'COALESCE(attendance.accepted_count, 0) AS accepted_count', "(#{ended}) AS event_ended")
-      .preload(user: [:event, :prefecture])
+      .preload(user: [{ event: :category }, :prefecture])
       .order(Arel.sql("CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC, #{order}"))
   end
 

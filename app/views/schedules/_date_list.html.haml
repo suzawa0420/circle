@@ -6,18 +6,13 @@
       .post_link スケジュールを追加する！
 - if @schedules.present?
   %ul
-    - @schedules.includes(:name_schedules, user: [:event, :prefecture, :prefecture_sub, :tags]).each.with_index(1) do |schedule, i|
+    - @schedules.includes(:name_schedules, user: [{ event: :category }, :prefecture, :prefecture_sub, :tags]).each.with_index(1) do |schedule, i|
       - accepted_count = schedule.name_schedules.count { |name_schedule| name_schedule.answer == 1 }
       %li.schedule_item_wrap
         = link_to(user_schedule_path(schedule.user.id, schedule.id)) do
           .header_schedule_list.ribbon-wrapper
             .header_img_wrap
-              - if schedule.top_image.present?
-                = lazysizes_image_tag schedule.top_image.url , class:'header_imege_user_list', alt: "#{schedule.title}"
-              - elsif schedule.user.pic_header.present?
-                = lazysizes_image_tag schedule.user.pic_header.url , class:'header_imege_user_list', alt: "#{schedule.user.name}"
-              - else
-                = lazysizes_image_tag schedule.user.pic_header.url , class:'header_imege_user_list'
+              = lazysizes_image_tag schedule_image_source(schedule), class:'header_imege_user_list', alt: schedule.title
             .ribbon-content
               - if schedule.recruitment == "募集終了"
                 %span.ribbon.red 満員御礼
