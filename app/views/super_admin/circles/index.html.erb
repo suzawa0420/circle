@@ -1,4 +1,5 @@
 <%= render 'webmasters/shared/page_header', title: 'サークル・主催者管理', description: '確認が必要な投稿の公開状態と、主催者の登録情報を管理します。' %>
+<div id="pending-posts"></div>
 <% [['確認待ちのサークル', @review_circles, 'circle', false], ['確認待ちのブログ', @review_blogs, 'blog', false], ['公開停止中のサークル', @blocked_circles, 'circle', true], ['公開停止中のブログ', @blocked_blogs, 'blog', true]].each do |title, records, kind, blocked| %>
 <details class="wm-disclosure" <%= "open" if records.any? %>>
   <summary><span><%= title %></span><span class="wm-badge"><%= records.size %>件</span></summary><div class="wm-disclosure-content">

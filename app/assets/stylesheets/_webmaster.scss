@@ -16,6 +16,14 @@
   .webmaster-nav input[type=submit], .webmaster-nav button { background: #fff; color: $cb-system-hover; border-color: #fff; }
   .webmaster-subnav { display: flex; gap: 8px; overflow-x: auto; padding: 12px 24px; background: #fff; border-bottom: 1px solid #dce7df; }
   .webmaster-subnav a { flex-shrink: 0; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; color: #52655a; }
+  .webmaster-subnav__item { position: relative; display: inline-flex; align-items: center; min-height: 44px; }
+  .webmaster-subnav a.webmaster-subnav__item--pending { padding-right: 36px; }
+  .webmaster-subnav__count {
+    position: absolute; top: 2px; right: 4px; display: inline-flex; align-items: center; justify-content: center;
+    min-width: 24px; height: 24px; padding: 0 4px; border-radius: 50%;
+    background: $cb-system; color: #fff; font-size: 11px; font-weight: 700; line-height: 1;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
   .webmaster-subnav a[aria-current=page] { background: $cb-system-soft; color: $cb-system-hover; }
   .wm-page-header { position: static; display: block; height: auto; width: auto; margin-bottom: 28px; background: transparent; }
   .wm-page-header p { color: #5c6d63; }
