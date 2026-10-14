@@ -108,6 +108,12 @@
     &__section { margin-bottom: 48px; }
     &__more { margin-right: 0; }
   }
+  @media (max-width: 767px) {
+    padding-top: 0;
+    &__hero { margin-left: -16px; margin-right: -16px; border-radius: 0; }
+    &__hero-copy { max-width: none; }
+    &__hero-description-line { display: block; }
+  }
   @media (max-width: 360px) {
     &__heading { flex-wrap: wrap; }
     &__item { flex-basis: 260px; }
