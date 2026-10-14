@@ -15,6 +15,6 @@
             %span.breadcrumb-current{ "aria-current" => "page" }= name
           - else
             %span= name
-- unless event_breadcrumb_in_content?
+- unless event_breadcrumb_in_structured_graph?
   - if (breadcrumb_data = site_breadcrumb_structured_data(breadcrumb_items))
     %script{ type: "application/ld+json" }= raw json_escape(breadcrumb_data.to_json)

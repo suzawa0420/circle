@@ -171,6 +171,15 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     assert_select '.wm-read-receipt', text: '参加者：既読'
   end
 
+  test 'breadcrumb sits after the content padding at the end of the page' do
+    login_master
+    get_thread super_admin_conversation_path(@conversation)
+    assert_response :success
+    assert_select 'main.webmaster-content .breadcrumbs_wrapper', count: 0
+    assert_select 'main.webmaster-content + footer.webmaster-footer .breadcrumbs_wrapper', count: 1
+    assert_select 'footer.webmaster-footer + .mobile-bottom-nav', count: 1
+  end
+
   private
   def get_thread(path, **options)
     get path, **options

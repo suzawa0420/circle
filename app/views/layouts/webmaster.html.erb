@@ -10,7 +10,7 @@
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <%= javascript_include_tag 'application', defer: true %>
 </head>
-<body class="webmaster-page">
+<body class="webmaster-page <%= "webmaster-page--mobile-nav" if webmaster? %>">
   <nav class="webmaster-nav" aria-label="運営管理">
     <%= link_to 'サークルブック', root_path %>
     <% if webmaster? %>
@@ -36,8 +36,10 @@
       <% if %w[notice alert].include?(type) %><p class="webmaster-flash <%= "webmaster-flash--warning" if type == "alert" %>" role="status"><%= message %></p><% end %>
     <% end %>
     <%= yield %>
-    <%= render "layouts/breadcrumb" %>
   </main>
+  <footer class="webmaster-footer">
+    <%= render "layouts/breadcrumb" %>
+  </footer>
   <% if webmaster? %><%= render "layouts/mobile_nav" %><% end %>
 </body>
 </html>

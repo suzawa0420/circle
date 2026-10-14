@@ -80,7 +80,7 @@ module BreadcrumbsHelper
     gretel = breadcrumbs.to_a
     items = if gretel.any?
       gretel.map { |link| [link.text, link.url] }
-    elsif event_breadcrumb_in_content?
+    elsif event_breadcrumb_in_structured_graph?
       [['ホーム', root_path]] + event_listing_breadcrumbs + [[@event_day_title || @event_hub_title, nil]]
     else
       legacy = (1..5).filter_map do |number|
@@ -104,7 +104,7 @@ module BreadcrumbsHelper
     items
   end
 
-  def event_breadcrumb_in_content?
+  def event_breadcrumb_in_structured_graph?
     controller_path == 'schedules' && %w[dates day today tomorrow this_week next_week].include?(action_name)
   end
 
