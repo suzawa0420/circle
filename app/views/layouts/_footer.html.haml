@@ -1,10 +1,5 @@
 .footer_wrap
-  - gretel_breadcrumbs = breadcrumbs separator: "&rsaquo;"
-  - if gretel_breadcrumbs.any?
-    .breadcrumbs_wrapper.text_slide
-      .breadcrumbs
-        = gretel_breadcrumbs
-  - else
+  - unless event_breadcrumb_in_content?
     = render "/layouts/breadcrumb"
   %ul.footer_links
     %li

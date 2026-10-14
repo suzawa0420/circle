@@ -14,7 +14,7 @@ crumb :circle_search_index do |q|
 end
 
 crumb :circle_search_show do |q|
-  link "「#{q}」のサークル検索結果", circles_search_path
+  link "「#{q}」のサークル検索結果", circles_search_path(q)
   parent :root
 end
 
@@ -89,7 +89,7 @@ end
 
   ## ブログ詳細ページ
   crumb :blog_show do |blog|
-    link "#{blog.title}", blog_path(blog)
+    link "#{blog.title}", circle_blog_path(blog.user, blog)
     parent :blog_event_prefecture_show, blog.user.event, blog.user.prefecture
   end
 

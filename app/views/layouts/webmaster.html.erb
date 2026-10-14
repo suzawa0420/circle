@@ -36,6 +36,7 @@
       <% if %w[notice alert].include?(type) %><p class="webmaster-flash <%= "webmaster-flash--warning" if type == "alert" %>" role="status"><%= message %></p><% end %>
     <% end %>
     <%= yield %>
+    <%= render "layouts/breadcrumb" %>
   </main>
   <% if webmaster? %><%= render "layouts/mobile_nav" %><% end %>
 </body>

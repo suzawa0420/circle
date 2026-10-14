@@ -1,17 +1,17 @@
 .breadcrumbs_wrapper
-  .breadcrumbs
-    %nav
-      %ul
+  %nav.breadcrumbs{ "aria-label" => "パンくずリスト" }
+    - breadcrumb_items = site_breadcrumb_items
+    %ol
+      - breadcrumb_items.each_with_index do |(name, path), index|
         %li
-          = link_to(root_path) do
-            = lucide_icon "house", class: "home_icon"
-        - if @b1_name.present?
-          %li= link_to @b1_name, @b1_url
-        - if @b2_name.present?
-          %li= link_to @b2_name, @b2_url
-        - if @b3_name.present?
-          %li= link_to @b3_name, @b3_url
-        - if @b4_name.present?
-          %li= link_to @b4_name, @b4_url
-        - if @b5_name.present?
-          %li= link_to @b5_name, @b5_url
+          - if index.positive?
+            = lucide_icon "chevron-right", class: "breadcrumb-separator", "aria-hidden" => "true"
+          - if path.present?
+            = link_to path do
+              - if index.zero?
+                = lucide_icon "house", class: "home_icon", "aria-hidden" => "true"
+              = name
+          - elsif index == breadcrumb_items.length - 1
+            %span.breadcrumb-current{ "aria-current" => "page" }= name
+          - else
+            %span= name
