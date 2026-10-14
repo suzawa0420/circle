@@ -2,7 +2,7 @@
 <p><%= link_to '通報一覧に戻る', super_admin_chat_reports_path, class: 'wm-button wm-button--secondary' %></p>
 <section class="wm-section"><article class="webmaster-card">
   <div class="wm-card-heading"><h2>通報内容</h2><span class="wm-badge <%= 'wm-badge--pending' unless @report.resolved_at %>"><%= ChatReport::STATUSES[@report.status] %></span></div>
-  <p class="wm-meta">通報者：<%= @report.reporter_role == 'member' ? '参加者' : '主催者' %> ／ <%= @report.created_at.strftime('%Y/%m/%d %H:%M') %></p>
+  <p class="wm-meta">通報者：<%= @report.conversation.practice_match? ? @report.conversation.participant_name(@report.reporter_role) : (@report.reporter_role == 'member' ? '参加者' : '主催者') %> ／ <%= @report.created_at.strftime('%Y/%m/%d %H:%M') %></p>
   <div class="wm-body"><%= simple_format @report.reason %></div>
   <% if @report.conversation_review %>
     <h3>対象の口コミ</h3><div class="wm-body"><%= simple_format @report.conversation_review.comment %></div>

@@ -1,3 +1,6 @@
+<% if conversation.practice_match? %>
+  <%= render 'conversations/practice_profiles', conversation: conversation, viewer_role: viewer_role, manage_accounts: local_assigns[:manage_accounts] %>
+<% else %>
 <section class="chat-profiles" aria-label="やり取りしている参加者と主催者">
   <% %w[member owner].each do |person_role| %>
     <% person = person_role == 'member' ? conversation.member : conversation.user %>
@@ -32,3 +35,5 @@
     </article>
   <% end %>
 </section>
+
+<% end %>

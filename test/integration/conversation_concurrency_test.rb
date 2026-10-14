@@ -52,6 +52,21 @@ class ConversationConcurrencyTest < ActiveSupport::TestCase
     assert @conversation.reload.owner_notification_due_at
   end
 
+  test 'opposite organizers starting simultaneously share one conversation' do
+    source_owner = AdminUser.create!(email: 'concurrent-practice@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    source = @circle.dup
+    source.admin_user = source_owner
+    source.save!
+    results = concurrently do |i|
+      i.zero? ? Conversation.for_circles!(@circle, source) : Conversation.for_circles!(source, @circle)
+    end
+    assert_equal 1, results.map(&:id).uniq.count
+    assert_equal 1, Conversation.where(user: @circle, source_user: source).or(Conversation.where(user: source, source_user: @circle)).count
+  ensure
+    source&.destroy!
+    source_owner&.destroy!
+  end
+
   private
   def concurrently
     ready, start = Queue.new, Queue.new

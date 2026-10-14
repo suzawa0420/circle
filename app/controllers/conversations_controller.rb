@@ -10,17 +10,20 @@ class ConversationsController < ApplicationController
   def index
     inbox_scope = accessible_conversations
     if admin_user_signed_in? && !member_signed_in?
-      inbox_scope = inbox_scope.where(user_id: params[:circle_id]) if params[:circle_id].present?
+      inbox_scope = inbox_scope.where(user_id: params[:circle_id]).or(inbox_scope.where(source_user_id: params[:circle_id])) if params[:circle_id].present?
       @penalty_count = inbox_scope.reported_unanswered.count
       @penalty_only = params[:penalty] == '1'
       inbox_scope = inbox_scope.reported_unanswered if @penalty_only
     end
     visible = ChatMessage.deliverable
     visible = visible.or(ChatMessage.where(sender_role: 'member', conversation_id: Conversation.where(member_id: current_member.id).select(:id))) if member_signed_in?
+    if admin_user_signed_in?
+      visible = visible.or(ChatMessage.where(sender_role: 'member', conversation_id: Conversation.where(source_user_id: current_admin_user.users.select(:id)).select(:id)))
+    end
     # Automatic guidance alone must not expose an inquiry held before delivery.
     latest = visible.where(conversation_id: inbox_scope.select(:id)).where.not(sender_role: 'system').select('conversation_id, MAX(COALESCE(released_at, created_at)) AS delivered_at, MAX(id) AS latest_id').group(:conversation_id)
     @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
-      .includes(:user, :member).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
+      .includes(:user, :member, :source_user).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
     ids = @conversations.map(&:id)
     @penalty_ids = Conversation.reported_unanswered.where(id: ids).pluck(:id)
     @latest_messages = visible.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id).delivery_order.index_by(&:conversation_id)
@@ -33,6 +36,11 @@ class ConversationsController < ApplicationController
 
   def new
     @user = User.publicly_visible.find(params[:user_id])
+    if practice_match_request?
+      raise Conversation::NotAllowed, '練習試合のメッセージ機能を準備しています。少し待ってからお試しください。' unless Conversation::PRACTICE_MATCH_ENABLED
+      @source_circles = current_admin_user.users.publicly_visible.order(:id)
+      return render :new_practice_match
+    end
     existing = Conversation.find_by(user: @user, member: current_member)
     return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists?
     @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
@@ -40,6 +48,7 @@ class ConversationsController < ApplicationController
 
   def create
     @user = User.publicly_visible.find(params[:user_id])
+    return create_practice_match if practice_match_request?
     raise Conversation::NotAllowed, '現在、このサークルは募集を停止しています。' unless @user.switch == '募集中'
     raise Conversation::NotAllowed, 'ご自身のサークルには問い合わせできません。' if current_admin_user&.id == @user.admin_user_id || @user.admin_user.email.casecmp?(current_member.email)
     current_member.with_lock do
@@ -89,7 +98,7 @@ class ConversationsController < ApplicationController
 
   def block
     @conversation.with_lock { @conversation.update!("#{@role}_blocked" => true) }
-    redirect_to conversation_path(@conversation), notice: 'ブロックしました。評価権や過去の履歴は残ります。'
+    redirect_to conversation_path(@conversation), notice: @conversation.practice_match? ? 'ブロックしました。過去の履歴は残ります。' : 'ブロックしました。評価権や過去の履歴は残ります。'
   end
 
   def unblock
@@ -119,7 +128,7 @@ class ConversationsController < ApplicationController
   end
 
   def no_reply
-    raise Conversation::NotAllowed, 'この操作はできません。' unless @role == 'member'
+    raise Conversation::NotAllowed, 'この操作はできません。' unless @role == 'member' && !@conversation.practice_match?
     @conversation.with_lock do
       raise Conversation::NotAllowed, '配信済みのお問い合わせがありません。' unless @conversation.chat_messages.deliverable.where(sender_role: 'member').exists?
       raise Conversation::NotAllowed, '返信済みの問い合わせです。' if @conversation.accepted_at
@@ -133,6 +142,25 @@ class ConversationsController < ApplicationController
   end
 
   private
+
+  def practice_match_request?
+    (%w[new create].include?(action_name) && params[:kind] == 'practice_match') || @conversation&.practice_match?
+  end
+
+  def create_practice_match
+    source = current_admin_user.users.publicly_visible.find(params[:source_user_id])
+    raise Conversation::NotAllowed, '現在、このサークルは対戦相手を募集していません。' unless @user.match&.recruit == '募集中'
+    raise Conversation::NotAllowed, '利用停止中のサークルには問い合わせできません。' if @user.admin_user.suspended?
+    current_admin_user.with_lock do
+      if Conversation.where(source_user_id: current_admin_user.users.select(:id)).where('created_at > ?', 1.day.ago).count >= 20
+        raise Conversation::NotAllowed, '本日の問い合わせ上限に達しました。明日お試しください。'
+      end
+      @conversation = Conversation.for_circles!(@user, source)
+      @role = @conversation.role_for(nil, current_admin_user)
+      @sent_message = @conversation.send_message!(@role, params.require(:message).permit(:body)[:body])
+    end
+    redirect_to conversation_path(@conversation), notice: @sent_message.delivered? ? '練習試合の相談を送信しました。' : '運営による確認後に配信します。相手にはまだ届いていません。'
+  end
 
   def mark_messages_read(advance_cursor: true)
     return if webmaster_signed_in?
@@ -153,6 +181,10 @@ class ConversationsController < ApplicationController
   end
 
   def authenticate_chat_account!
+    if practice_match_request? && !admin_user_signed_in?
+      store_location_for(:admin_user, request.fullpath) if request.get?
+      return redirect_to new_admin_user_session_path, alert: '練習試合の相談には主催者アカウントでログインしてください。'
+    end
     return if member_signed_in? || admin_user_signed_in?
     store_location_for(:member, request.fullpath) if request.get?
     if %w[new create].include?(action_name)
@@ -164,16 +196,17 @@ class ConversationsController < ApplicationController
   end
 
   def require_japanese_member_profile
-    return if @role == 'owner' || !member_signed_in? || current_member.japanese_profile?
+    return if practice_match_request? || @role == 'owner' || !member_signed_in? || current_member.japanese_profile?
     redirect_to edit_member_path(current_member), alert: '自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。'
   end
 
   def require_verified_chat_sender
-    actor = @role == 'owner' ? current_admin_user : current_member
+    owner_sender = practice_match_request? || @role == 'owner'
+    actor = owner_sender ? current_admin_user : current_member
     raise Conversation::NotAllowed, '利用停止中は問い合わせ・メッセージ・口コミを投稿できません。' if actor&.suspended?
-    if @role == 'owner'
+    if owner_sender
       unless current_admin_user.email_verified?
-        store_location_for(:admin_user, conversation_path(@conversation))
+        store_location_for(:admin_user, @conversation ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id], kind: 'practice_match'))
         redirect_to admin_user_email_verification_path
       end
       return
@@ -189,7 +222,7 @@ class ConversationsController < ApplicationController
 
   def accessible_conversations
     member_scope = member_signed_in? ? Conversation.where(member_id: current_member.id) : Conversation.none
-    owner_scope = admin_user_signed_in? ? Conversation.where(user_id: current_admin_user.users.select(:id)) : Conversation.none
+    owner_scope = admin_user_signed_in? ? Conversation.for_owner(current_admin_user) : Conversation.none
     member_scope.or(owner_scope)
   end
 
@@ -203,11 +236,7 @@ class ConversationsController < ApplicationController
     if identifier != @conversation.public_id && request.get? && action_name == 'show'
       return redirect_to conversation_path(@conversation), status: :moved_permanently
     end
-    @role = if member_signed_in? && @conversation.member_id == current_member.id
-              'member'
-            else
-              'owner'
-            end
+    @role = @conversation.role_for(current_member, current_admin_user)
   end
 
   def invalid_action(error)
@@ -215,7 +244,7 @@ class ConversationsController < ApplicationController
   end
 
   def invalid_record(error)
-    redirect_to(@conversation&.persisted? ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id]),
+    redirect_to(@conversation&.persisted? && Conversation.exists?(@conversation.id) ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id], kind: params[:kind]),
                 alert: error.record.errors.full_messages.join('、'))
   end
 end

@@ -53,7 +53,8 @@ class ChatSpamDetector
     reasons << 'contacts' if links.size + contact_channels.size >= 2
     reasons << 'hashtags' if body.to_s.unicode_normalize(:nfkc).scan(/#[\p{L}\p{N}_]+/).size >= 6
     reasons << 'known_destination' if links.any? && ChatSpamDestination.where(destination: links).exists?
-    recent = ChatMessage.joins(:conversation).where(conversations: { member_id: conversation.member_id }, sender_role: 'member')
+    sender_scope = conversation.practice_match? ? { source_user_id: conversation.source_user.admin_user.users.select(:id) } : { member_id: conversation.member_id }
+    recent = ChatMessage.joins(:conversation).where(conversations: sender_scope, sender_role: 'member')
                         .where.not(spam_fingerprint: nil).where('chat_messages.created_at > ?', 30.minutes.ago)
                         .where.not(conversation_id: conversation.id).order(id: :desc).limit(60).pluck(:conversation_id, :body)
     reasons << 'repeated' if recent.select { |_, other_body| similar?(text, normalized(other_body)) }.map(&:first).uniq.size >= 2

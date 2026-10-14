@@ -7,6 +7,7 @@ class SuperAdmin::ConversationsController < ApplicationController
     if @query.present?
       pattern = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
       scope = scope.where(user_id: User.where('name ILIKE ?', pattern).select(:id))
+                   .or(scope.where(source_user_id: User.where('name ILIKE ?', pattern).select(:id)))
                    .or(scope.where(member_id: Member.where('nickname ILIKE ?', pattern).select(:id)))
     end
     latest = ChatMessage.select('conversation_id, MAX(id) AS latest_message_id, MAX(created_at) AS latest_message_at').group(:conversation_id)

@@ -40,18 +40,18 @@ module MobileNavigationHelper
   def mobile_navigation_unread_count
     return @mobile_navigation_unread_count if defined?(@mobile_navigation_unread_count)
 
+    owner_scope = admin_user_signed_in? ? Conversation.where(user_id: current_admin_user.users.select(:id)) : Conversation.none
+    member_scope = member_signed_in? ? current_member.conversations : Conversation.none
     if admin_user_signed_in?
-      conversations = Conversation.where(user_id: current_admin_user.users.select(:id))
-      role, incoming = 'owner', 'member'
-    elsif member_signed_in?
-      conversations = current_member.conversations
-      role, incoming = 'member', 'owner'
-    else
-      return 0
+      member_scope = member_scope.or(Conversation.where(source_user_id: current_admin_user.users.select(:id)))
     end
-    @mobile_navigation_unread_count = conversations.where(
-      "EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.moderation_status IN (?, ?) AND ((chat_messages.released_at IS NULL AND chat_messages.id > conversations.#{role}_read_message_id) OR (chat_messages.released_at IS NOT NULL AND chat_messages.recipient_read_at IS NULL)))",
-      incoming, 'delivered', 'approved'
-    ).count
+    unread_scopes = { 'owner' => owner_scope, 'member' => member_scope }.map do |role, scope|
+      incoming = role == 'owner' ? 'member' : 'owner'
+      scope.where(
+        "EXISTS (SELECT 1 FROM chat_messages WHERE chat_messages.conversation_id = conversations.id AND chat_messages.sender_role = ? AND chat_messages.moderation_status IN (?, ?) AND ((chat_messages.released_at IS NULL AND chat_messages.id > conversations.#{role}_read_message_id) OR (chat_messages.released_at IS NOT NULL AND chat_messages.recipient_read_at IS NULL)))",
+        incoming, 'delivered', 'approved'
+      )
+    end
+    @mobile_navigation_unread_count = unread_scopes.reduce(&:or).count
   end
 end

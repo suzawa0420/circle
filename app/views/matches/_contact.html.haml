@@ -2,7 +2,7 @@
   %h2 練習試合の相談
   - if @match.recruit == '募集中'
     %p 日程・会場・チームのレベルなど、希望する条件を添えてご連絡ください。
-    = link_to new_user_user_contact_path(@user, entry: '2'), class: 'match-directory__button' do
+    = link_to new_user_conversation_path(@user, kind: 'practice_match'), class: 'match-directory__button' do
       = lucide_icon 'mail'
       練習試合について連絡する
   - else

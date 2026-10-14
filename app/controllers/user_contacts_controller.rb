@@ -275,7 +275,7 @@ class UserContactsController < ApplicationController
 
 private
   def route_new_contact_to_chat
-    redirect_to new_user_conversation_path(params[:user_id]), status: :see_other
+    redirect_to new_user_conversation_path(params[:user_id], kind: params[:entry] == '2' ? 'practice_match' : nil), status: :see_other
   end
 
 	def user_contact_params

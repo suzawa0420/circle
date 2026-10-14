@@ -1,0 +1,24 @@
+<main class="chat-shell">
+  <%= link_to @user.name, match_path(@user) %>
+  <h1>対戦・練習試合の相談</h1>
+  <p>送信元のサークルを選び、希望する日程・会場・チームのレベルなどをお伝えください。返信はメッセージ一覧で確認できます。</p>
+  <% if @source_circles.empty? %>
+    <div class="chat-card"><p>相談を送るには公開中のサークルが必要です。</p><%= link_to 'サークルを登録する', new_user_path %></div>
+  <% elsif @user.admin_user_id == current_admin_user.id %>
+    <p>ご自身のサークルには問い合わせできません。</p>
+  <% elsif @user.match&.recruit != '募集中' %>
+    <p>このサークルは現在、対戦相手を募集していません。</p>
+  <% else %>
+    <div class="chat-card">
+      <%= form_with url: user_conversations_path(@user), scope: :message, local: true do |f| %>
+        <%= hidden_field_tag :kind, 'practice_match' %>
+        <%= label_tag :source_user_id, '送信元のサークル' %>
+        <%= select_tag :source_user_id, options_from_collection_for_select(@source_circles, :id, :name), required: true %>
+        <%= f.label :body, '練習試合の相談内容' %>
+        <%= f.text_area :body, required: true, maxlength: 2000, rows: 8, placeholder: '希望する日程や会場、チームのレベルなどをご記入ください。' %>
+        <p>相手には送信元サークルの公開プロフィールが表示されます。</p>
+        <%= f.submit '練習試合の相談を送信', class: 'chat-button' %>
+      <% end %>
+    </div>
+  <% end %>
+</main>

@@ -16,7 +16,7 @@ class SuperAdmin::BulkOwnerDeletionsController < ApplicationController
     return invalid_selection unless @owners.size == ids.size
 
     circles = User.where(admin_user_id: ids)
-    conversations = Conversation.where(user_id: circles.select(:id))
+    conversations = Conversation.where(user_id: circles.select(:id)).or(Conversation.where(source_user_id: circles.select(:id)))
     @impact = { circles: circles.count, conversations: conversations.count,
                 messages: ChatMessage.where(conversation_id: conversations.select(:id)).count,
                 reviews: Review.where(user_id: circles.select(:id)).count }

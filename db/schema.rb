@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_13_100000) do
+ActiveRecord::Schema.define(version: 2026_10_14_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -200,9 +200,8 @@ ActiveRecord::Schema.define(version: 2026_10_13_100000) do
 
   create_table "conversations", force: :cascade do |t|
     t.string "public_id", limit: 24, null: false
-    t.index ["public_id"], name: "index_conversations_on_public_id", unique: true
     t.bigint "user_id", null: false
-    t.bigint "member_id", null: false
+    t.bigint "member_id"
     t.datetime "accepted_at"
     t.datetime "review_deadline"
     t.datetime "reviews_published_at"
@@ -218,12 +217,17 @@ ActiveRecord::Schema.define(version: 2026_10_13_100000) do
     t.datetime "owner_notified_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "source_user_id"
+    t.index "LEAST(user_id, source_user_id), GREATEST(user_id, source_user_id)", name: "index_conversations_circle_pair", unique: true, where: "(source_user_id IS NOT NULL)"
+    t.index ["member_id"], name: "index_conversations_on_member_id"
     t.index ["member_notification_due_at"], name: "index_conversations_on_member_notification_due_at"
     t.index ["owner_notification_due_at"], name: "index_conversations_on_owner_notification_due_at"
-    t.index ["member_id"], name: "index_conversations_on_member_id"
+    t.index ["public_id"], name: "index_conversations_on_public_id", unique: true
     t.index ["reviews_published_at", "review_deadline"], name: "index_conversations_review_publication"
+    t.index ["source_user_id"], name: "index_conversations_on_source_user_id"
     t.index ["user_id", "member_id"], name: "index_conversations_on_user_id_and_member_id", unique: true
     t.index ["user_id"], name: "index_conversations_on_user_id"
+    t.check_constraint "member_id IS NOT NULL AND source_user_id IS NULL OR member_id IS NULL AND source_user_id IS NOT NULL AND source_user_id <> user_id", name: "conversations_one_sender_kind"
   end
 
   create_table "circle_activity_fingerprints", force: :cascade do |t|
@@ -891,6 +895,7 @@ ActiveRecord::Schema.define(version: 2026_10_13_100000) do
   add_foreign_key "chat_reports", "conversations"
   add_foreign_key "conversation_reviews", "conversations"
   add_foreign_key "conversations", "members"
+  add_foreign_key "conversations", "users", column: "source_user_id"
   add_foreign_key "conversations", "users"
   add_foreign_key "reviews", "conversation_reviews"
 end

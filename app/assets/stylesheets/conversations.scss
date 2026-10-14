@@ -13,7 +13,7 @@
 .chat-message--mine { align-self: flex-end; background: #e9f5ee; border-color: $cb-border; }
 .chat-message time { color: $cb-muted; font-size: 12px; }
 .chat-message details { margin-top: 10px; }
-.chat-shell textarea { width: 100%; display: block; padding: 12px; border: 1px solid $cb-input-border; border-radius: 6px; margin: 8px 0 14px; font-size: 16px; box-sizing: border-box; }
+.chat-shell textarea, .chat-shell select { width: 100%; display: block; padding: 12px; border: 1px solid $cb-input-border; border-radius: 6px; margin: 8px 0 14px; font-size: 16px; box-sizing: border-box; }
 .chat-shell input[type=submit], .chat-shell button { min-height: 44px; padding: 9px 16px; margin: 6px 6px 6px 0; border: 1px solid $cb-input-border; border-radius: 6px; background: #fff; color: $cb-text; cursor: pointer; }
 .chat-shell .chat-button { background: $cb-action !important; color: #fff !important; border-color: $cb-action !important; }
 .chat-shell label { margin-right: 12px; }

@@ -52,6 +52,6 @@ class ChatMessage < ApplicationRecord
   end
 
   def sender_label
-    automatic? ? '自動案内' : (sender_role == 'owner' ? '主催者' : '参加者')
+    automatic? ? '自動案内' : (sender_role == 'owner' || conversation.practice_match? ? '主催者' : '参加者')
   end
 end

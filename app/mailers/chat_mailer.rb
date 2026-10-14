@@ -1,9 +1,12 @@
 class ChatMailer < ApplicationMailer
   def new_messages(conversation, role)
     @conversation = conversation
-    recipient = role == 'member' ? conversation.member.email : conversation.user.admin_user.email
+    recipient = conversation.actor(role).email
     circle_name = conversation.user.name.to_s.squish.presence || 'サークル'
-    subject = if role == 'member'
+    subject = if conversation.practice_match?
+      other_role = role == 'member' ? 'owner' : 'member'
+      "【サークルブック｜練習試合】#{conversation.participant_name(other_role)}からメッセージが届きました"
+    elsif role == 'member'
       "【サークルブック｜#{circle_name}】主催者からメッセージが届きました"
     else
       member_name = conversation.member.nickname.to_s.squish.presence || 'メンバー'

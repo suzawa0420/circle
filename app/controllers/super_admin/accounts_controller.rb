@@ -68,6 +68,6 @@ class SuperAdmin::AccountsController < ApplicationController
     @account = @model.find(params[:id])
   end
   def conversations
-    @kind == 'member' ? @account.conversations : Conversation.where(user_id: @account.users.select(:id))
+    @kind == 'member' ? @account.conversations : Conversation.for_owner(@account)
   end
 end

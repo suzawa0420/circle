@@ -7,7 +7,7 @@
   <% @messages.each do |message| %>
     <article class="webmaster-card wm-message">
       <div class="wm-card-heading"><strong><%= message.conversation.user.name %></strong><span class="wm-badge"><%= message.spam_score %>点</span></div>
-      <p class="wm-meta"><%= message.conversation.member.nickname %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= ChatMessage::STATUSES.fetch(message.moderation_status) %></p>
+      <p class="wm-meta"><%= message.conversation.participant_name('member') %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= ChatMessage::STATUSES.fetch(message.moderation_status) %></p>
       <ul><% message.spam_reasons.each do |reason| %><% label, points = ChatSpamDetector::REASONS.fetch(reason, ['その他', 0]) %><li><%= label %>（<%= points %>点）</li><% end %></ul>
       <div class="wm-body"><%= render 'conversations/image', message: message %><%= chat_message_body(message.body) %></div>
       <div class="wm-actions">

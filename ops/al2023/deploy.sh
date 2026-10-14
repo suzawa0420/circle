@@ -74,6 +74,8 @@ case "$mode" in
     bundle exec ruby bin/verify_public_level_index
     # Backlink reward requests must exist before activating the new scoring code.
     bundle exec rails db:migrate:up VERSION=20261013100000
+    # Circle-to-circle chat: nullable participant and an additive sender-circle reference.
+    bundle exec rails db:migrate:up VERSION=20261014000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

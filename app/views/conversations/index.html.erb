@@ -1,6 +1,6 @@
 <main class="chat-shell chat-inbox <%= "cb-participant" if member_signed_in? && !admin_user_signed_in? %>">
   <h1>メッセージ</h1>
-  <p class="chat-muted"><%= member_signed_in? ? 'サークルへの問い合わせ・参加の相談' : '参加希望者からのお問い合わせ・メッセージ' %></p>
+  <p class="chat-muted"><%= member_signed_in? ? 'サークルへの問い合わせ・参加の相談' : '参加の相談・対戦や練習試合の相談' %></p>
   <% if @penalty_count.to_i.positive? || @penalty_only %>
     <aside class="chat-card chat-penalty-summary">
       <strong>未返信報告の減点対象：<%= @penalty_count %>件（1件につき30ポイント）</strong>
@@ -16,7 +16,7 @@
         <p>メッセージはまだありません。気になるサークルに問い合わせると、ここでやり取りできます。</p>
         <%= link_to 'サークルを探す', circles_path %>
       <% else %>
-        <p>参加希望者からのお問い合わせが届くと、ここに表示されます。</p>
+        <p>参加希望者からのお問い合わせが届くと、ここに表示されます。主催者同士の練習試合の相談も確認できます。</p>
         <% circle = current_admin_user.users.first %>
         <%= link_to 'マイページへ戻る', circle ? "/users/#{circle.id}/mypage" : new_user_path %>
       <% end %>
@@ -24,21 +24,21 @@
   <% end %>
   <div class="chat-talk-list">
     <% @conversations.each do |conversation| %>
-      <% role = member_signed_in? && conversation.member_id == current_member.id ? 'member' : 'owner' %>
+      <% role = conversation.role_for(current_member, current_admin_user) %>
       <% incoming = role == 'member' ? 'owner' : 'member' %>
       <% latest = @latest_messages[conversation.id] %>
       <% unread = @unread_counts[role].fetch(conversation.id, 0) %>
       <%= link_to conversation_path(conversation), class: "chat-talk #{'chat-talk--unread' if unread.positive?}" do %>
         <%= render 'avatar', conversation: conversation, role: incoming %>
         <span class="chat-talk__content">
-          <strong class="chat-talk__name"><%= role == 'member' ? conversation.user.name : "#{conversation.member.nickname}さん" %></strong>
+          <strong class="chat-talk__name"><%= conversation.participant_name(incoming) %><%= "さん" if incoming == "member" && !conversation.practice_match? %></strong>
           <% if role == 'owner' %><span class="chat-talk__circle"><%= conversation.user.name %></span><% end %>
           <% if role == 'owner' && @penalty_ids.include?(conversation.id) %>
             <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
           <% end %>
           <span class="chat-talk__preview"><%= 'あなた：' if latest&.sender_role == role %><%= latest&.preview_text %></span>
-          <span class="chat-talk__status"><%= conversation.accepted_at ? '受付済み' : '返信待ち' %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
-          <% if role == 'owner' %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>
+          <span class="chat-talk__status"><%= conversation.practice_match? ? '対戦・練習試合' : (conversation.accepted_at ? '受付済み' : '返信待ち') %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
+          <% if role == 'owner' && !conversation.practice_match? %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>
         </span>
         <span class="chat-talk__meta"><% if latest %><time datetime="<%= latest.created_at.iso8601 %>"><%= latest.created_at.to_date == Date.current ? latest.created_at.strftime('%H:%M') : latest.created_at.strftime('%-m/%-d') %></time><% end %><% if unread.positive? %><span class="chat-badge" aria-label="未読<%= unread %>件"><%= unread %></span><% end %></span>
       <% end %>

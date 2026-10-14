@@ -159,6 +159,7 @@ class User < ApplicationRecord
 	has_many :questions, dependent: :destroy
 	has_many :collections, dependent: :destroy
 	has_many :conversations, dependent: :destroy
+  has_many :initiated_conversations, class_name: 'Conversation', foreign_key: :source_user_id, dependent: :destroy
 	has_many :reviews, dependent: :destroy
 	has_many :users_ages, dependent: :destroy
   has_many :ages, through: :users_ages

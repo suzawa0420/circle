@@ -1,0 +1,18 @@
+<section class="chat-profiles" aria-label="練習試合を相談しているサークル">
+  <% %w[member owner].each do |person_role| %>
+    <% circle = conversation.person(person_role) %>
+    <article class="chat-profile chat-profile--<%= person_role %>">
+      <%= link_to circle_path(circle), class: 'chat-profile__link' do %>
+        <span class="chat-profile__role">主催者・サークル</span>
+        <%= render 'conversations/avatar', conversation: conversation, role: person_role %>
+        <strong class="chat-profile__name"><%= circle.name %></strong>
+        <span class="chat-profile__attributes"><%= [circle.prefecture&.name, circle.area, circle.event&.name].compact.join('・') %></span>
+      <% end %>
+      <% if local_assigns[:manage_accounts] && webmaster? %>
+        <%= link_to '主催者の管理', super_admin_account_path(circle.admin_user, kind: 'owner'), class: 'wm-button' %>
+      <% elsif viewer_role == person_role %>
+        <span class="chat-profile__evaluate chat-profile__evaluate--disabled">あなたのサークル</span>
+      <% end %>
+    </article>
+  <% end %>
+</section>

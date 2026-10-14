@@ -1,5 +1,8 @@
 class Conversation < ApplicationRecord
   class NotAllowed < StandardError; end
+  # Enable production creation only after both servers understand organizer conversations.
+  PRACTICE_MATCH_ENABLED = !Rails.env.production?
+
   before_validation :assign_public_id, on: :create
   attr_readonly :public_id
 
@@ -20,7 +23,7 @@ class Conversation < ApplicationRecord
     delivered_inquiries = ChatMessage.deliverable.where(sender_role: 'member')
       .where('COALESCE(chat_messages.released_at, chat_messages.created_at) <= ?', NO_REPLY_WAIT.ago)
       .select(:conversation_id)
-    where(respond_check: 'NG', accepted_at: nil, id: delivered_inquiries)
+    where(source_user_id: nil, respond_check: 'NG', accepted_at: nil, id: delivered_inquiries)
   }
 
   def no_reply_reportable_at
@@ -31,7 +34,10 @@ class Conversation < ApplicationRecord
 
   ROLES = %w[member owner].freeze
   belongs_to :user
-  belongs_to :member
+  belongs_to :member, optional: true
+  belongs_to :source_user, class_name: 'User', optional: true
+  validates :member, presence: true, unless: :practice_match?
+  validate :valid_circle_participants
   has_many :chat_messages, dependent: :destroy
   has_many :conversation_reviews, dependent: :destroy
   has_many :chat_reports, dependent: :destroy
@@ -43,10 +49,41 @@ class Conversation < ApplicationRecord
     end
   end
 
+  # Stored member/owner roles describe the two sides; for practice matches both are organizers.
+  def practice_match? = source_user_id.present?
+  def person(role) = role == 'owner' ? user : (practice_match? ? source_user : member)
+  def actor(role) = person(role).is_a?(User) ? person(role).admin_user : person(role)
+  def participant_name(role) = person(role).is_a?(User) ? person(role).name : person(role).nickname
+
+  scope :for_owner, ->(owner) {
+    ids = owner.users.select(:id)
+    where(user_id: ids).or(where(source_user_id: ids))
+  }
+
+  def role_for(member_account, owner_account)
+    return 'member' if practice_match? && owner_account && source_user.admin_user_id == owner_account.id
+    return 'member' if !practice_match? && member_account && member_id == member_account.id
+    'owner'
+  end
+
+  def self.for_circles!(target, source)
+    raise NotAllowed, '練習試合のメッセージ機能を準備しています。少し待ってからお試しください。' unless PRACTICE_MATCH_ENABLED
+    pair = where(user: target, source_user: source).or(where(user: source, source_user: target))
+    pair.first || transaction(requires_new: true) { create!(user: target, source_user: source) }
+  rescue ActiveRecord::RecordNotUnique
+    pair.first!
+  end
+
+  def valid_circle_participants
+    return unless practice_match?
+    errors.add(:base, 'ご自身のサークルには問い合わせできません。') if user&.admin_user_id == source_user&.admin_user_id
+    errors.add(:member, 'は指定できません。') if member_id.present?
+  end
+
   def ensure_active_sender!(role)
     raise NotAllowed, '送信者が不正です。' unless ROLES.include?(role)
-    actor = role == 'owner' ? user.admin_user : member
-    raise NotAllowed, '利用停止中はメッセージ・口コミを投稿できません。' if actor.reload.suspended?
+    sender = actor(role)
+    raise NotAllowed, '利用停止中はメッセージ・口コミを投稿できません。' if sender.reload.suspended?
   end
 
   def blocked?
@@ -56,7 +93,7 @@ class Conversation < ApplicationRecord
   # Serialize initial inquiries across different circles for the same sender.
   def send_message!(role, body, image: nil)
     if role == 'member'
-      member.with_lock { send_message_locked!(role, body, image: image) }
+      actor(role).with_lock { send_message_locked!(role, body, image: image) }
     else
       send_message_locked!(role, body, image: image)
     end
@@ -66,18 +103,18 @@ class Conversation < ApplicationRecord
     with_lock do
       raise NotAllowed, 'ブロック中はメッセージを送信できません。' if blocked?
       ensure_active_sender!(role)
-      if role == 'member' && !member.japanese_profile?
+      if !practice_match? && role == 'member' && !member.japanese_profile?
         raise NotAllowed, '自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。'
       end
-      sender = role == 'owner' ? user.admin_user : member
+      sender = actor(role)
       raise NotAllowed, 'メールアドレスを確認してください。' unless sender.email_verified?
       if chat_messages.where(sender_role: role).where('created_at > ?', 1.minute.ago).count >= 10
         raise NotAllowed, '送信が続いています。少し待ってからお試しください。'
       end
-      if role == 'owner' && !chat_messages.deliverable.where(sender_role: 'member').exists?
+      if !practice_match? && role == 'owner' && !chat_messages.deliverable.where(sender_role: 'member').exists?
         raise NotAllowed, '参加者からの問い合わせを受けてから返信できます。'
       end
-      if role == 'member' && !chat_messages.exists?
+      if !practice_match? && role == 'member' && !chat_messages.exists?
         CircleInquiryGuidance.new(user).messages.each do |guidance|
           chat_messages.create!(sender_role: 'system', body: guidance)
         end
@@ -90,7 +127,7 @@ class Conversation < ApplicationRecord
       end
       message = chat_messages.create!(attributes)
       return message unless message.delivered?
-      if role == 'owner' && accepted_at.nil?
+      if !practice_match? && role == 'owner' && accepted_at.nil?
         self.accepted_at = Time.current
         self.review_deadline = 14.days.from_now
         had_no_reply_report = respond_check == "NG"
@@ -132,6 +169,7 @@ class Conversation < ApplicationRecord
   end
 
   def submit_review!(role, attributes)
+    raise NotAllowed, '練習試合の相談は口コミの対象外です。' if practice_match?
     with_lock do
       ensure_active_sender!(role)
       publish_reviews_locked!
@@ -150,6 +188,7 @@ class Conversation < ApplicationRecord
   end
 
   def delete_review!(role)
+    raise NotAllowed, '練習試合の相談は口コミの対象外です。' if practice_match?
     with_lock do
       publish_reviews_locked!
       review = conversation_reviews.find_by!(author_role: role)
@@ -169,7 +208,7 @@ class Conversation < ApplicationRecord
   end
 
   def publish_reviews_locked!
-    return if reviews_published_at || accepted_at.nil?
+    return if practice_match? || reviews_published_at || accepted_at.nil?
     return unless review_deadline <= Time.current || conversation_reviews.count == 2
 
     now = Time.current
