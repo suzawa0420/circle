@@ -7,8 +7,9 @@
         .post-user
           .post-top= blog.user.name.to_s.truncate(30)
           .post-bottom 更新日：#{time_tag blog.updated_at.to_date}
-    - if blog.image_01.present?
-      .post-body= image_tag blog.image_01.url, class: "content_image_one", alt: "", loading: "lazy"
+    - preview_image = [blog.image_01, blog.image_02, blog.image_03, blog.image_04].find(&:present?)
+    - if preview_image
+      .post-body= image_tag preview_image.url, class: "content_image_one", alt: "", loading: "lazy"
     .home-preview__body
       %h3.blog_title= blog.title.to_s.truncate(40)
       %p.home-preview__excerpt= strip_tags(blog.content.to_s).squish.truncate(110)
