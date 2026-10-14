@@ -200,6 +200,40 @@ class PracticeMatchConversationsTest < ActionDispatch::IntegrationTest
     assert_includes flash[:alert], '上限'
   end
 
+  test 'webmaster labels practice and participation across inbox reports moderation and account pages' do
+    start_practice
+    @practice.update!(member_blocked: true)
+    report = @practice.chat_reports.create!(reporter_role: 'member', reason: '練習試合の相談について確認をお願いします。')
+    held = @practice.chat_messages.create!(sender_role: 'member', body: '確認対象の相談です。', moderation_status: 'held')
+    sign_out @source_owner
+    master = Webmaster.create!(id: 1, email: 'practice-label-master@example.test', password: 'test-password-123')
+    post webmaster_session_path, params: { webmaster: { email: master.email, password: 'test-password-123' } }
+    get super_admin_conversations_path
+    assert_response :success
+    assert_select '[data-conversation-kind="practice_match"]', text: '対戦・練習試合'
+    assert_select '[data-conversation-kind="participation"]', text: '参加の相談'
+    assert_select '.wm-read-receipt', text: /主催者（#{@circle.name}）/
+    get super_admin_conversation_path(@practice)
+    follow_redirect!
+    assert_response :success
+    assert_select '[data-conversation-kind="practice_match"]', text: '対戦・練習試合'
+    assert_select '.wm-badge', text: 'ブロック中'
+    get super_admin_chat_reports_path
+    assert_response :success
+    assert_select '[data-conversation-kind="practice_match"]'
+    get super_admin_chat_report_path(report)
+    assert_response :success
+    assert_select '[data-conversation-kind="practice_match"]'
+    assert_select '.wm-meta', text: /通報者：主催者（#{@source.name}）/
+    get super_admin_chat_moderations_path
+    assert_response :success
+    assert_select '[data-conversation-kind="practice_match"]'
+    get super_admin_account_path(@source_owner, kind: 'owner')
+    assert_response :success
+    assert_select '[data-conversation-kind="practice_match"]', count: 2
+    assert_select 'p', text: "通報者：主催者（#{@source.name}）"
+  end
+
   private
 
   def sign_in(account)

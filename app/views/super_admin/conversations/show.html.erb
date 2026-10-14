@@ -2,7 +2,7 @@
 <%= link_to 'メッセージ一覧に戻る', super_admin_conversations_path, class: 'wm-button wm-button--secondary' %>
 <%= render 'conversations/profiles', conversation: @conversation, viewer_role: nil, manage_accounts: true %>
 <section class="wm-section wm-thread wm-conversation" data-chat-jump-target="<%= "chat-message-#{@initial_jump[:message_id]}" if @initial_jump %>" data-chat-jump-alignment="<%= @initial_jump&.fetch(:alignment) %>">
-  <div class="wm-section-heading"><h2>会話履歴</h2><span class="wm-badge"><%= @conversation.blocked? ? 'ブロック中' : (@conversation.practice_match? ? '対戦・練習試合' : (@conversation.accepted_at ? '受付済み' : '主催者の初回返信前')) %></span><span class="wm-badge"><%= @messages.total_count %>件</span></div>
+  <div class="wm-section-heading"><h2>会話履歴</h2><%= render 'conversations/kind_badge', conversation: @conversation %><% if @conversation.blocked? || !@conversation.practice_match? %><span class="wm-badge"><%= @conversation.blocked? ? 'ブロック中' : (@conversation.accepted_at ? '受付済み' : '主催者の初回返信前') %></span><% end %><span class="wm-badge"><%= @messages.total_count %>件</span></div>
   <%= paginate @messages %>
   <% @messages.each do |message| %>
     <article id="chat-message-<%= message.id %>" class="webmaster-card wm-message wm-message--<%= message.sender_role %>">

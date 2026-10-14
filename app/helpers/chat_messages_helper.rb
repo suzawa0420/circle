@@ -1,4 +1,9 @@
 module ChatMessagesHelper
+  def conversation_person_label(conversation, role)
+    return "主催者（#{conversation.participant_name(role)}）" if conversation.practice_match?
+    role == 'member' ? '参加者' : '主催者'
+  end
+
   def automatic_message_body(body)
     lines = body.to_s.split("\n")
     return chat_message_body(body) unless lines.first == '直近の活動日は以下です。'
