@@ -1,0 +1,15 @@
+.cb-active-filters { margin: 16px 0; text-align: left; }
+.cb-active-filters p { margin: 0 0 8px; font-weight: 700; font-size: 14px; }
+.cb-active-filters__items, .cb-search-recovery__links { display: flex; flex-wrap: wrap; gap: 8px; }
+.cb-active-filters__item, .cb-search-recovery__link {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 8px 12px; border: 1px solid #b9d4c9; border-radius: 8px;
+  background: #f2f8f5; color: #176047; font-size: 14px; line-height: 1.5; text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.cb-active-filters__item:hover, .cb-search-recovery__link:hover { background: #e4f1e9; }
+.cb-active-filters__item:focus-visible, .cb-search-recovery__link:focus-visible { outline: 2px solid #16835d; outline-offset: 3px; }
+.cb-active-filters__item .cb-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.cb-search-recovery { margin: 20px 0; padding: 16px; border: 1px solid #d9e4df; border-radius: 12px; text-align: left; }
+.cb-search-recovery h2 { font-size: 18px; margin: 0 0 8px; }
+.cb-search-recovery p { font-size: 14px; margin: 0 0 12px; }

@@ -33,7 +33,7 @@
             %label{:for => "popup-on_header"}
               %label{:for => "popup-on_header"}
                 .btn-open_header
-                  = lazysizes_image_tag @user.pic_header.url, class:'header_imege', alt: "ヘッダー画像｜#{@user.name}"
+                  = circle_detail_header_image @user
               %input#popup-on_header{:type => "checkbox"}/
               .popup
                 %label.icon-close_header{:for => "popup-on_header"}
@@ -43,7 +43,7 @@
                 %label{:for => "popup-on_header"}
                   .btn-close_header 閉じる
         - else
-          = lazysizes_image_tag @user.pic_header.url , class:'header_imege'
+          = circle_detail_header_image @user
 
 
         - if @user.pic_profile.present?

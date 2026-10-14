@@ -1,12 +1,12 @@
 - active_tab = local_assigns.fetch(:active_tab, :details)
 - owns_circle = admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
 .mobile-circle-summary__top
-  = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back"
+  = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back", data: { circle_search_back: @user.id }
   %span サークル詳細
 .mobile-circle-summary
   .mobile-circle-summary__identity
     - if @user.pic_profile.present?
-      = image_tag @user.pic_profile.url, alt: "", class: "mobile-circle-summary__image"
+      = image_tag(fast_public_detail? ? circle_listing_image_url(@user, 'profile') : @user.pic_profile.url, alt: "", width: 48, height: 48, decoding: "async", class: "mobile-circle-summary__image")
     - else
       .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
     .mobile-circle-summary__heading

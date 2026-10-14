@@ -15,6 +15,7 @@
       = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, filters[:event_id].presence || @event&.id), include_blank: 'サークル・チーム', 'aria-label' => '種目・カテゴリー'
       = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, filters[:prefecture_id].presence || @prefecture&.id), include_blank: '都道府県', 'aria-label' => '都道府県'
     = render "circles/commons/detailed_search"
+  = render "circles/commons/active_filters"
   = render "schedules/select_date"
 
 - unless controller.action_name == "kw"

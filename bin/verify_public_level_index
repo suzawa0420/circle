@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require_relative '../config/environment'
+
+# Return only index readiness, never connection configuration or user records.
+ready = ActiveRecord::Base.connection.select_value(<<~SQL)
+  SELECT indisvalid AND indisready
+  FROM pg_index
+  WHERE indexrelid = to_regclass('index_users_public_on_circle_level_order')
+SQL
+abort 'Public circle level index is missing or not ready' unless ready == true
+puts 'Public circle level index is valid and ready'

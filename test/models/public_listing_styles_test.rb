@@ -19,6 +19,15 @@ class PublicListingStylesTest < ActiveSupport::TestCase
     assert_includes css, '.event-date-search'
   end
 
+  test 'detail asset preserves gallery FAQ warnings and mobile navigation without editor styles' do
+    css = Rails.application.assets.find_asset('public_detail.css').to_s
+    %w[.header_imege .popup .circle-faq__question .circle-contact-warning .mobile-circle-summary .readmore-content].each do |selector|
+      assert_includes css, selector
+    end
+    refute_includes css, '.trix-button-group'
+    assert_operator css.bytesize, :<, Rails.application.assets.find_asset('application.css').to_s.bytesize
+  end
+
   test 'retains responsive rules aliases pseudo states and important declarations' do
     input = '@font-face{font-family:icon;src:url(icon.woff2)}' \
       '@media(min-width:768px){.used:hover,.unused{color:red!important}.editor{padding:1px}}' \

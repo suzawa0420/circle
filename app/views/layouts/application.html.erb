@@ -17,7 +17,7 @@
 
       <% unless webmaster? || %w[help_center support_requests backlink_requests member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google AdSense -->
-      <% if fast_public_listing? %>
+      <% if fast_public_page? %>
       <meta name="listing-adsense" content="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449">
       <% else %>
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449"
@@ -40,15 +40,21 @@
       <% if (leading_image = circle_listing_preload_image) %>
         <%= tag.link rel: 'preload', as: 'image', href: leading_image, type: 'image/webp', fetchpriority: 'high' %>
       <% end %>
-      <%= stylesheet_link_tag(fast_public_listing? ? 'public_listing' : 'application', media: 'all', 'data-turbolinks-track': 'reload') %>
+      <%= stylesheet_link_tag(fast_public_detail? ? 'public_detail' : (fast_public_listing? ? 'public_listing' : 'application'), media: 'all', 'data-turbolinks-track': 'reload') %>
 
 
+      <% if fast_public_detail? %>
+        <%= stylesheet_link_tag 'swiper.min', media: 'all' %>
+      <% end %>
+      <% if public_search_listing? %>
+        <%= stylesheet_link_tag 'circle_search_filters', media: 'all' %>
+      <% end %>
       <%= display_meta_tags(default_meta_tags) %>
 
 
-      <% if fast_public_listing? %>
+      <% if fast_public_page? %>
         <link rel="preconnect" href="https://circlebook.s3.ap-northeast-1.amazonaws.com">
-        <%= javascript_include_tag 'public_listing', defer: true, 'data-turbolinks-track': 'reload' %>
+        <%= javascript_include_tag(fast_public_detail? ? 'public_detail' : 'public_listing', defer: true, 'data-turbolinks-track': 'reload') %>
       <% else %>
       <%= stylesheet_link_tag 'jquery-ui', 'data-turbolinks-track': 'reload' %>
 
@@ -65,7 +71,7 @@
     </head>
 
     <% circle_tab = circle_navigation_tab %>
-    <body class="cb-site <%= "circle-context" if circle_tab %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>" data-page="<%= controller_path.tr('/', '-') %>" data-action="<%= action_name %>">
+    <body class="cb-site <%= "circle-context" if circle_tab %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>" data-public-circle-detail="<%= fast_public_detail? %>" data-circle-search-list="<%= public_search_listing? %>" data-page="<%= controller_path.tr('/', '-') %>" data-action="<%= action_name %>">
 
       <% unless webmaster? || %w[help_center support_requests backlink_requests member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google Tag Manager (noscript) -->
@@ -111,7 +117,7 @@
 
 
 
-    <% unless fast_public_listing? %>
+    <% unless fast_public_page? %>
     <!-- Initialize Swiper -->
     <script>
       var swiper = new Swiper('.swiper-container', {
@@ -310,9 +316,7 @@
 
 
 
-    <% if circle_contact_warning?(@user) %>
-      <%= render "users/contact_warning" %>
-    <% end %>
+
 
     <!-- 画像プレビュー -->
     <%= render "/layouts/image_preview" %>
@@ -321,6 +325,9 @@
 
 
 
+    <% if circle_contact_warning?(@user) %>
+      <%= render "users/contact_warning" %>
+    <% end %>
     </body>
 
   </html>

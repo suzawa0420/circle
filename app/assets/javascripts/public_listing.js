@@ -4,6 +4,7 @@
 //= require mobile_navigation
 //= require home_screen_install
 //= require circle_inquiry_tracking
+//= require circle_search_navigation
 
 (function () {
   function ready() {
@@ -42,7 +43,7 @@
           });
         });
       }
-      var leadingImage = document.querySelector('img.header_imege_user_list[fetchpriority="high"]');
+      var leadingImage = document.querySelector('img[fetchpriority="high"]');
       if (leadingImage && !leadingImage.complete) {
         leadingImage.addEventListener('load', afterImage, { once: true });
         leadingImage.addEventListener('error', afterImage, { once: true });

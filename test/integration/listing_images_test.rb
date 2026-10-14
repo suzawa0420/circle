@@ -50,6 +50,24 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     assert_equal [400, 160], MiniMagick::Image.open(@header_destination).dimensions
   end
 
+  test 'detail header has an independent larger derivative and preload while popup retains source' do
+    @source.rewind
+    @circle.pic_header = @source
+    @circle.save!
+    @header_destination = ListingImage.path(@circle, 'detail_header', format: 'webp')
+    url = listing_image_path(kind: 'detail_header', id: @circle.id,
+      fingerprint: ListingImage.fingerprint(@circle.pic_header), format: 'webp')
+    get circle_path(@circle)
+    assert_response :success
+    assert_select 'img.header_imege[src=?][loading=eager]', url, count: 1
+    assert_select 'link[rel=preload][href=?]', url, count: 1
+    assert_select '.popup-content img[src=?][loading=lazy]', @circle.pic_header.url, count: 1
+    get url
+    assert_response :success
+    assert_equal [960, 384], MiniMagick::Image.open(@header_destination).dimensions
+    assert_equal 'image/webp', response.media_type
+  end
+
   test 'webp derivatives have separate immutable URLs and reuse the cached JPEG without fetching the original' do
     get @url
     assert_response :success

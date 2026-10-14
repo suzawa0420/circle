@@ -1,5 +1,12 @@
 .no_hit_wrap
   = render "shared/empty_search", message: "該当するサークルがありません"
+  - if circle_active_filters.any?
+    .cb-search-recovery
+      %h2 条件を少し広げて探す
+      %p ほかの条件を残したまま、次の条件を一つ外して再検索できます。
+      .cb-search-recovery__links
+        - circle_active_filters.each do |filter|
+          = link_to "#{filter[:label]}を外して探す", filter[:url], class: "cb-search-recovery__link"
   = link_to(root_path) do
     .no_hit_top トップページに戻る
   = link_to(new_admin_user_registration_path) do

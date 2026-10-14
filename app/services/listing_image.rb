@@ -6,8 +6,8 @@ require 'uri'
 # Read-only derivatives of existing uploads. Originals and DB identifiers stay
 # intact; each server keeps its own atomic disk cache across deployments.
 class ListingImage
-  SIZES = { 'profile' => [160, 160], 'header' => [400, 160] }.freeze
-  MOUNTS = { 'profile' => :pic_profile, 'header' => :pic_header }.freeze
+  SIZES = { 'profile' => [160, 160], 'header' => [400, 160], 'detail_header' => [960, 384] }.freeze
+  MOUNTS = { 'profile' => :pic_profile, 'header' => :pic_header, 'detail_header' => :pic_header }.freeze
   CONTENT_TYPES = { 'jpg' => 'image/jpeg', 'webp' => 'image/webp' }.freeze
   MAX_BYTES = 20.megabytes
 

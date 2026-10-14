@@ -823,6 +823,7 @@ ActiveRecord::Schema.define(version: 2026_10_13_100000) do
     t.index ["switch", "last_post"], name: "index_users_public_on_switch_last_post", order: { last_post: :desc }, where: "(((publication_status)::text = 'published'::text) AND ((moderation_status)::text = 'clear'::text) AND ((ng_account IS NULL) OR ((ng_account)::text = 'OK'::text)) AND ((regexp_replace((COALESCE(name, ''::character varying))::text, '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text) OR (regexp_replace(COALESCE(appeal, ''::text), '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text)))"
     t.jsonb "moderation_reasons", default: [], null: false
     t.datetime "moderation_checked_at"
+    t.index "switch, LEAST((100)::numeric, GREATEST((0)::numeric, floor(round((cb_point)::numeric, 1)))) DESC, last_post DESC, id DESC", name: "index_users_public_on_circle_level_order", where: "(((publication_status)::text = 'published'::text) AND ((moderation_status)::text = 'clear'::text) AND ((ng_account IS NULL) OR ((ng_account)::text = 'OK'::text)) AND ((regexp_replace((COALESCE(name, ''::character varying))::text, '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text) OR (regexp_replace(COALESCE(appeal, ''::text), '<[^>]*>'::text, ''::text, 'g'::text) ~ '[ぁ-んァ-ヶ]'::text)))"
   end
 
   create_table "users_ages", force: :cascade do |t|

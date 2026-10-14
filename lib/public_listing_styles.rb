@@ -18,11 +18,17 @@ class PublicListingStyles
     active open hidden collapse in dropdown-menu dropdown-toggle].freeze
 
   def self.call(input)
-    return { data: input[:data] } unless input[:name] == 'public_listing'
+    return { data: input[:data] } unless %w[public_listing public_detail].include?(input[:name])
 
     context = input[:environment].context_class.new(input)
     root = Rails.root
-    files = SOURCE_GLOBS.flat_map { |glob| Dir[root.join(glob)] }.select { |path| File.file?(path) }.sort
+    globs = SOURCE_GLOBS
+    if input[:name] == 'public_detail'
+      globs += %w[app/views/circles/circles/* app/views/users/parts/* app/views/users/_question_card*
+        app/views/users/_contact_warning* app/views/bookmarks/* app/views/reviews/* app/views/questions/_accordion*
+        app/views/conversations/_no_reply_notice* app/assets/javascripts/circle_contact_warning.js]
+    end
+    files = globs.flat_map { |glob| Dir[root.join(glob)] }.select { |path| File.file?(path) }.sort
     files.each { |path| context.depend_on(path) }
     %w[app/views/circles app/views/layouts app/views/shared app/views/tags app/views/users app/views/schedules app/helpers app/assets/javascripts].each do |directory|
       ([root.join(directory).to_s] + Dir[root.join(directory, '**/')]).uniq.each { |path| context.depend_on(path) }

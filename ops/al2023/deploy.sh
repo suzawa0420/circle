@@ -70,6 +70,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261010010000
     # Public keyword searches: avoid profile-HTML checks in ordered scans.
     bundle exec rails db:migrate:up VERSION=20261013020000
+    bundle exec rails db:migrate:up VERSION=20261013030000
+    bundle exec ruby bin/verify_public_level_index
     # Backlink reward requests must exist before activating the new scoring code.
     bundle exec rails db:migrate:up VERSION=20261013100000
     bundle exec rails db:abort_if_pending_migrations

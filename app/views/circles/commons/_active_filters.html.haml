@@ -1,0 +1,8 @@
+- if circle_active_filters.any?
+  %nav.cb-active-filters{ "aria-label" => "現在の検索条件" }
+    %p 選択中の条件
+    .cb-active-filters__items
+      - circle_active_filters.each do |filter|
+        = link_to filter[:url], class: "cb-active-filters__item", "aria-label" => "#{filter[:label]}の条件を外す" do
+          %span= filter[:label]
+          = lucide_icon "x"
