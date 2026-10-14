@@ -49,6 +49,20 @@ class CircleSearchExperienceTest < ActionDispatch::IntegrationTest
     assert_select 'select[name=prefecture_id] option[selected][value=?]', @circle.prefecture_id.to_s
   end
 
+  test 'zero-result recovery removes the entire OR dimension rather than narrowing selected choices' do
+    get circles_search_index_path, params: { detailed: '1', q: '見つからない単語',
+      group_ids: [@beginner.id, @experienced.id], age_ids: [@age.id], sort: '2' }
+    assert_response :success
+    assert_select '.cb-search-recovery__link', text: '募集内容を外して探す', count: 1
+    link = css_select('.cb-search-recovery__link').find { |node| node.text == '募集内容を外して探す' }
+    query = Rack::Utils.parse_nested_query(URI(link['href']).query)
+    refute query.key?('group_ids')
+    assert_equal [@age.id.to_s], query['age_ids']
+    assert_equal '見つからない単語', query['q']
+    assert_equal '2', query['sort']
+    assert_select '.cb-active-filters__item[aria-label=?]', '初心者の条件を外す', count: 1
+  end
+
   test 'canonical landing filters survive removal and search words are HTML escaped' do
     get CircleFilterLanding.path(event: @circle.event, prefecture: @circle.prefecture, group: @beginner, age: @age), params: { sort: '2' }
     assert_response :success
