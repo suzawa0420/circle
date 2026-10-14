@@ -1,0 +1,39 @@
+- circles = users.to_a
+- if circles.any?
+  %section.place-related-circles{"aria-labelledby" => "place-circles-title"}
+    %h2#place-circles-title
+      = @prefecture.name
+      で活動している
+      %br/
+      = @event.name
+      サークル・チーム
+    %ul.place-circle-list
+      - circles.each do |circle|
+        %li.place-circle-card
+          = link_to circle_path(circle), class: "place-circle-link", "aria-label" => "#{circle.name}の詳細を見る" do
+            .place-circle-cover
+              = circle_listing_header_image(circle)
+              %span.place-circle-status= circle.switch
+              = circle_avatar_tag circle, class: "place-circle-avatar"
+            .place-circle-body
+              %h3= circle.name
+              - if circle.recruitment.present?
+                %p.place-circle-description= circle.recruitment
+              %dl.place-circle-facts
+                .place-circle-fact
+                  %dt
+                    = lucide_icon "map-pin"
+                    %span.sr-only 活動場所
+                  %dd= [circle.prefecture.name, circle.area.presence].compact.join("・")
+                .place-circle-fact
+                  %dt
+                    = lucide_icon "calendar-days"
+                    %span.sr-only 活動日
+                  %dd= circle.schedule.presence || "詳細ページで確認"
+              .place-circle-footer
+                %span サークル詳細を見る
+                = lucide_icon "chevron-right"
+    = link_to event_prefecture_path(@event.ruby, @prefecture.kana), class: "places-action place-circles-more" do
+      = @prefecture.name
+      の#{@event.name}サークルをもっと見る
+      = lucide_icon "chevron-right"

@@ -118,36 +118,7 @@
       <%= render 'place_information_reports/form', place: @place, report: @place.place_information_reports.build %>
     </section>
 
-    <% if @users.count >= 1 %>
-      <div class="user-list-wrap">
-        <h2 class="others-user">
-          <%= @prefecture.name %>で活動している<br><%= @event.txt %>
-        </h2>
-        <% @users.first(3).each do |user| %>
-          <%= link_to(circle_path(user.id)) do %>
-            <div class="user_list">
-              <div class="user-content">
-                <div class="user_list_header">
-                    <%= circle_avatar_tag user, class:'image_icon' %>
-                  <h3 class="user_name"><%= user.name.truncate(20) %></h3>
-                </div>
-                <div class="list_02">
-                  <span class="user_schedule">
-                    <%= lucide_icon "calendar-days" %><%= user.schedule %>
-                  </span>
-                </div>
-                <div class="list_03">
-                  <span class="user_area">
-                    <%= lucide_icon "map-pin" %><%= user.area %>
-                  </span>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-        <%= link_to ">>もっと見る", "/#{@event.ruby}/#{@prefecture.kana}", class: "more_text_link" %>
-      </div>
-    <% end %>
+    <%= render "places/circles", users: @users %>
 
     <% if @places.present? %>
       <section class="place-detail-related" aria-labelledby="place-related-title">

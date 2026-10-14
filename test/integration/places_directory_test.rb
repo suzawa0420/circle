@@ -137,6 +137,37 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     assert_select '.place-detail-review-form', count: 0
   end
 
+  test 'related circles use modern cards and only show three public recruiting circles in the same sport and prefecture' do
+    owner = AdminUser.create!(email: 'place-circle-owner@example.test', password: 'test-password-123')
+    create_circle = lambda do |name, **attributes|
+      User.create!({name: name, appeal: '地域で定期的に練習しています。初心者も経験者も歓迎します。' * 6,
+                    event: @basketball, prefecture: @tokyo, category: @basketball.category, admin_user: owner,
+                    area: '長い活動場所の説明です。' * 20, schedule: '毎週土曜日の19時から21時まで体育館で活動しています。' * 10,
+                    recruitment: '初心者も経験者も歓迎しています。', switch: '募集中'}.merge(attributes))
+    end
+    circles = 4.times.map { |index| create_circle.call("関連サークル#{index}", last_post: (index + 1).days.ago) }
+    create_circle.call('非公開サークル', moderation_status: 'blocked', last_post: Time.current)
+    create_circle.call('別の都道府県', prefecture: @osaka, last_post: Time.current)
+    create_circle.call('別の種目', event: @tennis, last_post: Time.current)
+    get path_for(@gym)
+    assert_response :success
+    assert_select '.place-related-circles .place-circle-card', count: 3
+    assert_select '.place-circle-body h3' do |names|
+      assert_equal circles.first(3).map(&:name), names.map(&:text)
+    end
+    assert_select '.place-circle-cover img[loading=lazy]', count: 3
+    assert_select '.place-circle-avatar', count: 3
+    assert_select '.place-circle-status', text: '募集中', count: 3
+    assert_select '.place-circle-description', count: 3
+    assert_select '.place-circle-facts dd', count: 6
+    assert_select '.place-circle-footer', text: 'サークル詳細を見る', count: 3
+    assert_select "a.place-circles-more[href='#{event_prefecture_path(@basketball.ruby, @tokyo.kana)}']"
+    assert_select '.place-related-circles .user_list', count: 0
+    circles.first(3).each do |circle|
+      assert_select "a.place-circle-link[href='#{circle_path(circle)}']"
+    end
+  end
+
   private
 
   def facility(name, prefecture, city, event)
