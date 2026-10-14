@@ -1,0 +1,9 @@
+<%= render 'webmasters/shared/page_header', title: '施設情報の修正依頼詳細', description: '依頼内容と現在の施設情報を確認し、必要な修正後に対応状況を保存してください。' %>
+<%= link_to '修正依頼一覧へ戻る', super_admin_place_information_reports_path %>
+<article class="webmaster-card"><h2><%= @report.place_name %></h2><p class="wm-meta"><%= PlaceInformationReport::KINDS[@report.kind] %> ／ <%= l(@report.created_at, format: :short) %></p><div class="wm-body"><%= simple_format(h(@report.body)) %></div>
+<% if @report.reference_url.present? %><p>参考URL：<%= link_to @report.reference_url, @report.reference_url, target: '_blank', rel: 'noopener noreferrer' %></p><% end %>
+<% if @report.place %><div class="wm-actions"><%= link_to '現在の施設情報', place_listing_path(@report.place), class: 'wm-button wm-button--secondary', target: '_blank', rel: 'noopener' %><%= link_to '施設情報を編集する', edit_place_path(@report.place), class: 'wm-button', target: '_blank', rel: 'noopener' %></div><% else %><p class="wm-meta">この施設は削除されています。修正依頼の記録は保持されています。</p><% end %>
+<% if @report.errors.any? %><div role="alert"><% @report.errors.full_messages.each do |message| %><p><%= message %></p><% end %></div><% end %>
+<%= form_with model: [:super_admin, @report], local: true do |f| %><div class="help-field"><%= f.label :status, '対応状況' %><%= f.select :status, PlaceInformationReport::STATUSES.map { |key, label| [label, key] } %></div><div class="help-field"><%= f.label :staff_note, '運営用メモ（非公開）' %><%= f.text_area :staff_note, rows: 5, maxlength: 4000 %></div><%= f.submit '対応状況を保存', class: 'wm-button' %><% end %>
+<% if @report.reviewed_at %><p class="wm-meta">最終対応：<%= l(@report.reviewed_at, format: :short) %></p><% end %>
+</article>

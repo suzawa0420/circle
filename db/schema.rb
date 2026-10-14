@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_14_000000) do
+ActiveRecord::Schema.define(version: 2026_10_14_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -592,6 +592,28 @@ ActiveRecord::Schema.define(version: 2026_10_14_000000) do
     t.index ["user_id"], name: "index_opinions_on_user_id"
   end
 
+  create_table "place_information_reports", force: :cascade do |t|
+    t.bigint "place_id"
+    t.string "place_name", null: false
+    t.string "kind", null: false
+    t.text "body", null: false
+    t.string "reference_url", limit: 2048
+    t.string "status", default: "pending", null: false
+    t.string "submission_key", null: false
+    t.text "staff_note"
+    t.bigint "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["place_id"], name: "index_place_information_reports_on_place_id"
+    t.index ["reviewed_by_id"], name: "index_place_information_reports_on_reviewed_by_id"
+    t.index ["status", "created_at"], name: "index_place_information_reports_on_status_and_created_at"
+    t.index ["submission_key"], name: "index_place_information_reports_on_submission_key", unique: true
+    t.check_constraint "kind::text = ANY (ARRAY['closed'::character varying, 'hours'::character varying, 'price'::character varying, 'address'::character varying, 'facility'::character varying, 'other'::character varying]::text[])", name: "place_information_reports_kind"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'resolved'::character varying, 'dismissed'::character varying]::text[])", name: "place_information_reports_status"
+  end
+
   create_table "place_reviews", force: :cascade do |t|
     t.integer "event_id"
     t.string "ip_address"
@@ -877,6 +899,8 @@ ActiveRecord::Schema.define(version: 2026_10_14_000000) do
   add_foreign_key "members_events", "members"
   add_foreign_key "name_schedules", "names"
   add_foreign_key "name_schedules", "schedules"
+  add_foreign_key "place_information_reports", "places", on_delete: :nullify
+  add_foreign_key "place_information_reports", "webmasters", column: "reviewed_by_id"
   add_foreign_key "place_reviews", "places"
   add_foreign_key "places_events", "events"
   add_foreign_key "places_events", "places"

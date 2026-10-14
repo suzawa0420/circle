@@ -1,0 +1,7 @@
+<%= render 'webmasters/shared/page_header', title: '施設情報の修正依頼', description: '閉鎖や掲載内容の誤りを確認し、施設情報を修正して対応状況を管理します。' %>
+<nav class="wm-actions" aria-label="対応状況で絞り込み"><% PlaceInformationReport::STATUSES.each do |key, label| %><%= link_to label, super_admin_place_information_reports_path(status: key), class: 'wm-button wm-button--secondary', 'aria-current' => (@status == key ? 'page' : nil) %><% end %></nav>
+<section class="wm-section wm-list"><% @reports.each do |report| %>
+  <article class="webmaster-card"><h2><%= report.place_name %></h2><p class="wm-meta"><%= PlaceInformationReport::KINDS[report.kind] %> ／ <%= l(report.created_at, format: :short) %> ／ <%= PlaceInformationReport::STATUSES[report.status] %></p><p><%= truncate(report.body, length: 120) %></p><div class="wm-actions"><%= link_to '内容を確認する', super_admin_place_information_report_path(report), class: 'wm-button' %></div></article>
+<% end %></section>
+<% if @reports.empty? %><%= render 'webmasters/shared/empty', message: 'この対応状況の修正依頼はありません。' %><% end %>
+<%= paginate @reports %>

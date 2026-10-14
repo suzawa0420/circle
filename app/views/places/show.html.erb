@@ -65,7 +65,7 @@
       <h2 id="place-map-title">場所・アクセス</h2>
       <iframe class="place-detail-map" title="<%= @place.name %>の地図" loading="lazy" src="https://maps.google.co.jp/maps?output=embed&amp;z=14&amp;q=<%= ERB::Util.url_encode(@place.address.to_s) %>"></iframe>
       <%= link_to "Google マップで開く", "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(@place.address.to_s)}", class: "places-action", target: "_blank", rel: "noopener" %>
-      <p class="place-detail-note">掲載情報は変更される場合があります。最新の利用条件や料金は施設の公式サイト・窓口でご確認ください。情報の誤りはメニューのお問い合わせよりご連絡ください。</p>
+      <p class="place-detail-note">掲載情報は変更される場合があります。最新の利用条件や料金は施設の公式サイト・窓口でご確認ください。情報の誤りは下の「情報の修正を依頼する」からお知らせください。</p>
     </section>
 
     <section class="place-detail-section" aria-labelledby="place-reviews-title">
@@ -111,6 +111,12 @@
         <% end %>
       </section>
     <% end %>
+
+    <section id="place-information-report" class="place-detail-section" aria-labelledby="place-report-title">
+      <h2 id="place-report-title">情報の修正を依頼する</h2>
+      <p class="place-report-hint">施設の閉鎖や、料金・利用時間などの情報に誤りがありましたらお知らせください。ログインなしで送信できます。</p>
+      <%= render 'place_information_reports/form', place: @place, report: @place.place_information_reports.build %>
+    </section>
 
     <% if @users.count >= 1 %>
       <div class="user-list-wrap">

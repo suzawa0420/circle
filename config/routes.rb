@@ -197,6 +197,7 @@ Rails.application.routes.draw do
 
   # 管理画面（SuperAdmin）
   namespace :super_admin do
+    resources :place_information_reports, only: [:index, :show, :update]
     resources :backlink_requests, only: [:index, :show, :update]
     resource :bulk_owner_deletion, only: [:create, :destroy]
     resources :accounts, only: [:index, :show, :update] do
@@ -326,6 +327,9 @@ Rails.application.routes.draw do
 	get 'places/count' , to: 'places#count'
 	get 'places/all' , to: 'places#no_index'
   get 'places/all/:kana/:city_kana/:id' , to: 'places#show_noindex'
+  resources :places, only: [] do
+    resources :information_reports, only: [:new, :create], controller: 'place_information_reports', path: 'information-reports'
+  end
   get 'places/search', to: 'places#global_search'
 	get 'places/:ruby' , to: 'places#event'
 	get 'places/:ruby/search' , to: 'places#search'

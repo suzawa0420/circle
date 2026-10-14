@@ -1,0 +1,5 @@
+<% set_meta_tags title: "#{@place.name}の情報修正を依頼する", noindex: true, nofollow: true %>
+<div class="main user-show places-directory place-detail"><div class="container">
+  <section class="place-detail-section"><h1 class="place-report-page-title">情報の修正を依頼する</h1><p><%= @place.name %></p><p class="place-report-hint">施設の閉鎖や掲載内容の誤りをお知らせください。</p><%= render 'form', place: @place, report: @report %></section>
+  <%= link_to '施設情報へ戻る', place_listing_path(@place) %>
+</div></div>

@@ -1,0 +1,14 @@
+ja:
+  activerecord:
+    models:
+      place_information_report: 施設情報の修正依頼
+    attributes:
+      place_information_report:
+        place: 施設
+        place_name: 施設名
+        kind: 修正を依頼する情報
+        body: 内容
+        reference_url: 参考URL
+        status: 対応状況
+        staff_note: 運営用メモ
+        submission_key: 受付情報

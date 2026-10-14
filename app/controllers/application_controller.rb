@@ -75,7 +75,7 @@ class ApplicationController < ActionController::Base
           end
         elsif action_name == 'destroy'
 
-        elsif %w[pages help_center support_requests].include?(controller_path) || controller_path == 'unsubscribe/admin_users' || controller_path == 'unsubscribe/members'
+        elsif %w[pages help_center support_requests place_information_reports].include?(controller_path) || controller_path == 'unsubscribe/admin_users' || controller_path == 'unsubscribe/members'
 
         else
             flash[:notice] = "登録を完了させてください"
@@ -96,7 +96,7 @@ class ApplicationController < ActionController::Base
           end
         elsif action_name == 'destroy'
 
-        elsif %w[pages help_center support_requests].include?(controller_path) || controller_path == 'unsubscribe/admin_users' || controller_path == 'unsubscribe/members'
+        elsif %w[pages help_center support_requests place_information_reports].include?(controller_path) || controller_path == 'unsubscribe/admin_users' || controller_path == 'unsubscribe/members'
 
         else
             flash[:notice] = "登録を完了させてください"

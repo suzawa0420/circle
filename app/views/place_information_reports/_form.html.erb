@@ -1,0 +1,11 @@
+<%= form_with model: report, url: place_information_reports_path(place), local: true, class: 'place-information-report-form' do |f| %>
+  <%= render 'shared/spam_protection', scope: "place-information-report:#{place.id}" %>
+  <% if report.errors.any? %>
+    <div class="place-report-errors" role="alert"><p>入力内容をご確認ください。</p><ul><% report.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div>
+  <% end %>
+  <div class="place-report-field"><%= f.label :kind, '修正を依頼する情報' %><%= f.select :kind, PlaceInformationReport::KINDS.map { |key, label| [label, key] }, {include_blank: '選択してください'}, {required: true} %></div>
+  <div class="place-report-field"><%= f.label :body, 'どの情報が違っていますか？' %><%= f.text_area :body, rows: 4, required: true, minlength: 10, maxlength: 2000, placeholder: '例：体育館が閉鎖されているため、掲載情報の確認をお願いします。', 'aria-describedby' => 'place-report-language-hint' %><p id="place-report-language-hint" class="place-report-hint">漢字とひらがなを両方含む日本語で、10〜2,000文字で入力してください。</p></div>
+  <div class="place-report-field"><%= f.label :reference_url, '参考になる公式サイトのURL（任意）' %><%= f.url_field :reference_url, maxlength: 2048, placeholder: 'https://...' %></div>
+  <p class="place-report-hint">送信内容は運営だけが確認します。個人の連絡先や、関係のない情報は入力しないでください。</p>
+  <div class="place-review-submit"><%= f.submit '修正を依頼する', class: 'places-action', data: { disable_with: '送信中...' } %></div>
+<% end %>
