@@ -130,6 +130,7 @@
   .place-report-field label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
   .place-report-field select, .place-report-field input, .place-report-field textarea { display: block; width: 100%; margin: 0; padding: 10px 12px; border: 1px solid $cb-input-border; border-radius: 7px; font-size: 16px; background: $cb-surface; }
   .place-report-field select, .place-report-field input { min-height: 44px; }
+  .place-report-field select { height: 48px; padding: 0 12px; line-height: normal; }
   .place-report-field textarea { min-height: 120px; line-height: 1.6; resize: vertical; }
   .place-report-hint { font-size: 12px; color: $cb-muted; margin-top: 8px; }
   .place-report-errors { padding: 12px; margin-top: 16px; border: 1px solid $cb-danger; border-radius: 7px; background: $cb-danger-soft; color: $cb-danger; }
