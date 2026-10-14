@@ -1,11 +1,11 @@
-- set_meta_tags title: "「#{params[:kw].truncate(30)}」のコートや体育館の検索結果",og: {image:image_url("/images/events/#{@event.ruby}.jpg")},twitter: { card: 'summary'}
-.main.users-index
+- set_meta_tags title: "「#{place_search_keyword.truncate(30)}」のコートや体育館の検索結果",og: {image:image_url("/images/events/#{@event.ruby}.jpg")},twitter: { card: 'summary'}
+.main.users-index.places-directory
   .container
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/
       .link_txt
         %h1.e_header_title
-          「#{params[:kw].truncate(30)}」の
+          「#{place_search_keyword.truncate(30)}」の
           = succeed "\u30B3\u30FC\u30C8\u3084\u4F53\u80B2\u9928\u306E\u691C\u7D22\u7D50\u679C" do
             %br/
     = render "/places/search"

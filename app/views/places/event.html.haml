@@ -1,6 +1,6 @@
 - set_meta_tags title: "【#{Time.now.strftime("%Y")}年版】#{@event.name}のコートや体育館の情報一覧ページ",description: "現在、#{@places_count}件の#{@event.name}のコート情報を掲載中です！体育館やアリーナ、屋外にある公園などの情報を分かりやすく掲載しています！住所やアクセス方法、駐車場情報も載っているので便利です。また、#{@event.name}のサークルやチーム、団体などの情報も掲載しています！",og: {image:image_url("/images/events/#{@event.ruby}.jpg")},twitter: { card: 'summary'}
 = render "places/local_business_place_list"
-.main.users-index
+.main.users-index.places-directory
   .container
     .e_header_wrap
       %img{:alt => "#{@event.name}", :src => "/images/events/#{@event.ruby}.jpg"}/

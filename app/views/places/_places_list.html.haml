@@ -1,55 +1,38 @@
 - if @places.present?
-  - cache @places do
-    %ul
-      - @places.each.with_index(1) do |place, i|
-        %li.places-index-item.ribbon-wrapper
-          .ribbon-content
-            - if place.tag.to_i == 1
-              %span.ribbon.green 屋内
-            - else place.tag.to_i == 2
-              %span.ribbon.blue 屋外
-          .place_cnt_wrap
-            %h2.place_name= place.name.truncate(24)
-            %h3.place_d
+  - review_counts = PlaceReview.where(place_id: @places.map(&:id), moderation_status: "clear").group(:place_id).count
+  %ul.places-results
+    - @places.each.with_index(1) do |place, i|
+      %li.place-card
+        .place-card-header
+          .place-card-heading
+            %p.place-card-location
               = place.prefecture.name
               = place.city.name
-              の#{"屋内" if place.tag.to_i == 1}#{"屋外" if place.tag.to_i == 2}にある
-              %br/
-              = @event.name
-              のコートや体育館の情報
-          .place_updated
-            更新日：#{place.updated_at.to_time.strftime("%Y年%-m月%-d日")}
-          .border
-          .article_item.article_padding.place_list
-            %table
-              %tbody
-                %tr.flex_contents
-                  %th.flex_list 住所
-                  %td.flex_list= place.address
-                %tr.flex_contents
-                  %th.flex_list アクセス
-                  %td.flex_list= place.access
-                %tr.flex_contents
-                  %th.flex_list 利用時間
-                  %td.flex_list= raw Rinku.auto_link(simple_format place.time)
-                %tr.flex_contents
-                  %th.flex_list 定休日
-                  %td.flex_list= raw Rinku.auto_link(simple_format place.regular_holiday)
-                %tr.flex_contents
-                  %th.flex_list 利用料金
-                  %td.flex_list= raw Rinku.auto_link(simple_format place.price)
-                %tr.flex_contents
-                  %th.flex_list 口コミ
-                  %td.flex_list= render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: place.public_place_reviews.count
-          = link_to "詳細を確認する", "/places/#{@event.ruby}/#{place.prefecture.kana}/#{place.city.city_kana}/#{place.id}", class: "place_more"
-        - if i == 5
-          .list_ad
-            = render "/layouts/ad_square"
+              - if place.tag.to_i.in?([1, 2])
+                %span.place-card-tag= place.tag.to_i == 1 ? "屋内" : "屋外"
+            %h2= link_to place.name, place_listing_path(place)
+          %span.place-card-updated 更新：#{l(place.updated_at.to_date, format: :default)}
+        %dl.place-card-facts
+          - {"住所" => place.address, "アクセス" => place.access, "利用時間" => place.time, "利用料金" => place.price}.each do |label, value|
+            .place-card-fact
+              %dt= label
+              %dd= place_summary(value)
+        .place-card-footer
+          .place-card-reviews
+            - if review_counts.fetch(place.id, 0).positive?
+              = render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: review_counts[place.id]
+            - else
+              %span 口コミはまだありません
+          = link_to place_listing_path(place), class: "places-action", "aria-label" => "#{place.name}の詳細を確認する" do
+            詳細を確認する
+            = lucide_icon "chevron-right"
+      - if i == 5
+        %li.list_ad
+          = render "/layouts/ad_square"
 - else
   .no_hit_wrap
-    .sorry_message 該当するコート情報がございません
-    %img.imege_sorry{:src => "/images/sorry_cat.png"}/
-    = link_to "/places" do
-      .no_hit_top コート・施設情報ページに戻る
-= render "/layouts/ad_square"
+    .sorry_message 該当する体育館・コートがありません
+    %p.places-empty-hint 条件を変えて、もう一度検索してください。
+    = link_to "体育館・コート情報トップへ", "/places", class: "places-action"
 = paginate @places
+= render "/layouts/ad_square"

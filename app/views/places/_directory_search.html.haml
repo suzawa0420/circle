@@ -1,0 +1,16 @@
+.places-filter
+  = form_tag('/places/search', method: :get, enforce_utf8: false) do
+    .places-filter-fields
+      .places-filter-field
+        = label_tag :sport, "種目"
+        = select_tag :sport, options_from_collection_for_select(@events, :ruby, :name, @selected_event&.ruby), include_blank: "すべての種目"
+      .places-filter-field
+        = label_tag :area, "都道府県"
+        = select_tag :area, options_from_collection_for_select(@prefectures, :kana, :name, @selected_prefecture&.kana), include_blank: "全国"
+      .places-filter-field.places-filter-keyword
+        = label_tag :kw, "キーワード"
+        = text_field_tag :kw, place_search_keyword, placeholder: "施設名・市区町村・駅名など"
+      %button.places-action{type: "submit"}
+        = lucide_icon "search"
+        検索する
+    %p.places-filter-hint 複数のキーワードはスペースで区切ってください

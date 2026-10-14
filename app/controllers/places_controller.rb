@@ -5,43 +5,35 @@ class PlacesController < ApplicationController
 	before_action :ensure_correct_user, {only: [:edit, :update]}
 	before_action :set_place, {only: [:event, :prefecture, :city, :show, :search]}
 
-	def index
-    @events = Event.where(place: 1).order(order: "asc")
-    @b1_name = "コート・施設情報"
-		@b1_url = "/places"
-	end
+  def index
+    prepare_place_filters
+    @places = place_listing.order(updated_at: :desc, id: :desc).page(params[:page])
+    @places_count = Place.count
+  end
 
-	def search
-		# キーワード分割
-		keyword_text = params[:kw].is_a?(String) ? params[:kw] : ''
-    keywords = keyword_text.split(/[[:blank:]]+/).select(&:present?)
-    return redirect_to("/places/#{@event.ruby}") if keywords.empty?
+  def global_search
+    prepare_place_filters
+    @selected_event = @events.find { |event| event.ruby == params[:sport] }
+    @selected_prefecture = @prefectures.find { |prefecture| prefecture.kana == params[:area] }
+    raise ActiveRecord::RecordNotFound if params[:sport].present? && !@selected_event
+    raise ActiveRecord::RecordNotFound if params[:area].present? && !@selected_prefecture
+    set_meta_tags noindex: true
+    places = place_listing
+    places = places.where(id: PlacesEvent.where(event_id: @selected_event.id).select(:place_id)) if @selected_event
+    places = places.where(prefecture_id: @selected_prefecture.id) if @selected_prefecture
+    @places = filter_place_keywords(places).order(updated_at: :desc, id: :desc).page(params[:page])
+    @places_count = @places.total_count
+    render :index
+  end
 
-    # 検索ワードの保存
-    last_search = DbSearch.last
-    @db_search = DbSearch.new
-    @db_search.keyword = params[:kw]
-    @db_search.save
+  def search
+    return redirect_to("/places/#{@event.ruby}") if place_keywords.empty?
 
-
-		# Placeモデルオブジェクト作成
-		@places = Place
-
-		# 検索ワードの数だけand検索を行う
-		keywords.each do |keyword|
-      @event_ids = Event.where("name LIKE ?", "%#{keyword}%").map { |e| e.id }
-			@place_event_ids = PlacesEvent.where(event_id: @event_ids).map { |u| u.place_id }
-      @prefecture_ids = Prefecture.where("name LIKE ?", "%#{keyword}%").map { |p| p.id }
-			@city_ids = City.where("name LIKE ?", "%#{keyword}%").map { |c| c.id }
-
-			@places = @places.place_search_word(keyword).
-      or(@places.where(id: @place_event_ids)).
-			or(@places.where(prefecture_id: @prefecture_ids)).
-			or(@places.where(id: @city_ids)).order(updated_at: "DESC").page(params[:page])
-		end
-
-	end
-
+    @places = filter_place_keywords(place_listing.where(id: @event_places))
+      .order(updated_at: :desc, id: :desc).page(params[:page])
+    @places_count = @places.total_count
+    DbSearch.create(keyword: params[:kw])
+  end
 
 
 	def new
@@ -149,7 +141,7 @@ class PlacesController < ApplicationController
 	end
 
 	def event
-    @places = Place.where(id: @event_places).order(updated_at: "DESC").page(params[:page])
+    @places = place_listing.where(id: @event_places).order(updated_at: "DESC").page(params[:page])
     @places_count = Place.where(id: @event_places).count
     @b2_name = @event.name
     @b2_url = "/places/#{@event.ruby}"
@@ -159,7 +151,7 @@ class PlacesController < ApplicationController
 	def prefecture
 		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		@cities = City.where(prefecture_id: @prefecture.id).order(places_count: "DESC")
-    @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).all.order(updated_at: "DESC").page(params[:page])
+    @places = place_listing.where(id: @event_places).where(prefecture_id: @prefecture.id).order(updated_at: "DESC").page(params[:page])
     @places_count = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).count
 		@b2_name = @event.name
 		@b2_url = "/places/#{@event.ruby}"
@@ -171,7 +163,7 @@ class PlacesController < ApplicationController
 	def city
 		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		@city = @prefecture.cities.find_by!(city_kana: params[:city_kana])
-    @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id).all.order(updated_at: "DESC").page(params[:page])
+    @places = place_listing.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id).order(updated_at: "DESC").page(params[:page])
     @places_count = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id).count
 		@b2_name = @event.name
 		@b2_url = "/places/#{@event.ruby}"
@@ -183,6 +175,33 @@ class PlacesController < ApplicationController
 	end
 
 	private
+  def prepare_place_filters
+    @events = Event.where(place: 1).order(order: :asc)
+    @prefectures = Prefecture.where.not(id: 50).order(order: :asc)
+    @b1_name = "体育館・コート情報"
+    @b1_url = "/places"
+  end
+
+  def place_listing
+    Place.includes(:prefecture, :city, :events)
+  end
+
+  def place_keywords
+    (params[:kw].is_a?(String) ? params[:kw] : '').split(/[[:space:]]+/).select(&:present?)
+  end
+
+  def filter_place_keywords(places)
+    place_keywords.each do |keyword|
+      pattern = "%#{ActiveRecord::Base.sanitize_sql_like(keyword)}%"
+      matches = Place.place_search_word(keyword)
+        .or(Place.where(id: PlacesEvent.where(event_id: Event.where("name LIKE ?", pattern).select(:id)).select(:place_id)))
+        .or(Place.where(prefecture_id: Prefecture.where("name LIKE ?", pattern).select(:id)))
+        .or(Place.where(city_id: City.where("name LIKE ?", pattern).select(:id)))
+      places = places.where(id: matches.select(:id))
+    end
+    places
+  end
+
 	def correct_user
     if webmaster?
     else

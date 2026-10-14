@@ -1,17 +1,21 @@
-- set_meta_tags title: "全国のコートや体育館の情報一覧"
-.main.users-index
+- searching = action_name == 'global_search'
+- set_meta_tags title: searching ? "体育館・コートの検索結果" : "全国の体育館・コートを探す", description: "全国の体育館やスポーツコートを種目・都道府県・施設名で検索。住所、アクセス、利用料金、口コミをまとめて確認できます。"
+.main.users-index.places-directory
   .container
-    %h1.users-heading 全国のコートや体育館の情報
-    .place_event_list
-      %ul.events-menus
+    .places-intro
+      %p.places-eyebrow 体育館・コート情報
+      %h1 全国の体育館・コートを探す
+      %p 活動場所を、種目やエリアから見つけよう。
+    = render "places/directory_search"
+    %nav.places-sports{"aria-label" => "種目から探す"}
+      %h2 種目から探す
+      .places-sport-links
         - @events.each do |event|
-          %li
-            = link_to("/places/#{event.ruby}") do
-              .e_icon_wrap
-                %img.lazyload{:alt => "#{event.name}", "data-src" => "/images/events/#{event.ruby}.jpg"}/
-                .link_txt
-                  = event.name
-                  の
-                  %br>/
-                  コートや体育館の情報
-    = render "/layouts/ad_square"
+          = link_to "/places/#{event.ruby}", class: "places-sport-link" do
+            %img{src: "/images/events/#{event.ruby}.jpg", alt: "", loading: "lazy"}
+            = event.name
+            = lucide_icon "chevron-right"
+    .places-results-heading
+      %h2= searching ? "検索結果" : "最近更新された体育館・コート"
+      %span #{@places_count.to_fs(:delimited)}件掲載
+    = render "places/places_list"

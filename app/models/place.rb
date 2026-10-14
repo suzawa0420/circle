@@ -62,11 +62,11 @@ class Place < ApplicationRecord
 
   # Place_検索用
 	scope :place_search_word, ->(keyword) do
-    where("LOWER(name) LIKE ?", "%#{keyword.downcase}%").
-		or(where("address LIKE ?", "%#{keyword}%")).
-		or(where("parking LIKE ?", "%#{keyword}%")).
-		or(where("scale LIKE ?", "%#{keyword}%")).
-		or(where("access LIKE ?", "%#{keyword}%"))
+    where("LOWER(name) LIKE ?", "%#{sanitize_sql_like(keyword.downcase)}%").
+		or(where("address LIKE ?", "%#{sanitize_sql_like(keyword)}%")).
+		or(where("parking LIKE ?", "%#{sanitize_sql_like(keyword)}%")).
+		or(where("scale LIKE ?", "%#{sanitize_sql_like(keyword)}%")).
+		or(where("access LIKE ?", "%#{sanitize_sql_like(keyword)}%"))
 	end
 
 end
