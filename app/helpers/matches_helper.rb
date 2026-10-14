@@ -5,10 +5,22 @@ module MatchesHelper
     "#{location}#{sport}対戦相手・練習試合の募集"
   end
 
-  def match_circle_updated_on(user)
-    user.user_time.to_date if user.user_time.present?
-  rescue ArgumentError
-    nil
+  def match_updated_at(matching)
+    circle_updated_at = begin
+      Time.zone.parse(matching.user.user_time) if matching.user.user_time.present?
+    rescue ArgumentError, TypeError
+      nil
+    end
+    [matching.updated_at, circle_updated_at].compact.max&.in_time_zone
+  end
+
+  def match_page_structured_data(matching)
+    url = "https://circle-book.com#{match_path(matching.user_id)}"
+    {
+      '@type' => 'WebPage', '@id' => url, 'url' => url,
+      'name' => "#{matching.user.name}の対戦相手・練習試合の募集",
+      'dateModified' => match_updated_at(matching)&.iso8601
+    }.compact
   end
 
   def match_avatar(user, detail: false)
