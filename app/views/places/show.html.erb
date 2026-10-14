@@ -9,204 +9,108 @@
 <%= render "places/local_business_show", place: @place %>
 
 
-<div class="main user-show">
+<div class="main user-show places-directory place-detail">
   <div class="container">
-    <div class="users-index-item ribbon-wrapper">
-      <div class="ribbon-content">
-        <% if @place.tag.to_i == 1 %>
-          <span class="ribbon green">屋内</span>
-        <% else @place.tag.to_i == 2 %>
-          <span class="ribbon blue">屋外</span>
-        <% end %>
-      </div>
-      <div class="place_cnt_wrap">
-        <h1 class="place_name"><%= @place.name %></h1>
-        <h2 class="place_d">
-            <%= @place.prefecture.name %><%= @place.city.name %>の<%= "屋内" if @place.tag.to_i == 1 %><%= "屋外" if @place.tag.to_i == 2 %>にある<br>
-            <%= @event.name %>のコートや体育館の情報
-        </h2>
-      </div>
-
-      <div class="place_updated">
-        更新日：<%= @place.updated_at.to_time.strftime("%Y年%-m月%-d日") %>
-      </div>
-
-			<% if webmaster? || admin_user_signed_in?%>
-				<% if webmaster? || (@place.user && can_manage_circle?(@place.user)) %>
-          <div class="place_edit">
-            <div class="post-edit_btn">
-              <%= link_to( "編集", edit_place_path ) %>／
-              <%= link_to( "削除", place_path, method: :delete, data: {confirm: "投稿を削除しますか？"}) %>
-            </div>
-          </div>
-				<% end %>
-			<% end %>
-
-      <div class="img_source_wrap">
-          <img src="/images/events/<%= @event.ruby %>.jpg" alt="<%= @event.name %>" class="img_source" >
-        <div class="img_url_source">※画像はイメージです</div>
-      </div>
-
-      <div class="border"></div>
-
-      <div class="article_item article_padding place_list ">
-        <table>
-          <tbody>
-            <tr class="flex_contents">
-              <th class="flex_list">住所</th>
-              <td class="flex_list"><%= @place.address %></td>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">アクセス</th>
-              <td class="flex_list"><%= @place.access %></td>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">駐車場情報</th>
-              <td class="flex_list"><%= raw Rinku.auto_link(simple_format @place.parking) %></td>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">利用可能時間</th>
-              <td class="flex_list"><%= raw Rinku.auto_link(simple_format @place.time) %></td>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">定休日</th>
-              <td class="flex_list"><%= raw Rinku.auto_link(simple_format @place.regular_holiday) %></td>
-            </tr>
-
-            <% if @place_events.present? %>
-              <tr class="flex_contents">
-                <th class="flex_list">対応種目</th>
-                <td class="flex_list">
-                  <% @place_events.sort.each do |event| %>
-                        <span class="flex_list_line">
-                          <% if event.name == "バスケ" %>
-                            バスケットボール
-                          <% else%>
-                            <%= event.name %>
-                          <% end %>
-                        </span>
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-
-            <tr class="flex_contents">
-              <th class="flex_list">施設規模</th>
-              <td class="flex_list"><%= raw Rinku.auto_link(simple_format @place.scale) %></td>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">利用料金</th>
-              <td class="flex_list"><%= raw Rinku.auto_link(simple_format @place.price) %></td>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">電話番号</th>
-              <td class="flex_list"><a href="tel:<%= @place.tel %>"><%= @place.tel %></a>
-            </tr>
-            <tr class="flex_contents">
-              <th class="flex_list">サイトURL</th>
-              <td class="flex_list"><a href="<%= @place.url %>" ><%= @place.url %></a></td>
-            </tr>
-
-            <% if @place.public_place_reviews.exists? %>
-              <tr class="flex_contents">
-                <th class="flex_list">コスパの良さ</th>
-                <td class="flex_list"><%= render "place_reviews/review_score", review_score: @place.average_price.to_f %></td>
-              </tr>
-              <tr class="flex_contents">
-                <th class="flex_list">設備の充実</th>
-                <td class="flex_list"><%= render "place_reviews/review_score", review_score: @place.average_facility.to_f %></td>
-              </tr>
-              <tr class="flex_contents">
-                <th class="flex_list">アクセス</th>
-                <td class="flex_list"><%= render "place_reviews/review_score", review_score: @place.average_access.to_f %></td>
-              </tr>
-              <tr class="flex_contents">
-                <th class="flex_list">予約の難易度</th>
-                <td class="flex_list"><%= render "place_reviews/review_score", review_score: @place.average_reservation.to_f %></td>
-              </tr>
-            <% end %>
-
-          </tbody>
-        </table>
-      </div>
-
-      <%= render "/places/link_to_user" %>
-
-      <div class="g_map">
-          <iframe src=<%= url_for("https://maps.google.co.jp/maps?output=embed&z=14&q=#{@place.address}") %>></iframe>
-
-          <div class="google_map_wrap">
-              <%= link_to "https://www.google.com/maps/search/?api=1&query=#{@place.address}" do %>  
-                <div class="google_map">Google MAP</div>
-              <% end %>
-            </div>
-      </div>
-      <%= render "/layouts/ad_square" %>
-			<div class="place_note">
-				本サイトでは正確な情報を掲載するよう心がけておりますが、<br>間違いや古い情報が掲載されていることがございます。<br>
-				※誤りがあった場合、メニューのお問い合わせよりご連絡ください。	
-			</div>
-
-      <% if @place_reviews.present? %>
-      <hr>
-      <h2 class="place_sub_title">口コミ・評価</h2>
-        <% @place_reviews.reverse_each do |review| %>
-          <div class="place_review_lists">
-            <%= render "place_reviews/review_score", review_score: review.average_score.to_f %>
-            <div class="place_review_updated">
-              <%= review.updated_at.to_time.strftime("%Y年%-m月%-d日") %>にレビュー済み
-            </div>
-            <%= simple_format review.comment %>
-            <% if webmaster? %>
-              <%= link_to '口コミを削除', place_place_review_path(@place, review), method: :delete, data: { confirm: 'この口コミを削除しますか？' } %>
-            <% end %>
-          </div>
-        <% end %>
-      <hr>
-      <% else %>
-
-      <% end %>
-
-
-      <% if @ip.blank? %>
-        <div class="place_review_form">
-        <h2 class="place_sub_title">感想を投稿する</h2>
-          <%= form_for ([@place, @place_review]) do |f| %>
-            <%= render "shared/spam_protection", scope: "place_review:#{@place.id}" %>
-            <%= f.hidden_field :event_id, value: @event.id %>
-
-            <table>
-              <tbody>
-                <tr class="select_review">
-                  <th class="item_left">コスパの良さ</th>
-                  <td class="item_right"><%= f.select :price, [ ['☆☆☆☆☆（0）', 0], ['★☆☆☆☆（1.0）', 1], ['★★☆☆☆（2.0）', 2], ['★★★☆☆（3.0）', 3], ['★★★★☆（4.0）', 4], ['★★★★★（5.0）', 5] ], selected: 5, required: true %></td>
-                </tr>
-                <tr class="select_review">
-                  <th class="item_left">設備の充実</th>
-                  <td class="item_right"><%= f.select :facility, [ ['☆☆☆☆☆（0）', 0], ['★☆☆☆☆（1.0）', 1], ['★★☆☆☆（2.0）', 2], ['★★★☆☆（3.0）', 3], ['★★★★☆（4.0）', 4], ['★★★★★（5.0）', 5] ], selected: 5, required: true %></td>
-                </tr>
-                <tr class="select_review">
-                  <th class="item_left">アクセスの良さ</th>
-                  <td class="item_right"><%= f.select :access, [ ['☆☆☆☆☆（0）', 0], ['★☆☆☆☆（1.0）', 1], ['★★☆☆☆（2.0）', 2], ['★★★☆☆（3.0）', 3], ['★★★★☆（4.0）', 4], ['★★★★★（5.0）', 5] ], selected: 5, required: true %></td>
-                </tr>
-                <tr class="select_review">
-                  <th class="item_left">予約の難易度</th>
-                  <td class="item_right"><%= f.select :reservation, [ ['☆☆☆☆☆（0）', 0], ['★☆☆☆☆（1.0）', 1], ['★★☆☆☆（2.0）', 2], ['★★★☆☆（3.0）', 3], ['★★★★☆（4.0）', 4], ['★★★★★（5.0）', 5] ], selected: 5, required: true %></td>
-                </tr>
-              </tbody>
-            </table>
-
-            <p>コメント<span class="must_red">(必須)</span></p>
-            <%= f.text_area :comment, class: 'form-control form-note', placeholder: "コートも広く、使いやすかったです！" %>
-            <%= f.submit "投稿する", class: "submit_btn", data: { confirm: "この内容でよろしいですか？", disable_with: '更新中...' } %>
-            <div class="reset"></div>
-          <% end %>
+    <section class="place-card place-detail-header" aria-label="施設の概要">
+      <div class="place-card-header">
+        <div class="place-card-heading">
+          <p class="place-card-location"><%= @prefecture.name %> <%= @city.name %>
+            <% if @place.tag.to_i.in?([1, 2]) %><span class="place-card-tag"><%= @place.tag.to_i == 1 ? "屋内" : "屋外" %></span><% end %>
+          </p>
+          <h1><%= @place.name %></h1>
         </div>
+        <time class="place-card-updated" datetime="<%= @place.updated_at.to_date.iso8601 %>">更新：<%= l(@place.updated_at.to_date) %></time>
+      </div>
+      <p class="place-detail-category"><%= @event.name %>のコート・体育館情報</p>
+      <% if webmaster? || (admin_user_signed_in? && @place.user && can_manage_circle?(@place.user)) %>
+        <nav class="place-detail-edit" aria-label="施設の管理">
+          <%= link_to "編集", edit_place_path(@place) %>
+          <%= link_to "削除", place_path(@place), method: :delete, data: {confirm: "投稿を削除しますか？"} %>
+        </nav>
       <% end %>
+    </section>
 
+    <section class="place-detail-section" aria-labelledby="place-information-title">
+      <div class="place-detail-section-heading">
+        <h2 id="place-information-title">施設の基本情報</h2>
+        <img class="place-detail-image" src="/images/events/<%= @event.ruby %>.jpg" alt="<%= @event.name %>のイメージ" width="64" height="64">
+      </div>
+      <dl class="place-detail-facts">
+        <% {"住所" => @place.address, "アクセス" => @place.access, "駐車場" => @place.parking, "利用時間" => @place.time, "定休日" => @place.regular_holiday, "施設規模" => @place.scale}.each do |label, value| %>
+          <div class="place-detail-fact"><dt><%= label %></dt><dd><%= place_detail_text(value) %></dd></div>
+        <% end %>
+        <div class="place-detail-fact"><dt>対応種目</dt><dd class="place-detail-sports">
+          <% @place_events.each do |event| %><%= link_to event.name, "/places/#{event.ruby}", class: "place-card-tag" %><% end %>
+        </dd></div>
+        <div class="place-detail-fact"><dt>電話番号</dt><dd>
+          <% if @place.tel.present? %><%= link_to @place.tel, "tel:#{@place.tel}" %><% else %>記載なし<% end %>
+        </dd></div>
+        <div class="place-detail-fact"><dt>公式サイト</dt><dd>
+          <% if @place.url.to_s.match?(%r{\Ahttps?://}i) %><%= link_to @place.url, @place.url, target: "_blank", rel: "noopener" %><% else %><%= @place.url.presence || "記載なし" %><% end %>
+        </dd></div>
+      </dl>
+    </section>
 
+    <section class="place-detail-section" aria-labelledby="place-price-title">
+      <h2 id="place-price-title">利用料金</h2>
+      <% if strip_tags(@place.price.to_s).length > 240 %>
+        <p class="place-detail-price-preview"><%= place_summary(@place.price, length: 100) %></p>
+        <details class="place-detail-price"><summary>料金の詳細を表示</summary><div><%= place_detail_text(@place.price) %></div></details>
+      <% else %>
+        <%= place_detail_text(@place.price) %>
+      <% end %>
+    </section>
 
-    </div>
+    <section class="place-detail-section" aria-labelledby="place-map-title">
+      <h2 id="place-map-title">場所・アクセス</h2>
+      <iframe class="place-detail-map" title="<%= @place.name %>の地図" loading="lazy" src="https://maps.google.co.jp/maps?output=embed&amp;z=14&amp;q=<%= ERB::Util.url_encode(@place.address.to_s) %>"></iframe>
+      <%= link_to "Google マップで開く", "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(@place.address.to_s)}", class: "places-action", target: "_blank", rel: "noopener" %>
+      <p class="place-detail-note">掲載情報は変更される場合があります。最新の利用条件や料金は施設の公式サイト・窓口でご確認ください。情報の誤りはメニューのお問い合わせよりご連絡ください。</p>
+    </section>
+
+    <section class="place-detail-section" aria-labelledby="place-reviews-title">
+      <h2 id="place-reviews-title">口コミ・評価</h2>
+      <% if @place_reviews.present? %>
+        <dl class="place-review-summary">
+          <% {"コスパの良さ" => @place.average_price, "設備の充実" => @place.average_facility, "アクセスの良さ" => @place.average_access, "予約の難易度" => @place.average_reservation}.each do |label, score| %>
+            <div><dt><%= label %></dt><dd><%= render "place_reviews/review_score", review_score: score.to_f %></dd></div>
+          <% end %>
+        </dl>
+        <% @place_reviews.order(created_at: :desc, id: :desc).each do |review| %>
+          <article class="place-detail-review">
+            <%= render "place_reviews/review_score", review_score: review.average_score.to_f %>
+            <time datetime="<%= review.updated_at.to_date.iso8601 %>"><%= l(review.updated_at.to_date) %></time>
+            <%= simple_format review.comment %>
+            <% if webmaster? %><%= link_to '口コミを削除', place_place_review_path(@place, review), method: :delete, data: { confirm: 'この口コミを削除しますか？' } %><% end %>
+          </article>
+        <% end %>
+      <% else %>
+        <p class="place-detail-muted">口コミはまだありません。</p>
+      <% end %>
+    </section>
+
+    <% if @ip.blank? %>
+      <section class="place-detail-section place-detail-review-form" aria-labelledby="place-review-form-title">
+        <h2 id="place-review-form-title">感想を投稿する</h2>
+        <%= form_for ([@place, @place_review]) do |f| %>
+          <%= render "shared/spam_protection", scope: "place_review:#{@place.id}" %>
+          <%= f.hidden_field :event_id, value: @event.id %>
+          <div class="place-review-fields">
+            <% {price: "コスパの良さ", facility: "設備の充実", access: "アクセスの良さ", reservation: "予約の難易度"}.each do |field, label| %>
+              <div class="place-review-field">
+                <%= f.label field, label %>
+                <%= f.select field, [['☆☆☆☆☆ 0', 0], ['★☆☆☆☆ 1', 1], ['★★☆☆☆ 2', 2], ['★★★☆☆ 3', 3], ['★★★★☆ 4', 4], ['★★★★★ 5', 5]], {selected: 5, include_blank: "評価を選択"}, {required: true} %>
+              </div>
+            <% end %>
+          </div>
+          <div class="place-review-comment">
+            <%= f.label :comment do %>コメント <span class="must_red">(必須)</span><% end %>
+            <%= f.text_area :comment, placeholder: "コートも広く、使いやすかったです！", required: true, minlength: 6, maxlength: 2000, rows: 4 %>
+          </div>
+          <div class="place-review-submit"><%= f.submit "投稿する", class: "places-action", data: {confirm: "この内容でよろしいですか？", disable_with: "投稿中..."} %></div>
+        <% end %>
+      </section>
+    <% end %>
 
     <% if @users.count >= 1 %>
       <div class="user-list-wrap">
@@ -239,53 +143,15 @@
       </div>
     <% end %>
 
-		<%= render "/layouts/ad_square" %>
-
-		<% if @places.count >= 2 %>
-
-				<div class="user-list-wrap others_place">
-					<h2 class="others-user">
-						条件が似ている<%= @prefecture.name %><%= @city.name %>にある<br>
-						<%= @event.name %>コート情報
-					</h2>
-            <% @places.each do |place| %>
-              <% if place.id != @place.id %>
-                <div class="users-index-item ribbon-wrapper others_place_list">
-                  <div class="ribbon-content">
-                    <% if place.tag.to_i == 1 %>
-                      <span class="ribbon green">屋内</span>
-                    <% else place.tag.to_i == 2 %>
-                      <span class="ribbon blue">屋外</span>
-                    <% end %>
-                  </div>
-                  <div class="place_list_title">
-                    <h2 class="place_name"><%= place.name.truncate(24) %></h2>
-                  </div>
-                  <div class="border"></div>
-                  <div class="article_item article_padding place_list ">
-                    <table>
-                      <tbody>
-                        <tr class="flex_contents">
-                          <th class="flex_list">住所</th>
-                          <td class="flex_list"><%= place.address %></td>
-                        </tr>
-                        <tr class="flex_contents">
-                          <th class="flex_list">アクセス</th>
-                          <td class="flex_list"><%= place.access %></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <%= link_to "詳細を確認する", "/places/#{@event.ruby}/#{place.prefecture.kana}/#{place.city.city_kana}/#{place.id}", class: "place_more" %>
-                </div>
-              <% end %>
-            <% end %>
-        </div>
-		<% end %>
-
-		<% if @places.count >= 2 %>
-			<%= render "/layouts/ad_square" %>
-		<% end %>
-
+    <% if @places.present? %>
+      <section class="place-detail-related" aria-labelledby="place-related-title">
+        <h2 id="place-related-title"><%= @prefecture.name %><%= @city.name %>のほかの<%= @event.name %>コート</h2>
+        <% review_counts = PlaceReview.where(place_id: @places.map(&:id), moderation_status: "clear").group(:place_id).count %>
+        <ul class="places-results">
+          <% @places.each do |place| %><%= render "places/card", place: place, review_count: review_counts.fetch(place.id, 0) %><% end %>
+        </ul>
+      </section>
+    <% end %>
+    <%= render "/layouts/ad_square" %>
   </div>
 </div>

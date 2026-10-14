@@ -64,9 +64,9 @@ class PlacesController < ApplicationController
 		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		@city = @prefecture.cities.find_by!(city_kana: params[:city_kana])
 
-    @places = Place.where(id: @event_places).where(prefecture_id: @prefecture.id).where(city_id: @city.id)
-    @users = User.publicly_visible.where(event_id: @event.id, prefecture_id: @prefecture.id, switch: "募集中").order(switch: :asc, last_post: :desc)
-    @place_events = @place.places_events.map{|e| e.event}
+    @places = place_listing.where(id: @event_places, prefecture_id: @prefecture.id, city_id: @city.id).where.not(id: @place.id).order(updated_at: :desc, id: :desc).limit(5)
+    @users = User.publicly_visible.where(event_id: @event.id, prefecture_id: @prefecture.id, switch: "募集中").order(switch: :asc, last_post: :desc).limit(3)
+    @place_events = @place.events.to_a
 
     @place_events.each do |event|
 			if event.id == @event.id

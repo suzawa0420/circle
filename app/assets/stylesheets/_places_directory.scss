@@ -29,14 +29,14 @@
   .places-results-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .places-results-heading > span { font-size: 12px; color: $cb-muted; }
   .place-card { padding: 20px; margin-bottom: 12px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface; }
-  .place-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .place-card-header { position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
   .place-card-heading { min-width: 0; }
-  .place-card-location { color: $cb-muted; font-size: 12px; margin-bottom: 6px; }
+  .place-card-location { padding-right: 112px; color: $cb-muted; font-size: 12px; margin-bottom: 6px; }
   .place-card-tag { display: inline-block; border-radius: 4px; background: $cb-mint-soft; color: $cb-action-hover; font-weight: 700; padding: 2px 6px; margin-left: 6px; }
   .place-card h2 { font-size: 20px; margin: 0; padding: 0; line-height: 1.5; }
   .place-card h2 a { color: $cb-text; font-size: 20px; font-weight: 700; }
   .place-card h2 a:hover { color: $cb-action; }
-  .place-card-updated { flex-shrink: 0; color: $cb-muted; font-size: 11px; padding-top: 3px; }
+  .place-card-updated { position: absolute; top: 0; right: 0; color: $cb-muted; font-size: 11px; padding-top: 3px; }
   .place-card-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
   .place-card-fact { display: flex; gap: 10px; min-width: 0; font-size: 13px; line-height: 1.6; }
   .place-card-fact dt { color: $cb-muted; font-weight: 500; flex: 0 0 56px; }
@@ -59,11 +59,67 @@
     .places-filter-keyword { flex-basis: 100%; }
     .places-filter-fields > .places-action { width: 100%; }
     .place-card { padding: 16px; }
-    .place-card-header { display: block; }
-    .place-card-updated { display: block; margin-top: 4px; }
+    .place-card-header { position: relative; display: block; }
+    .place-card-updated { font-size: 10px; padding-top: 2px; }
     .place-card h2, .place-card h2 a { font-size: 18px; }
     .place-card-facts { grid-template-columns: 1fr; gap: 8px; }
     .place-card-fact dt { flex-basis: 56px; }
     .place-card-footer .places-action { padding: 10px 12px; }
+  }
+}
+
+.places-directory.place-detail {
+  .place-detail-header h1 { margin: 0; padding: 0; font-size: 26px; line-height: 1.5; font-weight: 700; }
+  .place-detail-header .place-card-header { margin-bottom: 6px; }
+  .place-detail-category, .place-detail-muted { color: $cb-muted; font-size: 13px; }
+  .place-detail-edit { display: flex; justify-content: flex-end; gap: 16px; margin-top: 12px; }
+  .place-detail-section { background: $cb-surface; border: 1px solid $cb-border; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .place-detail-section h2, .place-detail-related > h2 { margin: 0 0 16px; padding: 0; font-size: 18px; font-weight: 700; line-height: 1.5; }
+  .place-detail-section-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .place-detail-section-heading h2 { margin: 0; }
+  .place-detail-image { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
+  .place-detail-facts { margin: 0; }
+  .place-detail-fact { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid $cb-border; font-size: 14px; line-height: 1.7; }
+  .place-detail-fact:first-child { padding-top: 0; }
+  .place-detail-fact:last-child { border: 0; padding-bottom: 0; }
+  .place-detail-fact dt { color: $cb-muted; font-weight: 500; }
+  .place-detail-fact dd { min-width: 0; overflow-wrap: anywhere; }
+  .place-detail-section p { font-size: 14px; line-height: 1.8; }
+  .place-detail-fact p { margin: 0; }
+  .place-detail-sports { display: flex; flex-wrap: wrap; gap: 6px; }
+  .place-detail-sports .place-card-tag { margin: 0; font-size: 12px; }
+  .place-detail-price-preview { color: $cb-muted; margin-bottom: 12px; }
+  .place-detail-price summary { cursor: pointer; padding: 12px; border-radius: 7px; background: $cb-mint-soft; color: $cb-action-hover; font-size: 14px; font-weight: 700; }
+  .place-detail-price > div { padding: 16px 0 0; }
+  .place-detail-map { display: block; width: 100%; height: 240px; border: 0; border-radius: 8px; margin-bottom: 14px; }
+  .place-detail-section .place-detail-note { margin-top: 16px; font-size: 12px; color: $cb-muted; }
+  .place-review-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px; }
+  .place-review-summary dt { color: $cb-muted; font-size: 12px; margin-bottom: 4px; }
+  .place-detail-review { border-top: 1px solid $cb-border; padding-top: 16px; margin-top: 16px; }
+  .place-detail-review time { display: block; color: $cb-muted; font-size: 12px; margin: 6px 0; }
+  .place-review-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .place-detail-review-form label { display: block; font-size: 14px; font-weight: 500; margin: 0 0 6px; }
+  .place-detail-review-form select { display: block; width: 100%; min-width: 0; height: 44px; padding: 8px 10px; margin: 0; background: $cb-surface; border: 1px solid $cb-input-border; border-radius: 7px; font-size: 16px; line-height: normal; }
+  .place-review-comment { margin-top: 20px; }
+  .place-review-comment textarea { display: block; width: 100%; min-height: 110px; padding: 12px; border: 1px solid $cb-input-border; border-radius: 7px; font-size: 16px; line-height: 1.6; resize: vertical; }
+  .place-review-submit { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .place-review-submit input { margin: 0; }
+  .place-detail-related { margin-top: 28px; }
+  .user-list-wrap { padding: 20px 0; background: transparent; }
+  .user-list-wrap h2 { font-size: 18px; line-height: 1.5; }
+  .user_list { border-radius: 12px; }
+  @media (max-width: 600px) {
+    .place-detail-header h1 { font-size: 22px; }
+    .place-detail-section { padding: 16px; }
+    .place-detail-fact { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; font-size: 13px; }
+    .place-review-fields { grid-template-columns: 1fr; gap: 12px; }
+    .place-review-field { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 1.2fr); align-items: center; gap: 12px; }
+    .place-review-field label { margin: 0; }
+    .place-review-field select { font-size: 14px; }
+    .place-detail-map { height: 200px; }
+  }
+  @media (max-width: 360px) {
+    .place-review-field { display: block; }
+    .place-review-field label { margin-bottom: 6px; }
   }
 }

@@ -91,6 +91,52 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'detail has full facility information, expandable fees and labelled rating fields' do
+    @gym.update!(parking: "10台", regular_holiday: "毎週月曜日", tel: "03-1234-5678", url: "https://example.test/gym")
+    get path_for(@gym)
+    assert_response :success
+    assert_select '.place-detail h1', text: @gym.name
+    assert_select '.place-detail-header time[datetime]'
+    assert_select '.place-detail-facts', text: /10台/
+    assert_select '.place-detail-facts a[href="tel:03-1234-5678"]'
+    assert_select '.place-detail-price summary', text: '料金の詳細を表示'
+    assert_select '.place-detail-price div', text: /最終料金/
+    assert_select 'iframe[loading=lazy][title]'
+    assert_select '.place-detail-review-form table', count: 0
+    %w[price facility access reservation].each do |field|
+      assert_select "label[for=place_review_#{field}]", count: 1
+      assert_select "select#place_review_#{field}[required] option:not([value=\"\"])", count: 6
+      assert_select "select#place_review_#{field} option[selected][value='5']", count: 1
+    end
+    assert_select 'textarea#place_review_comment[required][maxlength="2000"]'
+    assert_select 'input[name="place_review[event_id]"]' do |fields|
+      assert_equal @basketball.id.to_s, fields.first['value']
+    end
+    assert_select '.place-detail-facts a[href="https://example.test/gym"][rel=noopener]'
+    assert_select '.place-detail-section script', count: 0
+  end
+
+  test 'related facilities share list cards and are limited to five other facilities' do
+    7.times { |index| facility("関連体育館#{index}", @tokyo, @city, @basketball) }
+    get path_for(@gym)
+    assert_response :success
+    assert_select '.place-detail-related .place-card', count: 5
+    assert_select '.place-detail-related a', text: @gym.name, count: 0
+    assert_select '.place-detail-related time[datetime]', count: 5
+    assert_select '.place-detail-related .places-action', count: 5
+  end
+
+  test 'only public reviews are shown and duplicate reviewers cannot post again' do
+    @gym.place_reviews.create!(price: 5, facility: 4, access: 3, reservation: 2, average_score: 3.5, comment: '駅から近くて使いやすい体育館です。', ip_address: '192.0.2.1')
+    @gym.place_reviews.create!(price: 5, facility: 4, access: 3, reservation: 2, average_score: 3.5, comment: '非公開の感想です。', moderation_status: 'blocked', ip_address: '127.0.0.1')
+    get path_for(@gym)
+    assert_response :success
+    assert_select '.place-detail-review', count: 1
+    assert_select '.place-detail-review', text: /駅から近くて/
+    assert_not_includes response.body, '非公開の感想です。'
+    assert_select '.place-detail-review-form', count: 0
+  end
+
   private
 
   def facility(name, prefecture, city, event)

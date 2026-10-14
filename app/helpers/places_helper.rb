@@ -10,6 +10,12 @@ module PlacesHelper
     text.present? ? truncate(text, length: length) : "記載なし"
   end
 
+  def place_detail_text(value)
+    return content_tag(:p, "記載なし", class: "place-detail-muted") if value.blank?
+
+    sanitize(Rinku.auto_link(simple_format(value.to_s)), tags: %w[p br a], attributes: %w[href])
+  end
+
   def place_search_keyword
     params[:kw].is_a?(String) ? params[:kw] : ''
   end

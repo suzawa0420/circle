@@ -2,30 +2,7 @@
   - review_counts = PlaceReview.where(place_id: @places.map(&:id), moderation_status: "clear").group(:place_id).count
   %ul.places-results
     - @places.each.with_index(1) do |place, i|
-      %li.place-card
-        .place-card-header
-          .place-card-heading
-            %p.place-card-location
-              = place.prefecture.name
-              = place.city.name
-              - if place.tag.to_i.in?([1, 2])
-                %span.place-card-tag= place.tag.to_i == 1 ? "屋内" : "屋外"
-            %h2= link_to place.name, place_listing_path(place)
-          %span.place-card-updated 更新：#{l(place.updated_at.to_date, format: :default)}
-        %dl.place-card-facts
-          - {"住所" => place.address, "アクセス" => place.access, "利用時間" => place.time, "利用料金" => place.price}.each do |label, value|
-            .place-card-fact
-              %dt= label
-              %dd= place_summary(value)
-        .place-card-footer
-          .place-card-reviews
-            - if review_counts.fetch(place.id, 0).positive?
-              = render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: review_counts[place.id]
-            - else
-              %span 口コミはまだありません
-          = link_to place_listing_path(place), class: "places-action", "aria-label" => "#{place.name}の詳細を確認する" do
-            詳細を確認する
-            = lucide_icon "chevron-right"
+      = render "places/card", place: place, review_count: review_counts.fetch(place.id, 0)
       - if i == 5
         %li.list_ad
           = render "/layouts/ad_square"
