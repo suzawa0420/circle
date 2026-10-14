@@ -1,2 +1,5 @@
 // Retain only selectors used by the public detail and its shared partials.
 @import "application";
+
+// Keep image controls above the desktop toolbar and sticky mobile navigation.
+.mobile-circle-page .popup { z-index: 1200; }
