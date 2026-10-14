@@ -21,7 +21,7 @@
   .home-service--circles > svg:first-child { width: 36px; height: 36px; }
   .home-service--places { background: $cb-surface; font-size: 16px; color: $cb-text; }
   .home-service--places > svg:first-child { width: 28px; height: 28px; }
-  &__section { position: relative; margin: 0 0 36px; scroll-margin-top: 104px; }
+  &__section { position: relative; margin: 0 0 52px; scroll-margin-top: 104px; }
   &__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
   &__heading-copy { min-width: 0; }
   &__heading h2 { display: flex; gap: 8px; align-items: center; font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0 0 6px; }
@@ -105,7 +105,7 @@
     &__hero-search { min-height: 48px; margin-top: 20px; }
     &__services { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     &__item { flex-basis: 286px; }
-    &__section { margin-bottom: 48px; }
+    &__section { margin-bottom: 64px; }
     &__more { margin-right: 0; }
   }
   @media (max-width: 767px) {
