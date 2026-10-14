@@ -139,14 +139,14 @@ class BreadcrumbsTest < ActionDispatch::IntegrationTest
     assert structured_nodes.any? { |data| data['@type'] == 'LocalBusiness' }
   end
 
-  test 'public breadcrumb is the final visible footer section including event pages' do
+  test 'public breadcrumb appears above footer links including event pages' do
     ['/about', '/dates/today'].each do |path|
       get path
       assert_response :success
-      assert_select 'footer .footer_wrap > .breadcrumbs_wrapper:last-of-type', count: 1
+      assert_select 'footer .footer_wrap > .breadcrumbs_wrapper:first-of-type', count: 1
       assert_select '.event-results .breadcrumbs_wrapper', count: 0
       footer = css_select('footer .footer_wrap').sole
-      assert_includes footer.element_children.reject { |node| node.name == 'script' }.last['class'].to_s, 'breadcrumbs_wrapper'
+      assert_includes footer.element_children.first['class'].to_s, 'breadcrumbs_wrapper'
     end
   end
 

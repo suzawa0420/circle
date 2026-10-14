@@ -1,4 +1,5 @@
 .footer_wrap
+  = render "/layouts/breadcrumb"
   %ul.footer_links
     %li
       %a{:href => "/faq"} ヘルプ・よくある質問
@@ -21,4 +22,3 @@
           %img.footer_logo_img{:alt => "サークルブック", :src => "/images/logo.png?v=20260921-green-clean", :width => 960, :height => 251}/
     .footer_copyright_address
       Copyright (c) #{link_to "サークルブック", root_path}
-  = render "/layouts/breadcrumb"
