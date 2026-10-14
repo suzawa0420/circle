@@ -3,6 +3,13 @@
   padding: 28px 16px 40px;
   color: #223c35;
   &__container { max-width: 760px; margin: 0 auto; }
+  &__breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 0 0 16px; font-size: 12px; }
+  &__breadcrumbs a { color: #246d56; }
+  &__discovery { background: #fff; border: 1px solid #e0e7e3; border-radius: 12px; padding: 18px; margin: 24px 0 0; }
+  &__discovery h2 { font-size: 17px; line-height: 1.5; margin: 18px 0 8px; }
+  &__discovery h2:first-child { margin-top: 0; }
+  &__discovery p { font-size: 14px; line-height: 1.8; margin: 8px 0; }
+  &__discovery a { overflow-wrap: anywhere; }
   &__header { height: auto; }
   &__header h1 { font-size: 25px; line-height: 1.5; margin: 8px 0; font-weight: 700; }
   &__header p { font-size: 13px; color: #60746d; margin: 6px 0; }

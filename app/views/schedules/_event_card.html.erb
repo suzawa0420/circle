@@ -5,6 +5,7 @@
       <%= content_tag local_assigns.fetch(:heading_tag, :h3), schedule.title.presence || "#{user.event&.name}の活動" %>
       <p class="event-results__time"><%= lucide_icon 'clock' %><span><% if local_assigns[:show_date] %><%= calendar_schedule_date(Date.iso8601(schedule.day)) %> <br class="event-results__date-break"><% end %><%= calendar_schedule_time(schedule) %></span></p>
       <p class="event-results__location"><%= lucide_icon 'map-pin' %><%= [user.prefecture&.name, schedule.venue.presence].compact.join('・') %></p>
+      <% if schedule.has_attribute?(:cost) && schedule.cost.present? %><p><%= lucide_icon 'banknote' %>参加費：<%= schedule.cost %></p><% end %>
     </div>
     <%= image_tag schedule_image_source(schedule, user: user), alt: '', width: 76, height: 76, loading: local_assigns[:eager] ? 'eager' : 'lazy', class: 'event-results__image' %>
   </div>

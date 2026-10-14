@@ -18,21 +18,22 @@ class EventDaySitemap
         next
       end
       next unless date.iso8601 == day
-      bases = [EventDayListing.path(date)]
-      bases << '/dates/today' if date == today
-      bases << '/dates/tomorrow' if date == today + 1
+      periods = []
+      periods << 'today' if date == today
+      periods << 'tomorrow' if date == today + 1
       week_start = today.beginning_of_week(:monday)
-      bases << '/dates/this_week' if (week_start..week_start + 6).cover?(date)
-      bases << '/dates/next_week' if (week_start + 7..week_start + 13).cover?(date)
+      periods << 'this_week' if (week_start..week_start + 6).cover?(date)
+      periods << 'next_week' if (week_start + 7..week_start + 13).cover?(date)
       event = events[event_id].presence
       pref = prefectures[prefecture_id].presence
       filters = [{}]
       filters << { event: event } if event && event != 'nil'
-      filters << { pref: pref } if pref && pref != 'nil'
-      filters << { event: event, pref: pref } if event && pref && event != 'nil' && pref != 'nil'
-      bases.product(filters).each do |base, query|
-        path = base + (query.empty? ? '' : '?' + query.to_query)
-        yield path if seen.add?(path)
+      filters << { prefecture: pref } if pref && pref != 'nil'
+      filters << { event: event, prefecture: pref } if event && pref && event != 'nil' && pref != 'nil'
+      filters.each do |filter|
+        paths = [EventSearchPage.path(**filter), EventSearchPage.path(**filter, date: date)]
+        paths.concat(periods.map { |period| EventSearchPage.path(**filter, period: period) })
+        paths.each { |path| yield path if seen.add?(path) }
       end
     end
   end

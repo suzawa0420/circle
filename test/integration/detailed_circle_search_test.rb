@@ -40,7 +40,7 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
       assert_select '.date_list_wrap', count: 0
       assert_select '.event-date-search .event-results__days a', count: 12
       assert_select '.event-date-search .event-results__days a:first-child', text: /10\/13.*火/m
-      assert_select '.event-date-search a[href=?]', '/dates/2026/10/13?' + query.to_query
+      assert_select '.event-date-search a[href=?]', EventSearchPage.path(event: @circle.event.ruby, prefecture: @circle.prefecture.kana, date: Date.new(2026, 10, 13))
       assert_select '.event-date-search .event-results__shortcuts, .event-date-search form', count: 0
       get '/dates'
       assert_select '.event-results__days a:first-child', text: /10\/13.*火/m

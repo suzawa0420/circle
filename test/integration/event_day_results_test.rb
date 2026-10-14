@@ -29,8 +29,8 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
       assert_select '.event-results__days a', count: 12 do |links|
         links.each_with_index do |link, index|
           uri = URI.parse(link['href'])
-          assert_equal EventDayListing.path(Date.current + index), uri.path
-          assert_equal({ 'event' => @circle.event.ruby, 'pref' => @circle.prefecture.kana }, Rack::Utils.parse_nested_query(uri.query))
+          assert_equal EventSearchPage.path(event: @circle.event.ruby, prefecture: @circle.prefecture.kana, date: Date.current + index), uri.path
+          assert_nil uri.query
         end
       end
     end
@@ -61,12 +61,14 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
   test 'hub filters preserve canonical URLs and date input opens the corresponding day' do
     query = { event: @circle.event.ruby, pref: @circle.prefecture.kana }
     get '/dates', params: query.merge(utm_source: 'test')
+    assert_response :moved_permanently
+    follow_redirect!
     assert_response :success
-    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates?' + query.to_query
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com' + filtered_path
     assert_select 'h1', text: /東京都のバスケ/
     assert_select 'form[method="get"][action="/dates"] input[type="date"][name="date"]'
     get '/dates', params: query.merge(date: '2026-10-14')
-    assert_redirected_to '/dates/2026/10/14?' + query.to_query
+    assert_redirected_to filtered_path(date: Date.new(2026, 10, 14))
     follow_redirect!
     assert_select '.event-results__text h3', text: '明日のバスケ'
     assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { date: '2026-02-30' } }
@@ -158,15 +160,19 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
   test 'sorts and filters have canonical metadata with valid public links' do
     query = { event: @circle.event.ruby, pref: @circle.prefecture.kana }
     get '/dates/2026/10/13', params: query.merge(sort: '3', utm_source: 'test')
+    assert_response :moved_permanently
+    follow_redirect!
     assert_response :success
-    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates/2026/10/13?' + query.to_query
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com' + filtered_path(date: Date.current)
     assert_select 'meta[name="robots"][content*="noindex"]'
     assert_select 'title', text: /東京都.*バスケ/
     get '/dates/today', params: query.merge(sort: '1')
+    assert_response :moved_permanently
+    follow_redirect!
     assert_response :success
     assert_select 'meta[name="robots"][content*="noindex"]', count: 0
     assert_select 'h1', text: /今日・東京都のバスケ/
-    assert_select 'a[href*="/dates/tomorrow?event="]'
+    assert_select 'a[href=?]', filtered_path(period: 'tomorrow')
     get '/dates/today', params: { sort: '2' }
     assert_response :success
     assert_select 'meta[name="robots"][content*="noindex"]'
@@ -205,6 +211,8 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     activity('翌々週の活動', day: '2026-10-26')
     query = { event: @circle.event.ruby, pref: @circle.prefecture.kana }
     get '/dates/this_week', params: query.merge(utm_source: 'test')
+    assert_response :moved_permanently
+    follow_redirect!
     assert_response :success
     assert_select 'h1', text: /今週・東京都のバスケ/
     assert_select '.event-results__header p', text: /2026年10月12日（月）〜2026年10月18日（日）/
@@ -213,16 +221,18 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_select ".event-results__card[href='#{user_schedule_path(@circle, monday)}']", count: 1
     assert_select ".event-results__card[href='#{user_schedule_path(@circle, sunday)}'] .event-results__time", text: /10月18日.*日/m
     assert_select ".event-results__card[href='#{user_schedule_path(@circle, following)}']", count: 0
-    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates/this_week?' + query.to_query
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com' + filtered_path(period: 'this_week')
     assert_select 'meta[name="description"]', content: /今週.*10月12日.*10月18日.*バスケ/
     assert_select 'meta[name="robots"][content*="noindex"]', count: 0
-    assert_select 'a[href="/dates/next_week?' + query.to_query + '"]'
+    assert_select 'a[href=?]', filtered_path(period: 'next_week')
     assert_select 'script[type="application/ld+json"]', text: /ItemList/
     get '/dates/next_week', params: query
+    assert_response :moved_permanently
+    follow_redirect!
     assert_response :success
     assert_select '.event-results__card', count: 1
     assert_select 'h1', text: /来週・東京都のバスケ/
-    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com/dates/next_week?' + query.to_query
+    assert_select 'link[rel="canonical"]', href: 'https://circle-book.com' + filtered_path(period: 'next_week')
     get '/dates/next_week', params: { sort: '3' }
     assert_select 'meta[name="robots"][content*="noindex"]'
     assert_raises(ActiveRecord::RecordNotFound) { get '/dates/next_week', params: { page: 9 } }
@@ -259,8 +269,8 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     activity('来週の日曜', day: '2026-10-25')
     paths = EventDaySitemap.each_path.to_a
     assert_includes paths, '/dates/next_week'
-    assert_includes paths, '/dates/next_week?' + { event: @circle.event.ruby, pref: @circle.prefecture.kana }.to_query
-    assert_includes paths, '/dates/today?' + { event: @circle.event.ruby, pref: @circle.prefecture.kana }.to_query
+    assert_includes paths, filtered_path(period: 'next_week')
+    assert_includes paths, filtered_path(period: 'today')
     assert_not_includes paths, '/dates/2026/10/12'
     assert_not_includes paths, '/dates/2026/10/15'
     assert_equal paths.uniq, paths
@@ -271,6 +281,10 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def filtered_path(**options)
+    EventSearchPage.path(event: @circle.event.ruby, prefecture: @circle.prefecture.kana, **options)
+  end
 
   def activity(title, **attrs)
     @circle.schedules.create!({ title: title, day: '2026-10-13', venue: '公開体育館',

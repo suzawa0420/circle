@@ -1,7 +1,7 @@
 <% accepted_count = @schedule.name_schedules.where(answer: 1).count %>
 <% status = public_schedule_status(@schedule, accepted_count: accepted_count) %>
 <% date = Date.iso8601(@schedule.day) %>
-<%= link_to EventDayListing.path(date) + '?' + { event: @user.event.ruby }.to_query, class: 'schedule-detail__back' do %>
+<%= link_to event_listing_path({ event: @user.event.ruby, pref: @user.prefecture.kana }, date: date), class: 'schedule-detail__back' do %>
   <%= lucide_icon 'chevron-right' %><%= calendar_schedule_date(date) %>の<%= @user.event.name %>一覧
 <% end %>
 
@@ -36,6 +36,10 @@
     <% end %>
   </div>
 </article>
+<% if (data = public_event_structured_data(@schedule, user: @user)) %>
+  <script type="application/ld+json"><%= raw json_escape(data.to_json) %></script>
+<% end %>
+<%= link_to "#{@user.prefecture.name}の#{@user.event.name}開催予定を見る", event_listing_path(event: @user.event.ruby, pref: @user.prefecture.kana), class: 'schedule-detail__back' %>
 
 <section class="schedule-detail__card schedule-detail__section">
   <h2>活動内容・参加条件</h2>

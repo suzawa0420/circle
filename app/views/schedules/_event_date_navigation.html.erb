@@ -1,10 +1,10 @@
 <% compact = local_assigns.fetch(:compact, false) %>
 <% unless compact %>
     <nav class="event-results__shortcuts" aria-label="期間からイベントを探す">
-      <%= link_to '今日のイベント', today_events_path(filter_query) %>
-      <%= link_to '明日のイベント', tomorrow_events_path(filter_query) %>
-      <%= link_to '今週のイベント', this_week_events_path(filter_query) %>
-      <%= link_to '来週のイベント', next_week_events_path(filter_query) %>
+      <%= link_to '今日のイベント', event_listing_path(filter_query, period: 'today') %>
+      <%= link_to '明日のイベント', event_listing_path(filter_query, period: 'tomorrow') %>
+      <%= link_to '今週のイベント', event_listing_path(filter_query, period: 'this_week') %>
+      <%= link_to '来週のイベント', event_listing_path(filter_query, period: 'next_week') %>
     </nav>
 <% end %>
 <%= render 'schedules/event_date_strip', dates: (date..date + (compact ? 11 : 4)), filter_query: filter_query %>

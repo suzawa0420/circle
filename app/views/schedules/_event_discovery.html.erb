@@ -1,0 +1,35 @@
+<% unless params[:page].to_i > 1 %>
+  <section class="event-results__discovery" aria-label="開催予定と参加条件の探し方">
+    <h2><%= @prefecture&.name || '全国' %>の<%= @event&.name || 'イベント' %>に参加するには</h2>
+    <% if @event&.name.to_s.include?('バスケ') %>
+      <p>バスケットボールのイベントや練習会を、開催日・時間・会場・参加費から比較できます。初心者歓迎、経験者向け、一人参加や体験参加の可否はイベントごとに異なります。詳細ページの活動内容・参加条件を確認し、主催者へお問い合わせください。</p>
+    <% else %>
+      <p>開催日・時間・会場・参加費を比較して、都合に合う活動を探せます。初心者や一人での参加、体験参加の可否は各イベントの詳細で確認してください。持ち物や当日の流れが分からない場合は主催者へお問い合わせください。</p>
+    <% end %>
+    <nav class="event-results__shortcuts" aria-label="開催予定の一覧">
+      <%= link_to '今後の開催予定をすべて見る', @event_hub_path %>
+      <% if @event && @prefecture %>
+        <%= link_to "全国の#{@event.name}開催予定", event_listing_path(event: @event.ruby) %>
+        <%= link_to "#{@prefecture.name}のほかのイベント", event_listing_path(pref: @prefecture.kana) %>
+      <% end %>
+    </nav>
+    <% if @event_discovery.present? %>
+      <h2><%= @event ? '地域別の開催予定' : 'ジャンル別の開催予定' %></h2>
+      <nav class="event-results__shortcuts" aria-label="関連するイベント開催予定">
+        <% @event_discovery.each do |name, path| %><%= link_to name, path %><% end %>
+      </nav>
+    <% end %>
+    <% if @event_region_discovery.present? %>
+      <h2>都道府県別の開催予定</h2>
+      <nav class="event-results__shortcuts" aria-label="都道府県別のイベント開催予定">
+        <% @event_region_discovery.each do |name, path| %><%= link_to name, path %><% end %>
+      </nav>
+    <% end %>
+    <% if @event || @prefecture %>
+      <% circle_search_path = @event && @prefecture ? event_prefecture_path(@event.ruby, @prefecture.kana) : (@event ? event_path(@event.ruby) : prefecture_path(@prefecture.kana)) %>
+      <h2>継続して参加するサークルを探す</h2>
+      <p>定期的に活動する仲間や所属先を探している方は、サークル・チームのメンバー募集も確認できます。</p>
+      <%= link_to "#{@prefecture&.name}#{@event&.name}のサークル・チーム募集を見る", circle_search_path %>
+    <% end %>
+  </section>
+<% end %>

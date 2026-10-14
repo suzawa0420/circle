@@ -1,5 +1,6 @@
 <main class="event-results">
   <div class="event-results__container">
+    <%= render 'schedules/event_breadcrumbs' %>
     <header class="event-results__header">
       <p class="event-results__eyebrow">日付から、参加したい活動を見つけよう</p>
       <h1><%= @event_day_title %></h1>
@@ -7,14 +8,14 @@
       <p>時間・場所・募集状況を見比べて、気になるイベントへ。</p>
     </header>
     <nav class="event-results__shortcuts" aria-label="期間からイベントを探す">
-      <%= link_to '今日', today_events_path(@filter_query), aria: { current: action_name == 'today' ? 'page' : nil } %>
-      <%= link_to '明日', tomorrow_events_path(@filter_query), aria: { current: action_name == 'tomorrow' ? 'page' : nil } %>
-      <%= link_to '今週', this_week_events_path(@filter_query), aria: { current: action_name == 'this_week' ? 'page' : nil } %>
-      <%= link_to '来週', next_week_events_path(@filter_query), aria: { current: action_name == 'next_week' ? 'page' : nil } %>
-      <%= link_to '日付で探す', dates_path(@filter_query) %>
+      <%= link_to '今日', event_listing_path(@filter_query, period: 'today'), aria: { current: action_name == 'today' ? 'page' : nil } %>
+      <%= link_to '明日', event_listing_path(@filter_query, period: 'tomorrow'), aria: { current: action_name == 'tomorrow' ? 'page' : nil } %>
+      <%= link_to '今週', event_listing_path(@filter_query, period: 'this_week'), aria: { current: action_name == 'this_week' ? 'page' : nil } %>
+      <%= link_to '来週', event_listing_path(@filter_query, period: 'next_week'), aria: { current: action_name == 'next_week' ? 'page' : nil } %>
+      <%= link_to '今後の開催予定', @event_hub_path %>
     </nav>
     <%= render 'schedules/event_date_strip', dates: (@event_end_date ? (@event_date..@event_end_date) : (@event_date - 2..@event_date + 2)), filter_query: @filter_query, selected_date: (@event_end_date ? nil : @event_date) %>
-    <%= form_with url: @event_day_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
+    <%= form_with url: @event_filter_form_path, method: :get, local: true, class: 'event-results__filters' do |form| %>
       <label>エリア<%= form.select :pref, options_from_collection_for_select(@prefectures, :kana, :name, @prefecture&.kana), include_blank: '全国' %></label>
       <label>ジャンル<%= form.select :event, options_from_collection_for_select(@events, :ruby, :name, @event&.ruby), include_blank: 'すべて' %></label>
       <label>並び順<%= form.select :sort, options_for_select([['おすすめ（日替わり）', '1'], ['新着順', '2'], ['開始時間順', '3']], params[:sort] || '1') %></label>
@@ -33,8 +34,9 @@
         <% end %>
       </ul>
       <%= paginate @schedules %>
-      <script type="application/ld+json"><%= raw json_escape({ '@context' => 'https://schema.org', '@type' => 'ItemList', name: @event_day_title, itemListElement: @schedules.each_with_index.map { |s, i| { '@type' => 'ListItem', position: @schedules.offset_value + i + 1, url: "https://circle-book.com#{user_schedule_path(s.user_id, s.id)}", name: s.title.presence || "#{s.user.event&.name}の活動" } } }.to_json) %></script>
     <% end %>
     <p class="event-results__note">募集状況は変更されることがあります。参加条件・会場の詳細は各イベントでご確認ください。</p>
+    <%= render 'schedules/event_discovery' %>
+    <script type="application/ld+json"><%= raw json_escape(event_listing_structured_data.to_json) %></script>
   </div>
 </main>

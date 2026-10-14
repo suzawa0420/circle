@@ -43,7 +43,7 @@ class EventDayListing
     else "md5(schedules.id::text || #{connection.quote(now.to_date.iso8601)}), schedules.id ASC"
     end
     # ImageUploader appends updated_at to stored image URLs for cache busting.
-    columns = (ScheduleListingData::COLUMNS + [:top_image, :updated_at]).map { |column| "schedules.#{column}" }
+    columns = (ScheduleListingData::COLUMNS + [:cost, :top_image, :updated_at]).map { |column| "schedules.#{column}" }
     @base.joins("LEFT JOIN (#{counts}) attendance ON attendance.schedule_id = schedules.id")
       .select(*columns, 'COALESCE(attendance.accepted_count, 0) AS accepted_count', "(#{ended}) AS event_ended")
       .preload(user: [{ event: :category }, :prefecture])

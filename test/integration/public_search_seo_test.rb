@@ -171,7 +171,10 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
       assert_includes urls, "https://circle-book.com#{circle_path(@circle)}"
       assert_includes urls, "https://circle-book.com#{EventDayListing.path(today)}"
       assert_includes urls, 'https://circle-book.com/dates/today'
-      assert_includes urls, 'https://circle-book.com/dates/today?' + { event: @circle.event.ruby, pref: @circle.prefecture.kana }.to_query
+      assert_includes urls, 'https://circle-book.com' + EventSearchPage.path(event: @circle.event.ruby, prefecture: @circle.prefecture.kana, period: 'today')
+      assert_includes urls, 'https://circle-book.com' + EventSearchPage.path(event: @circle.event.ruby, prefecture: @circle.prefecture.kana)
+      assert_includes urls, "https://circle-book.com#{user_schedule_path(@circle, @circle.schedules.first)}"
+      refute urls.any? { |url| url.include?('?event=') || url.include?('&pref=') }
       refute urls.any? { |url| url.include?('/kw/') || url.include?('/search/') }
       landing = child.xpath('//url').find { |node| node.at_xpath('loc').text == "https://circle-book.com#{@path}" }
       assert_nil landing.at_xpath('lastmod')

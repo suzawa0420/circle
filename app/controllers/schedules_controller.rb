@@ -6,6 +6,7 @@ before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :u
 before_action :ensure_correct_user, only: [:new, :create, :edit, :update, :destroy]
 before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :today, :tomorrow, :this_week, :next_week, :year, :month]}
 before_action :set_dates, {only: [:dates, :day, :today, :tomorrow, :this_week, :next_week]}
+before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomorrow, :this_week, :next_week]
 
 
 	def index
@@ -118,6 +119,7 @@ before_action :set_dates, {only: [:dates, :day, :today, :tomorrow, :this_week, :
     # meta_tag
     @meta_title = "#{Time.parse(@schedule.day).strftime("%-m月%-d日(#{@wdays[Time.parse(@schedule.day).wday]})")}の活動内容｜#{@schedule.title}｜#{@user.name}"
     @meta_description = "#{Time.parse(@schedule.day).strftime("%-m月%-d日(#{@wdays[Time.parse(@schedule.day).wday]})")}#{ @schedule.time_s.strftime('%H:%M') if @schedule.time_s.present? }#{"〜" if @schedule.time_s.present? }#{ @schedule.time_e.strftime('%H:%M') if @schedule.time_e.present? }@#{ @schedule.venue }の活動内容｜#{@schedule.title}｜#{@user.name}"
+    set_meta_tags canonical: "https://circle-book.com#{user_schedule_path(@user, @schedule)}"
 
 		@b1_name = @user.name
 		@b1_url = "/users/#{@user.id}"
@@ -184,11 +186,6 @@ before_action :set_dates, {only: [:dates, :day, :today, :tomorrow, :this_week, :
 # スケジュール
 def dates
   @event_date = Time.current.in_time_zone('Tokyo').to_date
-  @events = Event.order(:order)
-  @prefectures = Prefecture.order(:order)
-  @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
-  @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
-  @filter_query = { event: @event&.ruby, pref: @prefecture&.kana }.compact
   if params[:date].present?
     raise ActiveRecord::RecordNotFound unless params[:date].is_a?(String) && params[:date].match?(/\A[0-9]{4}-[0-9]{2}-[0-9]{2}\z/)
     begin
@@ -197,21 +194,24 @@ def dates
       raise ActiveRecord::RecordNotFound
     end
     raise ActiveRecord::RecordNotFound unless (1900..2100).cover?(date.year)
-    return redirect_to EventDayListing.path(date) + (@filter_query.present? ? '?' + @filter_query.to_query : '')
+    return redirect_to EventSearchPage.path(**event_search_path_options, date: date), status: :moved_permanently
   end
-  @day_listing = EventDayListing.new(date: @event_date, event: @event, prefecture: @prefecture, upcoming: true)
+  return if redirect_event_search_url(EventSearchPage.path(**event_search_path_options))
+  @day_listing = EventDayListing.new(date: @event_date, event: @event, prefecture: @prefecture, upcoming: true, sort: params[:sort])
   @schedules = @day_listing.schedules.page(params[:page]).per(20)
   @result_count = @day_listing.total_count
-  @event_hub_title = "#{@prefecture&.name || '全国'}の#{@event&.name || 'イベント'}・サークル活動一覧"
-  query = @filter_query.dup
+  @event_hub_title = EventSearchPage.title(event: @event, prefecture: @prefecture, page: params[:page])
+  query = {}
   query[:page] = params[:page].to_i if params[:page].to_i > 1
-  canonical = 'https://circle-book.com/dates' + (query.present? ? '?' + query.to_query : '')
+  @event_hub_path = EventSearchPage.path(**event_search_path_options)
+  canonical = 'https://circle-book.com' + @event_hub_path + (query.present? ? '?' + query.to_query : '')
   set_meta_tags title: @event_hub_title,
-    description: "#{@prefecture&.name || '全国'}の#{@event&.name || 'イベント'}の開催予定を一覧で探せます。日付・エリア・ジャンルから絞り込み、時間・場所・募集状況を比較できます。",
-    canonical: canonical, noindex: @result_count.zero? || params[:sort].present?,
+    description: "#{@prefecture&.name || '全国'}で開催予定の#{EventSearchPage.subject(@event)}を日付から探せます。開催時間・会場・参加費・募集状況を比較し、体験参加や初心者の参加条件は各イベントの詳細で確認できます。",
+    canonical: canonical, noindex: @result_count.zero? || %w[2 3].include?(params[:sort]),
     og: { image: 'https://circle-book.com/images/dates.jpg' }
   @b1_name = 'イベント一覧'
   @b1_url = ''
+  prepare_event_discovery
 end
 
 def year
@@ -233,58 +233,105 @@ end
 
 def today
   prepare_event_day(Time.current.in_time_zone('Tokyo').to_date, relative: '今日')
-  render :day
+  render :day unless performed?
 end
 
 def tomorrow
   prepare_event_day(Time.current.in_time_zone('Tokyo').to_date + 1, relative: '明日')
-  render :day
+  render :day unless performed?
 end
 
 def this_week
   start = Time.current.in_time_zone('Tokyo').to_date.beginning_of_week(:monday)
   prepare_event_day(start, relative: '今週', end_date: start + 6)
-  render :day
+  render :day unless performed?
 end
 
 def next_week
   start = Time.current.in_time_zone('Tokyo').to_date.beginning_of_week(:monday) + 7
   prepare_event_day(start, relative: '来週', end_date: start + 6)
-  render :day
+  render :day unless performed?
 end
 
 private
   def prepare_event_day(date, relative: nil, end_date: nil)
+    period = relative ? action_name : nil
+    path = EventSearchPage.path(**event_search_path_options, period: period, date: (date unless relative))
+    return if redirect_event_search_url(path)
     @event_date = date
     @date = date.iso8601
     @day = "#{date.year}年#{date.month}月#{date.day}日（#{@wdays[date.wday]}）"
     @relative_day = relative
     @event_end_date = end_date
     @day += "〜#{end_date.year}年#{end_date.month}月#{end_date.day}日（#{@wdays[end_date.wday]}）" if end_date
-    @events = Event.order(:order)
-    @prefectures = Prefecture.order(:order)
-    @event = Event.find_by!(ruby: params[:event]) if params[:event].present?
-    @prefecture = Prefecture.find_by!(kana: params[:pref]) if params[:pref].present?
     @day_listing = EventDayListing.new(date: date, event: @event, prefecture: @prefecture, sort: params[:sort], end_date: end_date)
     @schedules = @day_listing.schedules.page(params[:page]).per(20)
     @result_count = @day_listing.total_count
-    @filter_query = { event: @event&.ruby, pref: @prefecture&.kana }.compact
-    @event_day_path = relative ? "/dates/#{action_name}" : EventDayListing.path(date)
-    query = @filter_query.dup
+    @event_day_path = path
+    @event_filter_form_path = relative ? "/dates/#{action_name}" : EventDayListing.path(date)
+    query = {}
     query[:page] = params[:page].to_i if params[:page].to_i > 1
     @event_day_canonical = 'https://circle-book.com' + @event_day_path
     @event_day_canonical += '?' + query.to_query if query.present?
-    @event_day_title = "#{relative || @day}#{@prefecture ? '・' + @prefecture.name : ''}の#{@event&.name || 'イベント'}・サークル活動一覧"
+    @event_day_title = EventSearchPage.title(event: @event, prefecture: @prefecture, period_label: relative || @day, page: params[:page])
     set_meta_tags title: @event_day_title,
-      description: "#{relative ? relative + '（' + @day + '）' : @day}に開催予定の#{@prefecture&.name}#{@event&.name || 'イベント'}を探せます。開催時間・場所・募集状況を比較して、気になるサークルの活動詳細を確認できます。",
+      description: "#{relative ? relative + '（' + @day + '）' : @day}に#{@prefecture&.name || '全国'}で開催予定の#{EventSearchPage.subject(@event)}を探せます。開催時間・会場・参加費・募集状況を比較し、参加条件を確認できます。",
       canonical: @event_day_canonical,
-      noindex: @result_count.zero? || %w[2 3].include?(params[:sort]),
+      noindex: @result_count.zero? || (end_date || date) < @event_date_today || %w[2 3].include?(params[:sort]),
       og: { title: @event_day_title, url: @event_day_canonical }
     raise ActiveRecord::RecordNotFound if params[:page].to_i > 1 && @schedules.empty?
     @b1_name = 'イベント一覧'
     @b1_url = '/dates'
     @b2_name = @event_day_title
     @b2_url = ''
+    prepare_event_discovery
+  end
+
+  def prepare_event_search_filters
+    @event_date_today = Time.current.in_time_zone('Tokyo').to_date
+    @events = Event.where.not(ruby: [nil, '', 'nil']).order(:order).to_a
+    @prefectures = Prefecture.where.not(kana: [nil, '', 'nil']).order(:order).to_a
+    event_slug = params[:event_slug].presence || params[:event].presence
+    prefecture_slug = params[:prefecture_slug].presence || params[:pref].presence
+    @event = @events.find { |event| event.ruby == event_slug } if event_slug
+    @prefecture = @prefectures.find { |prefecture| prefecture.kana == prefecture_slug } if prefecture_slug
+    raise ActiveRecord::RecordNotFound if (event_slug && !@event) || (prefecture_slug && !@prefecture)
+    @filter_query = { event: @event&.ruby, pref: @prefecture&.kana }.compact
+  end
+
+  def event_search_path_options
+    { event: @event&.ruby, prefecture: @prefecture&.kana }
+  end
+
+  def redirect_event_search_url(path)
+    return false if request.path == path && !request.query_parameters.keys.intersect?(%w[event pref date])
+    query = request.query_parameters.select { |key, _| %w[page sort gclid fbclid].include?(key) || key.start_with?('utm_') }
+    query.delete('page') if query['page'] == '1'
+    redirect_to path + (query.present? ? '?' + query.to_query : ''), status: :moved_permanently
+    true
+  end
+
+  def prepare_event_discovery
+    @event_hub_path = EventSearchPage.path(**event_search_path_options)
+    @event_discovery = []
+    return if params[:page].to_i > 1
+    populations = EventSearchPage.populations(event: @event, prefecture: (@prefecture unless @event))
+    if @event
+      ids = populations.select { |event_id, _| event_id == @event.id }.map(&:last)
+      @event_discovery = @prefectures.select { |prefecture| ids.include?(prefecture.id) }.map do |prefecture|
+        ["#{prefecture.name}の#{@event.name}開催予定", EventSearchPage.path(event: @event.ruby, prefecture: prefecture.kana)]
+      end
+    else
+      populations = populations.select { |_, prefecture_id| prefecture_id == @prefecture.id } if @prefecture
+      ids = populations.map(&:first)
+      @event_discovery = @events.select { |event| ids.include?(event.id) }.map do |event|
+        ["#{@prefecture&.name}の#{event.name}開催予定".delete_prefix('の'), EventSearchPage.path(event: event.ruby, prefecture: @prefecture&.kana)]
+      end
+    end
+    @event_discovery.reject! { |_, path| path == @event_hub_path }
+    @event_region_discovery = @prefectures.select { |prefecture| populations.any? { |_, id| id == prefecture.id } }.map do |prefecture|
+      ["#{prefecture.name}のイベント開催予定", EventSearchPage.path(prefecture: prefecture.kana)]
+    end unless @prefecture || @event
   end
 
   def set_copy_schedules

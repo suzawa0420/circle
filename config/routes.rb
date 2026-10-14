@@ -278,9 +278,20 @@ Rails.application.routes.draw do
   get 'dates/tomorrow', to: 'schedules#tomorrow', as: :tomorrow_events
   get 'dates/this_week', to: 'schedules#this_week', as: :this_week_events
   get 'dates/next_week', to: 'schedules#next_week', as: :next_week_events
-  get 'dates/:year' , to: 'schedules#year'
-  get 'dates/:year/:month' , to: 'schedules#month'
-  get 'dates/:year/:month/:day' , to: 'schedules#day'
+  get 'dates/:year' , to: 'schedules#year', constraints: { year: /\d{4}/ }
+  get 'dates/:year/:month' , to: 'schedules#month', constraints: { year: /\d{4}/ }
+  get 'dates/:year/:month/:day' , to: 'schedules#day', constraints: { year: /\d{4}/ }
+  # Keep period words distinct from genre and prefecture slugs.
+  scope constraints: { event_slug: /[a-z][a-z0-9_-]*/, prefecture_slug: /[a-z][a-z0-9_-]*/ } do
+    event_bases = ['dates/prefectures/:prefecture_slug', 'dates/:event_slug/:prefecture_slug', 'dates/:event_slug']
+    event_bases.each do |base|
+      %w[today tomorrow this_week next_week].each do |period|
+        get "#{base}/#{period}", to: "schedules##{period}"
+      end
+      get "#{base}/:year/:month/:day", to: 'schedules#day', constraints: { year: /\d{4}/ }
+    end
+    event_bases.each { |base| get base, to: 'schedules#dates' }
+  end
 
   # 出欠管理
   get 'schedules/:unique_id/:id' , to: 'schedules#secret'

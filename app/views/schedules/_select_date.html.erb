@@ -1,5 +1,6 @@
 <% filter_query = { event: @event&.ruby.presence, pref: @prefecture&.kana.presence }.compact.reject { |_, value| value == 'nil' } %>
 <section class="event-results event-results--hub event-date-search" aria-label="日付からイベントを探す">
   <h2><%= lucide_icon 'calendar-days' %>日付からイベントを探す</h2>
+  <%= link_to "#{@prefecture&.name}#{@event&.name}のイベント開催予定を見る", event_listing_path(filter_query) %>
   <%= render 'schedules/event_date_navigation', date: Time.current.in_time_zone('Tokyo').to_date, filter_query: filter_query, compact: true %>
 </section>

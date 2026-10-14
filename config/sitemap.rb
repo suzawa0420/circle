@@ -46,6 +46,10 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
   EventDaySitemap.each_path do |path|
     add path, lastmod: nil, changefreq: 'daily', priority: 0.7
   end
+  EventDayListing.public_schedules.where(day: Time.current.in_time_zone('Tokyo').to_date.iso8601..'2100-12-31')
+    .select(:id, :user_id, :updated_at).find_each do |schedule|
+    add user_schedule_path(schedule.user_id, schedule.id), lastmod: schedule.updated_at, priority: 0.6
+  end
 
 end
 

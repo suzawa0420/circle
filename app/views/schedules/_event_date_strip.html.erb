@@ -1,7 +1,7 @@
 <nav class="event-results__days" aria-label="開催日を選ぶ">
   <% dates.each do |day| %>
     <% selected = local_assigns[:selected_date] == day %>
-    <%= link_to EventDayListing.path(day) + (filter_query.present? ? '?' + filter_query.to_query : ''), class: selected ? 'is-selected' : nil, aria: { current: selected ? 'date' : nil } do %>
+    <%= link_to event_listing_path(filter_query, date: day), class: selected ? 'is-selected' : nil, aria: { current: selected ? 'date' : nil } do %>
       <span><%= day.month %>/<%= day.day %></span><small><%= SchedulesHelper::SCHEDULE_WEEKDAYS[day.wday] %></small>
     <% end %>
   <% end %>
