@@ -10,7 +10,7 @@ module BlogDecorator
     elsif self.user.pic_header.present?
       self.user.pic_header.url
     else
-      image_url('/images/default.png')
+      default_ogp_image_url
     end
   end
 

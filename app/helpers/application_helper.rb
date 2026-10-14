@@ -87,6 +87,16 @@ module ApplicationHelper
     public_controller && %w[index show dates day event prefecture event_prefecture category category_prefecture].include?(action_name)
   end
 
+  def default_ogp_image_url
+    image_url("/images/ogp.png?v=20261014-hobby-community")
+  end
+
+  def site_meta_tags
+    defaults = default_meta_tags
+    set_meta_tags og: { image: defaults[:og][:image] } if meta_tags[:og].blank? || meta_tags[:og][:image].blank?
+    display_meta_tags(defaults)
+  end
+
   def default_meta_tags
       {
         site: "サークルブック",
@@ -107,7 +117,7 @@ module ApplicationHelper
           description: :description,
           type: "website",
           url: request.original_url,
-          image: image_url("/images/ogp.png?v=20260921-green-clean"),
+          image: default_ogp_image_url,
           locale: "ja_JP"
         },
         twitter: {

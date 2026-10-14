@@ -4,10 +4,15 @@
   padding: 24px 16px 48px;
   color: $cb-text;
   &__container { max-width: 1200px; margin: 0 auto; }
-  &__hero { padding: 12px 0 24px; text-align: center; }
-  &__hero h1 { font-size: clamp(24px, 4vw, 36px); line-height: 1.4; font-weight: 700; margin: 8px 0 12px; }
-  &__hero p { color: $cb-muted; font-size: 14px; line-height: 1.7; margin: 0; }
-  &__hero .home-portal__eyebrow { color: $cb-action-hover; font-weight: 700; }
+  &__hero { position: relative; height: clamp(440px, 125vw, 480px); overflow: hidden; margin: 0 0 24px; border-radius: 16px; background: #f0f8ed; text-align: center; }
+  &__hero-art { position: absolute; inset: 0; display: block; pointer-events: none; }
+  &__hero-art img { position: absolute; bottom: 0; left: 0; display: block; width: 100%; height: auto; }
+  &__hero-copy { position: relative; z-index: 1; max-width: 360px; margin: 0 auto; padding: 20px 16px; }
+  &__hero h1 { color: #214c38; font-size: 26px; line-height: 1.4; font-weight: 700; margin: 0 0 10px; }
+  &__hero p { color: #365647; font-size: 13px; line-height: 1.7; margin: 0; }
+  &__hero-search { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 14px; padding: 10px 22px; border-radius: 8px; background: $cb-action; color: white; font-size: 15px; font-weight: 700; }
+  &__hero-search svg { width: 18px; height: 18px; }
+  &__hero-search:hover, &__hero-search:focus { background: $cb-action-hover; color: white; }
   &__services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 36px; }
   .home-service { min-height: 100px; padding: 16px 12px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: $cb-text; font-size: 16px; font-weight: 700; text-align: center; line-height: 1.5; box-shadow: $cb-shadow-card; }
   .home-service > svg { width: 28px; height: 28px; margin: 0; }
@@ -92,6 +97,12 @@
   .event-results__card-bottom { gap: 4px; flex-wrap: wrap; }
   @media (min-width: 768px) {
     padding: 36px 24px 64px;
+    &__hero { display: flex; align-items: center; height: clamp(300px, 40vw, 480px); text-align: left; }
+    &__hero-art img { height: 100%; object-fit: contain; object-position: left center; }
+    &__hero-copy { width: 40%; max-width: 480px; margin: 0; padding: 24px clamp(24px, 3vw, 40px); }
+    &__hero h1 { font-size: clamp(26px, 3vw, 36px); }
+    &__hero p { max-width: 300px; font-size: 14px; }
+    &__hero-search { min-height: 48px; margin-top: 20px; }
     &__services { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     &__item { flex-basis: 286px; }
     &__section { margin-bottom: 48px; }
