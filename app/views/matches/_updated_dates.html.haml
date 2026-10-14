@@ -1,0 +1,8 @@
+.match-directory__dates
+  %p
+    募集更新：
+    = time_tag matching.updated_at.to_date, matching.updated_at.strftime('%Y/%m/%d')
+  - if (circle_updated_on = match_circle_updated_on(matching.user))
+    %p
+      サークル更新：
+      = time_tag circle_updated_on, circle_updated_on.strftime('%Y/%m/%d')

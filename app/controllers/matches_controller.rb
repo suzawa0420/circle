@@ -6,6 +6,18 @@ before_action :set_matches
 
 
 	def index
+    if params[:event].present? || params[:pref].present?
+      event = Event.where.not(matching: 0).find_by!(ruby: params[:event]) if params[:event].present?
+      prefecture = Prefecture.where.not(id: [0, 50]).find_by!(kana: params[:pref]) if params[:pref].present?
+      path = if event && prefecture
+        "/match/#{event.ruby}/#{prefecture.kana}"
+      elsif event
+        "/match/#{event.ruby}"
+      else
+        "/match/prefectures/#{prefecture.kana}"
+      end
+      return redirect_to path
+    end
 		@matches = matches_with_user_details.order(updated_at: :desc).page(params[:page])
 	end
 
@@ -63,7 +75,7 @@ before_action :set_matches
 		@sub_prefecture = @user.prefecture_sub
 
 		user_ids = User.where(event_id: @event.id, prefecture_id: @prefecture.id).select(:id)
-		@matches = matches_with_user_details.where(user_id: user_ids).where.not(id: @match.id).order(updated_at: :desc)
+		@matches = matches_with_user_details.where(user_id: user_ids).where.not(id: @match.id).order(updated_at: :desc).limit(6)
 
 
 

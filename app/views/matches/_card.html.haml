@@ -1,0 +1,28 @@
+- user = matching.user
+%article.match-directory__card
+  = link_to match_path(user.id), class: 'match-directory__card-link' do
+    .match-directory__card-top
+      %span.match-directory__sport= user.event&.name
+      %span.match-directory__status{ class: matching.recruit == '募集中' ? nil : 'is-closed' }= matching.recruit.presence || '募集状況未設定'
+    .match-directory__identity
+      = match_avatar user
+      %div
+        - if local_assigns[:related]
+          %h3= user.name
+        - else
+          %h2= user.name
+        %p.match-directory__location
+          = lucide_icon 'map-pin'
+          = user.prefecture&.name
+    %dl.match-directory__facts
+      - { '年齢層' => matching.age_group, 'メンバー' => matching.member, 'レベル' => matching.level }.each do |label, value|
+        %div
+          %dt= label
+          %dd= value.presence || '未設定'
+    - if matching.comment.present?
+      %p.match-directory__excerpt= truncate(matching.comment, length: 90)
+    .match-directory__card-bottom
+      = render 'matches/updated_dates', matching: matching
+      %span.match-directory__more
+        募集詳細
+        = lucide_icon 'chevron-right'

@@ -1,46 +1,14 @@
-- cache [@matches, 'stored-image-extension-v1'] do
-  - @matches.each.with_index(1) do |matching, i|
-    .user-profile.matching_wrap
-      = link_to match_path(matching.id) do
-        .matching_card
-          - if matching.user.pic_profile.present?
-            %img.matching_icon{:alt => "プロフィール｜#{matching.user.name}", :src => "#{matching.user.pic_profile.url}"}/
-          - else
-            = circle_avatar_tag matching.user, class:'matching_icon'
-          %h2.matching_name= matching.user.name
-          .article_item.article_padding
-            %table
-              %tbody
-                %tr.flex_contents
-                  %th.flex_list 種目
-                  %td.flex_list
-                    - if matching.user.event_id.present?
-                      = matching.user.event.name if matching.user.event_id?
-                      %br/
-                %tr.flex_contents
-                  %th.flex_list 活動場所
-                  %td.flex_list
-                    - if matching.user.prefecture_id.present?
-                      = matching.user.prefecture.name if matching.user.prefecture_id?
-                %tr.flex_contents
-                  %th.flex_list 年齢層
-                  %td.flex_list= matching.age_group
-                %tr.flex_contents
-                  %th.flex_list メンバー
-                  %td.flex_list= matching.member
-                %tr.flex_contents
-                  %th.flex_list レベル
-                  %td.flex_list
-                    = matching.level
-                    - if matching.level == "初級"
-                      （★☆☆）
-                    - elsif matching.level == "中級"
-                      （★★☆）
-                    - elsif matching.level == "上級"
-                      （★★★）
-                    - else
+- if @matches.empty?
+  .match-directory__empty
+    = lucide_icon 'search'
+    %h2 この条件の対戦相手募集はまだありません
+    %p 種目や活動エリアを変えて、もう一度探してみてください。
+    = link_to '全国の対戦相手募集を見る', matches_path
+- else
+  .match-directory__list
+    - @matches.each.with_index(1) do |matching, i|
+      = render 'matches/card', matching: matching
       - if i == 5
-        .list_ad
-          = render "/layouts/ad_square"
-= render "/layouts/ad_square"
-= paginate @matches
+        .match-directory__ad= render '/layouts/ad_square'
+  = paginate @matches
+.match-directory__ad= render '/layouts/ad_square'

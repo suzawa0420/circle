@@ -1,0 +1,13 @@
+%main.match-directory
+  .match-directory__container
+    %header.match-directory__header
+      %p.match-directory__eyebrow チーム同士で、次の試合を。
+      %h1= match_listing_heading
+      %p 種目や活動エリアから、練習試合の対戦相手を探せます。
+    = render 'matches/search'
+    .match-directory__summary
+      %h2
+        %strong= @matches.total_count
+        件の対戦相手募集
+      %p 募集情報の更新が新しい順に表示しています。
+    = render 'matches/matches_list'

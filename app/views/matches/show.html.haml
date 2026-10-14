@@ -1,122 +1,71 @@
 - set_meta_tags title: "#{@match.user.name}｜#{@match.user.prefecture.name}の#{@match.user.event.txt}",description: "#{@match.user.prefecture.name}で活動している#{@match.user.event.name}サークル【#{@match.user.name}】です！新しい対戦相手を募集中！#{@match.comment}｜サークルブックは、サークルやチームの対戦相手を募集するサイトです！",keywords: "#{@match.user.event.name},#{@match.user.prefecture.name},サークル,チーム,対戦相手募集",og: {title: "#{@match.user.name}｜サークルブック",description: "#{@match.user.prefecture.name}で活動している#{@match.user.event.name}サークル｜#{@match.user.name}",image: @match.user.pic_profile.url},twitter: { card: 'summary'}
-.main.user-show
-  .container.bg_white
-    .user-profile.matching_wrap
-      .p_t.m_t 対戦相手の募集ページ
-      .matching_card
-        - if @match.user.pic_profile.present?
-          %img.matching_icon{:alt => "プロフィール｜#{@match.user.name}", :src => "#{@match.user.pic_profile.url}"}/
-        - else
-          = circle_avatar_tag @match.user, class:'matching_icon'
-        %h1.matching_name= @match.user.name
-        - if webmaster? || admin_user_signed_in?
-          .match_edit
-            - if can_manage_circle?(@user)
-              = link_to new_user_match_path(@user) do
-                .contact-button.edit プロフィール編集
-        .article_item.article_padding
-          %table
-            %tbody
-              %tr.flex_contents
-                %th.flex_list 種目
-                %td.flex_list
-                  - if @match.user.event_id.present?
-                    = @match.user.event.name if @match.user.event_id?
-                    %br/
-              %tr.flex_contents
-                %th.flex_list 活動場所
-                %td.flex_list
-                  - if @match.user.prefecture_id.present?
-                    = @match.user.prefecture.name if @match.user.prefecture_id?
-                  - if @match.user.prefecture_sub_id.present?
-                    ・#{@sub_prefecture.name}
-              %tr.flex_contents
-                %th.flex_list 年齢層
-                %td.flex_list= @match.age_group
-              %tr.flex_contents
-                %th.flex_list メンバー
-                %td.flex_list= @match.member
-              %tr.flex_contents
-                %th.flex_list レベル
-                %td.flex_list
-                  = @match.level
-                  - if @match.level == "初級"
-                    （★☆☆）
-                  - elsif @match.level == "中級"
-                    （★★☆）
-                  - elsif @match.level == "上級"
-                    （★★★）
-                  - else
-              - if @match.user.switch == "募集中"
-                %tr.flex_contents
-                  %th.flex_list 新規募集
-                  %td.flex_list.txt_s= link_to ">> 新規メンバーの募集ページ", circle_path(@match.user.id)
-              - if @match.user.twitter.present? || @match.user.instagram.present?
-                %tr.flex_contents
-                  %th.flex_list SNS
-                  %td.flex_list
-                    - if @match.user.twitter.present?
-                      %a{:href => "https://twitter.com/#{@match.user.twitter}"}
-                        %span.sns_link.twitter_link
-                          = lucide_icon "share-2"
-                          Twitter
-                    - if @match.user.instagram.present?
-                      %a{:href => "https://www.instagram.com/#{@match.user.instagram}"}
-                        %span.sns_link.instagram_link
-                          = lucide_icon "camera"
-                          Instagram
-        - if @match.user.web.present?
-          .matching_url
-            = lucide_icon "link"
-            %a{:href => "#{@match.user.web}"}
-              = @match.user.web
-          .border
-        - if @match.comment.present?
-          .profile_list_t.p_t_t
-          .profile_list_p.profile_list_a.border_none= raw Rinku.auto_link(simple_format @match.comment)
-    = render "/matches/contact"
-    .ad_space
-    = render "/layouts/ad_square"
-    .ad_space
-    - if @matches.count >= 1
-      .user-list-wrap
-        %h2.others-user
-          条件が似ている#{@user.event.name if @user.event_id?}サークル
-        - @matches.each do |match|
-          = link_to(match_path(match.id)) do
-            .user_list
-              .user-content
-                .user_list_header
-                  = circle_avatar_tag match.user, class:'image_icon'
-                  %h3.user_name= match.user.name.truncate(20)
-                .article_item.article_padding
-                  %table
-                    %tbody
-                      %tr.flex_contents
-                        %th.flex_list 種目
-                        %td.flex_list
-                          - if match.user.event_id.present?
-                            = match.user.event.name if match.user.event_id?
-                            %br/
-                      %tr.flex_contents
-                        %th.flex_list 活動場所
-                        %td.flex_list
-                          - if match.user.prefecture_id.present?
-                            = match.user.prefecture.name if match.user.prefecture_id?
-                      %tr.flex_contents
-                        %th.flex_list 年齢層
-                        %td.flex_list= match.age_group
-                      %tr.flex_contents
-                        %th.flex_list メンバー
-                        %td.flex_list= match.member
-                      %tr.flex_contents
-                        %th.flex_list レベル
-                        %td.flex_list
-                          = match.level
-                          - if match.level == "初級"
-                            （★☆☆）
-                          - elsif match.level == "中級"
-                            （★★☆）
-                          - elsif match.level == "上級"
-                            （★★★）
-                          - else
+%main.match-directory.match-directory--detail
+  .match-directory__container
+    = link_to matches_path, class: 'match-directory__back' do
+      = lucide_icon 'undo-2'
+      対戦相手募集の一覧へ
+    %section.match-directory__profile
+      .match-directory__card-top
+        %p.match-directory__eyebrow 対戦相手・練習試合の募集
+        %span.match-directory__status{ class: @match.recruit == '募集中' ? nil : 'is-closed' }= @match.recruit.presence || '募集状況未設定'
+      .match-directory__identity
+        = match_avatar @user, detail: true
+        %div
+          %h1= @user.name
+          %p.match-directory__location
+            = lucide_icon 'map-pin'
+            = @event.name
+            ·
+            = @prefecture.name
+            - if @sub_prefecture
+              ・#{@sub_prefecture.name}
+      = render 'matches/updated_dates', matching: @match
+      - if can_manage_circle?(@user)
+        = link_to '募集プロフィールを編集', edit_match_path(@match), class: 'match-directory__edit'
+    .match-directory__detail-grid
+      %div
+        %section.match-directory__section
+          %h2 チーム・募集条件
+          %dl.match-directory__conditions
+            - { '種目' => @event.name, '活動場所' => [@prefecture.name, @sub_prefecture&.name].compact.join('・'), '年齢層' => @match.age_group, 'メンバー' => @match.member, 'レベル' => @match.level }.each do |label, value|
+              %div
+                %dt= label
+                %dd= value.presence || '未設定'
+        %section.match-directory__section
+          %h2 募集内容
+          - if @match.comment.present?
+            .match-directory__description= sanitize(Rinku.auto_link(simple_format(@match.comment)))
+          - else
+            %p.match-directory__muted 詳しい条件は、チームへお問い合わせください。
+        %section.match-directory__section
+          %h2 サークルについて
+          = link_to circle_path(@user), class: 'match-directory__circle-link' do
+            = lucide_icon 'users'
+            サークルの紹介・メンバー募集を見る
+            = lucide_icon 'chevron-right'
+          - if @user.web.present? || @user.twitter.present? || @user.instagram.present?
+            .match-directory__social
+              - if @user.web.present?
+                = link_to @user.web do
+                  = lucide_icon 'link'
+                  公式サイト
+              - if @user.twitter.present?
+                = link_to "https://twitter.com/#{@user.twitter}" do
+                  = lucide_icon 'share-2'
+                  X（Twitter）
+              - if @user.instagram.present?
+                = link_to "https://www.instagram.com/#{@user.instagram}" do
+                  = lucide_icon 'camera'
+                  Instagram
+      %aside.match-directory__aside
+        = render 'matches/contact'
+    .match-directory__ad= render '/layouts/ad_square'
+    - related_matches = @matches.to_a
+    - if related_matches.any?
+      %section.match-directory__related
+        %h2 同じエリア・種目の対戦相手募集
+        %p #{@prefecture.name}の#{@event.name}で、ほかのチームも探してみましょう。
+        .match-directory__list
+          - related_matches.each do |matching|
+            = render 'matches/card', matching: matching, related: true
+        = link_to "#{@prefecture.name}の#{@event.name}をもっと見る", "/match/#{@event.ruby}/#{@prefecture.kana}", class: 'match-directory__back'

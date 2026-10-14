@@ -1,63 +1,22 @@
-.search_wrap
-  .search_select
-    - if @path.is('matches#index')
-      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
-        %option{:value => "#"} サークル・団体
-        - @events.each do |event|
-          %option{:value => "/match/#{event.ruby}"}= event.name
-      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
-        %option{:value => "#"} 都道府県
-        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
-          %optgroup{ label: region }
-            - region_prefectures.each do |prefecture|
-              - if prefecture.id != 50
-                %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
-      .search_icon
-        = lucide_icon "search"
-    - elsif @path.is('matches#event_prefecture')
-      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
-        %option{:value => "#"}= @event.name
-        - @events.each do |event|
-          - if event.ruby != @event.ruby
-            %option{:value => "/match/#{event.ruby}"}= event.name
-      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
-        %option{:value => "#"}= @prefecture.name
-        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
-          %optgroup{ label: region }
-            - region_prefectures.each do |prefecture|
-              - if prefecture.id != 50
-                - if prefecture.kana != @prefecture.kana
-                  %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
-      .search_icon
-        = lucide_icon "search"
-    - elsif  @path.is('matches#event')
-      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
-        %option{:value => "#"}= @event.name
-        - @events.each do |event|
-          - if event.ruby != @event.ruby
-            %option{:value => "/match/#{event.ruby}"}= event.name
-      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
-        %option{:value => "#"} 都道府県
-        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
-          %optgroup{ label: region }
-            - region_prefectures.each do |prefecture|
-              - if prefecture.id != 50
-                %option{:value => "/match/#{@event.ruby}/#{prefecture.kana}"}= prefecture.name
-      .search_icon
-        = lucide_icon "search"
-    - elsif @path.is('matches#prefecture')
-      %select{"aria-label" => "種目・カテゴリー", :name => "event_select", :onchange => "location.href=value;"}
-        %option{:value => "#"} サークル
-        - @events.each do |event|
-          %option{:value => "/match/#{event.ruby}/#{@prefecture.kana}"}= event.name
-      %select{"aria-label" => "都道府県", :name => "prefecture_select", :onchange => "location.href=value;"}
-        %option{:value => "#"}= @prefecture.name
-        - prefecture_option_groups(@prefectures).each do |region, region_prefectures|
-          %optgroup{ label: region }
-            - region_prefectures.each do |prefecture|
-              - if prefecture.id != 50
-                - if prefecture.kana != @prefecture.kana
-                  %option{:value => "/match/prefectures/#{prefecture.kana}"}= prefecture.name
-      .search_icon
-        = lucide_icon "search"
-    - else
+%section.match-directory__search{ 'aria-labelledby' => 'match-search-title' }
+  %h2#match-search-title
+    = lucide_icon 'search'
+    対戦相手を探す
+  = form_tag matches_path, method: :get, enforce_utf8: false, class: 'match-directory__filters' do
+    .match-directory__field
+      = label_tag :match_event, '種目'
+      = select_tag :event, options_from_collection_for_select(@events, :ruby, :name, @event&.ruby), include_blank: 'すべての種目', id: 'match_event'
+    .match-directory__field
+      = label_tag :match_pref, '活動エリア'
+      = select_tag :pref, grouped_options_for_select(prefecture_option_groups(@prefectures).map { |region, items| [region, items.reject { |pref| pref.id == 50 }.map { |pref| [pref.name, pref.kana] }] }, @prefecture&.kana), include_blank: '全国', id: 'match_pref'
+    %button.match-directory__button{ type: 'submit' }
+      = lucide_icon 'search'
+      この条件で探す
+  - if @event || @prefecture
+    .match-directory__active
+      %span 選択中：
+      - if @event
+        %span.match-directory__chip= @event.name
+      - if @prefecture
+        %span.match-directory__chip= @prefecture.name
+      = link_to '条件をクリア', matches_path

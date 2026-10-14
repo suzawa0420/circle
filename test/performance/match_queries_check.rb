@@ -68,7 +68,7 @@ class MatchQueriesTest < Minitest::Test
     assert_equal @users.reverse.first(10).map(&:id), controller.instance_variable_get(:@matches).map(&:id)
     controller.params = ActionController::Parameters.new(id: @users.first.id)
     controller.show
-    assert_equal @users.drop(1).reverse.map(&:id), controller.instance_variable_get(:@matches).map(&:id)
+    assert_equal @users.drop(1).reverse.first(6).map(&:id), controller.instance_variable_get(:@matches).map(&:id)
     assert_equal @event, controller.instance_variable_get(:@event)
     assert_nil controller.instance_variable_get(:@sub_prefecture)
   end
