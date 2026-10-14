@@ -25,11 +25,11 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
 
     get circle_blog_path(@circle, current)
     assert_response :success
-    assert_select '.blog-list-wrap .blog_list a' do |links|
+    assert_select '.circle-blog-related__card' do |links|
       assert_equal expected.map { |post| circle_blog_path(@circle, post) }, links.map { |link| link['href'] }
     end
-    assert_select '.blog-list-wrap a[href=?]', circle_blog_path(@circle, hidden), count: 0
-    assert_select '.blog-list-wrap a[href=?]', circle_blog_path(@circle, current), count: 0
+    assert_select '.circle-blog-related a[href=?]', circle_blog_path(@circle, hidden), count: 0
+    assert_select '.circle-blog-related a[href=?]', circle_blog_path(@circle, current), count: 0
   end
 
   test 'public pages and all account forms render on the upgraded runtime' do
