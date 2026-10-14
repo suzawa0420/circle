@@ -110,24 +110,21 @@
     .ad_space
 
     - if @blogs.size >= 1
-      .blog-list-wrap
-        %h2.others-blog
-          = @user.name
-          のブログ一覧
-        - @blogs.first(5).each do |blog|
-          .blog_list
-            = link_to(circle_blog_path(blog.user_id, blog.id)) do
-              .blog_link
-                .catch_image= lazysizes_image_tag blog.image_01.url , class:'post_image'
-                .post-bottom= blog.created_at.strftime("%Y年%-m月%-d日 %-H:%M")
-                %h3.post_title= blog.title.truncate(36)
-              .blog_user
-                = circle_avatar_tag @user, class:'icon_s'
-                .blog_user_name= @user.name.truncate(16)
+      %section.circle-blog-related{ "aria-labelledby" => "circle-blog-related-title" }
+        %h2#circle-blog-related-title.circle-blog-related__heading このサークルの他の記事
+        .circle-blog-related__list
+          - @blogs.first(5).each do |blog|
+            = link_to circle_blog_path(blog.user_id, blog.id), class: "circle-blog-related__card" do
+              - if blog.image_01.present?
+                = lazysizes_image_tag blog.image_01.url, class: "circle-blog-related__image", alt: ""
+              .circle-blog-related__body
+                %time.circle-blog-related__date{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime("%Y年%-m月%-d日")
+                %h3.circle-blog-related__title= blog.title
+                %p.circle-blog-related__excerpt= strip_tags(blog.content.to_s).squish.truncate(100)
         - if @blogs.size > 5
-          .more_link
-            = link_to "/users/#{@user.id}/blogs" do
-              \&gt;&gt; ブログをもっと見る
+          = link_to circle_blogs_path(@user), class: "circle-blog-related__more" do
+            ブログをもっと見る
+            = lucide_icon "chevron-right"
       .ad_space
       - if @blogs.size >= 3
         = render "/layouts/ad_square"

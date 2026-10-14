@@ -1,0 +1,81 @@
+.cb-site .circle-blog-related {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  background: $cb-canvas;
+
+  &__heading {
+    margin: 0 0 16px;
+    color: $cb-text;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  &__list { display: grid; gap: 12px; }
+
+  &__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid $cb-border;
+    border-radius: 12px;
+    background: $cb-surface;
+    color: $cb-text;
+    text-align: left;
+
+    &:hover { border-color: $cb-teal; }
+    &:focus-visible { outline: 2px solid $cb-teal; outline-offset: 3px; }
+  }
+
+  &__image {
+    flex: 0 0 104px;
+    width: 104px;
+    height: 104px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  &__body { flex: 1; min-width: 0; }
+  &__date { display: block; color: $cb-muted; font-size: 12px; letter-spacing: 0; }
+  &__title {
+    margin: 6px 0;
+    color: $cb-text;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  &__excerpt {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    color: $cb-muted;
+    font-size: 13px;
+    line-height: 1.7;
+    letter-spacing: 0;
+  }
+  &__more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+    padding: 12px;
+    border: 1px solid $cb-border;
+    border-radius: 8px;
+    background: $cb-surface;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 480px) {
+  .cb-site .circle-blog-related {
+    padding: 20px 16px;
+    &__card { gap: 12px; padding: 14px; }
+    &__image { flex-basis: 88px; width: 88px; height: 88px; }
+    &__title { font-size: 15px; }
+  }
+}
