@@ -10,6 +10,9 @@
   &__discovery h2:first-child { margin-top: 0; }
   &__discovery p { font-size: 14px; line-height: 1.8; margin: 8px 0; }
   &__discovery a { overflow-wrap: anywhere; }
+  &__circle-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box; max-width: 100%; min-height: 44px; padding: 10px 16px; border: 1px solid #187f60; border-radius: 10px; background: #edf7f1; color: #176344; font-size: 14px; font-weight: 700; line-height: 1.6; text-decoration: none; }
+  &__circle-link:hover { background: #dcefe4; border-color: #126448; color: #126448; text-decoration: underline; }
+  & &__circle-link svg { margin-top: 0; }
   &__header { height: auto; }
   &__header h1 { font-size: 25px; line-height: 1.5; margin: 8px 0; font-weight: 700; }
   &__header p { font-size: 13px; color: #60746d; margin: 6px 0; }

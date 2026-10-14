@@ -29,7 +29,10 @@
       <% circle_search_path = @event && @prefecture ? event_prefecture_path(@event.ruby, @prefecture.kana) : (@event ? event_path(@event.ruby) : prefecture_path(@prefecture.kana)) %>
       <h2>継続して参加するサークルを探す</h2>
       <p>定期的に活動する仲間や所属先を探している方は、サークル・チームのメンバー募集も確認できます。</p>
-      <%= link_to "#{@prefecture&.name}#{@event&.name}のサークル・チーム募集を見る", circle_search_path %>
+      <%= link_to circle_search_path, class: 'event-results__circle-link' do %>
+        <span><%= [@prefecture&.name, @event&.name].compact.join('の') %>のサークル・チーム募集を見る</span>
+        <%= lucide_icon 'chevron-right' %>
+      <% end %>
     <% end %>
   </section>
 <% end %>
