@@ -9,13 +9,13 @@
   &__hero p { color: $cb-muted; font-size: 14px; line-height: 1.7; margin: 0; }
   &__hero .home-portal__eyebrow { color: $cb-action-hover; font-weight: 700; }
   &__services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 36px; }
-  .home-service { min-height: 100px; padding: 16px 12px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: $cb-text; font-size: 14px; font-weight: 700; text-align: center; line-height: 1.5; }
+  .home-service { min-height: 100px; padding: 16px 12px; border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: $cb-text; font-size: 16px; font-weight: 700; text-align: center; line-height: 1.5; box-shadow: $cb-shadow-card; }
   .home-service > svg { width: 28px; height: 28px; margin: 0; }
   .home-service .home-service__arrow { width: 16px; height: 16px; }
-  .home-service--circles { grid-column: span 2; flex-direction: row; min-height: 100px; font-size: 20px; color: $cb-action-hover; border-color: #bcdacd; background: $cb-mint-soft; }
+  .home-service--circles { grid-column: span 2; flex-direction: row; min-height: 100px; font-size: 16px; color: $cb-text; border-color: $cb-border; background: $cb-surface; }
   .home-service--circles > svg:first-child { width: 36px; height: 36px; }
-  .home-service--places { background: transparent; font-size: 12px; color: $cb-muted; }
-  .home-service--places > svg:first-child { width: 22px; height: 22px; }
+  .home-service--places { background: $cb-surface; font-size: 16px; color: $cb-text; }
+  .home-service--places > svg:first-child { width: 28px; height: 28px; }
   &__section { position: relative; margin: 0 0 36px; scroll-margin-top: 104px; }
   &__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
   &__heading-copy { min-width: 0; }
@@ -71,6 +71,21 @@
   .home-preview .place_updated { font-size: 11px; color: $cb-muted; }
   .home-preview .place_more { width: calc(100% - 32px); padding: 8px 12px; display: flex; justify-content: center; align-items: center; min-height: 44px; margin: 0 16px 16px; border: 1px solid $cb-border; border-radius: 8px; background: white; color: $cb-action-hover; font-size: 14px; }
   .event-results__card { height: 100%; }
+  .event-results__text h3 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; line-height: 1.45; height: 2.9em; }
+  .home-service:hover { border-color: #9fbfd9; box-shadow: 0 3px 10px rgba(32, 33, 36, .08); }
+  .home-service:active { background: $cb-canvas; }
+  .home-place { height: 360px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .home-place__top { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: $cb-muted; }
+  .home-place__status { padding: 2px 8px; border-radius: 5px; background: $cb-mint-soft; color: $cb-action-hover; flex-shrink: 0; }
+  .home-place h3 { margin: 0; font-size: 17px; line-height: 1.4; height: 2.8em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .home-place__area { font-size: 12px; color: $cb-muted; margin: 0; }
+  .home-place__area, .home-place__sports { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .home-place__details { margin: 0; font-size: 13px; line-height: 1.5; }
+  .home-place__row { display: flex; gap: 8px; padding: 6px 0; border-top: 1px solid $cb-border; }
+  .home-place dt { flex: 0 0 56px; font-weight: 500; color: $cb-muted; }
+  .home-place dd { flex: 1; min-width: 0; margin: 0; height: 3em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+  .home-place.home-preview > .home-place__link { display: flex; justify-content: center; align-items: center; min-height: 44px; margin-top: auto; border: 1px solid $cb-border; border-radius: 8px; color: $cb-action-hover; font-size: 14px; font-weight: 700; }
+
   .event-results__body { flex-direction: column-reverse; }
   .event-results__image { width: 100%; height: 136px; border-radius: 8px; }
   .event-results__text { width: 100%; }

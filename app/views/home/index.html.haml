@@ -8,10 +8,9 @@
       %p 仲間も、イベントも、活動の場所も。目的に合わせて探そう。
     %nav.home-portal__services{"aria-label" => "目的から探す"}
       - home_services.each do |service|
-        = link_to "#home-#{service[:key]}", class: "home-service home-service--#{service[:key]}" do
+        = link_to service[:path], class: "home-service home-service--#{service[:key]}" do
           = lucide_icon service[:icon]
           %span= service[:title]
-          = lucide_icon "chevron-down", class: "home-service__arrow"
 
     - home_services.each do |service|
       %section.home-portal__section{id: "home-#{service[:key]}", "aria-labelledby" => "home-#{service[:key]}-title"}
