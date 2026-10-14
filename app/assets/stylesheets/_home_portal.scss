@@ -111,9 +111,10 @@
   @media (max-width: 767px) {
     padding-top: 0;
     &__hero { margin-left: -16px; margin-right: -16px; border-radius: 0; }
-    &__hero-copy { max-width: none; padding-top: 8px; }
+    &__hero-copy { max-width: none; padding-top: 24px; }
+    &__hero h1 { font-size: 24px; line-height: 1.35; margin-bottom: 8px; }
     &__hero-search { margin-top: 10px; }
-    &__hero-art img { bottom: -32px; }
+    &__hero-art img { bottom: -48px; }
     &__hero-description-line { display: block; }
   }
   @media (max-width: 360px) {
