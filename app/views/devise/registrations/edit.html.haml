@@ -11,11 +11,13 @@
             %br/
             = f.email_field :email, autofocus: true, autocomplete: "email", value: @current_admin_user.email
           .receive_setting
-            お問い合わせメールは以下から送信します。
+            メールアドレスの確認・新着メッセージの通知等は以下から送信します。
             %br/
             【noreply@circle-book.com】
             %br/
             メールを受信できるように設定をお願いします。
+            %br/
+            お問い合わせへの返信は、サークルブックのメッセージ画面で行ってください。
           .field
             = f.label :現在のパスワード
             ※

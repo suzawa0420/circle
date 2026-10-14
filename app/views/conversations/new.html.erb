@@ -3,6 +3,7 @@
   <h1>サークルに問い合わせる</h1>
   <%= render "conversations/no_reply_notice", user: @user %>
   <p>返信はこのサイトのメッセージで確認できます。初回の返信後、双方が対応について評価できます。</p>
+  <%= render 'conversations/participation_notice' %>
   <% if [1, 2].include?(@user.admin_user.check) %>
     <aside class="chat-card" aria-label="参加前の注意">
       <img src="/images/mascot/squirrel-warning.png" alt="参加前の確認を呼びかけるリス" width="160" height="160" style="display:block;margin:0 auto;object-fit:contain">

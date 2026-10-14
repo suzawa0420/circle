@@ -30,7 +30,7 @@
             %br/
             = f.password_field :password_confirmation, autocomplete: "new-password"
           .rules_link
-            登録した時点で#{link_to '利用規約', '/rules'}(※必読)に同意したものとします。
+            #{link_to '利用規約', rules_path}に同意し、#{link_to 'プライバシーポリシー', privacypolicy_path}を確認のうえ、登録してください。
           .actions
             = f.submit "登録する"
         = render "devise/shared/links"

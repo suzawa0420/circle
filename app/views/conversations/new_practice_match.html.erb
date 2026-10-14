@@ -2,6 +2,7 @@
   <%= link_to @user.name, match_path(@user) %>
   <h1>対戦・練習試合の相談</h1>
   <p>送信元のサークルを選び、希望する日程・会場・チームのレベルなどをお伝えください。返信はメッセージ一覧で確認できます。</p>
+  <%= render 'conversations/participation_notice' %>
   <% if @source_circles.empty? %>
     <div class="chat-card"><p>相談を送るには公開中のサークルが必要です。</p><%= link_to 'サークルを登録する', new_user_path %></div>
   <% elsif @user.admin_user_id == current_admin_user.id %>

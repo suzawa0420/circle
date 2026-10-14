@@ -19,7 +19,7 @@
       <div class="participant-field"><%= f.label :email, 'メールアドレス' %><%= f.email_field :email, required: true, autocomplete: 'email' %></div>
       <div class="participant-field"><%= f.label :password, 'パスワード' %><%= f.password_field :password, required: true, minlength: @minimum_password_length, autocomplete: 'new-password' %><p class="participant-help"><%= @minimum_password_length %>文字以上で設定してください。</p></div>
       <div class="participant-field"><%= f.label :password_confirmation, 'パスワード（確認）' %><%= f.password_field :password_confirmation, required: true, autocomplete: 'new-password' %></div>
-      <p class="participant-help">登録すると<%= link_to '利用規約', rules_path %>に同意したものとします。</p>
+      <p class="participant-help"><%= link_to '利用規約', rules_path %>に同意し、<%= link_to 'プライバシーポリシー', privacypolicy_path %>を確認のうえ、登録してください。</p>
       <%= f.submit '無料で登録する', class: 'participant-button participant-button--wide', data: { disable_with: '登録中…' } %>
       <p class="participant-help participant-signup__mail-note">登録後に確認メールをお送りします。</p>
     <% end %>
