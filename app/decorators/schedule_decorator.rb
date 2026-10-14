@@ -6,7 +6,7 @@ module ScheduleDecorator
     if top_image.present?
       self.top_image.url
     else
-      image_url("/images/schedule_ogp.jpg")
+      default_ogp_image_url
     end
   end
 

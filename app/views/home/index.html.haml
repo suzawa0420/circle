@@ -3,9 +3,18 @@
 %main.home-portal
   .home-portal__container
     .home-portal__hero
-      %p.home-portal__eyebrow 好きなことを、一緒に。
-      %h1 好きな活動を、ここから。
-      %p 仲間も、イベントも、活動の場所も。目的に合わせて探そう。
+      %picture.home-portal__hero-art{"aria-hidden" => "true"}
+        %source{media: "(min-width: 768px)", srcset: "/images/circlebook-hero-desktop-v1.webp", width: "1983", height: "793"}
+        %img{src: "/images/circlebook-hero-mobile-v1.webp", alt: "", width: "1182", height: "1330", fetchpriority: "high", decoding: "async"}
+      .home-portal__hero-copy
+        %h1
+          好きなことから、
+          %br
+          新しいつながり。
+        %p スポーツも、趣味も。あなたにぴったりのサークルを見つけよう。
+        = link_to circles_path, class: "home-portal__hero-search" do
+          = lucide_icon "search"
+          サークルを探す
     %nav.home-portal__services{"aria-label" => "目的から探す"}
       - home_services.each do |service|
         = link_to service[:path], class: "home-service home-service--#{service[:key]}" do

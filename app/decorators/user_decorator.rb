@@ -8,7 +8,7 @@ module UserDecorator
     elsif pic_header.present?
       self.pic_header.url
     else
-      image_url("/images/events/#{self.event.ruby}.jpg")
+      default_ogp_image_url
     end
   end
 
