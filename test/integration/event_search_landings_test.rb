@@ -101,6 +101,8 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
   end
 
   test 'populated discovery links and sitemap contain canonical URLs without filter queries' do
+    get '/circles'
+    assert_select '.event-date-search a[href="/dates"]', text: '全国のイベント・体験会一覧を見る'
     get '/dates'
     assert_select '.event-results__discovery a[href="/dates/basketball"]'
     assert_select '.event-results__discovery a[href="/dates/prefectures/kanagawa"]'
