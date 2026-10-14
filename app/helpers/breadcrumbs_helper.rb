@@ -46,6 +46,34 @@ module BreadcrumbsHelper
     'all_reviews' => '口コミ・評価一覧', 'secret' => '活動スケジュール'
   }.freeze
 
+  # Only public content routes are eligible; account and management trails remain visual.
+  BREADCRUMB_PUBLIC_ACTIONS = {
+    'pages' => %w[about rules privacypolicy], 'help_center' => %w[index show],
+    'places' => %w[index show event prefecture city search global_search],
+    'matches' => %w[index show match event prefecture event_prefecture],
+    'schedules' => %w[show dates day today tomorrow this_week next_week],
+    'categories' => %w[index category category_prefecture prefecture_index prefecture],
+    'tags' => %w[event event_prefecture event_prefecture_city prefecture prefecture_city],
+    'users' => %w[prefecture_city_station event_prefecture_city_station line],
+    'questions' => %w[index show question], 'reviews' => %w[index all_reviews],
+    'columns' => %w[index show], 'differences' => %w[index show contents]
+  }.freeze
+
+  def site_breadcrumb_structured_data(items = site_breadcrumb_items)
+    return unless public_breadcrumb_structured_data_page? && items.length >= 2
+    # Ancestors must have an explicit URL and match the visible navigation.
+    return unless items[0...-1].all? { |_, path| path.is_a?(String) && path.start_with?('/') && !path.start_with?('//') }
+
+    {
+      '@context' => 'https://schema.org', '@type' => 'BreadcrumbList',
+      'itemListElement' => items.each_with_index.map do |(name, path), index|
+        item = { '@type' => 'ListItem', 'position' => index + 1, 'name' => name.to_s }
+        item['item'] = index < items.length - 1 ? 'https://circle-book.com' + path : breadcrumb_current_url
+        item
+      end
+    }
+  end
+
   def site_breadcrumb_items
     return [['ホーム', nil]] if controller_path == 'home' && action_name == 'index'
 
@@ -70,7 +98,7 @@ module BreadcrumbsHelper
     items[0] = ['ホーム', root_path]
     items = items.reject { |name, _| name.blank? }.chunk_while { |a, b| a == b }.map(&:first)
     items.each do |item|
-      item[1] = item[1].sub(%r{\A/users(?=/\d+\z|\z)}, "/circles") if item[1].is_a?(String)
+      item[1] = canonical_breadcrumb_path(item[1])
     end
     items.last[1] = nil
     items
@@ -81,6 +109,45 @@ module BreadcrumbsHelper
   end
 
   private
+
+  def canonical_breadcrumb_path(path)
+    return path unless path.is_a?(String)
+    path = path.sub(%r{\A/users(?=/\d+\z|\z)}, '/circles')
+    aliases = {}
+    if @event.is_a?(Event)
+      aliases["/#{@event.ruby}"] = event_path(@event.ruby)
+      if @prefecture.is_a?(Prefecture)
+        aliases["/#{@event.ruby}/#{@prefecture.kana}"] = event_prefecture_path(@event.ruby, @prefecture.kana)
+        if @city.is_a?(City)
+          aliases["/#{@event.ruby}/#{@prefecture.kana}/#{@city.city_kana}"] = event_prefecture_city_path(@event.ruby, @prefecture.kana, @city.city_kana)
+        end
+      end
+    end
+    if @prefecture.is_a?(Prefecture) && @city.is_a?(City)
+      aliases["/prefectures/#{@prefecture.kana}/#{@city.city_kana}"] = prefecture_city_path(@prefecture.kana, @city.city_kana)
+    end
+    aliases["/categories/#{@category.name}"] = "/categories/#{@category.kana}" if @category.is_a?(Category)
+    aliases.fetch(path, path)
+  end
+
+  def breadcrumb_current_url
+    canonical = meta_tags[:canonical]
+    uri = URI.parse(canonical.is_a?(String) ? canonical : request.fullpath)
+    query = Rack::Utils.parse_nested_query(uri.query).reject do |key, _|
+      key == 'sort' || key.start_with?('utm_') || %w[gclid fbclid].include?(key)
+    end
+    query.delete('page') if query['page'] == '1'
+    'https://circle-book.com' + uri.path + (query.present? ? '?' + query.to_query : '')
+  end
+
+  def public_breadcrumb_structured_data_page?
+    return false unless request.get?
+    return false if webmaster? || meta_tags[:noindex] || response.headers['X-Robots-Tag'].to_s.include?('noindex')
+    if controller_path.start_with?('circles/', 'blogs/', 'exhibitions/', 'presents/')
+      return %w[index show landing].include?(action_name)
+    end
+    BREADCRUMB_PUBLIC_ACTIONS.fetch(controller_path, []).include?(action_name)
+  end
 
   def breadcrumb_parents
     if controller_path.start_with?('super_admin/', 'webmasters/') ||

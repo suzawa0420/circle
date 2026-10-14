@@ -21,15 +21,14 @@ module SchedulesHelper
     title = @event_day_title || @event_hub_title
     path = @event_day_path || @event_hub_path
     query = params[:page].to_i > 1 ? "?page=#{params[:page].to_i}" : ''
-    breadcrumbs = event_listing_breadcrumbs
-    breadcrumbs += [[title, path + query]] unless breadcrumbs.last&.last == path + query
+    breadcrumb_data = site_breadcrumb_structured_data
     {
       '@context' => 'https://schema.org',
       '@graph' => [
-        { '@type' => 'BreadcrumbList', itemListElement: breadcrumbs.each_with_index.map { |(name, url), i| { '@type' => 'ListItem', position: i + 1, name: name, item: 'https://circle-book.com' + url } } },
+        breadcrumb_data&.except('@context'),
         { '@type' => 'ItemList', name: title, url: 'https://circle-book.com' + path + query,
           itemListElement: @schedules.each_with_index.map { |schedule, i| { '@type' => 'ListItem', position: @schedules.offset_value + i + 1, url: "https://circle-book.com#{user_schedule_path(schedule.user_id, schedule.id)}", name: schedule.title.presence || "#{schedule.user.event&.name}の活動" } } }
-      ]
+      ].compact
     }
   end
 

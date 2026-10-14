@@ -5,7 +5,10 @@ class BreadcrumbsTest < ActionDispatch::IntegrationTest
   self.fixture_table_names = []
   include ChatRecords
 
-  setup { create_chat_records }
+  setup do
+    create_chat_records
+    @circle.update!(recruitment: '初心者歓迎')
+  end
 
   test 'unconfigured public pages and account forms have a labelled current page' do
     {
@@ -63,6 +66,79 @@ class BreadcrumbsTest < ActionDispatch::IntegrationTest
     assert_select '.breadcrumbs a[href="/dates"]', text: 'イベント開催予定'
   end
 
+  test 'public trails output exactly one BreadcrumbList matching visible labels and links' do
+    ['/about', '/faq', circle_path(@circle), '/circles'].each do |path|
+      get path, params: { utm_source: 'breadcrumb-test' }
+      assert_response :success
+      assert_structured_trail
+    end
+  end
+
+  test 'legacy category links use the category slug in HTML and JSON-LD' do
+    get "/categories/#{@circle.category.kana}/#{@circle.prefecture.kana}"
+    assert_response :success
+    assert_structured_trail
+    assert_select '.breadcrumbs a[href=?]', "/categories/#{@circle.category.kana}", text: @circle.category.name
+  end
+
+  test 'legacy genre and region links point directly to current routes' do
+    tag = Tag.create!(name: '初心者歓迎', text: '初心者歓迎')
+    @circle.tags << tag
+    get "/#{@circle.event.ruby}/#{@circle.prefecture.kana}/tag/#{tag.id}"
+    assert_response :success
+    assert_structured_trail
+    assert_select '.breadcrumbs a[href=?]', event_path(@circle.event.ruby), text: @circle.event.name
+    assert_select '.breadcrumbs a[href=?]', event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana), text: @circle.prefecture.name
+  end
+
+  test 'current URL preserves canonical pagination and excludes sort and tracking parameters' do
+    get circle_path(@circle), params: { page: '2', sort: '2', utm_source: 'campaign', gclid: 'tracking' }
+    assert_response :success
+    assert_equal "https://circle-book.com#{circle_path(@circle)}?page=2", breadcrumb_nodes.first['itemListElement'].last['item']
+  end
+
+  test 'JSON-LD safely serializes quotes backslashes and script closing tags' do
+    name = 'サークル "募集" \\ </script><script>alert(1)</script>'
+    @circle.update!(name: name)
+    get circle_path(@circle)
+    assert_response :success
+    assert_structured_trail
+    assert_equal name, breadcrumb_nodes.first['itemListElement'].last['name']
+    assert_select 'script', text: 'alert(1)', count: 0
+  end
+
+  test 'private routes noindex pages and home do not advertise breadcrumb rich results' do
+    ['/', '/members/sign_in', '/support/new', '/places/all', '/dates/today'].each do |path|
+      get path
+      assert_response :success
+      assert_empty breadcrumb_nodes, path
+    end
+    login(@owner)
+    get inquiry_settings_path(@circle)
+    assert_response :success
+    assert_empty breadcrumb_nodes
+  end
+
+  test 'event schema uses the shared trail once and retains the event ItemList' do
+    @circle.schedules.create!(day: Date.current.iso8601, title: '公開練習会', venue: '体育館', time_s: '18:00', time_e: '21:00')
+    get '/dates/today'
+    assert_response :success
+    assert_structured_trail
+    assert structured_nodes.any? { |data| data['@type'] == 'ItemList' }
+  end
+
+  test 'facility schema keeps LocalBusiness and uses only the shared breadcrumb' do
+    city = City.create!(name: '目黒区', city_kana: 'breadcrumb-meguro', prefecture: @circle.prefecture)
+    place = Place.create!(name: 'パンくず検証体育館', prefecture: @circle.prefecture, city: city,
+      user_id: @circle.id, address: '目黒区1-1', tag: '体育館', events: [@circle.event])
+    ["/places/#{@circle.event.ruby}", "/places/#{@circle.event.ruby}/#{@circle.prefecture.kana}/#{city.city_kana}/#{place.id}"].each do |path|
+      get path
+      assert_response :success
+      assert_structured_trail
+    end
+    assert structured_nodes.any? { |data| data['@type'] == 'LocalBusiness' }
+  end
+
   test 'all application GET routes have a breadcrumb label fallback' do
     excluded = %w[healthcheck sitemaps listing_images chat_images redirect]
     Rails.application.routes.routes.each do |route|
@@ -78,6 +154,34 @@ class BreadcrumbsTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def structured_nodes
+    css_select('script[type="application/ld+json"]').flat_map do |node|
+      data = JSON.parse(node.text)
+      data.is_a?(Hash) && data['@graph'] ? data['@graph'] : Array.wrap(data)
+    end
+  end
+
+  def breadcrumb_nodes
+    structured_nodes.select { |data| data['@type'] == 'BreadcrumbList' }
+  end
+
+  def assert_structured_trail
+    assert_equal 1, breadcrumb_nodes.length
+    items = breadcrumb_nodes.first['itemListElement']
+    visible = css_select('.breadcrumbs li').map { |node| node.text.strip }
+    assert_equal visible, items.map { |item| item['name'] }
+    assert_equal (1..items.length).to_a, items.map { |item| item['position'] }
+    assert items.all? { |item| item['@type'] == 'ListItem' }
+    assert_operator items.length, :>=, 2
+    links = css_select('.breadcrumbs a').map { |node| 'https://circle-book.com' + node['href'] }
+    assert_equal links, items[0...-1].map { |item| item['item'] }
+    assert items[0...-1].all? { |item| item['item'].start_with?('https://circle-book.com/') }
+    canonical_link = css_select('link[rel=canonical]').first
+    canonical = URI.parse(canonical_link ? canonical_link['href'] : request.path)
+    assert_equal 'https://circle-book.com' + canonical.path, items.last['item']
+    refute items.any? { |item| item['item'].to_s.include?('utm_source') }
+  end
 
   def login(owner)
     post admin_user_session_path, params: { admin_user: { email: owner.email, password: 'test-password-123' } }

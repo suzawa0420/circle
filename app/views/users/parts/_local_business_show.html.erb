@@ -3,7 +3,7 @@
   "@context": "http://schema.org/",
   "@type": "LocalBusiness",
   "@id": "<%= request.path %>",
-  "name": "<%= user.name %>",
+  "name": <%= raw json_escape(user.name.to_json) %>,
   "description": "<%= user.prefecture.name %>で活動している<%= user.event.txt %>",
   "image": [
     "<%= user.pic_profile.url %>",
@@ -41,34 +41,6 @@
     <% end %>
   <% end %>
   "priceRange": "<%= user.cost %>"
-}
-</script>
-
-<script type="application/ld+json">
-{
-"@context": "https://schema.org",
-"@type": "BreadcrumbList",
-  "itemListElement": [{
-    "@type": "ListItem",
-    "position": 1,
-    "name": "サークルブック",
-    "item": "https://circle-book.com"
-  },{
-    "@type": "ListItem",
-    "position": 2,
-    "name": "<%= user.event.name %>",
-    "item": "https://circle-book.com/<%= user.event.ruby %>"
-  },{
-    "@type": "ListItem",
-    "position": 3,
-    "name": "<%= user.prefecture.name %>",
-    "item": "https://circle-book.com/<%= user.event.ruby %>/<%= user.prefecture.kana %>"
-  },{
-    "@type": "ListItem",
-    "position": 4,
-    "name": "<%= user.name %>",
-    "item": "https://circle-book.com/users/<%= user.id %>"
-  }]
 }
 </script>
 

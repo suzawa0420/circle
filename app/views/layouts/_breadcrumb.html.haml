@@ -1,6 +1,6 @@
+- breadcrumb_items = site_breadcrumb_items
 .breadcrumbs_wrapper
   %nav.breadcrumbs{ "aria-label" => "パンくずリスト" }
-    - breadcrumb_items = site_breadcrumb_items
     %ol
       - breadcrumb_items.each_with_index do |(name, path), index|
         %li
@@ -15,3 +15,6 @@
             %span.breadcrumb-current{ "aria-current" => "page" }= name
           - else
             %span= name
+- unless event_breadcrumb_in_content?
+  - if (breadcrumb_data = site_breadcrumb_structured_data(breadcrumb_items))
+    %script{ type: "application/ld+json" }= raw json_escape(breadcrumb_data.to_json)
