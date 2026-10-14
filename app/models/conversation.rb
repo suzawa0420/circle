@@ -1,7 +1,7 @@
 class Conversation < ApplicationRecord
   class NotAllowed < StandardError; end
-  # Enable production creation only after both servers understand organizer conversations.
-  PRACTICE_MATCH_ENABLED = !Rails.env.production?
+  # Keep this switch to pause new practice inquiries without losing existing history.
+  PRACTICE_MATCH_ENABLED = true
 
   before_validation :assign_public_id, on: :create
   attr_readonly :public_id
