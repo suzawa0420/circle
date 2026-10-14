@@ -1,233 +1,46 @@
-- set_meta_tags title: "【#{@time.strftime("%Y")}年版】47都道府県のサークルやチーム、団体一覧｜メンバー募集サイト"
+- set_meta_tags title: "サークル・イベント・活動ブログ・対戦相手・コート体育館を探す", description: "サークルブックで好きな活動を見つけよう。サークルのメンバー募集、今日のイベント、活動ブログ、対戦相手の募集、コート・体育館情報を探せます。"
 = render "users/parts/local_business_user_list"
-.main.users-index
-  .container.top_page
-    .cb-home-hero
-      .cb-home-hero__copy
-        %p.cb-home-hero__eyebrow 好きなことを、一緒に。
-        %h1.cb-home-hero__title
-          好きなことを、
-          %br/
-          仲間と楽しもう
-        %p.cb-home-hero__description スポーツも、趣味も。地域や活動から、気になる仲間を見つけましょう。
-      = image_tag "/images/mascot/squirrel-participant.png", class: "cb-home-hero__image", alt: "本とラケットを持つサークルブックのリス", width: 112, height: 140
+%main.home-portal
+  .home-portal__container
+    .home-portal__hero
+      %p.home-portal__eyebrow 好きなことを、一緒に。
+      %h1 好きな活動を、ここから。
+      %p 仲間も、イベントも、活動の場所も。目的に合わせて探そう。
+    %nav.home-portal__services{"aria-label" => "目的から探す"}
+      - home_services.each do |service|
+        = link_to "#home-#{service[:key]}", class: "home-service home-service--#{service[:key]}" do
+          = lucide_icon service[:icon]
+          %span= service[:title]
+          = lucide_icon "chevron-down", class: "home-service__arrow"
 
-    .search_wrap
-      .search_word
-        = form_tag(circles_search_index_path, method: :get, enforce_utf8: false) do
-          %input.search_area.change_font{"aria-label" => "キーワードで検索", :name => "q", :placeholder => "例）バスケ　東京", :size => "30", :type => "text", :value => "#{params[:q]}"}/
-          .search_icon
-            = submit_tag("検索", :name => nil)
-        .search_word_announce ※複数の単語はスペースで区切ってください
-
-
-
-    .top_contents.bg_blue
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "users"
-          サークルをカテゴリーから探す
-      .readmore
-        %input#check1-1.readmore-check{:type => "checkbox"}/
-        .readmore-content
-          %ul.events-menus
-            - @categories.each do |category|
-              %li
-                = link_to("/categories/#{category.kana}") do
-                  .e_icon_wrap
-                    %img.lazyload{:alt => "#{category.name}", "data-src" => "/images/categories/#{category.kana}.jpg"}/
-                    .link_txt= category.name
-        %label.readmore-label{:for => "check1-1"}
-    .top_contents.bg_blue
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "users"
-          サークルをエリアから探す
-      .readmore
-        %input#check1-2.readmore-check{:type => "checkbox"}/
-        .readmore-content.pref-menus
-          %ul.events-menus
-            %li
-              = link_to("/prefectures/tokyo") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "東京", "data-src" => "/images/prefectures/tokyo.jpg"}/
-                  .link_txt 東京
-            %li
-              = link_to("/prefectures/kanagawa") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "神奈川", "data-src" => "/images/prefectures/kanagawa.jpg"}/
-                  .link_txt 神奈川
-            %li
-              = link_to("/prefectures/aichi") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "愛知", "data-src" => "/images/prefectures/aichi.jpg"}/
-                  .link_txt 愛知
-            %li
-              = link_to("/prefectures/osaka") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "大阪", "data-src" => "/images/prefectures/osaka.jpg"}/
-                  .link_txt 大阪
-            %li
-              = link_to("/prefectures/kyoto") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "京都", "data-src" => "/images/prefectures/kyoto.jpg"}/
-                  .link_txt 京都
-            %li
-              = link_to("/prefectures/fukuoka") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "福岡", "data-src" => "/images/prefectures/fukuoka.jpg"}/
-                  .link_txt 福岡
-          = render "home/area_directory", prefectures: @prefectures
-
-        %label.readmore-label{:for => "check1-2"}
-    .top_contents.top_contents_btm.bg_blue
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "users"
-          メンバー募集中のサークル
-      %ul.user_slide_wrap
-        - @users.each do |user|
-          = link_to(circle_path(user.id)) do
-            %li.user_slide_list
-              .user_list_header
-                = circle_avatar_tag user, class:'image_icon'
-                %h3.user_name= user.name.truncate(20)
-              .clear
-              .list_02
-                %span.user_area
-                  = lucide_icon "users"
-                  = user.event.name
-              .list_02
-                %span.user_schedule
-                  = lucide_icon "calendar-days"
-                  = user.schedule
-              .list_03
-                %span.user_area
-                  = lucide_icon "map-pin"
-                  = user.prefecture.name
-                  - if user.area.present?
-                    ：#{user.area}
-      = link_to ">>もっと見る", "/users", class: "more_link"
-    = render "/layouts/ad_square"
-    .top_contents.bg_green
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "flag"
-          対戦相手をジャンルから探す
-      .readmore
-        %input#check2-1.readmore-check{:type => "checkbox"}/
-        .readmore-content
-          %ul.events-menus
-            - @match_events.each do |match_event|
-              %li
-                = link_to("/match/#{match_event.ruby}") do
-                  .e_icon_wrap
-                    %img.lazyload{:alt => "#{match_event.name}", "data-src" => "/images/events/#{match_event.ruby}.jpg"}/
-                    .link_txt= match_event.name
-        %label.readmore-label{:for => "check2-1"}
-    .top_contents.bg_green
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "flag"
-          対戦相手をエリアから探す
-      .readmore
-        %input#check2-2.readmore-check{:type => "checkbox"}/
-        .readmore-content.pref-menus
-          %ul.events-menus
-            %li
-              = link_to("/match/prefectures/tokyo") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "東京", "data-src" => "/images/prefectures/tokyo.jpg"}/
-                  .link_txt 東京
-            %li
-              = link_to("/match/prefectures/kanagawa") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "神奈川", "data-src" => "/images/prefectures/kanagawa.jpg"}/
-                  .link_txt 神奈川
-            %li
-              = link_to("/match/prefectures/aichi") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "愛知", "data-src" => "/images/prefectures/aichi.jpg"}/
-                  .link_txt 愛知
-            %li
-              = link_to("/match/prefectures/osaka") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "大阪", "data-src" => "/images/prefectures/osaka.jpg"}/
-                  .link_txt 大阪
-            %li
-              = link_to("/match/prefectures/kyoto") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "京都", "data-src" => "/images/prefectures/kyoto.jpg"}/
-                  .link_txt 京都
-            %li
-              = link_to("/match/prefectures/fukuoka") do
-                .e_icon_wrap
-                  %img.lazyload{:alt => "福岡", "data-src" => "/images/prefectures/fukuoka.jpg"}/
-                  .link_txt 福岡
-          %ul.prefectures-menus.place_meus
-            - @prefectures.each do |prefecture|
-              - if prefecture.group != @pref_group
-                - if prefecture.id != 50
-                  .prefectures-sub-title
-                    = prefecture.group
-                    エリア
-                  %li
-                    = link_to "/match/prefectures/#{prefecture.kana}" do
-                      = prefecture.name
-                - @pref_group = prefecture.group
-              - else
-                %li
-                  = link_to "/match/prefectures/#{prefecture.kana}" do
-                    = prefecture.name
-        %label.readmore-label{:for => "check2-2"}
-    .top_contents.top_contents_btm.bg_green
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "flag"
-          対戦相手を募集中のサークル
-      %ul.user_slide_wrap
-        - @match_users.each do |m_user|
-          - next if m_user.user.nil?
-          = link_to(match_path(m_user.id)) do
-            %li.user_slide_list
-              .user_list_header
-                = circle_avatar_tag m_user.user, class:'image_icon'
-                %h3.user_name= m_user.user.name.truncate(20)
-              .clear
-              .list_02
-                %span.user_area
-                  = lucide_icon "users"
-                  = m_user.user.event.name
-              .list_02
-                %span.user_area
-                  = lucide_icon "map-pin"
-                  = m_user.user.prefecture.name
-              .list_03
-                %span.user_area
-                  = lucide_icon "trophy"
-                  = m_user.level
-                  - if m_user.level == "初級"
-                    （★☆☆）
-                  - elsif m_user.level == "中級"
-                    （★★☆）
-                  - elsif m_user.level == "上級"
-                    （★★★）
-                  - else
-      = link_to ">>もっと見る", "/matches", class: "more_link"
-    .top_contents.bg_yellow
-      .top_heading
-        %h2.sub_title
-          = lucide_icon "circle-dot"
-          コートや体育館、施設を探す
-      .readmore
-        %input#check3-1.readmore-check{:type => "checkbox"}/
-        .readmore-content
-          %ul.events-menus
-            - @place_events.each do |place_event|
-              %li
-                = link_to("/places/#{place_event.ruby}") do
-                  .e_icon_wrap
-                    %img.lazyload{:alt => "#{place_event.name}", "data-src" => "/images/events/#{place_event.ruby}.jpg"}/
-                    .link_txt= place_event.name
-        %label.readmore-label{:for => "check3-1"}
-    = render "/layouts/ad_square"
+    - home_services.each do |service|
+      %section.home-portal__section{id: "home-#{service[:key]}", "aria-labelledby" => "home-#{service[:key]}-title"}
+        .home-portal__heading
+          .home-portal__heading-copy
+            %h2{id: "home-#{service[:key]}-title"}
+              = lucide_icon service[:icon]
+              = service[:title]
+            %p= service[:description]
+          %span.home-portal__label= service[:label]
+        - records = { "circles" => @users, "events" => @schedules, "blogs" => @blogs, "matches" => @matches, "places" => @places }.fetch(service[:key])
+        - if records.any?
+          %p.home-portal__slide-hint
+            横にスライドして見る
+            = lucide_icon "chevron-right"
+          %ul.home-portal__rail{tabindex: "0", "aria-label" => "#{service[:title]}の掲載一覧"}
+            - records.each_with_index do |record, index|
+              %li.home-portal__item{class: "home-portal__item--#{service[:key]}"}
+                - if service[:key] == "events"
+                  - key, label = @day_listing.status(record)
+                  = render "schedules/event_card", schedule: record, user: record.user, status: { key: key, label: label }, eager: false
+                - else
+                  = render "home/#{service[:key]}_card", record: record, index: index
+        - else
+          .home-portal__empty
+            - if service[:key] == "events"
+              %p 今日のイベントはまだありません。ほかの開催日も探してみましょう。
+            - else
+              %p 掲載情報はまだありません。一覧ページから条件を選んで探せます。
+        = link_to service[:path], class: "home-portal__more" do
+          = service[:more]
+          = lucide_icon "chevron-right"

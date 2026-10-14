@@ -1,0 +1,23 @@
+- user = record
+.user_item_wrap.home-preview
+  = link_to circle_path(user) do
+    .header_user_list.ribbon-wrapper
+      .header_img_wrap= circle_listing_header_image(user, first: index.zero?)
+      .ribbon-content
+        %span.ribbon{class: user.switch == "募集中" ? "green" : "red"}= user.switch
+      = circle_avatar_tag user, class: "image_icon"
+    .users-index-item.user_list_wrap
+      %h3.user_name= user.name.to_s.truncate(40)
+      %p.home-preview__excerpt= user.recruitment.to_s.truncate(90)
+      - if @listing_data.review_count(user).positive?
+        = render "layouts/review_score", review_score: user.review_score.to_f, reviews_count: @listing_data.review_count(user)
+      .home-preview__meta
+        %p
+          = lucide_icon "tags"
+          = user.event&.txt.presence || user.event&.name
+        %p
+          = lucide_icon "map-pin"
+          = [user.prefecture&.name, user.area.presence].compact.join("・").truncate(50)
+        %p
+          = lucide_icon "calendar-days"
+          = user.schedule.to_s.truncate(50)

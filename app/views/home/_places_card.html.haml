@@ -1,0 +1,18 @@
+- place = record
+.places-index-item.ribbon-wrapper.home-preview
+  .ribbon-content
+    %span.ribbon{class: place.tag.to_i == 1 ? "green" : "blue"}= place.tag.to_i == 1 ? "屋内" : "屋外"
+  .place_cnt_wrap
+    %h3.place_name= place.name.to_s.truncate(40)
+    %p.place_d= [place.prefecture.name, place.city.name, place.events.map(&:name).join("・")].join("・")
+    .place_updated 更新日：#{time_tag place.updated_at.to_date}
+    .article_item.place_list
+      %table
+        %tbody
+          - [["住所", place.address], ["アクセス", place.access], ["利用時間", place.time]].each do |label, value|
+            %tr.flex_contents
+              %th.flex_list= label
+              %td.flex_list= strip_tags(value.to_s).truncate(70)
+    - if @place_review_counts.fetch(place.id, 0).positive?
+      = render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: @place_review_counts.fetch(place.id)
+  = link_to "詳細を確認する", "/places/#{place.events.first.ruby}/#{place.prefecture.kana}/#{place.city.city_kana}/#{place.id}", class: "place_more"

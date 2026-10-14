@@ -1,0 +1,14 @@
+- matching = record
+.user-profile.matching_wrap.home-preview
+  = link_to match_path(matching) do
+    .matching_card
+      = circle_avatar_tag matching.user, class: "matching_icon"
+      %h3.matching_name= matching.user.name.to_s.truncate(40)
+      .article_item
+        %table
+          %tbody
+            - [["種目", matching.user.event&.name], ["活動場所", matching.user.prefecture&.name], ["年齢層", matching.age_group], ["メンバー", matching.member], ["レベル", matching.level]].each do |label, value|
+              %tr.flex_contents
+                %th.flex_list= label
+                %td.flex_list= value.to_s.truncate(40)
+      %p.home-preview__updated 更新日：#{time_tag matching.updated_at.to_date}
