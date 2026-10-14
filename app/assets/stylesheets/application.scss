@@ -768,6 +768,8 @@ body {
 .image_icon {
   float: left;
   display: block;
+  flex-shrink: 0;
+  aspect-ratio: 1;
   width: 90px;
   height: 90px;
   border-radius: 50%;
@@ -5666,7 +5668,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 
 .new_review_comment {
   font-size: 12px;
-  padding: 10px 40px;
+  padding: 10px 12px;
   text-align: center;
   display: block;
 }
