@@ -95,14 +95,14 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
     assert_select '.match-directory__dates', text: /更新日：/, count: 1
     assert_select '.match-directory__dates time', count: 1
     assert_select '.match-directory__dates time[datetime="2026-10-12T12:00:00+09:00"]', text: '2026/10/12'
-    list = JSON.parse(css_select('script[type="application/ld+json"]').last.text)
+    list = structured_data_of_type('ItemList')
     assert_equal 'ItemList', list['@type']
     assert_equal 1, list['itemListElement'].first['position']
     assert_equal '2026-10-12T12:00:00+09:00', list['itemListElement'].first['item']['dateModified']
     [Time.zone.parse('2026-10-10 18:00:00'), Time.zone.parse('2026-10-13 09:45:00')].each do |updated_at|
       @match.update_columns(updated_at: updated_at)
       get match_path(@circle)
-      data = JSON.parse(css_select('script[type="application/ld+json"]').last.text)
+      data = structured_data_of_type('WebPage')
       expected = [updated_at, Time.zone.parse(@circle.user_time)].max.in_time_zone
       assert_equal 'WebPage', data['@type']
       assert_equal "https://circle-book.com/matches/#{@circle.id}", data['url']
@@ -119,7 +119,7 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
     ['2026-10-12T04:00:00Z', nil, 'invalid date'].each do |circle_time|
       @circle.update!(user_time: circle_time)
       get match_path(@circle)
-      data = JSON.parse(css_select('script[type="application/ld+json"]').last.text)
+      data = structured_data_of_type('WebPage')
       expected = circle_time == '2026-10-12T04:00:00Z' ? '2026-10-12T13:00:00+09:00' : '2026-10-12T12:00:00+09:00'
       assert_equal expected, data['dateModified']
       assert_select ".match-directory__profile time[datetime='#{expected}']", count: 1
@@ -129,7 +129,7 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
   test 'structured data escapes user names without creating script elements' do
     @circle.update!(name: 'テスト</script><script>alert(1)</script>')
     get match_path(@circle)
-    data = JSON.parse(css_select('script[type="application/ld+json"]').last.text)
+    data = structured_data_of_type('WebPage')
     assert_equal "#{@circle.name}の対戦相手・練習試合の募集", data['name']
     refute_includes response.body, '</script><script>alert(1)'
   end
@@ -143,5 +143,13 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
     assert_select '.match-directory__edit', href: edit_match_path(@match)
     assert_select '.match-directory__dates time', count: 1
     assert_select '.match-directory__conditions dd', text: '未設定', count: 1
+  end
+
+  private
+
+  def structured_data_of_type(type)
+    data = css_select('script[type="application/ld+json"]').map { |node| JSON.parse(node.text) }.find { |item| item['@type'] == type }
+    assert data, "Missing #{type} structured data"
+    data
   end
 end
