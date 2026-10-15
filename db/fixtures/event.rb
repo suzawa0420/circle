@@ -4,7 +4,7 @@ Event.seed(:id,
 # place => Place 1:連携/0:非連携
 # { :id => 99, :category_id => 9, :order => "9999", :name => "99" , :ruby => "99",  :matching => 0, :place => 0, :openchat => "", :txt => "99" },
 
-# Max id 61
+# Max activity id 64 (99 is その他)
 
   # 球技スポーツ
   { :id => 2, :category_id => 1, :order => "0101", :name => "バスケ" , :ruby => "basketball", :matching => 1, :place => 1, :openchat => "https://line.me/ti/g2/28860kzjimldNe2P9MOsqg", :txt => "バスケサークル・チーム" },
@@ -102,6 +102,9 @@ Event.seed(:id,
   { :id => 59, :category_id => 2, :order => "0206", :name => "ソフトテニス", :ruby => "soft-tennis", :matching => 0, :place => 0, :openchat => "", :txt => "ソフトテニスサークル" },
   { :id => 60, :category_id => 2, :order => "0207", :name => "ピックルボール", :ruby => "pickleball", :matching => 0, :place => 0, :openchat => "", :txt => "ピックルボールサークル" },
   { :id => 61, :category_id => 4, :order => "0403", :name => "スキー", :ruby => "ski", :matching => 0, :place => 0, :openchat => "", :txt => "スキーサークル" },
+  { :id => 62, :category_id => 3, :order => "03105", :name => "空手", :ruby => "karate", :matching => 0, :place => 0, :openchat => "", :txt => "空手サークル" },
+  { :id => 63, :category_id => 12, :order => "0904", :name => "手芸・ハンドメイド", :ruby => "handicraft", :matching => 0, :place => 0, :openchat => "", :txt => "手芸・ハンドメイドサークル" },
+  { :id => 64, :category_id => 9, :order => "1004", :name => "カラオケ", :ruby => "karaoke", :matching => 0, :place => 0, :openchat => "", :txt => "カラオケサークル" },
 
   # その他
   { :id => 99, :category_id => 99, :order => "9999", :name => "その他" , :ruby => "other",  :matching => 0, :place => 0, :openchat => "", :txt => "その他のサークル" }

@@ -1,6 +1,9 @@
 # Suggestions only. A name/body mention is not evidence that a club runs a sport.
 class SportClassification
   SPORTS = {
+    'karate' => ['空手'],
+    'handicraft' => ['手芸', 'ハンドメイド', '編み物'],
+    'karaoke' => ['カラオケ'],
     'soft-tennis' => ['ソフトテニス', '軟式テニス'],
     'pickleball' => ['ピックルボール'],
     'ski' => ['スキー'],

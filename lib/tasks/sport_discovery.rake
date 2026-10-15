@@ -3,7 +3,7 @@ namespace :sports do
   task metrics: :environment do
     require 'json'
     puts JSON.generate(%w[sport recruiting updated_within_90_days inquiry_conversations_28_days])
-    Event.where(ruby: %w[soft-tennis pickleball ski road-bike mountain swimming]).order(:order).each do |sport|
+    Event.where(ruby: %w[soft-tennis pickleball ski road-bike mountain swimming karate handicraft karaoke]).order(:order).each do |sport|
       population = User.publicly_visible.for_event(sport.id)
       recruiting = population.where(switch: '募集中')
       conversations = Conversation.where(user_id: population.select(:id))
@@ -17,13 +17,9 @@ namespace :sports do
   task audit: :environment do
     require 'json'
     puts JSON.generate(%w[circle_id current_sport candidate status url])
-    terms = { 'ソフトテニス' => 'soft-tennis', '軟式テニス' => 'soft-tennis',
-              'ピックルボール' => 'pickleball', 'スキー' => 'ski', 'サーフィン' => 'surfing' }
-    User.publicly_visible.includes(:event).find_each do |circle|
-      text = [circle.name, circle.recruitment, circle.appeal].join(' ')
-      terms.select { |word, _| text.include?(word) }.values.uniq.each do |slug|
-        next if circle.event.ruby == slug
-        puts JSON.generate([circle.id, circle.event.ruby, slug, circle.switch, "https://circle-book.com/circles/#{circle.id}"])
+    SportClassification::SPORTS.each_key do |slug|
+      SportClassification.candidates(slug).includes(:event).find_each do |circle|
+        puts JSON.generate([circle.id, circle.event&.ruby, slug, circle.switch, "https://circle-book.com/circles/#{circle.id}"])
       end
     end
   end
