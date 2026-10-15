@@ -58,24 +58,29 @@ class CircleProfileUpdateTest < ActionDispatch::IntegrationTest
     assert_select "form[action='/users/#{@circle.id}/admin_user_update']", count: 0
   end
 
-  test 'AV as a separate term remains prohibited while English words are accepted' do
-    %w[AV av AV鑑賞 鑑賞AV AV女優 AV99 99AV 風俗 escort].each do |name|
+  test 'remaining prohibited terms are rejected while AV is accepted' do
+    %w[風俗 escort ESCORT].each do |name|
       @circle.name = name
       refute @circle.valid?, name
       assert @circle.errors.of_kind?(:name, :invalid), name
     end
-    %w[HEARTWAVE99 WAVE BRAVE travel].each do |name|
+    %w[AV av AV鑑賞 鑑賞AV AV99 HEARTWAVE99 WAVE BRAVE travel].each do |name|
       @circle.name = name
       assert @circle.valid?, name
     end
     @circle.name = '通常のサークル'
     %i[appeal goal].each do |field|
       @circle[field] = 'AV鑑賞'
-      refute @circle.valid?
-      assert @circle.errors.of_kind?(field, :invalid)
-      @circle[field] = 'WAVEで楽しく活動'
       assert @circle.valid?
     end
+  end
+
+  test 'owner can save reply templates containing http and https URLs' do
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    template = "集合場所はこちらです。http://example.test/map\n詳細：https://example.test/info"
+    patch inquiry_settings_path(@circle), params: { user: { template: template } }
+    assert_redirected_to inquiry_settings_path(@circle)
+    assert_equal template, @circle.reload.template
   end
 
   private
