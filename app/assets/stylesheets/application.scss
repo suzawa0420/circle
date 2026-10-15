@@ -9662,11 +9662,16 @@ trix-toolbar .button_group button.icon {
 }
 .breadcrumbs ol {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 4px 0;
+  gap: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
   margin: 0;
-  padding: 0;
+  padding: 4px 0;
   list-style: none;
 }
 .breadcrumbs ol li,
@@ -9674,10 +9679,10 @@ trix-toolbar .button_group button.icon {
   display: flex;
   align-items: baseline;
   min-width: 0;
-  max-width: 100%;
+  max-width: none;
   padding: 0;
-  flex: 0 1 auto;
-  overflow-wrap: anywhere;
+  flex: 0 0 auto;
+  overflow-wrap: normal;
   position: static;
 }
 .breadcrumbs ol li::after,
@@ -9693,6 +9698,7 @@ trix-toolbar .button_group button.icon {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.breadcrumbs ol:focus-visible { outline: 2px solid #16835d; outline-offset: 2px; border-radius: 3px; }
 .breadcrumbs ol a:hover { color: #143d2c; }
 .breadcrumbs ol a:focus-visible { outline: 2px solid #16835d; outline-offset: 3px; border-radius: 3px; }
 .breadcrumbs .breadcrumb-current { padding: 4px 2px; color: #263a30; font-weight: 700; }
