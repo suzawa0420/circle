@@ -15,7 +15,7 @@
   - @user.errors.full_messages.each do |message|
     .form-error_message
       ・#{message}
-  - if webmaster?
+  - if webmaster? && @admin_user.present?
     .form
       = form_for @admin_user, url:"/users/#{@user.id}/admin_user_update" do |f|
         .label_item
@@ -185,7 +185,7 @@
     - if @path.is('users#edit')
       .warning_txt ※更新完了に少し時間がかかります
       = f.submit "更新する", data: { disable_with: '更新中...' }
-    - elsif @admin_user.check.present? && @admin_user.check != 0
+    - elsif @admin_user&.check.present? && @admin_user.check != 0
       %br/
       .attention_content
         = lucide_icon "triangle-alert"

@@ -208,7 +208,9 @@ class User < ApplicationRecord
 	validates :template, format: { without: NGWORD_REGEX }
 
 	NG_WORDS = %w(出張館 密会 援交 デリヘル 風俗 売春 援助 AV 풍속 escort)
-	NG_REGEX = /#{NG_WORDS.join('|')}/i
+	# Do not reject ordinary English names such as HEARTWAVE or BRAVE.
+	# ASCII letter boundaries still reject AV adjacent to Japanese text or digits.
+	NG_REGEX = /#{NG_WORDS.map { |word| word == 'AV' ? '(?<![a-z])AV(?![a-z])' : Regexp.escape(word) }.join('|')}/i
 	validates :name,   format: { without: NG_REGEX, message: "に使用できない言葉が含まれています" }
 	validates :appeal, format: { without: NG_REGEX, message: "に使用できない言葉が含まれています" }, allow_blank: true
 	validates :goal,   format: { without: NG_REGEX, message: "に使用できない言葉が含まれています" }, allow_blank: true
