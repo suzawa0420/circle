@@ -8,14 +8,14 @@
 - is_master_account = webmaster?
 - listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
-- cache [users, is_master_account, 'seo-list-v5-webp', 'stored-image-extension-v1'] do
+- cache [users, is_master_account, 'seo-list-v6-sports', 'stored-image-extension-v1'] do
   %ul
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
         - if is_master_account
           = link_to "編集", edit_user_path(user), data: { "turbolinks" => false }, class: "moderator-edit-btn"
           = link_to "削除", user_path(user), method: :delete, data: { confirm: circle_deletion_confirmation(user) }, class: "moderator-delete-btn"
-        = link_to(circle_path(user.id)) do
+        = link_to(circle_path(user.id), data: { sport_listing_click: user.event.ruby }) do
           .header_user_list.ribbon-wrapper
             .header_img_wrap
               = circle_listing_header_image(user, first: i == 1)
@@ -47,6 +47,8 @@
 
 
 
+                - [user.experience, user.equipment, user.meeting_area].select(&:present?).each do |detail|
+                  .list_02= detail
                 - if user.cost.present?
                   .list_02
                     %span= "参加費：#{user.cost.to_s.truncate(80)}"

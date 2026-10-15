@@ -11,7 +11,7 @@ class Circles::Events::CitiesController < Circles::Events::ApplicationController
     @city = City.find_by!(city_kana: params[:kana], prefecture_id: @prefecture.id)
 
 
-    users = User.where(event_id: @event.id).where_city(@city).list.order("prefectures.sort asc")
+    users = User.for_event(@event.id).where_city(@city).list.order("prefectures.sort asc")
 
     case params[:sort]
     when "1", nil

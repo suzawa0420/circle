@@ -96,10 +96,10 @@ private
     filters = @landing_filters || params
     @event = Event.find(filters[:event_id]) if filters[:event_id].present?
     @prefecture = Prefecture.find(filters[:prefecture_id]) if filters[:prefecture_id].present?
-    users = users.where(event_id: @event.id) if @event
+    users = users.for_event(@event.id) if @event
     users = users.where_pref(@prefecture.id) if @prefecture
     @category = Category.find(filters[:category_id]) if filters[:category_id].present?
-    users = users.where(category_id: @category.id) if @category
+    users = users.for_event(Event.where(category_id: @category.id)) if @category
     @city = City.find(filters[:city_id]) if filters[:city_id].present?
     users = users.where_city(@city) if @city
     @tag = Tag.find(filters[:tag_id]) if filters[:tag_id].present?
@@ -123,7 +123,7 @@ private
 
       # 検索ワードの数だけand検索を行う
       @keywords.each do |keyword|
-        event_ids = Event.where("name LIKE ?", "%#{keyword}%").select(:id)
+        event_ids = Event.matching_keyword(keyword).pluck(:id)
         prefecture_ids = Prefecture.where("name LIKE ?", "%#{keyword}%").select(:id)
 
         city_ids = City.where("name LIKE ?", "%#{keyword}%").select(:id)
@@ -134,6 +134,7 @@ private
 
         users = users.search_word(keyword).
         or(users.where(event_id: event_ids)).
+        or(users.where("users.secondary_event_ids && ARRAY[?]::integer[]", event_ids.presence || [0])).
         or(users.where(prefecture_id: prefecture_ids)).or(users.where(prefecture_sub_id: prefecture_ids)).
         or(users.where(id: city_user_ids)).
         or(users.where(id: tag_user_ids))

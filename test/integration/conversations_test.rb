@@ -473,6 +473,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_difference('Conversation.count', 1) do
       post user_conversations_path(@circle), params: { message: { body: '参加に関する問い合わせです。', member_id: @member.id } }
     end
+    assert_equal @circle.event.ruby, flash[:sport_inquiry_delivered]
     conversation = Conversation.find_by!(user: @circle, member: @other_member)
     assert_redirected_to conversation_path(conversation)
     assert_no_difference('Conversation.count') do

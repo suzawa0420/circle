@@ -36,11 +36,12 @@ class CircleFilterLanding
     prefectures = Prefecture.all.index_by(&:id)
     groups = Group.all.index_by(&:id)
     ages = Age.all.index_by(&:id)
-    population = User.publicly_visible.select(:id, :event_id, :prefecture_id, :prefecture_sub_id).to_sql
+    population = User.publicly_visible.select(:id, :event_id, :prefecture_id, :prefecture_sub_id, :secondary_event_ids).to_sql
     sql = <<~SQL
       WITH public_users AS (#{population}), combinations AS (
-        SELECT u.event_id, area.id AS prefecture_id, g.id AS group_id, a.id AS age_id
+        SELECT sport.id AS event_id, area.id AS prefecture_id, g.id AS group_id, a.id AS age_id
         FROM public_users u
+        JOIN LATERAL (SELECT u.event_id AS id UNION SELECT unnest(u.secondary_event_ids)) sport ON true
         JOIN LATERAL (
           SELECT u.prefecture_id AS id
           UNION SELECT u.prefecture_sub_id WHERE u.prefecture_sub_id IS NOT NULL

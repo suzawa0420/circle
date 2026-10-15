@@ -9,7 +9,7 @@ class Circles::Events::EventsController < Circles::Events::ApplicationController
   def show
 		@event = Event.find_by!(ruby: params[:kana])
 
-    users = User.where(event_id: @event.id).list
+    users = User.for_event(@event.id).list
     case params[:sort]
     when "1", nil
       @users = users.sort_1.page(params[:page])

@@ -90,6 +90,9 @@
       <%= render "/layouts/mobile_nav" %>
       <%= render "layouts/home_screen_install" %>
 
+      <% if flash[:sport_inquiry_delivered].present? %>
+        <span hidden data-sport-inquiry-delivered="<%= flash[:sport_inquiry_delivered] %>"></span>
+      <% end %>
       <% if flash[:notice] %>
         <div class="flash time-limit cb-system-notice">
           <%= flash[:notice] %>

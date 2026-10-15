@@ -1,4 +1,24 @@
 <%= render 'webmasters/shared/page_header', title: 'サークル・主催者管理', description: '確認が必要な投稿の公開状態と、主催者の登録情報を管理します。' %>
+<section class="wm-section">
+  <div class="wm-section-heading"><h2>種目の分類確認</h2></div>
+  <p>名称・紹介文から候補を抽出します。単語の記載だけでは活動種目と断定できません。募集内容を確認してから編集してください。複数種目の場合は補助種目に追加できます。</p>
+  <nav class="wm-actions" aria-label="種目の分類候補">
+    <% SportClassification::SPORTS.each do |slug, words| %>
+      <%= link_to words.first, url_for(sport_review: slug), class: 'wm-button wm-button--secondary' %>
+    <% end %>
+  </nav>
+  <% if @sport_candidates %>
+    <p><%= @sport_candidates.total_count %>件の確認候補。サーフィンは掲載数・活動実態を確認してから種目追加を判断します。</p>
+    <% @sport_candidates.each do |circle| %>
+      <article class="webmaster-card">
+        <h3><%= link_to circle.name, circle_path(circle) %></h3>
+        <p>現在の主種目：<%= circle.event.name %>／<%= circle.switch %></p>
+        <%= link_to '内容を確認して編集', edit_user_path(circle), class: 'wm-button wm-button--secondary' %>
+      </article>
+    <% end %>
+    <%= paginate @sport_candidates, param_name: :sport_page %>
+  <% end %>
+</section>
 <div id="pending-posts"></div>
 <% [['確認待ちのサークル', @review_circles, 'circle', false], ['確認待ちのブログ', @review_blogs, 'blog', false], ['公開停止中のサークル', @blocked_circles, 'circle', true], ['公開停止中のブログ', @blocked_blogs, 'blog', true]].each do |title, records, kind, blocked| %>
 <details class="wm-disclosure" <%= "open" if records.any? %>>

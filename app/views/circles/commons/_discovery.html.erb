@@ -5,13 +5,19 @@
     <% if @event&.ruby == 'student-group' %>
       <p>インカレは大学を越えて活動するサークルです。参加できる大学・学年、活動内容や新歓の日程は団体ごとに異なります。応募前に募集条件を確認しましょう。</p>
     <% end %>
+    <% if (guide = SportDiscoveryHelper::SPORT_GUIDES[@event&.ruby]) %>
+      <p><%= guide %></p>
+    <% end %>
     <nav aria-label="関連するサークル募集">
+      <% related_sport_links(@event, @prefecture).each do |name, path| %>
+        <%= link_to "#{name}を探す", path %>
+      <% end %>
       <% if @prefecture %>
-        <% (@categories || []).flat_map(&:events).select { |event| %w[basketball volleyball badminton futsal student-group reading mountain].include?(event.ruby) && event != @event }.each do |event| %>
+        <% region_discovery_sports(@prefecture).reject { |event| event == @event }.each do |event| %>
           <%= link_to "#{@prefecture.name}の#{event.name}", event_prefecture_path(event.ruby, @prefecture.kana) %>
         <% end %>
       <% elsif @event %>
-        <% (@prefectures || []).select { |prefecture| %w[tokyo kanagawa saitama chiba osaka aichi fukuoka].include?(prefecture.kana) }.each do |prefecture| %>
+        <% sport_populated_regions(@event).each do |prefecture| %>
           <%= link_to "#{prefecture.name}の#{@event.name}", event_prefecture_path(@event.ruby, prefecture.kana) %>
         <% end %>
       <% end %>

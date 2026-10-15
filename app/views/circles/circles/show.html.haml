@@ -247,6 +247,17 @@
                 %th.flex_list 目標
                 %td.flex_list= @user.goal
 
+              - @user.public_sport_details.each do |label, value|
+                %tr.flex_contents
+                  %th.flex_list= label
+                  %td.flex_list= value
+              - if @user.secondary_event_ids.any?
+                %tr.flex_contents
+                  %th.flex_list その他の活動種目
+                  %td.flex_list
+                    - Event.where(id: @user.secondary_event_ids).order(:order).each do |sport|
+                      = link_to sport.name, event_path(sport.ruby)
+
               - if @user.match.present?
                 - if @user.match.recruit == "募集中"
                   %tr.flex_contents

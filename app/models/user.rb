@@ -71,6 +71,7 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  include SportDiscovery
   has_one :backlink_request, dependent: :destroy
   def unanswered_report_count
     Conversation.reported_unanswered.where(user_id: id).count
@@ -249,7 +250,7 @@ class User < ApplicationRecord
   scope :user_sort_3, -> {ng_account.order(switch: :asc, created_at: :desc).where.not(switch: "") }
   scope :pref, -> { includes(:prefecture).order("prefectures.sort asc") }
   scope :user, -> (user_id){ where(id: user_id) }
-  scope :event, -> (event_id){ where(event_id: event_id) }
+  scope :event, -> (event_id){ for_event(event_id) }
   scope :prefecture, -> (prefecture_id){ where(prefecture_id: prefecture_id) }
   scope :prefecture_sub, -> (prefecture_sub_id){ where(prefecture_sub_id: prefecture_sub_id) }
   scope :prefecture_50, -> { where(prefecture_id: 50).or(where(prefecture_sub_id: 50)) }

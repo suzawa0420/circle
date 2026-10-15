@@ -70,6 +70,7 @@ module ApplicationHelper
   def circle_listing_description
     area = [@prefecture&.name, @city&.name].compact.join
     activity = @event&.txt.presence || 'サークル・チーム'
+    return "#{area.presence || '全国'}の#{activity}募集。#{SportDiscoveryHelper::SPORT_GUIDES[@event.ruby]}" if SportDiscoveryHelper::SPORT_GUIDES.key?(@event&.ruby)
     audience = @event&.ruby == 'student-group' ? '参加できる大学・学年などの条件' : '初心者の参加条件や募集対象'
     "#{area.present? ? "#{area}の" : "全国の"}#{activity}を活動場所・日程・募集内容から比較。#{audience}、費用は各団体の詳細で確認できます。気になる団体の活動予定を見て、参加について問い合わせましょう。"
   end

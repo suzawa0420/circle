@@ -58,6 +58,7 @@ class ConversationsController < ApplicationController
       @conversation = Conversation.for_member!(@user, current_member)
       @sent_message = @conversation.send_message!('member', params.require(:message).permit(:body)[:body])
     end
+    flash[:sport_inquiry_delivered] = @user.event.ruby if @sent_message.delivered?
     redirect_to conversation_path(@conversation), notice: @sent_message.delivered? ? 'お問い合わせを送信しました。' : '運営による確認後に配信します。相手にはまだ届いていません。'
   end
 

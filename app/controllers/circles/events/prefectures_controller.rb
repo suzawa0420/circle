@@ -10,7 +10,7 @@ class Circles::Events::PrefecturesController < Circles::Events::ApplicationContr
 		@prefecture = Prefecture.find_by!(kana: params[:kana])
 
 
-    users = User.where(event_id: @event.id).where_pref(@prefecture.id).list.order("prefectures.sort asc")
+    users = User.for_event(@event.id).where_pref(@prefecture.id).list.order("prefectures.sort asc")
     case params[:sort]
     when "1", nil
       @users = users.sort_1.page(params[:page])

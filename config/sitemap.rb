@@ -27,10 +27,12 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
   # Only populated, canonical landing pages belong in the sitemap. Arbitrary
   # internal search terms and sort/date combinations are deliberately omitted.
   population = User.publicly_visible
-  Event.where(id: population.select(:event_id)).find_each do |event|
+  Event.find_each do |event|
+    sport_users = population.for_event(event.id)
+    next unless sport_users.exists?
     next if event.ruby.blank? || event.ruby == 'nil'
     add event_path(event.ruby), lastmod: nil, changefreq: 'daily', priority: 0.8
-    Prefecture.where(id: population.where(event_id: event.id).select(:prefecture_id)).find_each do |prefecture|
+    Prefecture.where(id: sport_users.select(:prefecture_id)).or(Prefecture.where(id: sport_users.select(:prefecture_sub_id))).find_each do |prefecture|
       next if prefecture.kana.blank? || prefecture.kana == 'nil'
       add event_prefecture_path(event.ruby, prefecture.kana), lastmod: nil, changefreq: 'daily', priority: 0.8
     end

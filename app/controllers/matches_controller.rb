@@ -110,7 +110,7 @@ before_action :set_matches
 
 	def event
 		@event = Event.find_by!(ruby: params[:ruby])
-		user_ids = User.where(event_id: @event.id).select(:id)
+		user_ids = User.for_event(@event.id).select(:id)
 
 		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
  

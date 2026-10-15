@@ -9,8 +9,9 @@ class EventDaySitemap
     seen = Set.new
     populations = EventDayListing.public_schedules.joins(:user)
       .where(day: today.iso8601..'2100-12-31')
-      .group('schedules.day', 'users.event_id', 'users.prefecture_id')
-      .pluck('schedules.day', 'users.event_id', 'users.prefecture_id')
+      .joins('CROSS JOIN LATERAL (SELECT users.event_id AS id UNION SELECT unnest(users.secondary_event_ids)) sports')
+      .group('schedules.day', 'sports.id', 'users.prefecture_id')
+      .pluck('schedules.day', 'sports.id', 'users.prefecture_id')
     populations.each do |day, event_id, prefecture_id|
       begin
         date = Date.iso8601(day)

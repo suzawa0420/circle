@@ -3,6 +3,9 @@ class SuperAdmin::CirclesController < ApplicationController
   before_action :require_super_admin
 
   def index
+    if SportClassification::SPORTS.key?(params[:sport_review])
+      @sport_candidates = SportClassification.candidates(params[:sport_review]).includes(:event).order(id: :desc).page(params[:sport_page]).per(30)
+    end
     @admin_users = AdminUser.order(created_at: :desc).includes(:users).page(params[:page]).per(50)
     @review_circles = User.includes(:admin_user).where(moderation_status: "review").order(updated_at: :desc).limit(50)
     @review_blogs = Blog.where(moderation_status: "review").includes(:user).order(updated_at: :desc).limit(50)
