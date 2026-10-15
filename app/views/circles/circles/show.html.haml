@@ -86,6 +86,9 @@
             = render 'bookmarks/bookmark_area', user: @user
 
 
+      .circle-header-sentinel{ "aria-hidden" => "true" }
+      = render "mobile_summary", active_tab: :details, show_back: false
+
       .profile-content
         - if @user.user_time.present?
           .post-bottom.u_right

@@ -1,8 +1,9 @@
 - active_tab = local_assigns.fetch(:active_tab, :details)
 - owns_circle = admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
-.mobile-circle-summary__top
-  = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back", data: { circle_search_back: @user.id }
-  %span サークル詳細
+- if local_assigns.fetch(:show_back, true)
+  .mobile-circle-summary__top
+    = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back", data: { circle_search_back: @user.id }
+    %span サークル詳細
 .mobile-circle-summary
   .mobile-circle-summary__identity
     - if @user.pic_profile.present?

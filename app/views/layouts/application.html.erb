@@ -71,7 +71,7 @@
     </head>
 
     <% circle_tab = circle_navigation_tab %>
-    <body class="cb-site <%= "circle-context" if circle_tab %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>" data-public-circle-detail="<%= fast_public_detail? %>" data-circle-search-list="<%= public_search_listing? %>" data-page="<%= controller_path.tr('/', '-') %>" data-action="<%= action_name %>">
+    <body class="cb-site <%= "circle-context" if circle_tab %> <%= "circle-scroll-header" if circle_tab == :details %> <%= "chat-thread-page" if controller_path == "conversations" && action_name == "show" %>" data-public-circle-detail="<%= fast_public_detail? %>" data-circle-search-list="<%= public_search_listing? %>" data-page="<%= controller_path.tr('/', '-') %>" data-action="<%= action_name %>">
 
       <% unless webmaster? || %w[help_center support_requests place_information_reports backlink_requests member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
       <!-- Google Tag Manager (noscript) -->
@@ -81,7 +81,7 @@
       <% end %>
 
       <%= render "layouts/circle_desktop_toolbar" %>
-      <% unless circle_tab %>
+      <% if !circle_tab || circle_tab == :details %>
         <%= render "/layouts/mobile_heading" %>
       <% end %>
       <% if account_access_form_page? && !(webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?) %>
@@ -105,7 +105,12 @@
         </div>
       <% end %>
 
-      <% if circle_tab %>
+      <% if circle_tab == :details %>
+        <div class="mobile-circle-summary__top">
+          <%= link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back", data: { circle_search_back: @user.id } %>
+          <span>サークル詳細</span>
+        </div>
+      <% elsif circle_tab %>
         <%= render "circles/circles/mobile_summary", active_tab: circle_tab %>
       <% end %>
       <%= yield %>

@@ -11,6 +11,7 @@ class PublicListingStyles
     app/views/circles/events/**/*.haml app/views/circles/prefectures/**/*.haml
     app/views/circles/tags/**/*.haml app/views/tags/*.haml
     app/views/users/_users_list* app/helpers/* app/assets/javascripts/mobile_navigation.js
+    app/assets/javascripts/circle_scroll_header.js
     app/views/schedules/_event_date* app/views/schedules/_select_date*
   ].freeze
   # Kaminari generates these classes outside application templates.
