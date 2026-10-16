@@ -168,7 +168,55 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'facility rating declares zero to five and counts only public reviews' do
+    @gym.place_reviews.create!(price: 0, facility: 0, access: 0, reservation: 0,
+      average_score: 0, comment: '今回は使いづらかったです。')
+    @gym.place_reviews.create!(price: 5, facility: 5, access: 5, reservation: 5,
+      average_score: 5, comment: '非公開の口コミです。', moderation_status: 'blocked')
+    [0, 0.5, 5].each do |score|
+      @gym.update_columns(average_score: score)
+      get path_for(@gym)
+      assert_response :success
+      rating = facility_structured_data['aggregateRating']
+      assert_equal score, rating['ratingValue']
+      assert_equal 0, rating['worstRating']
+      assert_equal 5, rating['bestRating']
+      assert_equal 1, rating['reviewCount']
+    end
+  end
+
+  test 'facility ratings are absent without reviews or a valid aggregate score' do
+    @gym.update_columns(average_score: 4)
+    get path_for(@gym)
+    refute facility_structured_data.key?('aggregateRating')
+    @gym.place_reviews.create!(price: 5, facility: 5, access: 5, reservation: 5,
+      average_score: 5, comment: '使いやすい体育館でした。')
+    [nil, -1, 5.1].each do |score|
+      @gym.update_columns(average_score: score)
+      get path_for(@gym)
+      refute facility_structured_data.key?('aggregateRating')
+    end
+  end
+
+  test 'facility JSON round trips multiline prices names and addresses with special characters' do
+    text = "料金 \\_ \\( \"引用\"\n改行 <&> </script><script id=unexpected>文字</script>"
+    @gym.update_columns(name: text, price: text, address: text, tel: text)
+    get path_for(@gym)
+    assert_response :success
+    business = facility_structured_data
+    assert_equal text, business['name']
+    assert_equal text, business['priceRange']
+    assert_equal text, business['telephone']
+    assert_equal text, business['address']['streetAddress']
+    assert_select 'script#unexpected', count: 0
+  end
+
   private
+
+  def facility_structured_data
+    css_select('script[type="application/ld+json"]').map { |node| JSON.parse(node.text) }
+      .find { |data| data['@type'] == 'LocalBusiness' }.tap { |data| assert data }
+  end
 
   def facility(name, prefecture, city, event)
     Place.create!(name: name, prefecture: prefecture, city: city, events: [event], tag: '1', address: '駅前1-2-3',

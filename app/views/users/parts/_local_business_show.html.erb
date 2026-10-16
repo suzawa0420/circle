@@ -1,67 +1,52 @@
-<script type="application/ld+json">
-{
-  "@context": "http://schema.org/",
-  "@type": "LocalBusiness",
-  "@id": "<%= request.path %>",
-  "name": <%= raw json_escape(user.name.to_json) %>,
-  "description": "<%= user.prefecture.name %>で活動している<%= user.event.txt %>",
-  "image": [
-    "<%= user.pic_profile.url %>",
-    <% if user.gallery_01.url.present? %>"<%= user.gallery_01.url %>",<% end %>
-    <% if user.gallery_02.url.present? %>"<%= user.gallery_02.url %>",<% end %>
-    <% if user.gallery_03.url.present? %>"<%= user.gallery_03.url %>",<% end %>
-    <% if user.gallery_04.url.present? %>"<%= user.gallery_04.url %>",<% end %>
-    "<%= user.pic_header.url %>"
-  ],
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "JP",
-    "addressRegion": "<%= user.prefecture.name %>"
-  },
-  <% if user.reviews.present? %>
-    <% if user.review_score.to_f > 0 %>
-      "aggregateRating": {
-        "@type":"AggregateRating",
-        "ratingValue":<%= user.review_score.to_f %>,
-        "reviewCount":<%= user.reviews.count %>
-      },
-      "review":[
-        <% user.reviews.each.with_index(1) do |review, i| %>
-        <%= "," if i > 1 %>{
-          "@type": "Review",
-          "author": {
-            "@type": "Person",
-            "name": <% if review.member.present? %>"<%= review.member.nickname  %>"<% else %>"ゲストユーザー"<% end %>
-          },
-          "reviewBody": "<%= review.comment %>"
-        }
-        <% break if i == 5 %>
-        <% end %>
-      ],
-    <% end %>
-  <% end %>
-  "priceRange": "<%= user.cost %>"
-}
-</script>
-
-<% if user.questions.present? %>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    <% user.questions.each.with_index(1) do |question, i| %>
-      <%= "," if i > 1 %>{
-        "@type": "Question",
-        "name": "<%= question.content %>",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": <% if question.answer.present? %>"<%= question.answer %>"<% else %>"未回答の質問です。回答するまで、しばらくお待ちください。"<% end %>
-        }
+<%
+  reviews = user.reviews.to_a
+  business = {
+    '@context' => 'http://schema.org/',
+    '@type' => 'LocalBusiness',
+    '@id' => request.path,
+    'name' => user.name.to_s,
+    'description' => "#{user.prefecture.name}で活動している#{user.event.txt}",
+    'image' => [user.pic_profile.url.to_s] +
+      [user.gallery_01, user.gallery_02, user.gallery_03, user.gallery_04].filter_map { |gallery| gallery.url.presence } +
+      [user.pic_header.url.to_s],
+    'address' => {
+      '@type' => 'PostalAddress',
+      'addressCountry' => 'JP',
+      'addressRegion' => user.prefecture.name
+    },
+    'priceRange' => user.cost.to_s
+  }
+  rating = review_aggregate_rating(user.review_score, review_count: reviews.size)
+  if rating
+    business['aggregateRating'] = rating
+    business['review'] = reviews.first(5).map do |review|
+      {
+        '@type' => 'Review',
+        'author' => { '@type' => 'Person', 'name' => review.member.present? ? review.member.nickname.to_s : 'ゲストユーザー' },
+        'reviewBody' => review.comment.to_s
       }
-    <% break if i == 5 %>
-    <% end %>
-  ]
-}
-</script>
+    end
+  end
+%>
+<script type="application/ld+json"><%= raw json_escape(business.to_json) %></script>
+
+<% questions = user.questions.to_a %>
+<% if questions.any? %>
+  <%
+    faq = {
+      '@context' => 'https://schema.org',
+      '@type' => 'FAQPage',
+      'mainEntity' => questions.first(5).map do |question|
+        {
+          '@type' => 'Question',
+          'name' => question.content.to_s,
+          'acceptedAnswer' => {
+            '@type' => 'Answer',
+            'text' => question.answer.presence || '未回答の質問です。回答するまで、しばらくお待ちください。'
+          }
+        }
+      end
+    }
+  %>
+  <script type="application/ld+json"><%= raw json_escape(faq.to_json) %></script>
 <% end %>
