@@ -18,7 +18,16 @@ class CircleFilterLanding
 
   def self.from_search(params)
     return unless params[:detailed] == '1' && params[:q].blank?
-    return if %i[category_id city_id tag_id].any? { |key| params[key].present? }
+    return if %i[category_id tag_id].any? { |key| params[key].present? }
+    if params[:city_id].present?
+      city = City.find(params[:city_id].to_s)
+      prefecture = params[:prefecture_id].present? ? Prefecture.find(params[:prefecture_id]) : city.prefecture
+      raise ActiveRecord::RecordNotFound unless city.prefecture_id.to_s == prefecture.id.to_s
+      return if %i[group_ids age_ids].any? { |key| Array(params[key]).any?(&:present?) }
+      return if city.city_kana.blank? || city.city_kana == 'nil'
+      event = Event.find(params[:event_id]) if params[:event_id].present?
+      return CircleCityDirectory.path(city, event: event, prefecture: prefecture)
+    end
     groups = Array(params[:group_ids]).reject(&:blank?).uniq
     ages = Array(params[:age_ids]).reject(&:blank?).uniq
     return if groups.size > 1 || ages.size > 1

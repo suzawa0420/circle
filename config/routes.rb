@@ -64,6 +64,7 @@ Rails.application.routes.draw do
 
   # サークル Circle = User
   namespace :circles do
+    get 'search/cities', to: 'search#cities', as: :search_cities
     resources :search, only: [:index, :show], param: :q
     # ↑必ずresources :circlesの上部に記載
   end

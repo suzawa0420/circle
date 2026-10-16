@@ -45,6 +45,10 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
     add path, lastmod: nil, changefreq: 'daily', priority: 0.6
   end
 
+  CircleCityDirectory.each_populated_path do |path|
+    add path, lastmod: nil, changefreq: 'daily', priority: 0.7
+  end
+
   EventDaySitemap.each_path do |path|
     add path, lastmod: nil, changefreq: 'daily', priority: 0.7
   end

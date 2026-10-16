@@ -1,0 +1,20 @@
+<% if @prefecture && controller_path != 'circles/search' && !@tag %>
+  <% cities = CircleCityDirectory.populated_cities(@prefecture, event: @event).to_a %>
+  <% if cities.any? || @city %>
+    <section class="cb-city-directory" aria-label="市区町村からサークルを探す">
+      <h2><%= @prefecture.name %>の市区町村から探す</h2>
+      <nav class="cb-city-directory__links" aria-label="地域別のサークル募集">
+        <% if @city %>
+          <%= link_to "#{@prefecture.name}全域#{@event ? "の#{@event.name}" : 'のサークル'}", @event ? event_prefecture_path(@event.ruby, @prefecture.kana) : prefecture_path(@prefecture.kana) %>
+          <% if @event %>
+            <%= link_to "#{@city.name}のすべてのサークル", CircleCityDirectory.path(@city) %>
+          <% end %>
+        <% end %>
+        <% cities.each do |city| %>
+          <% next if city == @city %>
+          <%= link_to "#{city.name}の#{@event ? @event.name : 'サークル'}", CircleCityDirectory.path(city, event: @event, prefecture: @prefecture) %>
+        <% end %>
+      </nav>
+    </section>
+  <% end %>
+<% end %>

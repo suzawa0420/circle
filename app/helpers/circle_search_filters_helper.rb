@@ -29,7 +29,8 @@ module CircleSearchFiltersHelper
         items << { key: :q, label: "「#{word}」", url: circles_search_index_path(filters.merge(q: remaining)) }
       end
       { event_id: @event, prefecture_id: @prefecture, category_id: @category, city_id: @city, tag_id: @tag }.each do |key, record|
-        items << { key: key, label: record.name, url: circles_search_index_path(filters.except(key)) } if record && filters[key]
+        removed = key == :prefecture_id ? %i[prefecture_id city_id] : [key]
+        items << { key: key, label: record.name, url: circles_search_index_path(filters.except(*removed)) } if record && filters[key]
       end
       { group_ids: @search_groups, age_ids: @search_ages }.each do |key, records|
         Array(records).each do |record|

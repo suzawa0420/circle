@@ -1,10 +1,19 @@
 - filters = @landing_filters || params
-- detailed = Array(filters[:group_ids]).any?(&:present?) || Array(filters[:age_ids]).any?(&:present?)
+- detailed = @city.present? || filters[:city_id].present? || Array(filters[:group_ids]).any?(&:present?) || Array(filters[:age_ids]).any?(&:present?)
 %details.cb-detailed-search.cb-role-participant{ open: detailed }
   %summary
     = lucide_icon 'search'
     %span 詳しく絞り込む
     = lucide_icon 'chevron-down', class: 'cb-detailed-search__chevron'
+  %fieldset
+    %legend
+      %label{ for: 'circle-search-city' } 市区町村
+    - selected_prefecture = filters[:prefecture_id].presence || @prefecture&.id
+    - cities = selected_prefecture.present? ? City.where(prefecture_id: selected_prefecture).order(:id) : City.none
+    = select_tag :city_id, options_from_collection_for_select(cities, :id, :name, filters[:city_id].presence || @city&.id), include_blank: selected_prefecture.present? ? '指定なし（都道府県全域）' : '都道府県を選択してください', disabled: selected_prefecture.blank?, id: 'circle-search-city', class: 'cb-city-select', data: { cities_url: circles_search_cities_path, prefecture_id: selected_prefecture }
+    %p.cb-detailed-search__hint{ 'data-city-status' => '', role: 'status' } 市区町村は1つ選択できます。
+    %noscript
+      %p.cb-detailed-search__hint 都道府県を変更した場合は、一度検索してから市区町村を選択してください。
   %fieldset
     %legend 募集内容
     .cb-detailed-search__choices

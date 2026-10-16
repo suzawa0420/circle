@@ -1,6 +1,12 @@
 class Circles::SearchController < Circles::ApplicationController
   before_action :set_search, only: [:index, :show, :landing]
 
+  def cities
+    prefecture = Prefecture.find(params[:prefecture_id])
+    response.headers['X-Robots-Tag'] = 'noindex'
+    render json: prefecture.cities.order(:id).pluck(:id, :name).map { |id, name| { id: id, name: name } }
+  end
+
 
 	def index
     params[:q] = params[:q].to_s.gsub("　"," ")
@@ -97,11 +103,16 @@ private
     @event = Event.find(filters[:event_id]) if filters[:event_id].present?
     @prefecture = Prefecture.find(filters[:prefecture_id]) if filters[:prefecture_id].present?
     users = users.for_event(@event.id) if @event
-    users = users.where_pref(@prefecture.id) if @prefecture
+    users = users.where_pref(@prefecture.id) if @prefecture && filters[:city_id].blank?
     @category = Category.find(filters[:category_id]) if filters[:category_id].present?
     users = users.for_event(Event.where(category_id: @category.id)) if @category
-    @city = City.find(filters[:city_id]) if filters[:city_id].present?
-    users = users.where_city(@city) if @city
+    @city = City.find(filters[:city_id].to_s) if filters[:city_id].present?
+    if @city
+      raise ActiveRecord::RecordNotFound if @prefecture && @city.prefecture_id.to_s != @prefecture.id.to_s
+      @prefecture ||= @city.prefecture
+      users = users.where(id: CircleCityDirectory.users(@city).select(:id))
+      set_meta_tags noindex: true
+    end
     @tag = Tag.find(filters[:tag_id]) if filters[:tag_id].present?
     users = users.where(id: UserTag.where(tag_id: @tag.id).select(:user_id)) if @tag
 

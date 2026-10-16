@@ -4,7 +4,7 @@
     %h2.cb-circle-search-form__heading 条件からサークルを探す
     = hidden_field_tag :detailed, '1'
     = hidden_field_tag :sort, params[:sort] if params[:sort].present?
-    - { category_id: @category&.id, city_id: @city&.id, tag_id: @tag&.id }.each do |key, value|
+    - { category_id: @category&.id, tag_id: @tag&.id }.each do |key, value|
       = hidden_field_tag key, params[key].presence || value if params[key].present? || value
     .search_word
       .cb-search-keyword

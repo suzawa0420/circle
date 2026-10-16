@@ -10,7 +10,7 @@ class Circles::Prefectures::CitiesController < Circles::Prefectures::Application
 		@prefecture = Prefecture.find_by!(kana: params[:prefecture_kana])
     @city = @prefecture.cities.find_by!(city_kana: params[:kana])
 
-    users = User.where_city(@city).list.order("prefectures.sort asc")
+    users = CircleCityDirectory.users(@city).list.order("prefectures.sort asc")
 
     case params[:sort]
     when "1", nil

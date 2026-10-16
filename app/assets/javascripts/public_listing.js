@@ -6,6 +6,7 @@
 //= require home_screen_install
 //= require circle_inquiry_tracking
 //= require circle_search_navigation
+//= require circle_city_search
 //= require sport_discovery_tracking
 
 (function () {

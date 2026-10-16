@@ -112,6 +112,9 @@ class CircleFilterLandingsTest < ActionDispatch::IntegrationTest
   end
 
   test 'sitemap XML includes populated fixed pages and excludes empty ones' do
+    city = City.create!(name: '渋谷区', city_kana: 'sitemap-shibuya', prefecture: @circle.prefecture)
+    empty_city = City.create!(name: '新宿区', city_kana: 'sitemap-shinjuku', prefecture: @circle.prefecture)
+    UsersCity.create!(user: @circle, city: city)
     require 'sitemap_generator'
     require 'aws-sdk-s3'
     require 'minitest/mock'
@@ -136,6 +139,9 @@ class CircleFilterLandingsTest < ActionDispatch::IntegrationTest
       assert_nil Rails.cache.read('published-sitemap-v2/sitemap1')
       assert_equal 'preserved', Rails.cache.read('unrelated-cache-check')
       assert_includes urls, "https://circle-book.com#{@path}"
+      assert_includes urls, "https://circle-book.com#{CircleCityDirectory.path(city)}"
+      assert_includes urls, "https://circle-book.com#{CircleCityDirectory.path(city, event: @circle.event)}"
+      refute_includes urls, "https://circle-book.com#{CircleCityDirectory.path(empty_city)}"
       refute_includes urls, "https://circle-book.com#{empty_path}"
       refute urls.any? { |url| url.include?('?') }
     end

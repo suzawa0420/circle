@@ -1,4 +1,5 @@
 <% if params[:page].blank? || params[:page] == '1' %>
+  <%= render 'circles/commons/city_links' %>
   <section class="cb-discovery" aria-label="サークルの選び方と関連する募集">
     <h2><%= [@prefecture&.name, @event&.name].compact.join('の') %><%= @prefecture || @event ? 'で' : '' %>参加先を探す</h2>
     <p>活動場所・日程・参加費を比べて、通いやすい団体を探せます。募集状況と更新日を確認し、初心者・一人参加などの条件は各団体の詳細で確認してください。</p>
