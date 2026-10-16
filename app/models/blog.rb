@@ -29,6 +29,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Blog < ApplicationRecord
+  include PublicListingOrder
   include RemembersCircleActivity
   belongs_to :user
   before_validation :flag_suspicious_content
@@ -79,7 +80,7 @@ class Blog < ApplicationRecord
 
 	paginates_per 10
 
-  scope :blog_sort, -> { order(created_at: "DESC") }
+  scope :blog_sort, -> { order(created_at: "DESC").moderation_last }
   scope :list, -> (user_ids){publicly_visible.where(user_id: user_ids).includes(user: [:event, :prefecture]).blog_sort}
 
 

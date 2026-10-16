@@ -30,6 +30,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Schedule < ApplicationRecord
+  include PublicListingOrder
   include RemembersCircleActivity
   belongs_to :user
 	has_many :name_schedules, dependent: :destroy

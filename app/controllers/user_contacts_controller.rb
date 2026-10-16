@@ -9,7 +9,7 @@ class UserContactsController < ApplicationController
     @user_contact = @user.user_contacts.build
     @admin_users = AdminUser.where(check: nil)
     @admin_ids = @admin_users.select(:id)
-    @users = User.ng_account.prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中", admin_user_id: @admin_ids).where.not(id: @user.id).order(:last_post => :desc)
+    @users = User.ng_account.prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中", admin_user_id: @admin_ids).where.not(id: @user.id).order(:last_post => :desc).moderation_last
 
     # 荒らし対応
     @account_block = UserContact.where(ip_address: request.remote_ip, account_block: "block")
@@ -95,7 +95,7 @@ class UserContactsController < ApplicationController
 
 	def thanks
     @user_contact = UserContact.find_by(random_id: params[:random_id])
-    @users = User.ng_account.prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中").where.not(id: @user.id).order(:last_post => :desc)
+    @users = User.ng_account.prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中").where.not(id: @user.id).order(:last_post => :desc).moderation_last
 	end
 
 	def check_thanks

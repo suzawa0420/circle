@@ -18,7 +18,7 @@ before_action :set_matches
       end
       return redirect_to path
     end
-		@matches = matches_with_user_details.order(updated_at: :desc).page(params[:page])
+		@matches = matches_with_user_details.order(updated_at: :desc).moderation_last.page(params[:page])
 	end
 
 	def new
@@ -75,7 +75,7 @@ before_action :set_matches
 		@sub_prefecture = @user.prefecture_sub
 
 		user_ids = User.where(event_id: @event.id, prefecture_id: @prefecture.id).select(:id)
-		@matches = matches_with_user_details.where(user_id: user_ids).where.not(id: @match.id).order(updated_at: :desc).limit(6)
+		@matches = matches_with_user_details.where(user_id: user_ids).where.not(id: @match.id).order(updated_at: :desc).moderation_last.limit(6)
 
 
 
@@ -112,7 +112,7 @@ before_action :set_matches
 		@event = Event.find_by!(ruby: params[:ruby])
 		user_ids = User.for_event(@event.id).select(:id)
 
-		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
+		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).moderation_last.page(params[:page])
  
 		# パンくず
 		@b2_name = @event.name
@@ -122,7 +122,7 @@ before_action :set_matches
 	def prefecture
 		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		user_ids = User.where(prefecture_id: @prefecture.id).select(:id)
-		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
+		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).moderation_last.page(params[:page])
 
 		# パンくず
 		@b2_name = @prefecture.name
@@ -133,7 +133,7 @@ before_action :set_matches
 		@event = Event.find_by!(ruby: params[:ruby])
 		@prefecture = Prefecture.find_by!(kana: params[:kana])
 		user_ids = User.where(event_id: @event.id, prefecture_id: @prefecture.id).select(:id)
-		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).page(params[:page])
+		@matches = matches_with_user_details.where(user_id: user_ids).order(updated_at: :desc).moderation_last.page(params[:page])
 
 		# パンくず
 		@b2_name = @event.name

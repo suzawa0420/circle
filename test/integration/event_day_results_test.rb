@@ -19,6 +19,49 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'flagged organizers follow ordinary circles for every public sort before pagination' do
+    normal = @circle
+    flagged = [1, 2, 3].map do |check|
+      owner = AdminUser.create!(email: "flagged-#{check}@example.test", password: 'test-password-123', check: check)
+      circle = normal.dup
+      circle.assign_attributes(admin_user: owner, name: "注意対象サークル#{check}", cb_point: 100,
+                               last_post: '2099-12-31', created_at: 1.day.from_now)
+      circle.save!
+      circle.schedules.create!(title: "注意対象イベント#{check}", day: '2026-10-13', venue: '体育館',
+                               time_s: '01:00', created_at: 1.day.from_now)
+      circle
+    end
+    normal.update_columns(cb_point: 0, last_post: '2020-01-01', switch: '募集終了')
+    scopes = %i[sort_1 sort_2 sort_3 user_sort_1 user_sort_2 user_sort_3 user_order]
+    scopes.each do |sort|
+      relation = User.where(id: [normal.id, *flagged.map(&:id)]).pref.public_send(sort)
+      assert_equal normal.id, relation.limit(1).first.id, sort.to_s
+      assert_equal normal.id, relation.page(1).per(1).first.id, sort.to_s
+    end
+    [nil, '1', '2', '3'].each do |sort|
+      listing = EventDayListing.new(date: Date.current, sort: sort)
+      schedules = listing.schedules.to_a
+      assert_equal [normal.id], schedules.first(5).map(&:user_id).uniq
+      assert_equal flagged.first(2).map(&:id).sort, schedules.drop(5).map(&:user_id).sort
+      assert_not_includes schedules.map(&:user_id), flagged.last.id
+      upcoming = EventDayListing.new(date: Date.current, sort: sort, upcoming: true)
+      assert_equal normal.id, upcoming.schedules.page(1).per(1).first.user_id
+    end
+    get '/dates'
+    assert_response :success
+    assert_select '.event-results__card .event-results__text h3' do |titles|
+      assert_equal ['注意対象イベント1', '注意対象イベント2'].sort, titles.to_a.last(2).map(&:text).sort
+    end
+    [Blog, Match, Link].each do |model|
+      result = model.insert_all!([normal, flagged.first].map do |circle|
+        { user_id: circle.id, created_at: Time.current, updated_at: circle == normal ? 1.day.ago : Time.current }
+      end)
+      assert_equal normal.id, model.where(id: result.rows.flatten).order(updated_at: :desc).moderation_last.limit(1).first.user_id
+    end
+    flagged.first.admin_user.update!(check: nil)
+    assert_equal flagged.first.id, User.where(id: [normal.id, flagged.first.id]).sort_2.first.id
+  end
+
   test 'circle search has twelve consecutive date links without duplicate period or date forms' do
     travel_to Time.zone.local(2026, 12, 29, 12)
     get event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana)

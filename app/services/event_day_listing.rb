@@ -47,7 +47,7 @@ class EventDayListing
     @base.joins("LEFT JOIN (#{counts}) attendance ON attendance.schedule_id = schedules.id")
       .select(*columns, 'COALESCE(attendance.accepted_count, 0) AS accepted_count', "(#{ended}) AS event_ended")
       .preload(user: [{ event: :category }, :prefecture])
-      .order(Arel.sql([@upcoming ? 'schedules.day ASC' : nil, "CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC", order].compact.join(', ')))
+      .order(Arel.sql([@upcoming ? 'schedules.day ASC' : nil, "CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC", order].compact.join(', '))).moderation_last
   end
 
   def status(schedule)

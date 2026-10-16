@@ -71,6 +71,7 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  include PublicListingOrder
   include SportDiscovery
   has_one :backlink_request, dependent: :destroy
   def unanswered_report_count
@@ -238,17 +239,17 @@ class User < ApplicationRecord
   scope :where_city, -> (city) do
     where(id: city.users.select(:id)).or(where(prefecture_id: 50))
   end
-  scope :sort_1, -> {order(switch: :asc, last_post: :desc)}
-  scope :sort_2, -> { order(switch: :asc).order(Arel.sql('LEAST(100, GREATEST(0, FLOOR(ROUND(users.cb_point::numeric, 1)))) DESC')).order(last_post: :desc, id: :desc) }
-  scope :sort_3, -> {order(switch: :asc, created_at: :desc)}
+  scope :sort_1, -> {order(switch: :asc, last_post: :desc).moderation_last}
+  scope :sort_2, -> { order(switch: :asc).order(Arel.sql('LEAST(100, GREATEST(0, FLOOR(ROUND(users.cb_point::numeric, 1)))) DESC')).order(last_post: :desc, id: :desc).moderation_last }
+  scope :sort_3, -> {order(switch: :asc, created_at: :desc).moderation_last}
   scope :users_list, -> { publicly_visible }
 
 
 	# User用
 	scope :ng_account, -> { publicly_visible.includes([:event, :prefecture, :tags, :reviews]) }
-  scope :user_sort_1, -> {ng_account.order(switch: :asc, last_post: :desc).where.not(switch: "") }
+  scope :user_sort_1, -> {ng_account.sort_1.where.not(switch: "") }
   scope :user_sort_2, -> { ng_account.sort_2.where.not(switch: "") }
-  scope :user_sort_3, -> {ng_account.order(switch: :asc, created_at: :desc).where.not(switch: "") }
+  scope :user_sort_3, -> {ng_account.sort_3.where.not(switch: "") }
   scope :pref, -> { includes(:prefecture).order("prefectures.sort asc") }
   scope :user, -> (user_id){ where(id: user_id) }
   scope :event, -> (event_id){ for_event(event_id) }
@@ -283,7 +284,7 @@ class User < ApplicationRecord
 	end
 
 	# Tag用
-  scope :user_order, -> { includes(:prefecture).order("prefectures.sort asc", switch: :asc, last_post: :desc) }
+  scope :user_order, -> { includes(:prefecture).order("prefectures.sort asc", switch: :asc, last_post: :desc).moderation_last }
   scope :user_sort, -> { user_hide.user_order }
   scope :grouping, ->(group_name) do
     where("grouping LIKE ?", "%#{group_name}%")

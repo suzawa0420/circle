@@ -21,6 +21,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Match < ApplicationRecord
+  include PublicListingOrder
 	belongs_to :user
 	paginates_per 10
 end

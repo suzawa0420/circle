@@ -31,7 +31,7 @@ class Circles::CirclesController < Circles::ApplicationController
     @user_groups = @user.users_groups.includes([:group]).map{|g| g.group}
 		@user_ages = @user.users_ages.includes([:age]).map{|a| a.age}
 
-		@users = User.publicly_visible.where.not(id: @user.id).prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中").order(:last_post => :desc).limit(5)
+		@users = User.publicly_visible.where.not(id: @user.id).prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中").order(:last_post => :desc).moderation_last.limit(5)
   end
 
 

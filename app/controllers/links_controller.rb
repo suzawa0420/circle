@@ -8,12 +8,12 @@ class LinksController < ApplicationController
 
 
 	def index
-		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").limit(5)
+		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").moderation_last.limit(5)
 	end
 
 	def new
 		@user = User.find(params[:user_id])
-		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").limit(5)
+		@links = Link.where(user_id: User.publicly_visible.select(:id)).where.not(link03_title: "").order("RANDOM()").moderation_last.limit(5)
 
 		if webmaster? || admin_user_signed_in?
 			if can_manage_circle?(@user)
@@ -46,7 +46,7 @@ class LinksController < ApplicationController
 	def create
 		@link = Link.new(link_params)
 		@user = User.find(params[:user_id])
-    @links = Link.where.not(link03_title: "").order("RANDOM()").limit(5)
+    @links = Link.where.not(link03_title: "").order("RANDOM()").moderation_last.limit(5)
 		@link.user_id = @user.id
 		@link.link01_title = @user.name
 		@link.link01_url = "https://circle-book.com/users/#{@user.id}"

@@ -15,7 +15,7 @@
     <% if @schedules.empty? %>
       <div class="event-results__empty"><h2>この条件のイベントはまだありません</h2><p>エリアやジャンルを変えて探してみてください。</p><%= link_to '全国のイベントを見る', dates_path %></div>
     <% else %>
-      <% @schedules.to_a.group_by(&:day).each do |day, schedules| %>
+      <% @schedules.to_a.chunk(&:day).each do |day, schedules| %>
         <% date = Date.iso8601(day) %>
         <section class="event-results__date-group">
           <h2><%= lucide_icon 'calendar-days' %><%= "#{date.year}年" if date.year != @event_date.year %><%= calendar_schedule_date(date) %></h2>

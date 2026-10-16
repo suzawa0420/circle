@@ -28,6 +28,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Link < ApplicationRecord
+  include PublicListingOrder
 	belongs_to :user
 
   validates :unique_id,
