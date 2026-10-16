@@ -56,13 +56,14 @@ class WebmasterNavigationTest < ActionDispatch::IntegrationTest
     assert_select ".webmaster-subnav a[href='#{super_admin_opinions_path}'][aria-label='ご意見箱：未対応・確認待ち100件']"
   end
 
-  test 'sport classification candidates are reviewable in the protected management page' do
+  test 'management page no longer exposes sport classification review' do
     @circle.update!(name: 'ピックルボールの体験会')
     login_master
     get super_admin_circles_path, params: { sport_review: 'pickleball' }
     assert_response :success
-    assert_select 'h2', text: '種目の分類確認'
-    assert_select 'a[href=?]', edit_user_path(@circle), text: '内容を確認して編集'
+    assert_select 'h2', text: '種目の分類確認', count: 0
+    assert_select 'nav[aria-label="種目の分類候補"]', count: 0
+    assert_select '#pending-posts', count: 1
   end
 
   private

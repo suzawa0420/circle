@@ -51,14 +51,14 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     assert_empty EventSearchPage.populations(today: today, event: @sport)
   end
 
-  test 'owner can set and clear details and secondary sports' do
+  test 'owner can update details but cannot change existing secondary sports' do
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     patch user_path(@circle), params: { user: { secondary_event_ids: ['', @sport.id, @sport.id, @circle.event_id], equipment: '持参してください' } }
     assert_response :redirect
     assert_equal [@sport.id], @circle.reload.secondary_event_ids
     assert_equal '持参してください', @circle.equipment
     patch user_path(@circle), params: { user: { secondary_event_ids: [''] } }
-    assert_equal [], @circle.reload.secondary_event_ids
+    assert_equal [@sport.id], @circle.reload.secondary_event_ids
   end
 
   test 'invalid sports and overly long details are rejected' do

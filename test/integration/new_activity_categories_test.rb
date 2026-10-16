@@ -40,11 +40,12 @@ class NewActivityCategoriesTest < ActionDispatch::IntegrationTest
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     get edit_user_path(@circle)
     assert_response :success
-    assert_select 'select[name="user[secondary_event_ids][]"] option[value="63"]', text: '手芸・ハンドメイド'
+    assert_select 'select[name="user[secondary_event_ids][]"]', count: 0
+    assert_select 'select[name="user[event_id]"] option[value="64"]', text: 'カラオケ'
     patch user_path(@circle), params: { user: { secondary_event_ids: ['', 63] } }
     assert_response :redirect
-    assert_equal [63], @circle.reload.secondary_event_ids
-    assert_includes User.publicly_visible.for_event(63), @circle
+    assert_equal [], @circle.reload.secondary_event_ids
+    refute_includes User.publicly_visible.for_event(63), @circle
   end
 
   test 'migration refuses existing IDs instead of overwriting another activity' do
