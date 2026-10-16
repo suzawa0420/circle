@@ -81,12 +81,6 @@
     - events = Event.where(category_id: @user.category).order(:users_count => :desc)
     - event_options = events.map { |e| [e.name, e.id] }
     = f.select :event_id, event_options, { include_blank: true }, class: 'user-select-children'
-    %details
-      %summary 種目ごとの参加条件・集合場所を入力する
-      %p 不明な項目は空欄にしてください。入力した内容は公開されます。
-      - SportDiscovery::DETAIL_FIELDS.each do |key, label|
-        .label_item= f.label key, label
-        = f.text_field key, class: 'form-control', maxlength: 200
     .label_item
       %span.label.label_danger> 必須
       メインの活動エリア（例：東京都）
