@@ -11,9 +11,35 @@ module CircleListingTitlesHelper
 
   def circle_listing_heading
     count, _bracket, subject = circle_listing_title.partition('】')
+    area = [@prefecture&.name, @city&.name].compact.join
+    area = area.present? && subject.start_with?("#{area}の") ? "#{area}の" : nil
+    subject = subject.delete_prefix(area) if area
+
+    conditions = []
+    if controller_path == 'circles/search' && (@filtered_landing || params[:detailed] == '1')
+      audience = [Array(@search_groups).map(&:name).join('・').presence,
+                  Array(@search_ages).map(&:name).join('・').presence].compact.join('／')
+      conditions << "#{audience}向けの" if audience.present?
+    end
+    conditions << (@tag.text.presence || "#{@tag.name}の") if @tag
+    condition = conditions.join
+    if condition.present? && subject.start_with?(condition)
+      subject = subject.delete_prefix(condition)
+    else
+      condition = nil
+    end
+
+    # Keep established wording and the complete accessible text. Only the visual
+    # grouping changes; long filters are also listed in full below the form.
     safe_join([
-      content_tag(:span, count.delete_prefix('【'), class: 'circle-listing-heading__count'),
-      content_tag(:span, subject, class: 'circle-listing-heading__subject')
+      content_tag(:span, class: 'circle-listing-heading__intro') do
+        safe_join([
+          content_tag(:span, count.delete_prefix('【'), class: 'circle-listing-heading__count'),
+          (content_tag(:span, area, class: ['circle-listing-heading__area', ('circle-listing-heading__area--long' if area.length > 9)]) if area)
+        ].compact)
+      end,
+      (content_tag(:span, condition, class: 'circle-listing-heading__conditions', title: condition) if condition),
+      content_tag(:span, subject, class: ['circle-listing-heading__subject', ('circle-listing-heading__subject--long' if subject.length > 14)], title: subject)
     ])
   end
 
