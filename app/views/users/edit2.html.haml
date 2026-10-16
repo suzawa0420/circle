@@ -26,16 +26,7 @@
             .check_boxes
               = f.collection_check_boxes(:tag_ids, @tags, :id, :name)
           - if @user.prefecture_id != 50
-            .edit02_warp
-              %span.edit02_subtitle
-                活動エリア（#{@prefecture.name}）
-              .check_boxes
-                = f.collection_check_boxes(:city_ids, @cities, :id, :name)
-          - if @user.prefecture_sub_id.present?
-            - if @user.prefecture_sub_id != 50
-              .edit02_warp
-                %span.edit02_subtitle
-                  活動エリア（#{@sub_prefecture.name}）
-                .check_boxes
-                  = f.collection_check_boxes(:city_ids, @sub_cities, :id, :name)
+            = render "users/city_selection", f: f, prefecture: @prefecture, cities: @cities, selection_id: "main-cities"
+          - if @user.prefecture_sub_id.present? && @user.prefecture_sub_id != 50
+            = render "users/city_selection", f: f, prefecture: @sub_prefecture, cities: @sub_cities, selection_id: "sub-cities"
           = f.submit "更新する", data: { disable_with: '更新中...' }

@@ -46,12 +46,14 @@
       %ul.remove_img
         - if @user.pic_profile.present?
           %li
-            = f.check_box :remove_pic_profile
-            アイコン画像の削除
+            = f.label :remove_pic_profile do
+              = f.check_box :remove_pic_profile
+              アイコン画像の削除
         - if @user.pic_header.present?
           %li
-            = f.check_box :remove_pic_header
-            背景画像の削除
+            = f.label :remove_pic_header do
+              = f.check_box :remove_pic_header
+              背景画像の削除
     - if webmaster?
       .label_item
         %span.label.label_danger> 管理権限
@@ -154,20 +156,24 @@
         %ul.remove_img
           - if @user.gallery_01.present?
             %li
-              = f.check_box :remove_gallery_01
-              ①削除
+              = f.label :remove_gallery_01 do
+                = f.check_box :remove_gallery_01
+                ①削除
           - if @user.gallery_02.present?
             %li
-              = f.check_box :remove_gallery_02
-              ②削除
+              = f.label :remove_gallery_02 do
+                = f.check_box :remove_gallery_02
+                ②削除
           - if @user.gallery_03.present?
             %li
-              = f.check_box :remove_gallery_03
-              ③削除
+              = f.label :remove_gallery_03 do
+                = f.check_box :remove_gallery_03
+                ③削除
           - if @user.gallery_04.present?
             %li
-              = f.check_box :remove_gallery_04
-              ④削除
+              = f.label :remove_gallery_04 do
+                = f.check_box :remove_gallery_04
+                ④削除
     .label_item サークルの詳細情報
     .rich_text_sub
       .rich_text_notes ▼文字の装飾は最後に行ってください

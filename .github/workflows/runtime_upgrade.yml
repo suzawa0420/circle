@@ -86,6 +86,7 @@ jobs:
       - run: node test/security/chat_images_js_test.js
       - run: node test/security/home_screen_install_js_test.js
       - run: node test/security/webmaster_bulk_selection_js_test.js
+      - run: node test/security/circle_edit_selection_js_test.js
       - run: node test/security/sport_discovery_tracking_js_test.js
       - run: node test/security/circle_inquiry_tracking_js_test.js
       - run: node test/security/circle_search_navigation_js_test.js

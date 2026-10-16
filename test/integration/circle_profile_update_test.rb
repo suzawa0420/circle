@@ -83,6 +83,33 @@ class CircleProfileUpdateTest < ActionDispatch::IntegrationTest
     assert_equal template, @circle.reload.template
   end
 
+  test 'all edit steps link to each other with the current step marked' do
+    login_master
+    paths = [edit_user_path(@circle), "/users/#{@circle.id}/edit2", "/users/#{@circle.id}/edit3"]
+    paths.each do |path|
+      get path
+      assert_response :success
+      paths.each { |destination| assert_select ".step_bar a[href='#{destination}']", count: 1 }
+      assert_select ".step_bar a[aria-current='step'][href='#{path}']", count: 1
+    end
+  end
+
+  test 'main and sub prefectures have separate select all controls and retain saved cities' do
+    sub = Prefecture.create!(name: '神奈川県', kana: 'edit-kanagawa', order: '2', sort: 2)
+    main_city = City.create!(name: '千代田区', prefecture: @circle.prefecture)
+    sub_city = City.create!(name: '横浜市', prefecture: sub)
+    @circle.update!(prefecture_sub_id: sub.id, city_ids: [main_city.id])
+    login_master
+    get "/users/#{@circle.id}/edit2"
+    assert_response :success
+    assert_select '[data-city-selection]', count: 2
+    assert_select '#main-cities-all[data-city-select-all]'
+    assert_select '#sub-cities-all[data-city-select-all]'
+    assert_select "#main-cities input[value='#{main_city.id}'][checked]"
+    assert_select "#sub-cities input[value='#{sub_city.id}']:not([checked])"
+    assert_select 'input[name="user[city_ids][]"][type=checkbox]', count: 2
+  end
+
   private
 
   def login_master

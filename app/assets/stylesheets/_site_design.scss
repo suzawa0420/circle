@@ -187,6 +187,54 @@
   .check_boxes input[type=checkbox]:focus-visible + label {
     outline: 2px solid $cb-action; outline-offset: 2px;
   }
+  .users-edit {
+    .check_boxes label {
+      min-height: 48px; padding: 10px 12px 10px 48px;
+      border: 1px solid $cb-border; background: $cb-surface;
+      line-height: 1.5; font-size: 15px;
+      &:hover { border-color: $cb-action; background: $cb-mint-soft; }
+      &:after {
+        left: 12px; width: 24px; height: 24px; margin-top: -12px;
+        border: 2px solid $cb-muted; border-radius: 5px;
+      }
+      &:before {
+        z-index: 1; left: 20px; width: 8px; height: 13px; margin-top: -9px;
+        border-color: white;
+      }
+    }
+    .check_boxes input:checked + label {
+      border-color: $cb-action; background: $cb-mint-soft;
+      &:after { background: $cb-action; border-color: $cb-action; }
+    }
+    .check_boxes input:indeterminate + label {
+      &:after { background: $cb-action; border-color: $cb-action; }
+      &:before {
+        opacity: 1; transform: none; border: 0; background: white;
+        left: 18px; width: 12px; height: 3px; margin-top: -1.5px;
+      }
+    }
+    .city-selection-all { margin: 12px 0; }
+    .city-selection-all label { font-weight: 700; }
+    .remove_img label { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; }
+    .remove_img input[type=checkbox] { width: 24px; height: 24px; margin: 0; accent-color: $cb-action; }
+    .progressbar li.edit-step:before { content: none; }
+    .edit-step-link {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      min-height: 92px; padding: 4px; color: $cb-muted; border-radius: $cb-radius-control;
+      line-height: 1.5; text-decoration: none;
+      &:hover { background: $cb-mint-soft; color: $cb-action; }
+    }
+    .edit-step-number {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%;
+      background: $cb-canvas; border: 1px solid $cb-border; font-size: 16px;
+    }
+    .progressbar li.edit-step:after { top: 24px; }
+    .edit-step.active .edit-step-link, .edit-step.complete .edit-step-link { color: $cb-action; }
+    .edit-step.active .edit-step-number, .edit-step.complete .edit-step-number {
+      color: white; background: $cb-action; border-color: $cb-action;
+    }
+  }
   .attention_content, .check_boxes_advice_wrap { @include cb-card; @include cb-type(compact); background: $cb-warning-soft; color: $cb-warning-text; margin: cb-space(4) 0 cb-space(6); }
   .attention_title { color: inherit; }
   .users-form input[type=submit], .schedule_input input[type=submit], .qa_answer_form .submit_btn,

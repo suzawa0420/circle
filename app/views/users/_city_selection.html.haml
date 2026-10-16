@@ -1,0 +1,8 @@
+.edit02_warp{data: {city_selection: true}}
+  %span.edit02_subtitle
+    活動エリア（#{prefecture.name}）
+  .check_boxes.city-selection-all
+    = check_box_tag "", "1", false, id: "#{selection_id}-all", data: {city_select_all: true}, aria: {controls: selection_id}, disabled: cities.empty?
+    = label_tag "#{selection_id}-all", "全選択"
+  .check_boxes.city-selection-options{id: selection_id}
+    = f.collection_check_boxes(:city_ids, cities, :id, :name)
