@@ -48,8 +48,8 @@
           = link_to "削除", user_review_path(review.user_id, review), method: :delete, data: {confirm: "口コミを削除しますか？公開後の削除は再投稿できません。"}
     .speech_bubble
       = simple_format review.comment
-    - if review.conversation_review&.participated?
-      %small 参加した感想（自己申告）
+    - if review.conversation_review
+      %small= review.conversation_review.participated? ? "参加した感想（自己申告）" : "メッセージのやり取りの感想"
     - if review.conversation_review && admin_user_signed_in? && current_admin_user.id == review.user.admin_user_id
       %p= link_to "評価の確認・通報", conversation_path(review.conversation_review.conversation, anchor: 'evaluation')
 .reset

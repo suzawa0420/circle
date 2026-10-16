@@ -129,7 +129,7 @@ class Conversation < ApplicationRecord
       return message unless message.delivered?
       if !practice_match? && role == 'owner' && accepted_at.nil?
         self.accepted_at = Time.current
-        self.review_deadline = 14.days.from_now
+        self.review_deadline = 30.days.from_now
         had_no_reply_report = respond_check == "NG"
         self.respond_check = nil
       end
@@ -165,6 +165,39 @@ class Conversation < ApplicationRecord
       end
       update_columns("#{role}_read_message_id" => self["#{role}_read_message_id"],
                      "#{role}_notification_due_at" => self["#{role}_notification_due_at"])
+    end
+  end
+
+  # Each side controls its own reminders; peer submissions are never disclosed.
+  def review_writable?(role)
+    return false unless ROLES.include?(role)
+    return false if practice_match? || accepted_at.nil? || review_deadline.nil?
+    return false if reviews_published_at || review_deadline <= Time.current
+    return false if actor(role).suspended? || !actor(role).email_verified?
+    return false if role == 'member' && (legacy_member_review? || Review.exists?(user: user, member: member))
+
+    true
+  end
+
+  def review_prompt_due?(role)
+    return false unless review_writable?(role)
+    return false if self["#{role}_review_prompt_dismissed"]
+    return false if conversation_reviews.any? { |review| review.author_role == role }
+
+    (self["#{role}_review_prompt_after"] || accepted_at + 7.days) <= Time.current
+  end
+
+  def update_review_prompt!(role, choice)
+    raise NotAllowed, '案内の設定が不正です。' unless ROLES.include?(role) && %w[later dismiss].include?(choice)
+
+    with_lock do
+      raise NotAllowed, '口コミの案内対象外です。' unless review_prompt_due?(role)
+
+      if choice == 'later'
+        update!("#{role}_review_prompt_after" => 7.days.from_now)
+      else
+        update!("#{role}_review_prompt_dismissed" => true)
+      end
     end
   end
 

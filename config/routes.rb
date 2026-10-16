@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     post :message, on: :member
     post :block, on: :member
     delete :block, action: :unblock, on: :member
+    post :review_prompt, on: :member
     put :review, on: :member
     delete :review, action: :delete_review, on: :member
     post :report, on: :member

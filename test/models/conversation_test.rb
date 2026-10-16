@@ -6,12 +6,12 @@ class ConversationTest < ActiveSupport::TestCase
   include ChatRecords
   setup { create_chat_records }
 
-  test 'one conversation per circle and member; first owner reply starts an immutable fourteen day deadline' do
+  test 'one conversation per circle and member; first owner reply starts an immutable thirty day deadline' do
     assert_equal @conversation, Conversation.for_member!(@circle, @member)
     assert_nil @conversation.accepted_at
     assert_raises(Conversation::NotAllowed) { @conversation.submit_review!('member', member_evaluation) }
     accept_conversation
-    assert_in_delta 14.days, @conversation.review_deadline - @conversation.accepted_at, 1
+    assert_in_delta 30.days, @conversation.review_deadline - @conversation.accepted_at, 1
     deadline = @conversation.review_deadline
     travel 1.day do
       @conversation.send_message!('owner', 'その後いかがでしょうか？')
@@ -167,6 +167,54 @@ class ConversationTest < ActiveSupport::TestCase
     placeholder = Conversation.for_member!(@circle, @other_member)
     assert_raises(Conversation::NotAllowed) { placeholder.send_message!('owner', '問い合わせがないのに評価します。') }
     assert_nil placeholder.reload.accepted_at
+  end
+
+  test 'review prompts start seven days after reply and each side can postpone or dismiss independently' do
+    assert_not @conversation.review_prompt_due?('member')
+    accept_conversation
+    travel_to @conversation.accepted_at + 7.days + 1.second do
+      assert @conversation.review_prompt_due?('member')
+      assert @conversation.review_prompt_due?('owner')
+      @conversation.update_review_prompt!('member', 'later')
+      @conversation.update_review_prompt!('owner', 'dismiss')
+      assert_not @conversation.review_prompt_due?('member')
+      assert_not @conversation.review_prompt_due?('owner')
+      travel 7.days
+      assert @conversation.reload.review_prompt_due?('member')
+      assert_not @conversation.review_prompt_due?('owner')
+      # Opting out of reminders does not remove the ability to submit.
+      @conversation.submit_review!('owner', owner_evaluation)
+      assert @conversation.review_prompt_due?('member')
+      @conversation.submit_review!('member', member_evaluation)
+      assert_not @conversation.reload.review_prompt_due?('member')
+    end
+  end
+
+  test 'prompts stop after own submission deadline suspension or legacy review' do
+    accept_conversation
+    travel 8.days do
+      @conversation.submit_review!('member', member_evaluation)
+      assert_not @conversation.review_prompt_due?('member')
+      assert @conversation.review_prompt_due?('owner')
+      @owner.update!(email_verified_at: nil)
+      @conversation.reload
+      assert_not @conversation.review_prompt_due?('owner')
+      assert_raises(Conversation::NotAllowed) { @conversation.update_review_prompt!('owner', 'later') }
+    end
+    travel_to @conversation.review_deadline do
+      assert_not @conversation.review_prompt_due?('owner')
+    end
+  end
+
+  test 'legacy reviewers are not prompted and invalid reminder choices cannot update preferences' do
+    accept_conversation
+    travel 8.days do
+      @conversation.update!(legacy_member_review: true)
+      assert_not @conversation.review_prompt_due?('member')
+      assert @conversation.review_prompt_due?('owner')
+      assert_raises(Conversation::NotAllowed) { @conversation.update_review_prompt!('owner', 'invalid') }
+      assert_nil @conversation.reload.owner_review_prompt_after
+    end
   end
 
 end

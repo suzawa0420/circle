@@ -591,4 +591,52 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test 'due review prompts appear in inbox and thread and can be postponed or dismissed' do
+    accept_conversation
+    sign_in @member
+    get conversation_path(@conversation)
+    assert_select '.chat-review-prompt', count: 0
+    travel 7.days + 1.second do
+      get conversations_path
+      assert_select '.chat-review-prompt-badge', text: '感想を募集中'
+      assert_select "a[href=?]", conversation_path(@conversation, anchor: 'evaluation')
+      get conversation_path(@conversation)
+      assert_select '.chat-review-prompt', count: 1
+      assert_select '.chat-review-prompt [data-open-evaluation]', text: '感想を書く'
+      assert_select '#chat-messages[data-chat-jump-target=""]'
+      assert_select 'input[type=radio][checked]', count: 0
+      post review_prompt_conversation_path(@conversation), params: { choice: 'later' }
+      assert_redirected_to conversation_path(@conversation)
+      get conversations_path
+      assert_select '.chat-review-prompt-badge', count: 0
+      travel 7.days
+      get conversation_path(@conversation)
+      assert_select '.chat-review-prompt', count: 1
+      post review_prompt_conversation_path(@conversation), params: { choice: 'dismiss' }
+      get conversation_path(@conversation)
+      assert_select '.chat-review-prompt', count: 0
+      assert_select '#evaluation form', count: 1
+      put review_conversation_path(@conversation), params: { evaluation: member_evaluation }
+      assert_equal 1, @conversation.conversation_reviews.count
+    end
+  end
+
+  test 'another account cannot change reminder preferences and owner preference is independent' do
+    accept_conversation
+    travel 8.days do
+      sign_in @other_member
+      assert_raises(ActiveRecord::RecordNotFound) do
+        post review_prompt_conversation_path(@conversation), params: { choice: 'dismiss' }
+      end
+      assert_not @conversation.reload.member_review_prompt_dismissed
+      sign_out @other_member
+      sign_in @owner
+      get conversation_path(@conversation)
+      assert_select '.chat-review-prompt h2', text: /参加者さくらさん/
+      post review_prompt_conversation_path(@conversation), params: { choice: 'dismiss' }
+      assert @conversation.reload.owner_review_prompt_dismissed
+      assert @conversation.review_prompt_due?('member')
+    end
+  end
+
 end

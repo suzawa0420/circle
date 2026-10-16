@@ -23,7 +23,7 @@ class ConversationsController < ApplicationController
     # Automatic guidance alone must not expose an inquiry held before delivery.
     latest = visible.where(conversation_id: inbox_scope.select(:id)).where.not(sender_role: 'system').select('conversation_id, MAX(COALESCE(released_at, created_at)) AS delivered_at, MAX(id) AS latest_id').group(:conversation_id)
     @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
-      .includes(:user, :member, :source_user).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
+      .includes(:conversation_reviews, :member, :source_user, user: :admin_user).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
     ids = @conversations.map(&:id)
     @penalty_ids = Conversation.reported_unanswered.where(id: ids).pluck(:id)
     @latest_messages = visible.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id).delivery_order.index_by(&:conversation_id)
@@ -64,6 +64,7 @@ class ConversationsController < ApplicationController
 
   def show
     @conversation.publish_reviews!
+    @review_prompt_due = @conversation.review_prompt_due?(@role)
     @initial_jump = ConversationJump.new(@conversation, role: @role).call if params[:page].blank?
     @messages = @conversation.chat_messages.visible_to(@role).delivery_order.page(params[:page].presence || @initial_jump&.fetch(:page)).per(ConversationJump::PAGE_SIZE).load
     mark_messages_read(advance_cursor: params[:page].blank? || params[:page] == '1')
@@ -111,6 +112,12 @@ class ConversationsController < ApplicationController
     attributes = params.require(:evaluation).permit(:score, :comment, :participated)
     @conversation.submit_review!(@role, attributes)
     redirect_to conversation_path(@conversation), notice: '口コミを保存しました。双方の投稿完了または期限終了で公開します。'
+  end
+
+  def review_prompt
+    @conversation.update_review_prompt!(@role, params[:choice])
+    notice = params[:choice] == 'later' ? '7日後にもう一度ご案内します。投稿期限を過ぎた場合は表示しません。' : 'このやり取りの口コミ案内を停止しました。投稿期限内はいつでも感想を書けます。'
+    redirect_to conversation_path(@conversation), notice: notice
   end
 
   def delete_review

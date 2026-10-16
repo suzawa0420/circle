@@ -194,3 +194,11 @@
 
 .chat-history [id^="chat-message-"] { scroll-margin-top: 80px; scroll-margin-bottom: calc(var(--chat-composer-height, 85px) + 20px); }
 .wm-conversation [id^="chat-message-"] { scroll-margin-top: 80px; scroll-margin-bottom: 100px; }
+
+.chat-review-prompt { background: $cb-mint-soft; border-color: $cb-action; }
+.chat-review-prompt h2 { font-size: 16px; line-height: 1.6; margin: 0 0 8px; }
+.chat-review-prompt p { font-size: 13px; line-height: 1.7; }
+.chat-review-prompt__actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.chat-review-prompt__actions form { margin: 0; }
+.chat-review-prompt__actions button { min-height: 44px; background: #fff; border: 1px solid $cb-border; border-radius: 8px; padding: 8px 12px; }
+.chat-review-prompt-badge { display: inline-block; margin-top: 6px; padding: 3px 8px; background: $cb-mint-soft; color: $cb-action; border: 1px solid $cb-border; border-radius: 6px; font-size: 12px; font-weight: 700; }

@@ -17,6 +17,6 @@
       <time datetime="<%= posted_at.to_date.iso8601 %>"><%= posted_at.strftime('%Y年%-m月%-d日') %></time>
     </div>
     <div class="chat-review-preview__comment"><%= simple_format review.comment %></div>
-    <% if participant && review.participated? %><p class="chat-review-help">参加した感想（自己申告）</p><% end %>
+    <% if participant %><p class="chat-review-help"><%= review.participated? ? '参加した感想（自己申告）' : 'メッセージのやり取りの感想' %></p><% end %>
   </div>
 </article>

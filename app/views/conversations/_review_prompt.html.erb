@@ -1,0 +1,10 @@
+<aside class="chat-card chat-review-prompt" aria-labelledby="review-prompt-heading">
+  <h2 id="review-prompt-heading"><%= @conversation.participant_name(@role == 'member' ? 'owner' : 'member') %><%= 'さん' if @role == 'owner' %>とのやり取りはいかがでしたか？</h2>
+  <p><%= @role == 'member' ? '参加前でも、連絡のやり取りについて感想を書けます。参加した方は、サークルの雰囲気も教えてください。' : '連絡のやり取りや、参加時の様子について感想を教えてください。' %></p>
+  <p>相手が投稿しなくても、あなたの口コミだけで公開されます。</p>
+  <div class="chat-review-prompt__actions">
+    <%= link_to '感想を書く', '#evaluation', class: 'chat-button', data: { open_evaluation: true } %>
+    <%= button_to 'まだやり取り中', review_prompt_conversation_path(@conversation), params: { choice: 'later' } %>
+    <%= button_to '今回は書かない', review_prompt_conversation_path(@conversation), params: { choice: 'dismiss' } %>
+  </div>
+</aside>

@@ -18,9 +18,10 @@
   </div>
   </details>
   <% end %>
+  <%= render "review_prompt" if @review_prompt_due %>
   <section aria-label="メッセージ履歴" class="chat-history">
     <%= paginate @messages %>
-    <div id="chat-messages" class="chat-history" data-chat-jump-target="<%= "chat-message-#{@initial_jump[:message_id]}" if @initial_jump %>" data-chat-jump-alignment="<%= @initial_jump&.fetch(:alignment) %>" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if @messages.current_page == 1 %>" data-accepted="<%= @conversation.accepted_at.present? %>">
+    <div id="chat-messages" class="chat-history" data-chat-jump-target="<%= "chat-message-#{@initial_jump[:message_id]}" if @initial_jump && !@review_prompt_due %>" data-chat-jump-alignment="<%= @initial_jump&.fetch(:alignment) %>" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if @messages.current_page == 1 %>" data-accepted="<%= @conversation.accepted_at.present? %>">
       <%= render "messages" %>
     </div>
   </section>
@@ -73,7 +74,7 @@
     <summary>口コミを投稿する</summary>
     <p>やり取りの感想を教えてください。参加した方は、サークルの雰囲気についても書けます。</p>
     <% if @conversation.review_deadline %><p class="cb-system-notice"><strong class="cb-system-notice__label">口コミの投稿期限</strong>投稿期限：<%= l(@conversation.review_deadline, format: '%Y年%-m月%-d日（%a）%H時%M分') %></p><% end %>
-    <p class="chat-review-help">双方の投稿が揃うか、投稿期限が過ぎると公開されます。ニックネーム・サークル名も表示されます。</p>
+    <p class="chat-review-help">相手が投稿しなくても、投稿期限が過ぎるとあなたの口コミは公開されます。双方が投稿した場合は、その時点で公開されます。公開までは相手の内容は見えません。ニックネーム・サークル名も表示されます。</p>
     <p class="chat-review-help">連絡先などの個人情報は書かないでください。高評価や削除の強要、報復は禁止です。</p>
     <p id="chat-acceptance-notice" class="cb-system-notice" hidden><strong class="cb-system-notice__label">システム通知</strong>主催者から返信が届きました。<%= link_to "ページを更新して口コミを書く", conversation_path(@conversation, refresh: 1, anchor: "evaluation") %></p>
     <% if @conversation.actor(@role).suspended? %>
@@ -84,6 +85,9 @@
       <p>投稿期間は終了しました。公開後は編集できません。削除後の再投稿もできません。</p>
     <% elsif @role == 'member' && @conversation.legacy_member_review %>
       <p>このサークルへの口コミは投稿済みです。評価は1人につき同じサークルに1件です。</p>
+    <% elsif !@conversation.review_writable?(@role) %>
+      <p>口コミの投稿にはメールアドレスの確認が必要です。</p>
+      <%= link_to 'メールアドレスを確認する', @role == 'owner' ? admin_user_email_verification_path : member_email_verification_path %>
     <% else %>
       <%= form_with url: review_conversation_path(@conversation), method: :put, scope: :evaluation, local: true do |f| %>
         <fieldset class="chat-rating"><legend>やり取りはいかがでしたか？</legend>
@@ -92,7 +96,7 @@
               <%= f.label "score_#{score}", class: "chat-rating-option chat-rating-option--#{expression}" do %>
                 <%= lucide_icon expression == "smile" ? "smile" : "frown" %>
                 <span><%= label %></span>
-                <%= f.radio_button :score, score, checked: (@own_review ? @own_review.score == score : score == 1), required: true %>
+                <%= f.radio_button :score, score, checked: (@own_review&.score == score), required: true %>
               <% end %>
             <% end %>
           </div>

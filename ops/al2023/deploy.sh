@@ -86,6 +86,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261015030000
     # Hold existing profiles containing the specifically prohibited Chinese phrase.
     bundle exec rails db:migrate:up VERSION=20261016000000
+    # Review prompts: per-side preferences and extension of open review windows.
+    bundle exec rails db:migrate:up VERSION=20261016010000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

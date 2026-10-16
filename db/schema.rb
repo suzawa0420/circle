@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_16_000000) do
+ActiveRecord::Schema.define(version: 2026_10_16_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -218,6 +218,10 @@ ActiveRecord::Schema.define(version: 2026_10_16_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "source_user_id"
+    t.datetime "member_review_prompt_after"
+    t.boolean "member_review_prompt_dismissed", default: false, null: false
+    t.datetime "owner_review_prompt_after"
+    t.boolean "owner_review_prompt_dismissed", default: false, null: false
     t.index "LEAST(user_id, source_user_id), GREATEST(user_id, source_user_id)", name: "index_conversations_circle_pair", unique: true, where: "(source_user_id IS NOT NULL)"
     t.index ["member_id"], name: "index_conversations_on_member_id"
     t.index ["member_notification_due_at"], name: "index_conversations_on_member_notification_due_at"

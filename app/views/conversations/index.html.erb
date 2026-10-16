@@ -28,7 +28,7 @@
       <% incoming = role == 'member' ? 'owner' : 'member' %>
       <% latest = @latest_messages[conversation.id] %>
       <% unread = @unread_counts[role].fetch(conversation.id, 0) %>
-      <%= link_to conversation_path(conversation), class: "chat-talk #{'chat-talk--unread' if unread.positive?}" do %>
+      <%= link_to conversation_path(conversation, anchor: ('evaluation' if conversation.review_prompt_due?(role))), class: "chat-talk #{'chat-talk--unread' if unread.positive?}" do %>
         <%= render 'avatar', conversation: conversation, role: incoming %>
         <span class="chat-talk__content">
           <strong class="chat-talk__name"><%= conversation.participant_name(incoming) %><%= "さん" if incoming == "member" && !conversation.practice_match? %></strong>
@@ -36,6 +36,7 @@
           <% if role == 'owner' && @penalty_ids.include?(conversation.id) %>
             <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
           <% end %>
+          <% if conversation.review_prompt_due?(role) %><span class="chat-review-prompt-badge">感想を募集中</span><% end %>
           <span class="chat-talk__preview"><%= 'あなた：' if latest&.sender_role == role %><%= latest&.preview_text %></span>
           <span class="chat-talk__status"><%= conversation.practice_match? ? '対戦・練習試合' : (conversation.accepted_at ? '受付済み' : '返信待ち') %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
           <% if role == 'owner' && !conversation.practice_match? %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>
