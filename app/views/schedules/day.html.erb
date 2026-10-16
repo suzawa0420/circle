@@ -2,7 +2,7 @@
   <div class="event-results__container">
     <header class="event-results__header">
       <p class="event-results__eyebrow">日付から、参加したい活動を見つけよう</p>
-      <h1><%= @event_day_title %></h1>
+      <h1 class="event-results__heading"><%= event_listing_heading(@event_day_title) %></h1>
       <% if @relative_day %><p><%= @day %></p><% end %>
       <p>時間・場所・募集状況を見比べて、気になるイベントへ。</p>
     </header>

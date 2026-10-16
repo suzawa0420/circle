@@ -15,6 +15,13 @@
   & &__circle-link svg { margin-top: 0; }
   &__header { height: auto; }
   &__header h1 { font-size: 25px; line-height: 1.5; margin: 8px 0; font-weight: 700; }
+  &__heading { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  &__heading-period { font-size: 20px; line-height: 1.5; }
+  &__heading-context, &__heading-subject { display: block; max-width: 100%; font-size: clamp(18px, 5vw, 22px); line-height: 1.5; }
+  &__heading-context { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  &__heading-subject { white-space: nowrap; }
+  &__heading-page { margin-left: 4px; font-size: 12px; font-weight: 400; }
+  &__heading-separator { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   &__header p { font-size: 13px; color: #60746d; margin: 6px 0; }
   &__eyebrow { color: #187f60 !important; font-weight: 700; }
   &__shortcuts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 14px; }

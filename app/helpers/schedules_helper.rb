@@ -1,6 +1,22 @@
 module SchedulesHelper
   SCHEDULE_WEEKDAYS = %w[日 月 火 水 木 金 土].freeze
 
+  def event_listing_heading(title)
+    period = @relative_day.presence || (@event_date.present? ? @day : nil)
+    context = "#{@prefecture&.name || '全国'}の#{@event&.name}"
+    subject = "#{EventSearchPage.subject(@event).delete_prefix(@event&.name.to_s)}一覧"
+    page = title.delete_prefix("#{period.present? ? "#{period}・" : ''}#{context}#{subject}")
+
+    safe_join([
+      (content_tag(:span, period, class: 'event-results__heading-period') if period.present?),
+      (content_tag(:span, '・', class: 'event-results__heading-separator') if period.present?),
+      content_tag(:span, context, class: 'event-results__heading-context', title: context),
+      content_tag(:span, class: 'event-results__heading-subject') do
+        safe_join([subject, (content_tag(:small, page, class: 'event-results__heading-page') if page.present?)])
+      end
+    ])
+  end
+
   def event_listing_path(filters = {}, period: nil, date: nil, **keywords)
     filters = filters.merge(keywords)
     EventSearchPage.path(event: filters[:event], prefecture: filters[:pref], period: period, date: date)

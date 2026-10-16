@@ -2,7 +2,7 @@
   <div class="event-results__container">
     <header class="event-results__header">
       <p class="event-results__eyebrow">日付から、参加したい活動を見つけよう</p>
-      <h1><%= @event_hub_title %></h1>
+      <h1 class="event-results__heading"><%= event_listing_heading(@event_hub_title) %></h1>
       <p>開催日・会場・参加費を比較して、都合に合うイベントや体験参加の機会を探せます。</p>
     </header>
     <%= render 'schedules/event_date_navigation', date: @event_date, filter_query: @filter_query %>

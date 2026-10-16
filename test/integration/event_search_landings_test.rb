@@ -18,6 +18,20 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'date area genre and listing label form separate heading lines with full SEO text' do
+    get "#{@base}/2026/10/14"
+    assert_response :success
+    assert_select 'h1 .event-results__heading-period', text: '2026年10月14日（水）'
+    assert_select 'h1 .event-results__heading-context', text: '神奈川県のバスケ'
+    assert_select 'h1 .event-results__heading-subject', text: 'イベント・練習会一覧'
+    assert_select 'h1', text: '2026年10月14日（水）・神奈川県のバスケイベント・練習会一覧'
+    get "#{@base}/today"
+    assert_select 'h1 .event-results__heading-period', text: '今日'
+    get @base
+    assert_select 'h1 .event-results__heading-period', count: 0
+    assert_select 'h1 .event-results__heading-context', text: '神奈川県のバスケ'
+  end
+
   test 'genres regions and their combinations return unique upcoming landing pages' do
     {
       '/dates/basketball' => '全国のバスケイベント・練習会一覧',
