@@ -4,9 +4,10 @@ const fs = require('fs');
 const vm = require('vm');
 const source = fs.readFileSync(__dirname + '/../../app/assets/javascripts/conversations.js', 'utf8');
 
-async function checkPolling({ hidden = false, focused = false, latestId = 10, receiptText = '既読', historyVersion = 'initial' } = {}) {
+async function checkPolling({ hidden = false, focused = false, latestId = 10, receiptText = '既読', historyVersion = 'initial', noticeHtml, noticeFocused = false, noticeInitial = '' } = {}) {
   const events = {};
   let scheduled, requests = 0, replacements = 0;
+  const reviewPrompt = { innerHTML: noticeInitial, contains: () => noticeFocused };
   const receipt = { dataset: { messageId: '10' }, textContent: '未読' };
   const container = {
     dataset: { pollUrl: '/conversations/example/messages', latestId: '10', historyVersion: 'initial', accepted: 'true' },
@@ -19,18 +20,18 @@ async function checkPolling({ hidden = false, focused = false, latestId = 10, re
     hidden, activeElement: {},
     body: { contains: () => true },
     querySelector: () => null,
-    getElementById: id => id === 'chat-messages' ? container : null,
+    getElementById: id => id === 'chat-messages' ? container : (id === 'chat-review-prompt' ? reviewPrompt : null),
     addEventListener: (name, callback) => { events[name] = callback; }
   };
   const window = { clearTimeout() {}, setTimeout(fn) { scheduled = fn; }, location: { hash: '' } };
   vm.runInNewContext(source, { window, document, fetch: async () => {
     requests++;
-    return { ok: true, redirected: false, json: async () => ({ latest_id: latestId, recipient_read_id: 10, receipts: { 10: receiptText }, history_version: historyVersion, html: 'new messages', accepted: true }) };
+    return { ok: true, redirected: false, json: async () => ({ latest_id: latestId, recipient_read_id: 10, receipts: { 10: receiptText }, history_version: historyVersion, html: 'new messages', accepted: true, review_prompt_html: noticeHtml }) };
   } });
   events.DOMContentLoaded();
   scheduled();
   await new Promise(resolve => setImmediate(resolve));
-  return { receipt, requests, replacements };
+  return { receipt, requests, replacements, reviewPrompt };
 }
 function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = false, alignment = 'start' } = {}) {
   const events = {}, windowEvents = {}, frames = new Map();
@@ -58,6 +59,12 @@ function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = 
   return calls;
 }
 (async () => {
+  const peerNotice = await checkPolling({ noticeHtml: '<aside>口コミが届いています</aside>' });
+  assert.equal(peerNotice.reviewPrompt.innerHTML, '<aside>口コミが届いています</aside>', 'peer notice appears without a new chat message');
+  const published = await checkPolling({ noticeHtml: '', noticeInitial: 'old invitation' });
+  assert.equal(published.reviewPrompt.innerHTML, '', 'invitation disappears once reviews are public');
+  const focusedNotice = await checkPolling({ noticeHtml: 'new invitation', noticeInitial: 'current invitation', noticeFocused: true });
+  assert.equal(focusedNotice.reviewPrompt.innerHTML, 'current invitation', 'focused invitation controls are preserved');
   const sameMessage = await checkPolling();
   assert.equal(sameMessage.receipt.textContent, '既読', 'receipt updates without a new message');
   assert.equal(sameMessage.replacements, 0, 'existing content is preserved');
@@ -76,5 +83,5 @@ function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = 
   assert.equal(checkInitialJump({ readyState: 'loading', event: 'DOMContentLoaded', alignment: 'end' })[0].block, 'end', 'all-read conversations align the latest message');
   assert.equal(checkInitialJump({ hash: '#evaluation' }).length, 0, 'explicit anchor links take priority');
   assert.equal(checkInitialJump({ cancel: true }).length, 0, 'user scrolling cancels pending automatic movement');
-  console.log('Conversation receipt polling and initial jump: 13 assertions passed');
+  console.log('Conversation receipt polling and initial jump: 16 assertions passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -88,6 +88,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261016000000
     # Review prompts: per-side preferences and extension of open review windows.
     bundle exec rails db:migrate:up VERSION=20261016010000
+    # One-time invitation after the peer submits a blind review.
+    bundle exec rails db:migrate:up VERSION=20261016020000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

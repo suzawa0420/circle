@@ -80,7 +80,8 @@ class ConversationsController < ApplicationController
                    history_version: history_version,
                    receipts: @messages.reject(&:automatic?).select { |m| m.sender_role == @role }.to_h { |m| [m.id, m.receipt_text(@conversation)] },
                    recipient_read_id: @conversation.recipient_read_message_id(@role),
-                   accepted: @conversation.accepted_at.present? }
+                   accepted: @conversation.accepted_at.present?,
+                   review_prompt_html: @conversation.review_prompt_due?(@role) ? render_to_string(partial: "review_prompt", formats: [:html]) : "" }
   end
 
   def message

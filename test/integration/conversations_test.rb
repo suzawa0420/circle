@@ -639,4 +639,29 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'peer submission notifies the missing author in thread inbox and live polling without disclosing content' do
+    accept_conversation
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_select '.chat-review-prompt', count: 0
+    @conversation.submit_review!('member', member_evaluation)
+    get conversations_path
+    assert_select '.chat-review-prompt-badge', text: '口コミが届いています・あなたも投稿できます'
+    get conversation_path(@conversation)
+    assert_select '#chat-review-prompt .cb-system-notice__label', text: 'システム通知'
+    assert_select '#review-prompt-heading', text: '相手から口コミが届いています'
+    assert_not_includes response.body, member_evaluation[:comment]
+    get messages_conversation_path(@conversation), as: :json
+    notice = response.parsed_body.fetch('review_prompt_html')
+    assert_includes notice, 'あなたも口コミを投稿すると'
+    assert_not_includes notice, member_evaluation[:comment]
+    assert_not_includes notice, '残念だった'
+    put review_conversation_path(@conversation), params: { evaluation: owner_evaluation }
+    get messages_conversation_path(@conversation), as: :json
+    assert_equal '', response.parsed_body.fetch('review_prompt_html')
+    get conversation_path(@conversation)
+    assert_select '.chat-review-prompt', count: 0
+    assert_includes response.body, member_evaluation[:comment]
+  end
+
 end

@@ -168,7 +168,7 @@ class Conversation < ApplicationRecord
     end
   end
 
-  # Each side controls its own reminders; peer submissions are never disclosed.
+  # Each side controls its own reminders; peer scores and comments stay private.
   def review_writable?(role)
     return false unless ROLES.include?(role)
     return false if practice_match? || accepted_at.nil? || review_deadline.nil?
@@ -185,6 +185,22 @@ class Conversation < ApplicationRecord
     return false if conversation_reviews.any? { |review| review.author_role == role }
 
     (self["#{role}_review_prompt_after"] || accepted_at + 7.days) <= Time.current
+  end
+
+  def peer_review_waiting?(role)
+    return false unless review_writable?(role)
+    reviews = conversation_reviews.to_a
+    reviews.none? { |review| review.author_role == role } &&
+      reviews.any? { |review| review.author_role != role && !review.deleted_at && !review.published_at }
+  end
+
+  def invite_peer_reviewer!(author_role)
+    recipient = author_role == 'member' ? 'owner' : 'member'
+    return if self["#{recipient}_review_invited_at"] || !peer_review_waiting?(recipient)
+
+    update!("#{recipient}_review_invited_at" => Time.current,
+            "#{recipient}_review_notification_due_at" => 5.minutes.from_now,
+            "#{recipient}_review_prompt_after" => Time.current)
   end
 
   def update_review_prompt!(role, choice)
@@ -212,10 +228,13 @@ class Conversation < ApplicationRecord
       end
       review = conversation_reviews.find_or_initialize_by(author_role: role)
       raise NotAllowed, '公開後の評価は編集・再投稿できません。' if review.published_at || review.deleted_at
+      new_submission = review.new_record?
       review.assign_attributes(attributes)
       review.participated = false if role == 'owner'
       review.save!
+      conversation_reviews.reset
       publish_reviews_locked!
+      invite_peer_reviewer!(role) if new_submission
       review
     end
   end

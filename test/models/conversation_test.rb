@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'minitest/mock'
 require_relative '../support/chat_records'
 
 class ConversationTest < ActiveSupport::TestCase
@@ -214,6 +215,177 @@ class ConversationTest < ActiveSupport::TestCase
       assert @conversation.review_prompt_due?('owner')
       assert_raises(Conversation::NotAllowed) { @conversation.update_review_prompt!('owner', 'invalid') }
       assert_nil @conversation.reload.owner_review_prompt_after
+    end
+  end
+
+  test 'first peer review immediately invites only the missing side and keeps content private' do
+    accept_conversation
+    @conversation.update!(owner_review_prompt_after: 20.days.from_now)
+    @conversation.submit_review!('member', member_evaluation)
+    assert @conversation.owner_review_invited_at
+    assert_nil @conversation.member_review_invited_at
+    assert @conversation.review_prompt_due?('owner')
+    assert @conversation.peer_review_waiting?('owner')
+    assert_not @conversation.peer_review_waiting?('member')
+    assert_not @conversation.review_prompt_due?('member')
+    assert_empty @circle.reviews
+    assert_empty @member.received_conversation_reviews
+  end
+
+  test 'owner review also immediately invites a member before seven days' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation)
+    assert @conversation.review_prompt_due?('member')
+    assert @conversation.peer_review_waiting?('member')
+    assert_nil @conversation.owner_review_invited_at
+    assert @conversation.member_review_invited_at
+  end
+
+  test 'review notification email goes to the missing side once and never includes score or comment' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    due = @conversation.owner_review_notification_due_at
+    ActionMailer::Base.deliveries.clear
+    ChatMaintenance.deliver_review_invitation(@conversation, 'owner')
+    assert_empty ActionMailer::Base.deliveries
+    travel_to due + 1.second do
+      2.times { ChatMaintenance.deliver_review_invitation(@conversation, 'owner') }
+      mail = ActionMailer::Base.deliveries.sole
+      assert_equal [@owner.email], mail.to
+      assert_includes mail.subject, '口コミが届いています'
+      assert_includes mail.body.decoded, 'あなたも口コミを投稿すると'
+      assert_includes mail.body.decoded, "#{@conversation.public_id}#evaluation"
+      assert_not_includes mail.body.decoded, member_evaluation[:comment]
+      assert_not_includes mail.body.decoded, '良かった'
+      assert_not_includes mail.body.decoded, '残念だった'
+      assert @conversation.reload.owner_review_notified_at
+      assert_nil @conversation.owner_review_notification_due_at
+    end
+  end
+
+  test 'editing deleting and reposting cannot issue repeated invitations' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    invited = @conversation.owner_review_invited_at
+    due = @conversation.owner_review_notification_due_at
+    @conversation.update_review_prompt!('owner', 'dismiss')
+    @conversation.submit_review!('member', member_evaluation.merge(score: 0))
+    @conversation.delete_review!('member')
+    @conversation.submit_review!('member', member_evaluation)
+    assert_equal invited, @conversation.owner_review_invited_at
+    assert_equal due, @conversation.owner_review_notification_due_at
+    assert @conversation.owner_review_prompt_dismissed
+  end
+
+  test 'both submissions before mail delivery cancel the pending invitation' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation)
+    @conversation.submit_review!('member', member_evaluation)
+    ActionMailer::Base.deliveries.clear
+    travel 6.minutes do
+      ChatMaintenance.deliver_review_invitation(@conversation, 'member')
+      assert_empty ActionMailer::Base.deliveries
+      assert_nil @conversation.reload.member_review_notification_due_at
+      assert_not @conversation.peer_review_waiting?('member')
+      assert @conversation.reviews_published_at
+    end
+  end
+
+  test 'deleted peer review cancels invitation email' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    @conversation.delete_review!('member')
+    ActionMailer::Base.deliveries.clear
+    travel 6.minutes do
+      ChatMaintenance.deliver_review_invitation(@conversation, 'owner')
+      assert_empty ActionMailer::Base.deliveries
+      assert_nil @conversation.reload.owner_review_notification_due_at
+    end
+  end
+
+  test 'blocking or declining prompts prevents the pending email' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    ActionMailer::Base.deliveries.clear
+    @conversation.update_review_prompt!('owner', 'later')
+    travel 6.minutes do
+      ChatMaintenance.deliver_review_invitation(@conversation, 'owner')
+      assert_empty ActionMailer::Base.deliveries
+      assert_nil @conversation.reload.owner_review_notification_due_at
+      @conversation.update!(owner_review_notification_due_at: 1.minute.ago, owner_review_prompt_after: 1.minute.ago, member_blocked: true)
+      ChatMaintenance.deliver_review_invitation(@conversation, 'owner')
+      assert_empty ActionMailer::Base.deliveries
+    end
+  end
+
+  test 'review mail failures keep their pending deadline for retry' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    failing_mail = Object.new
+    def failing_mail.deliver_now = raise('Synthetic delivery failure')
+    travel 6.minutes do
+      ChatMailer.stub(:review_received, failing_mail) do
+        assert_raises(RuntimeError) { ChatMaintenance.deliver_review_invitation(@conversation, 'owner') }
+      end
+      assert @conversation.reload.owner_review_notification_due_at
+      assert_nil @conversation.owner_review_notified_at
+      ActionMailer::Base.deliveries.clear
+      ChatMaintenance.run
+      assert_equal 1, ActionMailer::Base.deliveries.count { |mail| mail.subject.include?('口コミが届いています') }
+      assert @conversation.reload.owner_review_notified_at
+    end
+  end
+
+  test 'editing a review from before notifications were introduced does not send an invitation' do
+    accept_conversation
+    @conversation.conversation_reviews.create!(member_evaluation.merge(author_role: 'member'))
+    @conversation.submit_review!('member', member_evaluation.merge(comment: '以前の感想を更新しました。'))
+    assert_nil @conversation.owner_review_invited_at
+    assert_nil @conversation.owner_review_notification_due_at
+  end
+
+  test 'ineligible or expired recipients do not receive review invitation mail' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation)
+    @member.update!(email_verified_at: nil)
+    ActionMailer::Base.deliveries.clear
+    travel 6.minutes do
+      ChatMaintenance.deliver_review_invitation(@conversation.reload, 'member')
+      assert_empty ActionMailer::Base.deliveries
+      assert_nil @conversation.reload.member_review_notification_due_at
+    end
+    @member.update!(email_verified_at: Time.current)
+    @conversation.update!(member_review_notification_due_at: 1.minute.ago)
+    travel_to @conversation.review_deadline + 1.second do
+      ChatMaintenance.deliver_review_invitation(@conversation, 'member')
+      assert_empty ActionMailer::Base.deliveries
+    end
+  end
+
+  test 'an earlier opt out remains respected when the peer submits a review' do
+    accept_conversation
+    @conversation.update!(owner_review_prompt_dismissed: true)
+    @conversation.submit_review!('member', member_evaluation)
+    assert @conversation.owner_review_invited_at
+    assert_not @conversation.review_prompt_due?('owner')
+    ActionMailer::Base.deliveries.clear
+    travel 6.minutes do
+      ChatMaintenance.deliver_review_invitation(@conversation, 'owner')
+      assert_empty ActionMailer::Base.deliveries
+    end
+  end
+
+  test 'maintenance can run during deployment before the review notification columns are visible' do
+    accept_conversation
+    @conversation.submit_review!('member', member_evaluation)
+    old_columns = Conversation.column_names - ['member_review_notification_due_at']
+    travel 6.minutes do
+      ActionMailer::Base.deliveries.clear
+      Conversation.stub(:column_names, old_columns) { ChatMaintenance.run }
+      assert_not ActionMailer::Base.deliveries.any? { |mail| mail.subject.include?('口コミが届いています') }
+      assert @conversation.reload.owner_review_notification_due_at
+      ChatMaintenance.run
+      assert_equal 1, ActionMailer::Base.deliveries.count { |mail| mail.subject.include?('口コミが届いています') }
     end
   end
 

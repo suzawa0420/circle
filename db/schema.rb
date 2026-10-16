@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_16_010000) do
+ActiveRecord::Schema.define(version: 2026_10_16_020000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,14 @@ ActiveRecord::Schema.define(version: 2026_10_16_010000) do
     t.boolean "member_review_prompt_dismissed", default: false, null: false
     t.datetime "owner_review_prompt_after"
     t.boolean "owner_review_prompt_dismissed", default: false, null: false
+    t.datetime "member_review_invited_at"
+    t.datetime "member_review_notification_due_at"
+    t.datetime "member_review_notified_at"
+    t.datetime "owner_review_invited_at"
+    t.datetime "owner_review_notification_due_at"
+    t.datetime "owner_review_notified_at"
+    t.index ["member_review_notification_due_at"], name: "index_conversations_on_member_review_notification_due_at", where: "(member_review_notification_due_at IS NOT NULL)"
+    t.index ["owner_review_notification_due_at"], name: "index_conversations_on_owner_review_notification_due_at", where: "(owner_review_notification_due_at IS NOT NULL)"
     t.index "LEAST(user_id, source_user_id), GREATEST(user_id, source_user_id)", name: "index_conversations_circle_pair", unique: true, where: "(source_user_id IS NOT NULL)"
     t.index ["member_id"], name: "index_conversations_on_member_id"
     t.index ["member_notification_due_at"], name: "index_conversations_on_member_notification_due_at"

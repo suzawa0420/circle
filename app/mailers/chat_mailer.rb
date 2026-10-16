@@ -15,6 +15,12 @@ class ChatMailer < ApplicationMailer
     mail(to: recipient, subject: subject)
   end
 
+  def review_received(conversation, role)
+    @conversation = conversation
+    circle_name = conversation.user.name.to_s.squish.presence || 'サークル'
+    mail(to: conversation.actor(role).email, subject: "【サークルブック｜#{circle_name}】相手から口コミが届いています")
+  end
+
   def verify_owner_email(owner)
     @token = owner.signed_id(purpose: owner.email_verification_purpose, expires_in: 24.hours)
     mail(to: owner.email, subject: '【サークルブック】主催者メールアドレスの確認')

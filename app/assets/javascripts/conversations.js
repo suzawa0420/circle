@@ -28,6 +28,11 @@
       if (evaluation) evaluation.open = true;
     }
     evaluationLinks.forEach(function (link) { link.addEventListener('click', revealEvaluation); });
+    var reviewPrompt = document.getElementById('chat-review-prompt');
+    function revealPromptEvaluation(event) {
+      if (event.target.closest('[data-open-evaluation]')) revealEvaluation();
+    }
+    if (reviewPrompt) reviewPrompt.addEventListener('click', revealPromptEvaluation);
     if (input) input.addEventListener('input', resize);
     window.addEventListener('resize', resize);
     window.addEventListener('hashchange', openEvaluation);
@@ -36,6 +41,7 @@
     openEvaluation();
     cleanup = function () {
       evaluationLinks.forEach(function (link) { link.removeEventListener('click', revealEvaluation); });
+      if (reviewPrompt) reviewPrompt.removeEventListener('click', revealPromptEvaluation);
       if (input) input.removeEventListener('input', resize);
       window.removeEventListener('resize', resize);
       window.removeEventListener('hashchange', openEvaluation);
@@ -90,6 +96,11 @@
           container.querySelectorAll('.chat-read-receipt').forEach(function (receipt) {
             if (data.receipts && data.receipts[receipt.dataset.messageId]) receipt.textContent = data.receipts[receipt.dataset.messageId];
           });
+          var reviewPrompt = document.getElementById('chat-review-prompt');
+          if (reviewPrompt && typeof data.review_prompt_html === 'string' &&
+              !reviewPrompt.contains(document.activeElement) && reviewPrompt.innerHTML !== data.review_prompt_html) {
+            reviewPrompt.innerHTML = data.review_prompt_html;
+          }
           if (data.history_version !== container.dataset.historyVersion) {
             // Preserve any report the user is currently composing.
             if (!container.contains(document.activeElement) && !container.querySelector('details[open]')) {
