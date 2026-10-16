@@ -20,6 +20,3 @@
           = check_box_tag 'age_ids[]', age.id, Array(filters[:age_ids]).include?(age.id.to_s), id: "filter-age-#{age.id}"
           %span= age.name
   %p.cb-detailed-search__hint 募集内容・年齢層は複数選択できます。各項目内では、選んだいずれかに当てはまるサークルを表示します。
-  .cb-detailed-search__actions
-    = submit_tag 'この条件で検索', name: nil, class: 'cb-button'
-    = link_to '条件をクリア', circles_path, class: 'cb-button cb-button--secondary'

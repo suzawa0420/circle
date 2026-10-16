@@ -573,12 +573,23 @@
 .cb-site .chat-shell.cb-participant .chat-person a,
 .cb-site .chat-shell.cb-participant .chat-evaluation a { color: $cb-participant-hover; }
 
+.cb-site .search_wrap.cb-circle-discovery {
+  padding: 0; border: 0; background: transparent;
+  .cb-circle-search-form, .event-date-search { @include cb-card; }
+  .cb-circle-search-form__heading { margin: 0 0 cb-space(3); font-size: 16px; line-height: 1.5; font-weight: 700; }
+  .search_select { margin-top: cb-space(3); }
+  .cb-detailed-search { margin-top: cb-space(2); }
+  .cb-circle-search-form__actions > .cb-button { @include cb-button; width: 100%; margin: 0; }
+  .cb-circle-search-form__clear { display: block; width: fit-content; margin: cb-space(2) auto 0; padding: cb-space(2); color: $cb-muted; font-size: 13px; }
+  .event-date-search { margin-top: cb-space(3); }
+  .event-date-search .event-results__days { margin-bottom: 0; }
+}
+
 .cb-site .cb-detailed-search {
   --cb-role-action: #{$cb-participant};
   --cb-role-ink: #{$cb-participant-hover};
   --cb-role-soft: #{$cb-participant-soft};
   margin-top: cb-space(4);
-  border-top: 1px solid $cb-border;
   summary {
     @include cb-focus;
     display: flex; align-items: center; gap: cb-space(2);
@@ -601,7 +612,6 @@
     input[type=checkbox] { position: static; width: 18px; height: 18px; margin: 0; accent-color: $cb-participant; }
   }
   .cb-detailed-search__hint { @include cb-type(helper); margin: cb-space(3) 0; color: $cb-muted; }
-  .cb-detailed-search__actions { display: flex; flex-wrap: wrap; gap: cb-space(2); }
 }
 
 // Keep everyday actions ahead of the optional level explanations.

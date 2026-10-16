@@ -29,6 +29,10 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
       assert_select 'select[name=prefecture_id]', count: 1
       assert_select 'details form', count: 0
       assert_select 'details input[name=q], details select', count: 0
+      assert_select 'input[type=submit]', count: 1
+      assert_select 'details input[type=submit]', count: 0
+      assert_select '.cb-circle-search-form__actions input[type=submit][value=?]', 'この条件でサークルを検索'
+      assert_select '.event-date-search', count: 0
     end
   end
 
@@ -39,6 +43,7 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_select '.date_list_wrap', count: 0
       assert_select '.event-date-search .event-results__days a', count: 12
+      assert_select 'form.cb-circle-search-form ~ .event-date-search', count: 1
       assert_select '.event-date-search .event-results__days a:first-child', text: /10\/13.*火/m
       assert_select '.event-date-search a[href=?]', EventSearchPage.path(event: @circle.event.ruby, prefecture: @circle.prefecture.kana, date: Date.new(2026, 10, 13))
       assert_select '.event-date-search .event-results__shortcuts, .event-date-search form', count: 0

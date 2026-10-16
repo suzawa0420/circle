@@ -65,7 +65,7 @@
     <div><h3><%= @user.name %></h3><p><%= @user.prefecture.name %> · <%= @user.event.name %></p></div><%= lucide_icon 'chevron-right' %>
   <% end %>
   <div class="schedule-detail__actions">
-    <%= link_to circle_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'info' %><span>サークルの詳細を見る</span><% end %>
+    <%= link_to circle_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'info' %><span>サークル詳細</span><% end %>
     <%= link_to user_schedules_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'calendar-days' %><span>ほかの活動日を見る</span><% end %>
   </div>
 </section>

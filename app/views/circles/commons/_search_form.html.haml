@@ -1,6 +1,7 @@
 - filters = @landing_filters || params
-.search_wrap
+.search_wrap.cb-circle-discovery
   = form_tag circles_search_index_path, method: :get, enforce_utf8: false, class: 'cb-circle-search-form' do
+    %h2.cb-circle-search-form__heading 条件からサークルを探す
     = hidden_field_tag :detailed, '1'
     = hidden_field_tag :sort, params[:sort] if params[:sort].present?
     - { category_id: @category&.id, city_id: @city&.id, tag_id: @tag&.id }.each do |key, value|
@@ -8,14 +9,16 @@
     .search_word
       .cb-search-keyword
         %input.search_area.change_font{ "aria-label" => "キーワードで検索", name: "q", placeholder: "例）バスケ　東京", type: "text", value: filters[:q] }
-        .search_icon
-          = submit_tag '検索', name: nil
       .search_word_announce ※複数の単語はスペースで区切ってください
     .search_select
       = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, filters[:event_id].presence || @event&.id), include_blank: 'サークル・チーム', 'aria-label' => '種目・カテゴリー'
       = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, filters[:prefecture_id].presence || @prefecture&.id), include_blank: '都道府県', 'aria-label' => '都道府県'
     = render "circles/commons/detailed_search"
-  = render "circles/commons/active_filters"
+    .cb-circle-search-form__actions
+      = submit_tag 'この条件でサークルを検索', name: nil, class: 'cb-button'
+      - if circle_active_filters.any?
+        = link_to '条件をクリア', circles_path, class: 'cb-circle-search-form__clear'
+    = render "circles/commons/active_filters"
   = render "schedules/select_date"
 
 - unless controller.action_name == "kw"
