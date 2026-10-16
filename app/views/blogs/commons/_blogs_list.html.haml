@@ -14,7 +14,7 @@
             = circle_avatar_tag blog.user, class:'content_icon'
             .post-user_wrap
               .post-user
-                .post-top= blog.user.name.truncate(40)
+                .post-top{ title: blog.user.name }= blog.user.name
                 .post-bottom
                   = "作成日：#{time_tag blog.created_at.to_date}"
           .post-body

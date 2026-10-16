@@ -7,6 +7,15 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
 
   setup { create_chat_records }
 
+  test 'blog list retains the complete long circle name for accessible single line display' do
+    name = '【参加費0円】散策で友達作り！カフェ・ランチや都内イベントに一緒に行こう'
+    @circle.update_column(:name, name)
+    @circle.blogs.create!(title: '週末の活動記録', content: '参加者のみなさんと楽しく活動しました。' * 8)
+    get '/blogs'
+    assert_response :success
+    assert_select '.blog-body .post-top[title=?]', name, text: name
+  end
+
   test 'owner dashboard renders Lucide actions including additional circle registration' do
     login(@owner)
     get "/users/#{@circle.id}/mypage"

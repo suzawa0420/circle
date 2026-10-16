@@ -110,6 +110,11 @@
   .post_message { margin: 0 0 cb-space(5); border-radius: $cb-radius-card; }
   .post-bottom { @include cb-type(caption); color: $cb-muted; }
   .post-top { @include cb-type(label); }
+  .blog-body .header-post { display: flex; align-items: center; }
+  .blog-body .content_icon { flex-shrink: 0; }
+  .blog-body .post-user_wrap { flex: 1; min-width: 0; }
+  .blog-body .post-user { min-width: 0; width: 100%; }
+  .blog-body .post-top { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .post-body, .rich_text_main, .rich_text_sub, .profile_list_p { overflow-wrap: anywhere; }
   .rich_text_main, .rich_text_sub, .profile_list_p, .page_wrap p { @include cb-type(body); }
   .rich_text_main a, .profile_list_p a, .page_wrap p a { color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
