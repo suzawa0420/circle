@@ -84,6 +84,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261015020000
     # Karate, handicraft and karaoke taxonomy (circle edits follow manual review).
     bundle exec rails db:migrate:up VERSION=20261015030000
+    # Hold existing profiles containing the specifically prohibited Chinese phrase.
+    bundle exec rails db:migrate:up VERSION=20261016000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

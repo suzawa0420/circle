@@ -2,7 +2,7 @@ module MobileNavigationHelper
   def mobile_navigation_circle
     return @mobile_navigation_circle if defined?(@mobile_navigation_circle)
 
-    candidate = @user if @user.is_a?(User)
+    candidate = @user if @user.is_a?(User) && @user.persisted?
     candidate ||= @conversation&.user if @conversation.is_a?(Conversation)
     @mobile_navigation_circle = if candidate && candidate.admin_user_id == current_admin_user.id
       session[:managed_circle_id] = candidate.id if request.get?

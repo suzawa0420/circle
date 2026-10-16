@@ -123,7 +123,9 @@ class User < ApplicationRecord
 	end
 
   def moderation_rule_reasons
-    japanese_profile? ? [] : ['non_japanese_profile']
+    reasons = japanese_profile? ? [] : ['non_japanese_profile']
+    reasons << 'adult_service_promotion' if CircleProfilePolicy.review?(self)
+    reasons
   end
 
 	private
@@ -140,7 +142,8 @@ class User < ApplicationRecord
 
 	def flag_suspicious_profile
 		return if moderation_status == "blocked"
-		return unless new_record? || will_save_change_to_name? || will_save_change_to_appeal? || will_save_change_to_publication_status?
+		return unless new_record? || will_save_change_to_publication_status? || will_save_change_to_sport_details? ||
+      CircleProfilePolicy::FIELDS.any? { |field| will_save_change_to_attribute?(field) }
 
 		# Category and location labels are supplied by the site; only owner-written
 		# name and introduction count toward the Japanese-language check.
@@ -203,11 +206,13 @@ class User < ApplicationRecord
     :format => /\A#{URI::regexp(%w(http https))}\z/
 	}
 
-	NG_WORDS = %w(出張館 密会 援交 デリヘル 風俗 売春 援助 풍속 escort)
-	NG_REGEX = /#{NG_WORDS.map { |word| Regexp.escape(word) }.join('|')}/i
-	validates :name,   format: { without: NG_REGEX, message: "に使用できない言葉が含まれています" }
-	validates :appeal, format: { without: NG_REGEX, message: "に使用できない言葉が含まれています" }, allow_blank: true
-	validates :goal,   format: { without: NG_REGEX, message: "に使用できない言葉が含まれています" }, allow_blank: true
+  validate do
+    CircleProfilePolicy::FIELDS.each do |field|
+      if CircleProfilePolicy.prohibited?(public_send(field))
+        errors.add(field, :invalid, message: 'に使用できない言葉が含まれています')
+      end
+    end
+  end
 
 	paginates_per 20
 

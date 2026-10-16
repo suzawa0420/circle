@@ -3,6 +3,7 @@
 class ModerationReasonReport
   LABELS = {
     'non_japanese_profile' => 'サークル名・詳細情報にひらがな・カタカナが含まれていません。',
+    'adult_service_promotion' => '「深夜舒壓／深夜舒压」の表現が含まれています。性的サービスの宣伝の可能性があるため確認が必要です。',
     'foreign_links' => 'タイトル・本文にひらがな・カタカナがなく、外部リンクが2件以上あります。',
     'duplicate_content' => 'サイト全体に同じ本文のブログが2件以上あります（この投稿を除く）。',
     'frequent_posts' => '同じサークルの直近1時間に既存の投稿が3件以上あります（4件目以降の投稿）。'
@@ -44,7 +45,7 @@ class ModerationReasonReport
     end
     if record.is_a?(User)
       if record.moderation_status == 'clear' && record.moderation_rule_reasons.any?
-        notes << '現在の公開条件：サークル名・詳細情報にひらがな・カタカナが含まれていません。'
+        notes.concat(snapshot(record.moderation_rule_reasons).map { |reason| "現在の判定条件：#{reason.fetch('message')}" })
       end
       notes << "公開に不足する項目：#{record.missing_publication_fields.join('、')}" if record.publication_status == 'draft' && record.missing_publication_fields.any?
       notes << 'サークルが非公開対象（NG）に設定されています。' if record[:ng_account] == 'NG'
