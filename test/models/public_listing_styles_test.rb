@@ -40,4 +40,16 @@ class PublicListingStylesTest < ActiveSupport::TestCase
     assert_includes output, 'html{box-sizing:border-box;}'
     refute_includes output, '.editor'
   end
+
+  test 'directory asset keeps facility cards calendar states and shared navigation' do
+    css = Rails.application.assets.find_asset('public_directory.css').to_s
+    %w[.place-card .places-filter .schedule-calendar__grid .schedule-calendar__day.is-today
+       .schedule-calendar__day.is-selected .status-cancelled .mobile-circle-summary].each do |selector|
+      assert_includes css, selector
+    end
+    refute_includes css, '.trix-button-group'
+    assert_match(/\.mobile-circle-summary\{[^}]*display:\s*block/, css)
+    assert_match(/\.mobile-circle-summary__identity\{[^}]*display:\s*flex/, css)
+    assert_operator css.bytesize, :<, Rails.application.assets.find_asset('application.css').to_s.bytesize / 2
+  end
 end

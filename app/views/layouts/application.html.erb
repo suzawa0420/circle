@@ -40,7 +40,7 @@
       <% if (leading_image = circle_listing_preload_image) %>
         <%= tag.link rel: 'preload', as: 'image', href: leading_image, type: 'image/webp', fetchpriority: 'high' %>
       <% end %>
-      <%= stylesheet_link_tag(fast_public_detail? ? 'public_detail' : (fast_public_listing? ? 'public_listing' : 'application'), media: 'all', 'data-turbolinks-track': 'reload') %>
+      <%= stylesheet_link_tag(fast_public_detail? ? 'public_detail' : (fast_public_directory? ? 'public_directory' : (fast_public_listing? ? 'public_listing' : 'application')), media: 'all', 'data-turbolinks-track': 'reload') %>
 
 
       <% if fast_public_detail? %>

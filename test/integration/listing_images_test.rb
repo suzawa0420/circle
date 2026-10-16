@@ -68,6 +68,14 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     assert_equal 'image/webp', response.media_type
   end
 
+  test 'public calendar summary uses the small profile derivative instead of the original upload' do
+    get user_schedules_path(@circle)
+    assert_response :success
+    expected_url = listing_image_path(kind: 'profile', id: @circle.id,
+      fingerprint: ListingImage.fingerprint(@circle.pic_profile), format: 'webp')
+    assert_select '.mobile-circle-summary__image[src=?][width="48"][height="48"]', expected_url, count: 1
+  end
+
   test 'webp derivatives have separate immutable URLs and reuse the cached JPEG without fetching the original' do
     get @url
     assert_response :success

@@ -7,7 +7,7 @@
 .mobile-circle-summary
   .mobile-circle-summary__identity
     - if @user.pic_profile.present?
-      = image_tag(fast_public_detail? ? circle_listing_image_url(@user, 'profile') : @user.pic_profile.url, alt: "", width: 48, height: 48, decoding: "async", class: "mobile-circle-summary__image")
+      = image_tag(fast_public_page? ? circle_listing_image_url(@user, 'profile') : @user.pic_profile.url, alt: "", width: 48, height: 48, decoding: "async", class: "mobile-circle-summary__image")
     - else
       .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
     .mobile-circle-summary__heading

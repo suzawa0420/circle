@@ -8,6 +8,7 @@ module PublicSearchSeo
   end
 
   def public_search_listing?
+    return true if controller_path == 'users' && %w[event_prefecture_city_station prefecture_city_station].include?(action_name)
     return true if controller_path == 'circles/circles' && action_name == 'index'
     return true if controller_path == 'circles/search' && %w[index show landing].include?(action_name)
     return true if controller_path.start_with?('circles/events/', 'circles/prefectures/', 'circles/tags/') && action_name == 'show'

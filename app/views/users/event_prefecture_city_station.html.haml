@@ -13,9 +13,9 @@
           %br/
           = @event.txt
           の一覧
-    - if @users.count != 0
+    - if @users.any?
       .search_area
         = render "/users/search"
       = render "/users/users_list"
-    - else @users.count == 0
+    - else
       = render "/users/no_hit"

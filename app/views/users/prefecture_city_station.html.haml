@@ -13,9 +13,9 @@
           %br/
           サークルやチーム、クラブ、団体
           %br/
-    - if @users.count != 0
+    - if @users.any?
       .search_area
         = render "/users/search"
       = render "users_list"
-    - else @users.count == 0
+    - else
       = render "/users/no_hit"

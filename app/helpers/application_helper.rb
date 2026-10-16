@@ -38,7 +38,13 @@ module ApplicationHelper
   end
 
   def fast_public_page?
-    fast_public_listing? || fast_public_detail?
+    fast_public_listing? || fast_public_detail? || fast_public_directory?
+  end
+
+  def fast_public_directory?
+    directory = (controller_path == 'places' && %w[index global_search event prefecture city search].include?(action_name)) ||
+      (controller_path == 'schedules' && action_name == 'index')
+    directory && !admin_user_signed_in? && !member_signed_in? && !webmaster? && !exhibition_group_signed_in?
   end
 
   def circle_detail_header_image(user)
@@ -128,7 +134,7 @@ module ApplicationHelper
   end
 
     def lazysizes_image_tag(source, options={})
-      return image_tag(source, options.merge(loading: 'lazy', decoding: 'async')) if fast_public_detail?
+      return image_tag(source, options.merge(loading: 'lazy', decoding: 'async')) if fast_public_page?
     options['data-src'] = source
       if options[:class].blank?
         options[:class] = "lazyload"
