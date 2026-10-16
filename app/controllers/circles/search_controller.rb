@@ -2,7 +2,7 @@ class Circles::SearchController < Circles::ApplicationController
   before_action :set_search, only: [:index, :show, :landing]
 
   def cities
-    prefecture = Prefecture.find(params[:prefecture_id])
+    prefecture = Prefecture.find(params[:prefecture_id].to_s)
     response.headers['X-Robots-Tag'] = 'noindex'
     render json: prefecture.cities.order(:id).pluck(:id, :name).map { |id, name| { id: id, name: name } }
   end

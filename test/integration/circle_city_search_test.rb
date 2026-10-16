@@ -31,6 +31,7 @@ class CircleCitySearchTest < ActionDispatch::IntegrationTest
     assert_equal 'noindex', response.headers['X-Robots-Tag']
     assert_equal [@city.id, @empty_city.id], response.parsed_body.map { |city| city['id'] }
     assert_raises(ActiveRecord::RecordNotFound) { get circles_search_cities_path, params: { prefecture_id: 0 } }
+    assert_raises(ActiveRecord::RecordNotFound) { get circles_search_cities_path, params: { prefecture_id: [@prefecture.id] } }
   end
 
   test 'simple city filters redirect to existing canonical pages and preserve sort' do
