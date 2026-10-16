@@ -215,6 +215,16 @@
     }
     .city-selection-all { margin: 12px 0; }
     .city-selection-all label { font-weight: 700; }
+    .city-selection-options {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch; gap: 6px;
+      label {
+        min-width: 0; width: 100%; padding: 8px 4px 8px 32px;
+        font-size: 13px; line-height: 1.4; overflow-wrap: anywhere;
+        &:after { left: 4px; }
+        &:before { left: 12px; }
+      }
+    }
     .remove_img label { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; }
     .remove_img input[type=checkbox] { width: 24px; height: 24px; margin: 0; accent-color: $cb-action; }
     .progressbar li.edit-step:before { content: none; }
