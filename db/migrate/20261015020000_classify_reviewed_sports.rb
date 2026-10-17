@@ -3,18 +3,20 @@
 class ClassifyReviewedSports < ActiveRecord::Migration[8.1]
   def up
     execute "SET LOCAL lock_timeout = '5s'"
+    secondary_column = column_exists?(:users, :secondary_event_ids)
     reviewed_rows.each do |id, previous, target, category, name_fragment, secondary|
       next unless select_value("SELECT 1 FROM events WHERE id = #{Integer(target)}")
       condition = sanitize(["id = ? AND event_id = ? AND name LIKE ?", id, previous, "%#{name_fragment}%"])
       if secondary
+        next unless secondary_column
         execute <<~SQL
           UPDATE users SET secondary_event_ids = array_append(secondary_event_ids, #{Integer(target)})
           WHERE #{condition} AND NOT secondary_event_ids @> ARRAY[#{Integer(target)}]::integer[]
         SQL
       else
+        cleanup = secondary_column ? ", secondary_event_ids = array_remove(secondary_event_ids, #{Integer(target)})" : ''
         execute <<~SQL
-          UPDATE users SET event_id = #{Integer(target)}, category_id = #{Integer(category)},
-            secondary_event_ids = array_remove(secondary_event_ids, #{Integer(target)})
+          UPDATE users SET event_id = #{Integer(target)}, category_id = #{Integer(category)}#{cleanup}
           WHERE #{condition}
         SQL
       end

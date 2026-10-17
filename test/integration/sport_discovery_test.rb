@@ -10,11 +10,14 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     SearchResultCountCache::STORE.clear
     create_chat_records
     @sport = Event.create!(name: '検証ピックルボール', ruby: 'test-pickleball', txt: 'ピックルボールサークル', category: @circle.category)
-    @circle.update!(secondary_event_ids: [@sport.id], experience: '未経験可', equipment: 'パドル貸出あり', meeting_area: '駅前集合')
+    if User.connection.column_exists?(:users, :secondary_event_ids)
+      User.connection.execute("UPDATE users SET secondary_event_ids = ARRAY[#{@sport.id}]::integer[] WHERE id = #{@circle.id}")
+    end
+    @circle.update!(experience: '未経験可', equipment: 'パドル貸出あり', meeting_area: '駅前集合')
   end
 
-  test 'secondary sport is discoverable through national regional and filtered listings without duplicates' do
-    assert_equal [@circle.id], User.publicly_visible.event(Event.where(id: @sport.id)).pluck(:id)
+  test 'only primary sport is discoverable through national regional and filtered listings' do
+    assert_empty User.publicly_visible.event(Event.where(id: @sport.id))
     assert_equal [@circle.id], User.publicly_visible.event([@circle.event_id, @sport.id]).pluck(:id)
     assert_empty User.event(Event.none)
     group = Group.create!(name: '初心者')
@@ -24,13 +27,18 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     paths.each do |path|
       get path
       assert_response :success
-      assert_select 'h1', text: /全1件/
-      assert_select '.list_02', text: 'パドル貸出あり'
+      assert_select 'h1', text: /全0件/
     end
-    assert_includes CircleFilterLanding.each_populated_path.to_a, paths.last
+    refute_includes CircleFilterLanding.each_populated_path.to_a, paths.last
+    assert_includes CircleFilterLanding.each_populated_path.to_a, CircleFilterLanding.path(event: @circle.event, prefecture: @circle.prefecture, group: group)
+    get event_path(@circle.event.ruby)
+    assert_select 'h1', text: /全1件/
+    assert_select '.list_02', text: 'パドル貸出あり'
     get circle_path(@circle)
     assert_select 'td', text: '駅前集合'
-    assert_select 'a[href=?]', event_path(@sport.ruby), text: @sport.name
+    assert_select 'a[href=?]', event_path(@sport.ruby), count: 0
+    assert_select 'th', text: 'その他の活動種目', count: 0
+    assert_not @circle.has_attribute?(:secondary_event_ids)
   end
 
   test 'draft circles stay hidden in secondary sports and sitemap combinations' do
@@ -41,13 +49,24 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     refute User.publicly_visible.for_event(@sport.id).exists?
   end
 
-  test 'event discovery and date sitemap use primary sport while circle search includes secondary sports' do
+  test 'keyword and region discovery ignore retired secondary sport data' do
+    get circles_search_index_path, params: { q: @sport.name }
+    assert_response :success
+    assert_select '.list_02', count: 0
+    @sport.update!(ruby: 'pickleball')
+    helper = Object.new.extend(SportDiscoveryHelper)
+    refute_includes helper.region_discovery_sports(@circle.prefecture), @sport
+    @circle.update!(event: @sport)
+    assert_includes helper.region_discovery_sports(@circle.prefecture), @sport
+  end
+
+  test 'event discovery and date sitemap use primary sport and circle search use primary sport' do
     today = Time.current.in_time_zone('Tokyo').to_date
     schedule = @circle.schedules.create!(day: today.iso8601, title: '体験会', venue: '公開体育館')
     assert_empty EventSearchPage.populations(today: today, event: @sport)
     refute_includes EventDaySitemap.each_path(today: today).to_a, EventSearchPage.path(event: @sport.ruby, date: today)
     refute EventDayListing.new(date: today, event: @sport).schedules.exists?(schedule.id)
-    assert User.publicly_visible.for_event(@sport.id).exists?(@circle.id)
+    refute User.publicly_visible.for_event(@sport.id).exists?(@circle.id)
     assert_includes EventSearchPage.populations(today: today, event: @circle.event), [@circle.event_id, @circle.prefecture_id]
     assert_includes EventDaySitemap.each_path(today: today).to_a, EventSearchPage.path(event: @circle.event.ruby, date: today)
     assert EventDayListing.new(date: today, event: @circle.event).schedules.exists?(schedule.id)
@@ -67,16 +86,13 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     assert_select 'input[name="user[schedule]"]', count: 1
     patch user_path(@circle), params: { user: { secondary_event_ids: ['', @sport.id, @sport.id, @circle.event_id], equipment: '持参してください' } }
     assert_response :redirect
-    assert_equal [@sport.id], @circle.reload.secondary_event_ids
+    assert_not @circle.reload.has_attribute?(:secondary_event_ids)
     assert_equal 'パドル貸出あり', @circle.equipment
     patch user_path(@circle), params: { user: { secondary_event_ids: [''] } }
-    assert_equal [@sport.id], @circle.reload.secondary_event_ids
+    assert_not @circle.reload.has_attribute?(:secondary_event_ids)
   end
 
-  test 'invalid sports and overly long details are rejected' do
-    @circle.secondary_event_ids = [2_000_000_000]
-    refute @circle.valid?
-    @circle.secondary_event_ids = []
+  test 'overly long details are rejected' do
     @circle.equipment = 'a' * 201
     refute @circle.valid?
   end
@@ -100,7 +116,6 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     migration.instance_variable_set(:@target, @sport)
     ActiveRecord::Migration.suppress_messages { migration.up }
     assert_equal @sport.id, @circle.reload.event_id
-    assert_equal [], @circle.secondary_event_ids
     assert_equal snapshot, @circle.attributes.slice(*snapshot.keys)
     assert_equal 1, @sport.reload.users_count
     assert_equal 0, Event.find(previous).users_count
@@ -114,8 +129,8 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     Event.where(ruby: 'pickleball').where.not(id: @sport.id).delete_all
     @sport.update!(ruby: 'pickleball')
     @circle.update!(name: 'ピックルボール体験会')
-    refute_includes SportClassification.candidates('pickleball'), @circle
-    @circle.update!(secondary_event_ids: [])
     assert_includes SportClassification.candidates('pickleball'), @circle
+    @circle.update!(event: @sport)
+    refute_includes SportClassification.candidates('pickleball'), @circle
   end
 end

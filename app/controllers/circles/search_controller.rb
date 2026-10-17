@@ -145,7 +145,6 @@ private
 
         users = users.search_word(keyword).
         or(users.where(event_id: event_ids)).
-        or(users.where("users.secondary_event_ids && ARRAY[?]::integer[]", event_ids.presence || [0])).
         or(users.where(prefecture_id: prefecture_ids)).or(users.where(prefecture_sub_id: prefecture_ids)).
         or(users.where(id: city_user_ids)).
         or(users.where(id: tag_user_ids))

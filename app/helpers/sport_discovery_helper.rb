@@ -32,7 +32,7 @@ module SportDiscoveryHelper
 
   def region_discovery_sports(prefecture)
     users = User.publicly_visible.where_pref(prefecture.id).where(switch: '募集中')
-    ids = users.select(Arel.sql('unnest(ARRAY[users.event_id] || users.secondary_event_ids)'))
+    ids = users.select(:event_id)
     Event.where(id: ids).where(ruby: %w[basketball volleyball badminton futsal student-group reading mountain soft-tennis pickleball ski karate handicraft karaoke]).order(:order)
   end
 end

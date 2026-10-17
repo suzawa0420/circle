@@ -104,18 +104,17 @@ class CircleCitySearchTest < ActionDispatch::IntegrationTest
     assert_select 'meta[name=robots][content*=noindex]'
   end
 
-  test 'nationwide results cannot populate unregistered cities and secondary sports are supported' do
+  test 'nationwide results cannot populate unregistered cities and other sports stay excluded' do
     nationwide = Prefecture.find_by(id: 50) || Prefecture.create!(id: 50, name: '全国', kana: 'city-national')
     @circle.update!(prefecture: nationwide)
     get CircleCityDirectory.path(@empty_city)
     assert_select 'h1', text: /全0件/
     assert_select 'meta[name=robots][content*=noindex]'
     secondary = Event.create!(name: 'バドミントン', ruby: 'city-badminton', category: @circle.category)
-    @circle.update!(secondary_event_ids: [secondary.id])
     path = CircleCityDirectory.path(@city, event: secondary)
-    assert_includes CircleCityDirectory.each_populated_path.to_a, path
+    refute_includes CircleCityDirectory.each_populated_path.to_a, path
     get path
     assert_response :success
-    assert_select 'h1', text: /全1件東京都渋谷区のバドミントン/
+    assert_select 'h1', text: /全0件東京都渋谷区のバドミントン/
   end
 end

@@ -71,6 +71,8 @@
 #  fk_rails_...  (prefecture_id => prefectures.id)
 #
 class User < ApplicationRecord
+  # Deploy this before dropping the retired column so rolling workers are safe.
+  self.ignored_columns += %w[secondary_event_ids]
   include PublicListingOrder
   include SportDiscovery
   has_one :backlink_request, dependent: :destroy

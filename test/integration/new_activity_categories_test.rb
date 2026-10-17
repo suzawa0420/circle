@@ -16,7 +16,7 @@ class NewActivityCategoriesTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'new categories support discovery images profile selection and secondary activities' do
+  test 'new categories support discovery images profile selection with only a primary sport' do
     original = @circle.attributes.slice('event_id', 'category_id', 'updated_at', 'last_post')
     ActiveRecord::Migration.suppress_messages { AddKarateHandicraftKaraoke.new.up }
     assert_equal original, @circle.reload.attributes.slice(*original.keys)
@@ -25,7 +25,7 @@ class NewActivityCategoriesTest < ActionDispatch::IntegrationTest
       64 => ['karaoke', 'カラオケ', 9] }.each do |id, (slug, name, category_id)|
       event = Event.find(id)
       assert_equal [slug, name, category_id.to_s], [event.ruby, event.name, event.category_id]
-      @circle.update!(event: event, category: event.category, secondary_event_ids: [])
+      @circle.update!(event: event, category: event.category)
       SearchResultCountCache::STORE.clear
       get event_path(slug)
       assert_response :success
@@ -44,7 +44,7 @@ class NewActivityCategoriesTest < ActionDispatch::IntegrationTest
     assert_select 'select[name="user[event_id]"] option[value="64"]', text: 'カラオケ'
     patch user_path(@circle), params: { user: { secondary_event_ids: ['', 63] } }
     assert_response :redirect
-    assert_equal [], @circle.reload.secondary_event_ids
+    assert_not @circle.reload.has_attribute?(:secondary_event_ids)
     refute_includes User.publicly_visible.for_event(63), @circle
   end
 

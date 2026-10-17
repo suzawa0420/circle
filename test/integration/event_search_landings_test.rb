@@ -18,13 +18,12 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
-  test 'event listings use the displayed primary sport rather than secondary circle sports' do
+  test 'event listings use only the displayed primary sport' do
     badminton = Event.create!(name: 'バドミントン', ruby: 'badminton', category: @circle.category, order: '2')
     other = @circle.dup
-    other.assign_attributes(name: 'バドミントンサークル', event: badminton, secondary_event_ids: [@circle.event_id])
+    other.assign_attributes(name: 'バドミントンサークル', event: badminton)
     other.save!
     other_schedule = other.schedules.create!(day: Date.current.iso8601, title: 'バドミントンの練習', venue: '体育館')
-    @circle.update!(secondary_event_ids: [badminton.id])
 
     ['', '/today', '/this_week', '/2026/10/14'].each do |suffix|
       ['/dates/basketball', @base].each do |base|
