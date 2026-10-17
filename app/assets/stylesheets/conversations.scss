@@ -289,4 +289,6 @@ body.cb-site .chat-shell .chat-review-prompt-badge { display: inline-block; marg
 
 .chat-inquiry-context__time-part { display: inline-block; }
 
-.chat-inquiry-context__description { margin: 8px 0; font-size: 13px; line-height: 1.7; color: $cb-system-hover; }
+.chat-inquiry-context__description { margin: 8px 0; font-size: 13px; line-height: 1.7; letter-spacing: 0; color: $cb-system-hover; }
+
+@media (max-width: 360px) { .chat-inquiry-context__description { font-size: 12px; } }

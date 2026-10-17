@@ -17,7 +17,7 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     login_master
     get_thread super_admin_conversation_path(@conversation), params: { page: 1 }
     assert_response :success
-    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日ページからお問い合わせがありました。.*2026年10月25日.*18:00〜21:00/m
+    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*お問い合わせ元：活動日ページ.*2026年10月25日.*18:00〜21:00/m
     assert_select "#chat-message-#{message.id} .chat-inquiry-context__link[href=?]", user_schedule_path(@circle, schedule), text: '体験バスケ'
     assert_select "#chat-message-#{message.id} .chat-inquiry-context ~ .wm-body", text: '体験参加を希望しています。'
     assert_equal before, @conversation.reload.attributes

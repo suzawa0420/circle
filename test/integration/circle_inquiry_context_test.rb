@@ -45,12 +45,12 @@ class CircleInquiryContextTest < ActionDispatch::IntegrationTest
     assert_equal 'schedule', message.inquiry_context['kind']
     assert_equal user_schedule_path(@circle, @schedule), message.inquiry_context['path']
     get conversation_path(@conversation)
-    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日ページからお問い合わせがありました。.*体験バスケ/m
+    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*お問い合わせ元：活動日ページ.*体験バスケ/m
     assert_select "#chat-message-#{message.id} .chat-body .chat-inquiry-context", count: 0
     sign_out @member
     sign_in @owner
     get conversation_path(@conversation)
-    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日ページからお問い合わせがありました。.*体験バスケ/m
+    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*お問い合わせ元：活動日ページ.*体験バスケ/m
     assert_select "#chat-message-#{message.id} .chat-body .chat-inquiry-context", count: 0
   end
 
@@ -60,14 +60,14 @@ class CircleInquiryContextTest < ActionDispatch::IntegrationTest
       token = CircleInquiryContext.issue(@circle, kind: kind)
       get new_user_conversation_path(@circle, inquiry_context: token)
       assert_response :success
-      assert_select '.chat-inquiry-context__description', text: "#{label}ページからお問い合わせがありました。"
+      assert_select '.chat-inquiry-context__description', text: "お問い合わせ元：#{label}ページ"
       assert_select '.chat-inquiry-context__link', count: 0
       assert_select '.chat-inquiry-context', text: /#{Regexp.escape(@circle.name)}/, count: 0
     end
     # Existing stored context gets the updated presentation too.
     @conversation.chat_messages.where(sender_role: 'member').first.update!(inquiry_context: CircleInquiryContext.build(@circle, 'details', nil))
     get conversation_path(@conversation)
-    assert_select '.chat-inquiry-context__description', text: 'サークル詳細ページからお問い合わせがありました。'
+    assert_select '.chat-inquiry-context__description', text: 'お問い合わせ元：サークル詳細ページ'
     assert_select '.chat-inquiry-context__link', count: 0
   end
 
