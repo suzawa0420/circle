@@ -45,13 +45,30 @@ class CircleInquiryContextTest < ActionDispatch::IntegrationTest
     assert_equal 'schedule', message.inquiry_context['kind']
     assert_equal user_schedule_path(@circle, @schedule), message.inquiry_context['path']
     get conversation_path(@conversation)
-    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日を見てお問い合わせがありました。.*体験バスケ/m
+    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日ページからお問い合わせがありました。.*体験バスケ/m
     assert_select "#chat-message-#{message.id} .chat-body .chat-inquiry-context", count: 0
     sign_out @member
     sign_in @owner
     get conversation_path(@conversation)
-    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日を見てお問い合わせがありました。.*体験バスケ/m
+    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日ページからお問い合わせがありました。.*体験バスケ/m
     assert_select "#chat-message-#{message.id} .chat-body .chat-inquiry-context", count: 0
+  end
+
+  test 'source descriptions name the page and omit redundant circle names' do
+    sign_in @member
+    { 'details' => 'サークル詳細', 'schedules' => '活動日一覧', 'reviews' => '口コミ', 'questions' => 'Q&A', 'blogs' => 'ブログ一覧' }.each do |kind, label|
+      token = CircleInquiryContext.issue(@circle, kind: kind)
+      get new_user_conversation_path(@circle, inquiry_context: token)
+      assert_response :success
+      assert_select '.chat-inquiry-context__description', text: "#{label}ページからお問い合わせがありました。"
+      assert_select '.chat-inquiry-context__link', count: 0
+      assert_select '.chat-inquiry-context', text: /#{Regexp.escape(@circle.name)}/, count: 0
+    end
+    # Existing stored context gets the updated presentation too.
+    @conversation.chat_messages.where(sender_role: 'member').first.update!(inquiry_context: CircleInquiryContext.build(@circle, 'details', nil))
+    get conversation_path(@conversation)
+    assert_select '.chat-inquiry-context__description', text: 'サークル詳細ページからお問い合わせがありました。'
+    assert_select '.chat-inquiry-context__link', count: 0
   end
 
   test 'forged cross-circle and hidden sources are not accepted' do
