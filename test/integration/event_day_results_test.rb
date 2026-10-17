@@ -90,7 +90,13 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_select '.event-results--hub', count: 1
     assert_select '.event-results__card', count: 7
     assert_select '.event-results__date-group', count: 2
-    assert_select '.event-results__days a', count: 5
+    assert_select '.event-results__days a', count: 12 do |links|
+      links.each_with_index do |link, index|
+        assert_equal EventSearchPage.path(date: Date.current + index), link['href']
+      end
+    end
+    assert_select '.event-results__shortcuts--periods a', count: 4
+    assert_select '.event-results__shortcuts--periods a[aria-label="今日のイベント"]'
     assert_select '.event-results__shortcuts a[href="/dates/today"]'
     assert_select '.event-results__shortcuts a[href="/dates/tomorrow"]'
     assert_select '.schedule_item_wrap, .e_header_wrap', count: 0

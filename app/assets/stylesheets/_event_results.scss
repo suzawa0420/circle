@@ -77,6 +77,11 @@
     &__container &__body { flex: 1; }
     &__container &__image { max-height: 240px; }
   }
+  @media (max-width: 767px) {
+    &__shortcuts--periods { flex-wrap: nowrap; gap: 8px; }
+    &__shortcuts--periods a { flex: 1 1 0; min-width: 0; padding: 8px 4px; text-align: center; white-space: nowrap; }
+    &__shortcut-suffix { display: none; }
+  }
   @media (max-width: 480px) { &__date-break { display: initial; } }
   @media (max-width: 360px) { &__days a { font-size: 16px; } }
 }
