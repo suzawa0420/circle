@@ -8,8 +8,8 @@
 - is_master_account = webmaster?
 - listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
-- cache [users, is_master_account, 'seo-list-v6-sports', 'stored-image-extension-v1'] do
-  %ul
+- cache [users, is_master_account, 'seo-list-v7-desktop-grid', 'stored-image-extension-v1'] do
+  %ul.circle-results-grid
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
         - if is_master_account
