@@ -7,7 +7,7 @@
         <p class="participant-eyebrow">サークル参加者</p>
         <h1><%= @member.nickname.presence || '参加者' %><small>さん</small></h1>
         <p class="public-profile-meta"><% if @member.age_group.present? %><span><%= @member.age_group %></span><% end %><% if @member.prefecture %><span>活動エリア：<%= @member.prefecture.name %></span><% end %></p>
-        <% if @review_count.positive? %><a class="public-profile-score" href="#reviews" aria-label="主催者からの口コミ：5点満点中<%= format('%.2f', @member.received_review_score) %>、<%= @review_count %>件"><%= render 'expression', positive: true %><strong><%= format('%.2f', @member.received_review_score) %></strong><span>/ 5</span><span>（<%= @review_count %>件）</span></a><% else %><p class="public-profile-no-score">口コミはまだありません</p><% end %>
+        <% if @review_count.positive? %><a class="public-profile-score" href="#reviews" aria-label="主催者からの口コミ：5点満点中<%= format('%.2f', @member.received_review_score) %>、<%= @review_count %>件"><span class="public-profile-score__stars"><%= render 'layouts/review_stars', review_score: @member.received_review_score, reviews_count: @review_count %></span><strong><%= format('%.1f', @member.received_review_score) %></strong><span>（<%= @review_count %>件）</span></a><% else %><p class="public-profile-no-score">口コミはまだありません</p><% end %>
       </div>
     </div>
     <%= render 'conversations/no_reply_notice', person: @member %>
@@ -45,7 +45,7 @@
       <% @reviews.each do |review| %>
         <article class="participant-card public-profile-review">
           <div class="public-profile-review__header"><%= render 'conversations/avatar', conversation: review.conversation, role: 'owner' %><div><%= link_to review.conversation.user.name, circle_path(review.conversation.user) %><time datetime="<%= review.published_at.to_date.iso8601 %>"><%= l(review.published_at.to_date) %></time></div></div>
-          <p class="public-profile-review__rating"><%= render 'expression', positive: review.score == 1 %><strong><%= review.score == 1 ? '良かった' : '残念だった' %></strong></p>
+          <p class="public-profile-review__rating <%= review.score == 1 ? 'review-sentiment--positive' : 'review-sentiment--negative' %>"><%= render 'expression', positive: review.score == 1 %><strong><%= review.score == 1 ? '良かった' : '残念だった' %></strong></p>
           <%= simple_format review.comment %>
           <% if webmaster? %><%= button_to '口コミを削除（運営）', super_admin_evaluation_path(review), method: :delete, data: { confirm: 'この口コミを削除しますか？相手側の口コミは残ります。' } %><% end %>
         </article>

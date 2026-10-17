@@ -94,6 +94,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261017000000
     # Private attendance claims and the participant's explanation/appeal.
     bundle exec rails db:migrate:up VERSION=20261017010000
+    # Publish one-sided reviews two weeks after the first submitted review.
+    bundle exec rails db:migrate:up VERSION=20261017020000
     # Secondary sport references were retired on both servers before this release.
     bundle exec rails db:migrate:up VERSION=20261017030000
     bundle exec rails db:abort_if_pending_migrations

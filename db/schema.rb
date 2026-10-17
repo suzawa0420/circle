@@ -215,6 +215,7 @@ ActiveRecord::Schema.define(version: 2026_10_17_030000) do
     t.bigint "user_id", null: false
     t.bigint "member_id"
     t.datetime "accepted_at"
+    t.datetime "first_review_submitted_at"
     t.datetime "review_deadline"
     t.datetime "reviews_published_at"
     t.boolean "legacy_member_review", default: false, null: false

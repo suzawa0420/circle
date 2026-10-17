@@ -1,9 +1,9 @@
 <aside class="chat-card chat-review-prompt" aria-labelledby="review-prompt-heading">
+  <p class="chat-review-prompt__label"><%= lucide_icon 'info' %><span>システム通知</span></p>
   <% if @conversation.peer_review_waiting?(@role) %>
-    <p class="cb-system-notice"><strong class="cb-system-notice__label">システム通知</strong></p>
     <h2 id="review-prompt-heading">相手から口コミが届いています</h2>
-    <p>あなたも口コミを投稿すると、双方の口コミが公開されます。相手の評価・本文は公開まで表示されません。</p>
-    <p>投稿しない場合も、投稿期限が過ぎると相手の口コミは公開されます。投稿は任意です。</p>
+    <p class="chat-review-prompt__description">あなたも口コミを投稿すると、双方の口コミが公開されます。</p>
+    <p class="chat-review-prompt__note">相手の評価・本文は公開まで非表示です。投稿は任意で、あなたが投稿しない場合も相手の口コミは最初の投稿から2週間後に公開されます。</p>
   <% else %>
     <h2 id="review-prompt-heading"><%= @conversation.participant_name(@role == 'member' ? 'owner' : 'member') %><%= 'さん' if @role == 'owner' %>とのやり取りはいかがでしたか？</h2>
     <p><%= @role == 'member' ? '参加前でも、連絡のやり取りについて感想を書けます。参加した方は、サークルの雰囲気も教えてください。' : '連絡のやり取りや、参加時の様子について感想を教えてください。' %></p>
@@ -12,6 +12,6 @@
   <div class="chat-review-prompt__actions">
     <%= link_to '感想を書く', '#evaluation', class: 'chat-button', data: { open_evaluation: true } %>
     <%= button_to 'まだやり取り中', review_prompt_conversation_path(@conversation), params: { choice: 'later' } %>
-    <%= button_to '今回は書かない', review_prompt_conversation_path(@conversation), params: { choice: 'dismiss' } %>
+    <%= button_to '今回は書かない', review_prompt_conversation_path(@conversation), params: { choice: 'dismiss' }, class: 'chat-review-prompt__dismiss' %>
   </div>
 </aside>

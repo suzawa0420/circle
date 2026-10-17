@@ -1,0 +1,21 @@
+// Review sentiment and rating colours stay the same for every account role.
+body.cb-site .profile-expression--positive,
+body.cb-site .review-sentiment--positive,
+body.cb-site .chat-review-preview__expression.is-good,
+body.cb-site .chat-rating-option--smile .cb-icon,
+body.cb-site .review_contents .good { color: $cb-review-positive !important; }
+body.cb-site .profile-expression--negative,
+body.cb-site .review-sentiment--negative,
+body.cb-site .chat-review-preview__expression.is-bad,
+body.cb-site .chat-rating-option--frown .cb-icon,
+body.cb-site .review_contents .bad { color: $cb-review-negative !important; }
+body.cb-site .star .orange,
+body.cb-site .user_item_wrap .star .orange,
+body.cb-site .chat-profile__stars-fill { color: $cb-rating !important; }
+body.cb-site .star .gray { color: $cb-rating-empty !important; }
+body.cb-site .review-sentiment { display: inline-flex; align-items: center; gap: 8px; }
+body.cb-site .public-profile-score { gap: 8px; color: $cb-text; text-decoration: none; }
+body.cb-site .public-profile-score__stars { display: inline-flex; }
+body.cb-site .public-profile-score__stars .star { float: none; gap: 2px; }
+body.cb-site .public-profile-score__stars .cb-icon { font-size: 20px; }
+body.cb-site .public-profile-score strong { color: $cb-text; font-size: 20px; }

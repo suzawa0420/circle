@@ -4,6 +4,7 @@
     <h1><%= @conversation.practice_match? ? '対戦・練習試合の相談' : 'メッセージ' %></h1>
     <a href="#chat-reply" class="chat-reply-link"><%= lucide_icon 'undo-2' %>返信欄へ</a>
   </header>
+  <div id="chat-review-prompt"><%= render "review_prompt" if @review_prompt_due %></div>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
   <% if @role == 'owner' && Conversation.reported_unanswered.exists?(@conversation.id) %>
@@ -19,7 +20,6 @@
   </div>
   </details>
   <% end %>
-  <div id="chat-review-prompt"><%= render "review_prompt" if @review_prompt_due %></div>
   <section aria-label="メッセージ履歴" class="chat-history">
     <%= paginate @messages %>
     <div id="chat-messages" class="chat-history" data-chat-jump-target="<%= "chat-message-#{@initial_jump[:message_id]}" if @initial_jump && !@review_prompt_due %>" data-chat-jump-alignment="<%= @initial_jump&.fetch(:alignment) %>" data-history-version="<%= history_version %>" data-latest-id="<%= @messages.first&.id || 0 %>" data-poll-url="<%= messages_conversation_path(@conversation) if @messages.current_page == 1 %>" data-accepted="<%= @conversation.accepted_at.present? %>">
@@ -106,7 +106,7 @@
     <summary><span class="chat-section-label"><%= lucide_icon 'square-pen' %><span>口コミを投稿する</span></span></summary>
     <p>やり取りの感想を教えてください。</p>
     <% if @conversation.review_deadline %><p class="chat-review-deadline">投稿期限：<%= l(@conversation.review_deadline, format: '%-m月%-d日 %H:%M') %></p><% end %>
-    <p class="chat-review-help">双方の投稿完了、または期限後に公開されます。公開までは相手の内容は見えません。</p>
+    <p class="chat-review-help">双方が投稿すると、その時点で公開されます。片方だけの場合は、最初の投稿から2週間後に公開されます。公開までは相手の内容は見えません。</p>
     <details class="chat-review-guidelines"><summary>公開・投稿のルール</summary><p class="chat-review-help">ニックネーム・サークル名も公開されます。連絡先などの個人情報は書かないでください。高評価や削除の強要、報復は禁止です。</p></details>
     <p id="chat-acceptance-notice" class="cb-system-notice" hidden><strong class="cb-system-notice__label">システム通知</strong>主催者から返信が届きました。<%= link_to "ページを更新して口コミを書く", conversation_path(@conversation, refresh: 1, anchor: "evaluation") %></p>
     <% if @conversation.actor(@role).suspended? %>
@@ -153,7 +153,7 @@
     <% elsif @own_review&.deleted_at %><p>自分の口コミは削除済みです。再投稿できません。</p><% end %>
     <% @public_reviews.each do |review| %>
       <% next if review.author_role == @role %>
-      <div class="chat-own-review"><strong>相手の口コミ：<%= review.score == 1 ? '良かった' : '残念だった' %></strong><%= simple_format review.comment %></div>
+      <div class="chat-own-review"><span class="review-sentiment <%= review.score == 1 ? 'review-sentiment--positive' : 'review-sentiment--negative' %>"><%= render 'member_profiles/expression', positive: review.score == 1 %><strong>相手の口コミ：<%= review.score == 1 ? '良かった' : '残念だった' %></strong></span><%= simple_format review.comment %></div>
       <details><summary>この口コミを通報する</summary>
         <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
           <%= hidden_field_tag :review_id, review.id %>

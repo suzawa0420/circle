@@ -250,11 +250,26 @@
 .chat-history [id^="chat-message-"] { scroll-margin-top: 80px; scroll-margin-bottom: 20px; }
 .wm-conversation [id^="chat-message-"] { scroll-margin-top: 80px; scroll-margin-bottom: 100px; }
 
-.chat-review-prompt { background: $cb-mint-soft; border-color: $cb-action; }
-.chat-review-prompt h2 { font-size: 16px; line-height: 1.6; margin: 0 0 8px; }
-.chat-review-prompt p { font-size: 13px; line-height: 1.7; }
-.chat-review-prompt__actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.chat-review-prompt__actions form { margin: 0; }
-.chat-review-prompt__actions button { min-height: 44px; background: #fff; border: 1px solid $cb-border; border-radius: 8px; padding: 8px 12px; }
-.chat-review-prompt-badge { display: inline-block; margin-top: 6px; padding: 3px 8px; background: $cb-mint-soft; color: $cb-action; border: 1px solid $cb-border; border-radius: 6px; font-size: 12px; font-weight: 700; }
-.chat-review-prompt__actions .chat-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 9px 16px; border: 1px solid $cb-action; border-radius: 8px; text-decoration: none; }
+// Platform notices use one continuous surface, separate from chat participants.
+body.cb-site .chat-shell .chat-review-prompt { padding: 22px 24px; background: $cb-system-soft; border: 1px solid $cb-system-border; border-radius: 14px; box-shadow: none; }
+body.cb-site .chat-shell .chat-review-prompt .chat-review-prompt__label { display: flex; align-items: center; gap: 7px; margin: 0 0 10px; color: $cb-system; font-size: 12px; font-weight: 700; line-height: 1.5; }
+body.cb-site .chat-shell .chat-review-prompt__label .cb-icon { width: 16px; height: 16px; flex: none; }
+body.cb-site .chat-shell .chat-review-prompt h2 { margin: 0 0 8px; color: $cb-text; font-size: 18px; font-weight: 700; line-height: 1.6; }
+body.cb-site .chat-shell .chat-review-prompt p { margin: 0 0 8px; font-size: 14px; line-height: 1.8; }
+body.cb-site .chat-shell .chat-review-prompt .chat-review-prompt__note { max-width: 62ch; margin: 6px 0 0; color: $cb-muted; font-size: 12px; line-height: 1.8; }
+body.cb-site .chat-shell .chat-review-prompt__actions { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 18px; }
+body.cb-site .chat-shell .chat-review-prompt__actions form { margin: 0; }
+body.cb-site .chat-shell .chat-review-prompt__actions :is(button, input[type=submit]) { min-height: 44px; margin: 0; padding: 8px 4px; border: 0 !important; border-radius: 6px; background: transparent !important; box-shadow: none !important; color: $cb-system !important; font-size: 13px; line-height: 1.5; text-decoration: underline !important; text-underline-offset: 4px; }
+body.cb-site .chat-shell .chat-review-prompt__actions :is(button, input[type=submit]):hover { color: $cb-system-hover !important; background: transparent !important; }
+body.cb-site .chat-shell .chat-review-prompt__actions input.chat-review-prompt__dismiss { color: $cb-muted !important; }
+body.cb-site .chat-shell .chat-review-prompt .chat-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 20px; margin: 0; border: 1px solid $cb-system !important; border-radius: 8px; background: $cb-system !important; color: #fff !important; font-size: 14px; font-weight: 700; line-height: 1.5; text-decoration: none; }
+body.cb-site .chat-shell .chat-review-prompt .chat-button:hover { background: $cb-system-hover !important; border-color: $cb-system-hover !important; }
+body.cb-site .chat-shell .chat-review-prompt-badge { display: inline-block; margin-top: 6px; padding: 3px 8px; background: $cb-system-soft; color: $cb-system; border: 1px solid $cb-system-border; border-radius: 6px; font-size: 12px; font-weight: 700; }
+@media (max-width: 600px) {
+  body.cb-site .chat-shell .chat-review-prompt { padding: 18px; }
+  body.cb-site .chat-shell .chat-review-prompt h2 { font-size: 17px; }
+  body.cb-site .chat-shell .chat-review-prompt__actions { gap: 4px 16px; }
+  body.cb-site .chat-shell .chat-review-prompt .chat-button { width: 100%; margin-bottom: 4px; }
+  body.cb-site .chat-shell .chat-review-prompt__actions form { flex: 1; }
+  body.cb-site .chat-shell .chat-review-prompt__actions :is(button, input[type=submit]) { width: 100%; }
+}

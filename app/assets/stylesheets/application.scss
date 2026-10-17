@@ -9704,3 +9704,6 @@ trix-toolbar .button_group button.icon {
 .breadcrumbs .breadcrumb-current { padding: 4px 2px; color: #263a30; font-weight: 700; }
 .breadcrumbs .breadcrumb-separator { flex: 0 0 14px; width: 14px; height: 14px; margin: 0 8px; color: #697b70; }
 .breadcrumbs .home_icon { flex: 0 0 16px; width: 16px; height: 16px; }
+
+// Review meaning takes precedence over participant/organizer action colours.
+@import "review_semantics";

@@ -119,4 +119,19 @@ class ParticipantAccountsTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert_nil @other_member.reload.date_of_birth
   end
+  test 'public member rating uses shared stars and sentiment classes instead of a five point fraction' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation.merge(score: 1))
+    @conversation.submit_review!('member', member_evaluation)
+    get member_profile_path(@member)
+    assert_response :success
+    assert_select '.public-profile-score .star svg.orange', count: 5
+    assert_select '.public-profile-score strong', text: '5.0'
+    assert_select '.public-profile-score', text: /5.0.*1件/
+    assert_select '.public-profile-score', text: %r{/ 5}, count: 0
+    assert_select '.public-profile-rating-counts .profile-expression--positive', count: 1
+    assert_select '.public-profile-rating-counts .profile-expression--negative', count: 1
+    assert_select '.public-profile-review__rating.review-sentiment--positive .profile-expression--positive', count: 1
+  end
+
 end

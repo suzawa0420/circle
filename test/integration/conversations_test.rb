@@ -703,7 +703,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     get conversations_path
     assert_select '.chat-review-prompt-badge', text: '口コミが届いています・あなたも投稿できます'
     get conversation_path(@conversation)
-    assert_select '#chat-review-prompt .cb-system-notice__label', text: 'システム通知'
+    assert_select '#chat-review-prompt .chat-review-prompt__label span', text: 'システム通知'
     assert_select '#review-prompt-heading', text: '相手から口コミが届いています'
     assert_not_includes response.body, member_evaluation[:comment]
     get messages_conversation_path(@conversation), as: :json

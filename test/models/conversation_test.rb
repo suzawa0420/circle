@@ -7,7 +7,7 @@ class ConversationTest < ActiveSupport::TestCase
   include ChatRecords
   setup { create_chat_records }
 
-  test 'one conversation per circle and member; first owner reply starts an immutable thirty day deadline' do
+  test 'one conversation per circle and member; first owner reply starts a thirty day initial submission window' do
     assert_equal @conversation, Conversation.for_member!(@circle, @member)
     assert_nil @conversation.accepted_at
     assert_raises(Conversation::NotAllowed) { @conversation.submit_review!('member', member_evaluation) }
@@ -387,6 +387,47 @@ class ConversationTest < ActiveSupport::TestCase
       ChatMaintenance.run
       assert_equal 1, ActionMailer::Base.deliveries.count { |mail| mail.subject.include?('口コミが届いています') }
     end
+  end
+
+  test 'first submitted review starts a fourteen day publication deadline independent of first reply' do
+    accept_conversation
+    assert_nil @conversation.first_review_submitted_at
+    travel 10.days do
+      @conversation.submit_review!('member', member_evaluation)
+      assert_in_delta Time.current, @conversation.first_review_submitted_at, 1
+      assert_in_delta 14.days, @conversation.review_deadline - Time.current, 1
+      travel 13.days
+      ChatMaintenance.run
+      assert_nil @conversation.reload.reviews_published_at
+      travel 1.day + 1.second
+      ChatMaintenance.run
+      assert @conversation.reload.reviews_published_at
+      assert_equal 1, @circle.reviews.count
+    end
+  end
+
+  test 'editing deleting and resubmitting cannot extend the fourteen day publication deadline' do
+    accept_conversation
+    @conversation.submit_review!('owner', owner_evaluation)
+    first_post = @conversation.first_review_submitted_at
+    deadline = @conversation.review_deadline
+    travel 2.days do
+      @conversation.submit_review!('owner', owner_evaluation.merge(comment: '投稿した感想を更新しました。'))
+      @conversation.delete_review!('owner')
+      @conversation.submit_review!('owner', owner_evaluation)
+      assert_equal first_post, @conversation.first_review_submitted_at
+      assert_equal deadline, @conversation.review_deadline
+      @conversation.submit_review!('member', member_evaluation)
+      assert @conversation.reload.reviews_published_at
+    end
+  end
+
+  test 'invalid first review cannot start a publication deadline' do
+    accept_conversation
+    deadline = @conversation.review_deadline
+    assert_raises(ActiveRecord::RecordInvalid) { @conversation.submit_review!('member', member_evaluation.merge(comment: '短')) }
+    assert_nil @conversation.reload.first_review_submitted_at
+    assert_equal deadline, @conversation.review_deadline
   end
 
 end

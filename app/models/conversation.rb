@@ -275,6 +275,11 @@ class Conversation < ApplicationRecord
       review.assign_attributes(attributes)
       review.participated = false if role == 'owner'
       review.save!
+      unless first_review_submitted_at
+        self.first_review_submitted_at = review.created_at
+        self.review_deadline = first_review_submitted_at + 14.days
+        save!
+      end
       conversation_reviews.reset
       publish_reviews_locked!
       invite_peer_reviewer!(role) if new_submission
