@@ -71,10 +71,10 @@
                     このサークルに質問する！
               .post_cta
                 .contact_link
-                  = link_to new_user_user_contact_path(@user, entry: "3") do
+                  = link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user) do
                     .btn.btn_c.btn_green.btn_cubic
                       = lucide_icon "mail"
-                      このサークルに直接質問する！
+                      このサークルにお問い合わせする
     = render "/layouts/ad_square"
     .ad_space
     .qa_card_warp

@@ -25,7 +25,8 @@ class ScheduleDetailDesignTest < ActionDispatch::IntegrationTest
     assert_select '.schedule-detail__card > .schedule-detail__heading + .schedule-detail__image + .schedule-detail__summary', count: 1
     assert_select '.schedule-detail__image img[src="/images/events/basketball.jpg"][fetchpriority="high"]'
     assert_select '.schedule-detail__facts', text: /18:30–21:30.*駒込／田端.*男性1,500円／女性1,000円/m
-    assert_select '.schedule-detail__contact[href=?][data-circle-inquiry-click]', new_user_conversation_path(@circle)
+    assert_select '.schedule-detail__contact[data-circle-inquiry-click]', count: 2
+    assert_select '.schedule-detail__section .schedule-detail__body ~ .schedule-detail__contact', text: /この活動について問い合わせる/
     assert_select '.schedule-detail__organizer[href=?]', circle_path(@circle)
     assert_select '.schedule-detail__body', text: /シューズを持参/
     assert_select '.schedule-detail__body script', count: 0

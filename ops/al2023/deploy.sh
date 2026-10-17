@@ -100,6 +100,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261017030000
     # Shared level-up notification baseline; nullable for existing circles.
     bundle exec rails db:migrate:up VERSION=20261017040000
+    # Public inquiry source attached to its chat message.
+    bundle exec rails db:migrate:up VERSION=20261017050000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

@@ -24,8 +24,21 @@
   <% end %>
   <div class="chat-card">
     <%= form_with url: user_conversations_path(@user), scope: :message, local: true do |f| %>
+      <% if @inquiry_context.present? %>
+        <%= hidden_field_tag :inquiry_context, params[:inquiry_context] %>
+        <p class="chat-muted">ご覧になったページは自動で記録され、送信後にシステムから案内されます。選択や入力は不要です。</p>
+      <% end %>
       <%= f.label :body, '問い合わせ内容' %>
-      <%= f.text_area :body, required: true, maxlength: 2000, rows: 8, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
+      <%= f.text_area :body, required: true, maxlength: 2000, rows: 8, data: { inquiry_preview_input: true }, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
+      <% if @inquiry_context.present? %>
+        <details class="chat-inquiry-preview" open>
+          <summary>送信後の表示プレビュー</summary>
+          <%= render 'inquiry_context', context: @inquiry_context %>
+          <div class="chat-body">
+            <p data-inquiry-body-preview>ここに入力したお問い合わせ内容が表示されます。</p>
+          </div>
+        </details>
+      <% end %>
       <p>ニックネームと公開プロフィール・評価は主催者に表示されます。</p>
       <%= f.submit '問い合わせを送信', class: 'chat-button' %>
     <% end %>

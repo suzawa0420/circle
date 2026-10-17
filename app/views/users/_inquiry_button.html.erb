@@ -1,0 +1,7 @@
+<% if @user.switch == '募集中' && !can_manage_circle?(@user) %>
+  <div class="circle-page-inquiry">
+    <%= link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'cb-button cb-button--primary cb-participant') do %>
+      <%= lucide_icon 'message-circle' %>このサークルにお問い合わせする
+    <% end %>
+  </div>
+<% end %>

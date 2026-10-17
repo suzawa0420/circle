@@ -1,0 +1,6 @@
+<aside class="chat-inquiry-context" aria-label="システムからの案内">
+  <strong class="chat-inquiry-context__label"><%= lucide_icon 'file-text' %>システムからの案内</strong>
+  <p class="chat-inquiry-context__description"><%= context.fetch('label') %>を見てお問い合わせがありました。</p>
+  <% if context['timing'].present? %><p class="chat-inquiry-context__timing"><% context['timing'].split(' ').each do |part| %><span class="chat-inquiry-context__time-part"><%= part %></span> <% end %></p><% end %>
+  <%= link_to context.fetch('title'), context.fetch('path'), class: 'chat-inquiry-context__link' %>
+</aside>

@@ -9,6 +9,20 @@ class WebmasterConversationsTest < ActionDispatch::IntegrationTest
     @master = Webmaster.create!(id: 1, email: 'webmaster@example.test', password: 'test-password-123')
   end
 
+  test 'webmaster sees the automatic inquiry source before the participant body without marking it read' do
+    schedule = @circle.schedules.create!(day: '2026-10-25', title: '体験バスケ', time_s: '18:00', time_e: '21:00', venue: '体育館')
+    token = CircleInquiryContext.issue(@circle, kind: 'schedule', record_id: schedule.id)
+    message = @conversation.send_message!('member', '体験参加を希望しています。', inquiry_context: CircleInquiryContext.resolve(@circle, token))
+    before = @conversation.reload.attributes
+    login_master
+    get_thread super_admin_conversation_path(@conversation), params: { page: 1 }
+    assert_response :success
+    assert_select "#chat-message-#{message.id} > .chat-inquiry-context", text: /システムからの案内.*活動日を見てお問い合わせがありました。.*2026年10月25日.*18:00〜21:00/m
+    assert_select "#chat-message-#{message.id} .chat-inquiry-context__link[href=?]", user_schedule_path(@circle, schedule), text: '体験バスケ'
+    assert_select "#chat-message-#{message.id} .chat-inquiry-context ~ .wm-body", text: '体験参加を希望しています。'
+    assert_equal before, @conversation.reload.attributes
+  end
+
   test 'master jumps to the earliest message unread by either party without marking it read' do
     first = @conversation.chat_messages.where(sender_role: 'member').sole
     ChatMessage.insert_all!(110.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "長い履歴 #{i}", created_at: Time.current, updated_at: Time.current } })

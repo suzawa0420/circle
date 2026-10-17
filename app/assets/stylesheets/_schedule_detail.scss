@@ -27,6 +27,7 @@
   &__contact svg { width: 17px; height: 17px; flex-shrink: 0; }
   &__hint { font-size: 12px; color: #60746b; margin: 8px 0 0; }
   &__section { padding: 17px 16px; }
+  &__section > &__contact { margin-top: 20px; }
   &__section h2 { font-size: 16px; margin: 0 0 12px; font-weight: 700; line-height: 1.5; }
   &__section > p, &__body { font-size: 14px; line-height: 1.8; color: #60746b; overflow-wrap: anywhere; }
   &__section p:last-child { margin-bottom: 0; }

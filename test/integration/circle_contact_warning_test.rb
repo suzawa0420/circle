@@ -12,7 +12,7 @@ class CircleContactWarningTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '#circle-contact-warning', count: 0
     assert_select 'a[data-circle-contact-warning]', count: 0
-    assert_select "a[href='#{new_user_conversation_path(@circle)}']", minimum: 1
+    assert_select "a[data-circle-inquiry-click][href^='#{new_user_conversation_path(@circle)}?']", minimum: 1
     assert_select 'a[data-circle-inquiry-click]', count: 2
   end
 

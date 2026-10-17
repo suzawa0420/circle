@@ -18,6 +18,18 @@ module UsersHelper
     options.merge(data: (options[:data] || {}).merge(circle_inquiry_click: true))
   end
 
+  def circle_inquiry_path(user)
+    kind = circle_navigation_tab&.to_s || 'details'
+    record = case kind
+             when 'schedules' then @schedule if action_name == 'show'
+             when 'blogs' then @blog if action_name == 'show'
+             when 'questions' then @question if action_name == 'show'
+             end
+    kind = { 'schedules' => 'schedule', 'blogs' => 'blog', 'questions' => 'question' }.fetch(kind, kind) if record&.persisted?
+    token = CircleInquiryContext.issue(user, kind: kind, record_id: record&.id)
+    new_user_conversation_path(user, inquiry_context: token)
+  end
+
   # Stored scores use tenths. Normalize float noise before splitting the level
   # and its progress, without changing or capping the stored score.
   def circle_level_status(user)

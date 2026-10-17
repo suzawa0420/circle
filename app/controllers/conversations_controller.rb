@@ -42,8 +42,9 @@ class ConversationsController < ApplicationController
       @source_circles = current_admin_user.users.publicly_visible.order(:id)
       return render :new_practice_match
     end
+    @inquiry_context = CircleInquiryContext.resolve(@user, params[:inquiry_context])
     existing = Conversation.find_by(user: @user, member: current_member)
-    return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists?
+    return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists? && @inquiry_context.blank?
     @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
   end
 
@@ -57,7 +58,7 @@ class ConversationsController < ApplicationController
         raise Conversation::NotAllowed, '本日の問い合わせ上限に達しました。明日お試しください。'
       end
       @conversation = Conversation.for_member!(@user, current_member)
-      @sent_message = @conversation.send_message!('member', params.require(:message).permit(:body)[:body])
+      @sent_message = @conversation.send_message!('member', params.require(:message).permit(:body)[:body], inquiry_context: CircleInquiryContext.resolve(@user, params[:inquiry_context]))
     end
     flash[:sport_inquiry_delivered] = @user.event.ruby if @sent_message.delivered?
     redirect_to conversation_path(@conversation), notice: @sent_message.delivered? ? 'お問い合わせを送信しました。' : '運営による確認後に配信します。相手にはまだ届いていません。'
@@ -240,7 +241,7 @@ class ConversationsController < ApplicationController
       return redirect_to new_member_registration_path, alert: '無料の参加者登録をしてご利用ください。'
     end
     unless current_member.email_verified?
-      store_location_for(:member, @conversation ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id]))
+      store_location_for(:member, @conversation ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id], inquiry_context: params[:inquiry_context]))
       redirect_to member_email_verification_path
     end
   end

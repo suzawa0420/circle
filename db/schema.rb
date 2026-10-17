@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_17_040000) do
+ActiveRecord::Schema.define(version: 2026_10_17_050000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 2026_10_17_040000) do
     t.index ["moderation_status", "created_at"], name: "index_chat_messages_on_moderation_status_and_created_at"
     t.index ["spam_fingerprint"], name: "index_chat_messages_on_spam_fingerprint"
     t.check_constraint "moderation_status::text = ANY (ARRAY['delivered'::character varying, 'held'::character varying, 'approved'::character varying, 'spam'::character varying]::text[])", name: "chat_messages_moderation_valid"
+    t.jsonb "inquiry_context", default: {}, null: false
   end
 
   create_table "chat_reports", force: :cascade do |t|

@@ -29,7 +29,7 @@
     </dl>
     <%= render 'users/parts/admin_user_check', admin_user: @user.admin_user %>
     <% if @user.switch == '募集中' %>
-      <%= link_to new_user_conversation_path(@user), circle_inquiry_link_options(@user).merge(class: 'schedule-detail__contact cb-participant') do %>
+      <%= link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'schedule-detail__contact cb-participant') do %>
         <%= lucide_icon 'message-circle' %>この活動について問い合わせる
       <% end %>
       <p class="schedule-detail__hint">会場の詳細・参加条件は主催者に確認できます。</p>
@@ -57,6 +57,12 @@
       <% if @user.link&.link02_url.present? %><%= link_to 'サークルのリンク集', "/link/#{@user.link.unique_id}" %><% end %>
       <% if @user.web.present? %><%= link_to 'サークルのWebサイト', @user.web, rel: 'nofollow' %><% end %>
     </div>
+  <% end %>
+  <% if @user.switch == '募集中' %>
+    <%= link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'schedule-detail__contact cb-participant') do %>
+      <%= lucide_icon 'message-circle' %>この活動について問い合わせる
+    <% end %>
+    <p class="schedule-detail__hint">会場の詳細・参加条件は主催者に確認できます。</p>
   <% end %>
 </section>
 

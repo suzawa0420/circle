@@ -134,15 +134,15 @@ class Conversation < ApplicationRecord
   end
 
   # Serialize initial inquiries across different circles for the same sender.
-  def send_message!(role, body, image: nil)
+  def send_message!(role, body, image: nil, inquiry_context: nil)
     if role == 'member'
-      actor(role).with_lock { send_message_locked!(role, body, image: image) }
+      actor(role).with_lock { send_message_locked!(role, body, image: image, inquiry_context: inquiry_context) }
     else
-      send_message_locked!(role, body, image: image)
+      send_message_locked!(role, body, image: image, inquiry_context: inquiry_context)
     end
   end
 
-  def send_message_locked!(role, body, image: nil)
+  def send_message_locked!(role, body, image: nil, inquiry_context: nil)
     with_lock do
       raise NotAllowed, 'ブロック中はメッセージを送信できません。' if blocked?
       ensure_active_sender!(role)
@@ -163,6 +163,7 @@ class Conversation < ApplicationRecord
         end
       end
       attributes = { sender_role: role, body: body.to_s, image: image }
+      attributes[:inquiry_context] = inquiry_context if role == 'member' && !practice_match? && inquiry_context.present?
       if role == 'member' && accepted_at.nil?
         result = ChatSpamDetector.evaluate(self, body)
         attributes.merge!(spam_score: result.score, spam_reasons: result.reasons, spam_fingerprint: result.fingerprint,

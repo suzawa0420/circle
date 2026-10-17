@@ -7,6 +7,7 @@
   <% else %>
   <% mine = message.sender_role == @role %>
   <article id="chat-message-<%= message.id %>" class="chat-message chat-message--<%= message.sender_role %> <%= 'chat-message--mine' if mine %>">
+    <%= render "conversations/inquiry_context", context: message.inquiry_context if message.inquiry_context.present? %>
     <div class="chat-message__content">
       <div class="chat-message__heading">
         <%= render 'avatar', conversation: @conversation, role: message.sender_role %>
