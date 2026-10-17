@@ -28,7 +28,7 @@ class ModerationReasonReport
     elsif record.moderation_status == 'review'
       codes = if record.is_a?(Blog)
         count = duplicate_counts ? [duplicate_counts.fetch(record.content, 0) - 1, 0].max : nil
-        record.moderation_rule_reasons(at: record.created_at || Time.current, check_recent: true, duplicate_count: count)
+        record.moderation_rule_reasons(duplicate_count: count)
       else
         record.moderation_rule_reasons
       end

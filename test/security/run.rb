@@ -179,10 +179,10 @@ class AntiSpamRateTest < Minitest::Test
     travel 1.hour
     assert_equal 200, request('/members').first
   end
-  def test_post_limits_cover_reviews_facilities_and_blog_edits
+  def test_post_limits_cover_reviews_and_facilities_but_exclude_blogs
     5.times { assert_equal 200, request('/users/1/reviews').first }
     assert_equal 429, request('/coat/places/1/place_reviews').first
-    assert_equal 429, request('/circles/1/blogs/2.json', method: 'PATCH').first
+    assert_equal 200, request('/circles/1/blogs/2.json', method: 'PATCH').first
     assert_equal 200, request('/circles/1/blogs', method: 'GET').first
   end
   def test_encoded_and_repeated_slashes_cannot_bypass_limit
@@ -194,10 +194,20 @@ class AntiSpamRateTest < Minitest::Test
   end
   def test_hourly_post_limit_survives_minute_windows
     6.times do
-      5.times { assert_equal 200, request('/circles/1/blogs').first }
+      5.times { assert_equal 200, request('/users/1/reviews').first }
       travel 1.minute
     end
     assert_equal 429, request('/users/2/reviews').first
+  end
+  def test_blog_posts_and_edits_have_no_minute_or_hourly_limit
+    35.times { assert_equal 200, request('/circles/1/blogs').first }
+    %w[POST PUT PATCH].each do |method|
+      assert_equal 200, request('/circles/1/blogs/2.json', method: method).first
+    end
+    assert_equal 200, request('/%63ircles//1/blogs/').first
+    5.times { assert_equal 200, request('/users/1/reviews').first }
+    assert_equal 429, request('/users/1/reviews').first
+    assert_equal 200, request('/circles/1/blogs').first
   end
   def test_spoofed_forwarded_prefix_does_not_rotate_identity
     10.times { |i| assert_equal 200, request('/members', ip: '127.0.0.1', forwarded: "203.0.113.#{i}, 198.51.100.7").first }

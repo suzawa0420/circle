@@ -10,7 +10,7 @@ class ModerationReasonsTest < ActionDispatch::IntegrationTest
     @content = 'みんなで楽しく活動しました。定期的に練習しています。初心者も歓迎しています。' * 5
   end
 
-  test 'duplicate and frequent posting reasons are saved with the decision timestamp' do
+  test 'duplicate posting reasons are saved with the decision timestamp' do
     first = @circle.blogs.create!(title: '活動報告1', content: @content)
     second = @circle.blogs.create!(title: '活動報告2', content: @content)
     third = @circle.blogs.create!(title: '活動報告3', content: @content)
@@ -18,7 +18,7 @@ class ModerationReasonsTest < ActionDispatch::IntegrationTest
     assert_equal 'clear', first.moderation_status
     assert_equal 'clear', second.moderation_status
     assert_equal ['duplicate_content'], third.reload.moderation_reasons.map { |r| r['code'] }
-    assert_equal %w[duplicate_content frequent_posts], fourth.reload.moderation_reasons.map { |r| r['code'] }
+    assert_equal ['duplicate_content'], fourth.reload.moderation_reasons.map { |r| r['code'] }
     assert fourth.moderation_checked_at
     saved = fourth.moderation_reasons
     stamp = fourth.moderation_checked_at
@@ -27,6 +27,17 @@ class ModerationReasonsTest < ActionDispatch::IntegrationTest
     assert_equal 'review', fourth.reload.moderation_status
     assert_equal saved, fourth.moderation_reasons
     assert_equal stamp, fourth.moderation_checked_at
+  end
+
+  test 'consecutive distinct blogs remain public within the same hour' do
+    freeze_time do
+      6.times do |index|
+        blog = @circle.blogs.create!(title: "活動報告#{index}", content: @content + "第#{index}回の活動です。")
+        assert_equal 'clear', blog.reload.moderation_status
+        assert blog.publicly_visible?
+        assert_empty blog.moderation_reasons
+      end
+    end
   end
 
   test 'foreign language links and circle language decisions record exact reasons' do
