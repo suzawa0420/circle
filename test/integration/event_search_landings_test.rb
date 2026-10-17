@@ -18,6 +18,36 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'event listings use the displayed primary sport rather than secondary circle sports' do
+    badminton = Event.create!(name: 'バドミントン', ruby: 'badminton', category: @circle.category, order: '2')
+    other = @circle.dup
+    other.assign_attributes(name: 'バドミントンサークル', event: badminton, secondary_event_ids: [@circle.event_id])
+    other.save!
+    other_schedule = other.schedules.create!(day: Date.current.iso8601, title: 'バドミントンの練習', venue: '体育館')
+    @circle.update!(secondary_event_ids: [badminton.id])
+
+    ['', '/today', '/this_week', '/2026/10/14'].each do |suffix|
+      ['/dates/basketball', @base].each do |base|
+        get base + suffix
+        assert_response :success
+        assert_select '.event-results__card', count: 1
+        assert_select '.event-results__card-top > span:first-child', text: 'バスケ'
+        assert_select '.event-results__card[href=?]', user_schedule_path(other, other_schedule), count: 0
+      end
+      get '/dates/badminton' + suffix
+      assert_response :success
+      assert_select '.event-results__card', count: 1
+      assert_select '.event-results__card[href=?]', user_schedule_path(other, other_schedule)
+    end
+
+    other.update_columns(publication_status: 'draft')
+    assert_equal [[@circle.event_id, @circle.prefecture_id]], EventSearchPage.populations
+    assert_empty EventSearchPage.populations(event: badminton)
+    get '/dates'
+    assert_select '.event-results__discovery a[href="/dates/badminton"]', count: 0
+    refute EventDaySitemap.each_path.any? { |path| path.start_with?('/dates/badminton') }
+  end
+
   test 'date area genre and listing label form separate heading lines with full SEO text' do
     get "#{@base}/2026/10/14"
     assert_response :success

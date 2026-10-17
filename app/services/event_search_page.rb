@@ -34,11 +34,10 @@ class EventSearchPage
   def self.populations(today: Time.current.in_time_zone('Tokyo').to_date, event: nil, prefecture: nil)
     relation = EventDayListing.public_schedules.joins(:user)
       .where(day: today.iso8601..'2100-12-31')
-      .joins('CROSS JOIN LATERAL (SELECT users.event_id AS id UNION SELECT unnest(users.secondary_event_ids)) sports')
-    relation = relation.where('sports.id = ?', event.id) if event
+    relation = relation.where(users: { event_id: event.id }) if event
     relation = relation.where(users: { prefecture_id: prefecture.id }) if prefecture
     relation
-      .group('sports.id', 'users.prefecture_id')
-      .pluck('sports.id', 'users.prefecture_id')
+      .group('users.event_id', 'users.prefecture_id')
+      .pluck('users.event_id', 'users.prefecture_id')
   end
 end

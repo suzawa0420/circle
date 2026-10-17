@@ -16,7 +16,9 @@ class EventDayListing
     @upcoming = upcoming || end_date.present?
     days = end_date ? date.iso8601..end_date.iso8601 : (upcoming ? date.iso8601..'2100-12-31' : date.iso8601)
     @base = self.class.public_schedules.where(day: days)
-    @base = @base.where(user_id: User.for_event(event.id).select(:id)) if event
+    # Schedules display their organizer's primary sport; secondary circle sports
+    # do not identify the sport played at an individual scheduled activity.
+    @base = @base.where(user_id: User.where(event_id: event.id).select(:id)) if event
     @base = @base.where(user_id: User.where(prefecture_id: prefecture.id).select(:id)) if prefecture
   end
 
