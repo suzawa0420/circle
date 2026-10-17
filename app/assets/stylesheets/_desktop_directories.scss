@@ -19,5 +19,12 @@
     .blog-results-grid .blog-body { height: 100%; }
     .circle-results-grid > .list_ad, .blog-results-grid > .list_ad,
     .places-results > .list_ad, .match-directory__list > .match-directory__ad { grid-column: 1 / -1; min-width: 0; width: 100%; margin: 0; }
+    // Reserve full rows for ads after complete card pairs. Auto-placed cards
+    // can then fill the sixth slot before the first ad, preserving card order.
+    .circle-results-grid > .list_ad, .blog-results-grid > .list_ad,
+    .places-results > .list_ad, .match-directory__list > .match-directory__ad { grid-row: 4; }
+    .circle-results-grid > .list_ad ~ .list_ad { grid-row: 7; }
+    .circle-results-grid > .list_ad ~ .list_ad ~ .list_ad { grid-row: 11; }
+
   }
 }
