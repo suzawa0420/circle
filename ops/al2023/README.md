@@ -72,6 +72,31 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Retiring secondary sports (2026-10-17)
+
+Secondary activities were already hidden from the edit form, but stored values
+still affected search, profile links and sitemap discovery. All discovery now
+uses `users.event_id` exclusively.
+
+The rollout requires two separate successful deployments:
+
+1. Activate `c2ca5047b` on **both** servers. This removes all live references and
+   adds `User.ignored_columns` for `secondary_event_ids`, while leaving the data
+   in place. Wait for the deployment workflow to succeed before step 2.
+2. Deploy the subsequent column-removal commit. Migration `20261017030000` drops
+   `users.secondary_event_ids` and its GIN index. A five-second lock timeout
+   prevents waiting indefinitely for the table lock. The normal workflow checks
+   and activates both servers in sequence and republishes the sitemap.
+
+Do not skip step 1 on any existing server. Removing the column discards its
+stored assignments permanently; the primary sport and `sport_details` remain.
+After step 2, use `c2ca5047b` as the application recovery baseline, never an older
+revision that references the deleted column. Do not run `db:rollback`: the drop
+is explicitly irreversible. Keep the ignored-column declaration for safe Rails
+schema caching. Historical migrations retain their original column creation;
+the reviewed classification migration also tolerates the retired column being
+absent when exercised against a current schema.
+
 ## Ruby 3.4.11 update (deployed 2026-10-11)
 
 Both production servers now run Ruby 3.4.11. Deployment of `cd2f2fc7f` succeeded
