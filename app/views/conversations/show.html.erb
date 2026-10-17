@@ -2,6 +2,7 @@
   <header class="chat-thread-heading">
     <%= link_to '‹ 一覧', conversations_path, class: 'chat-back', aria: { label: 'メッセージ一覧へ戻る' } %>
     <h1><%= @conversation.practice_match? ? '対戦・練習試合の相談' : 'メッセージ' %></h1>
+    <a href="#chat-reply" class="chat-reply-link"><%= lucide_icon 'undo-2' %>返信欄へ</a>
   </header>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
@@ -26,7 +27,8 @@
     </div>
   </section>
   <div id="chat-latest" tabindex="-1"></div>
-  <section class="chat-composer" aria-label="返信する">
+  <section id="chat-reply" class="chat-composer" aria-labelledby="chat-reply-title" tabindex="-1">
+    <h2 id="chat-reply-title">返信する</h2>
     <% if @conversation.actor(@role).suspended? %>
       <p>利用停止中のため送信できません。過去の会話は確認できます。</p>
     <% elsif (@role == 'owner' || @conversation.practice_match?) && !current_admin_user.email_verified? %>
@@ -48,7 +50,7 @@
           <%= f.file_field :image, accept: 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif', class: 'chat-image-input', aria: { label: '写真を1枚選ぶ（10MBまで）' } %>
         <% end %>
         <%= f.label :body, 'メッセージ', class: 'chat-visually-hidden' %>
-        <%= f.text_area :body, value: @draft_body, maxlength: 2000, rows: 1, placeholder: "メッセージを入力", class: "chat-compose-input" %>
+        <%= f.text_area :body, value: @draft_body, maxlength: 2000, rows: 4, placeholder: "メッセージを入力", class: "chat-compose-input" %>
         <%= f.submit '送信', class: 'chat-button', data: { disable_with: '送信中…' } %>
         </div>
       <% end %>
@@ -136,4 +138,5 @@
 <% end %>
 </main>
 
+<a href="#chat-reply" class="chat-reply-shortcut"><%= lucide_icon 'undo-2' %><span>返信</span></a>
 <%= render 'conversations/image_viewer' %>

@@ -5,16 +5,11 @@
     var composer = document.querySelector('.chat-composer');
     if (!composer) return;
     var input = composer.querySelector('.chat-compose-input');
-    var root = document.documentElement;
-    var viewport = window.visualViewport;
     function resize() {
       if (input) {
         input.style.height = 'auto';
-        input.style.height = Math.min(input.scrollHeight, 144) + 'px';
+        input.style.height = Math.min(input.scrollHeight, 320) + 'px';
       }
-      root.style.setProperty('--chat-composer-height', composer.offsetHeight + 'px');
-      var offset = viewport ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop) : 0;
-      root.style.setProperty('--chat-keyboard-offset', offset + 'px');
     }
     function openEvaluation() {
       if (window.location.hash === '#evaluation') {
@@ -36,7 +31,6 @@
     if (input) input.addEventListener('input', resize);
     window.addEventListener('resize', resize);
     window.addEventListener('hashchange', openEvaluation);
-    if (viewport) { viewport.addEventListener('resize', resize); viewport.addEventListener('scroll', resize); }
     resize();
     openEvaluation();
     cleanup = function () {
@@ -45,9 +39,6 @@
       if (input) input.removeEventListener('input', resize);
       window.removeEventListener('resize', resize);
       window.removeEventListener('hashchange', openEvaluation);
-      if (viewport) { viewport.removeEventListener('resize', resize); viewport.removeEventListener('scroll', resize); }
-      root.style.removeProperty('--chat-keyboard-offset');
-      root.style.removeProperty('--chat-composer-height');
     };
   }
   function setupInitialJump() {

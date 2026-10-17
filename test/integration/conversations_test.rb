@@ -8,6 +8,36 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     create_chat_records
   end
 
+  test 'both participants can reach the reply form through native links on every history page' do
+    ChatMessage.insert_all!(55.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
+    [@owner, @member].each do |actor|
+      sign_in actor
+      [1, 2].each do |page|
+        get conversation_path(@conversation), params: { page: page }
+        assert_response :success
+        assert_select '.chat-thread-heading a[href="#chat-reply"]', text: '返信欄へ'
+        assert_select 'a.chat-reply-shortcut[href="#chat-reply"]', text: '返信'
+        assert_select 'section#chat-reply[tabindex="-1"]' do
+          assert_select 'h2#chat-reply-title', text: '返信する'
+          assert_select 'form[action=?]', message_conversation_path(@conversation) do
+            assert_select 'textarea[name="message[body]"][rows="4"]', count: 1
+            assert_select 'input[type="submit"][value="送信"]', count: 1
+          end
+        end
+      end
+      sign_out actor
+    end
+  end
+
+  test 'reply destination explains blocking instead of presenting a send form' do
+    @conversation.update!(owner_blocked: true)
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_select '#chat-reply', text: /ブロック中のため/
+    assert_select '#chat-reply form', count: 0
+    assert_select 'a.chat-reply-shortcut[href="#chat-reply"]'
+  end
+
   test 'owner opens the page of the first unread message before the read cursor advances' do
     first = @conversation.chat_messages.where(sender_role: 'member').sole
     ChatMessage.insert_all!(110.times.map { |i| { conversation_id: @conversation.id, sender_role: 'member', body: "未読の長い履歴 #{i}", created_at: Time.current, updated_at: Time.current } })
