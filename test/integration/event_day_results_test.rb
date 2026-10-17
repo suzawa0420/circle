@@ -214,7 +214,7 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
     assert_select 'meta[name="robots"][content*="noindex"]', count: 0
-    assert_select 'h1', text: /今日・東京都のバスケ/
+    assert_select 'h1', text: /今日開催予定の東京都のバスケ/
     assert_select 'a[href=?]', filtered_path(period: 'tomorrow')
     get '/dates/today', params: { sort: '2' }
     assert_response :success
@@ -257,7 +257,7 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_response :moved_permanently
     follow_redirect!
     assert_response :success
-    assert_select 'h1', text: /今週・東京都のバスケ/
+    assert_select 'h1', text: /今週開催予定の東京都のバスケ/
     assert_select '.event-results__header p', text: /2026年10月12日（月）〜2026年10月18日（日）/
     assert_select '.event-results__days a', count: 7
     assert_select '.event-results__card', count: 8
@@ -274,7 +274,7 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
     assert_select '.event-results__card', count: 1
-    assert_select 'h1', text: /来週・東京都のバスケ/
+    assert_select 'h1', text: /来週開催予定の東京都のバスケ/
     assert_select 'link[rel="canonical"]', href: 'https://circle-book.com' + filtered_path(period: 'next_week')
     get '/dates/next_week', params: { sort: '3' }
     assert_select 'meta[name="robots"][content*="noindex"]'

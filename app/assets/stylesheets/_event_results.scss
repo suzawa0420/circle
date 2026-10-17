@@ -16,12 +16,12 @@
   &__header { height: auto; }
   &__header h1 { font-size: 25px; line-height: 1.5; margin: 8px 0; font-weight: 700; }
   &__heading { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  &__heading-period { font-size: 20px; line-height: 1.5; }
-  &__heading-context, &__heading-subject { display: block; max-width: 100%; font-size: clamp(18px, 5vw, 22px); line-height: 1.5; }
-  &__heading-context { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  &__heading-subject { white-space: nowrap; }
-  &__heading-page { margin-left: 4px; font-size: 12px; font-weight: 400; }
-  &__heading-separator { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  &__heading-lead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+  &__heading-count { font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  &__heading-period { font-size: 18px; line-height: 1.5; }
+  &__heading-main { display: block; font-size: clamp(18px, 5vw, 24px); line-height: 1.5; text-wrap: balance; overflow-wrap: anywhere; }
+  &__heading-context, &__heading-subject { display: inline-block; max-width: 100%; vertical-align: top; }
+  &__heading-page { margin-left: 4px; font-size: 12px; font-weight: 400; white-space: nowrap; }
   &__header p { font-size: 13px; color: #60746d; margin: 6px 0; }
   &__eyebrow { color: #187f60 !important; font-weight: 700; }
   &__shortcuts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 14px; }
@@ -69,6 +69,14 @@
   &__date-group > h2 { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
   &__organizer-link { margin-top: 20px; font-size: 14px; }
   @media (min-width: 700px) { padding-top: 40px; &__filters { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, .6fr); } &--hub &__date-field, &--hub &__filters input[type="submit"] { grid-column: auto; } &__text h3, &__text h4 { font-size: 18px; } }
+  @media (min-width: 900px) {
+    &__container { max-width: 1040px; }
+    &__container &__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    &__container &__list > li { display: flex; min-width: 0; }
+    &__container &__card { display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+    &__container &__body { flex: 1; }
+    &__container &__image { max-height: 240px; }
+  }
   @media (max-width: 480px) { &__date-break { display: initial; } }
   @media (max-width: 360px) { &__days a { font-size: 16px; } }
 }

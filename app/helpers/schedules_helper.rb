@@ -7,12 +7,20 @@ module SchedulesHelper
     subject = "#{EventSearchPage.subject(@event).delete_prefix(@event&.name.to_s)}一覧"
     page = title.delete_prefix("#{period.present? ? "#{period}・" : ''}#{context}#{subject}")
 
+    period_label = @relative_day.present? ? "#{@relative_day}開催予定の" : period
     safe_join([
-      (content_tag(:span, period, class: 'event-results__heading-period') if period.present?),
-      (content_tag(:span, '・', class: 'event-results__heading-separator') if period.present?),
-      content_tag(:span, context, class: 'event-results__heading-context', title: context),
-      content_tag(:span, class: 'event-results__heading-subject') do
-        safe_join([subject, (content_tag(:small, page, class: 'event-results__heading-page') if page.present?)])
+      content_tag(:span, class: 'event-results__heading-lead') do
+        safe_join([
+          content_tag(:span, "【全#{number_with_delimiter(@result_count)}件】", class: 'event-results__heading-count'),
+          (content_tag(:span, period_label, class: 'event-results__heading-period') if period_label.present?)
+        ])
+      end,
+      content_tag(:span, class: 'event-results__heading-main') do
+        safe_join([
+          content_tag(:span, context, class: 'event-results__heading-context'),
+          content_tag(:span, subject, class: 'event-results__heading-subject'),
+          (content_tag(:small, page, class: 'event-results__heading-page') if page.present?)
+        ])
       end
     ])
   end

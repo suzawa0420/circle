@@ -53,9 +53,10 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
     assert_select 'h1 .event-results__heading-period', text: '2026年10月14日（水）'
     assert_select 'h1 .event-results__heading-context', text: '神奈川県のバスケ'
     assert_select 'h1 .event-results__heading-subject', text: 'イベント・練習会一覧'
-    assert_select 'h1', text: '2026年10月14日（水）・神奈川県のバスケイベント・練習会一覧'
+    assert_select 'h1', text: '【全1件】2026年10月14日（水）神奈川県のバスケイベント・練習会一覧'
+    assert_select 'h1 .event-results__heading-count', text: '【全1件】'
     get "#{@base}/today"
-    assert_select 'h1 .event-results__heading-period', text: '今日'
+    assert_select 'h1 .event-results__heading-period', text: '今日開催予定の'
     get @base
     assert_select 'h1 .event-results__heading-period', count: 0
     assert_select 'h1 .event-results__heading-context', text: '神奈川県のバスケ'
@@ -69,7 +70,7 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
     }.each do |path, title|
       get path
       assert_response :success
-      assert_select 'h1', text: title
+      assert_select 'h1 .event-results__heading-main', text: title
       assert_select 'title', text: "#{title} | サークルブック"
       assert_select 'link[rel=canonical][href=?]', 'https://circle-book.com' + path
       assert_select 'meta[name=robots][content*=noindex]', count: 0
@@ -163,7 +164,7 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
     get @base, params: { event: 'missing', pref: 'missing' }
     assert_redirected_to @base
     follow_redirect!
-    assert_select 'h1', text: '神奈川県のバスケイベント・練習会一覧'
+    assert_select 'h1 .event-results__heading-main', text: '神奈川県のバスケイベント・練習会一覧'
     get '/dates', params: { pref: 'kanagawa' }
     assert_redirected_to '/dates/prefectures/kanagawa'
     get '/dates', params: { event: 'basketball', pref: 'kanagawa', date: '2026-10-14' }
@@ -195,7 +196,7 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
     @circle.event.update!(name: '読書', ruby: 'reading')
     get '/dates/reading/kanagawa'
     assert_response :success
-    assert_select 'h1', text: '神奈川県の読書イベント・活動一覧'
+    assert_select 'h1 .event-results__heading-main', text: '神奈川県の読書イベント・活動一覧'
     assert_select 'h1', text: /練習会|チーム募集/, count: 0
   end
 
