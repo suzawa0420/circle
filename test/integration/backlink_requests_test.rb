@@ -51,9 +51,14 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
     login_master
     get super_admin_backlink_requests_path
     assert_response :success
+    assert_select '.wm-backlink-statuses a[aria-current=page]', text: /確認中.*1/m
+    assert_select '.wm-list .webmaster-card .wm-button', text: '申請を確認する'
     assert_select ".webmaster-subnav a[href='#{super_admin_backlink_requests_path}'] .webmaster-subnav__count", text: '1'
     get super_admin_backlink_request_path(request)
     assert_response :success
+    assert_select '.webmaster-card .backlink-placement[href=?]', request.placement_url
+    assert_select '.wm-backlink-checklist li', count: 2
+    assert_select '.wm-field textarea[name=review_note][aria-describedby=backlink-review-hint]'
     patch super_admin_backlink_request_path(request), params: { decision: 'approve' }
     assert_equal 'approved', request.reload.status
     assert_in_delta 10.1, @circle.reload.cb_point
@@ -93,6 +98,15 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
     end
     assert_equal 'pending', request.reload.status
     assert_equal 'https://example.test/fixed', request.placement_url
+  end
+
+  test 'empty status lists keep the selected filter and use the shared empty state' do
+    login_master
+    get super_admin_backlink_requests_path(status: 'approved')
+    assert_response :success
+    assert_select '.wm-backlink-statuses a', count: 4
+    assert_select '.wm-backlink-statuses a[aria-current=page]', text: /付与済み.*0/m
+    assert_select '.wm-empty', text: '付与済みの申請はありません。'
   end
 
   test 'authentication and ownership are required and owners cannot review' do

@@ -66,6 +66,19 @@ class WebmasterNavigationTest < ActionDispatch::IntegrationTest
     assert_select '#pending-posts', count: 1
   end
 
+  test 'reports are newest first regardless of resolution with stable ordering and status filtering' do
+    login_master
+    older = ChatReport.create!(conversation: @conversation, reporter_role: 'member', reason: '古い未対応の通報です。', created_at: 2.days.ago)
+    newer = ChatReport.create!(conversation: @conversation, reporter_role: 'member', reason: '新しい対応済みの通報です。', status: 'resolved', created_at: 1.day.ago)
+    same_time = ChatReport.create!(conversation: @conversation, reporter_role: 'member', reason: '同時刻の未対応の通報です。', created_at: newer.created_at)
+    get super_admin_chat_reports_path
+    assert_response :success
+    assert_equal [same_time, newer, older].map { |report| super_admin_chat_report_path(report) }, css_select('.wm-list .wm-actions a').map { |link| link['href'] }
+    get super_admin_chat_reports_path, params: { status: 'pending' }
+    assert_equal [same_time, older].map { |report| super_admin_chat_report_path(report) }, css_select('.wm-list .wm-actions a').map { |link| link['href'] }
+    assert_select '.wm-report-filter__controls select[name="status"] option[selected]', text: '未対応'
+  end
+
   private
 
   def login_master

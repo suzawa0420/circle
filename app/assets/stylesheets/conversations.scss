@@ -45,7 +45,7 @@
 .chat-back, .chat-evaluation-link { flex: none; font-size: 12px; }
 .chat-context { font-size: 12px; margin: 14px 0; }
 .chat-thread summary { cursor: pointer; min-height: 32px; line-height: 2; }
-.chat-history { gap: 16px; }
+.chat-history { gap: 24px; }
 .chat-history .chat-history { margin: 0; }
 .chat-date { text-align: center; font-size: 11px; color: $cb-muted; margin: 8px 0; }
 .chat-date time { background: #e7eeea; padding: 5px 12px; border-radius: 20px; }
@@ -57,9 +57,9 @@
 .chat-message__heading .chat-avatar { width: 26px; height: 26px; font-size: 12px; }
 .cb-site .chat-message__heading .message-role { flex: none; margin: 0; padding: 2px 6px; font-size: 10px; white-space: nowrap; }
 .chat-message__name { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: $cb-muted; margin: 0 0 0 4px; }
-.chat-body { padding: 12px 15px; background: #fff; border: 1px solid $cb-border; border-radius: 3px 18px 18px 18px; color: $cb-text; overflow-wrap: anywhere; }
-.chat-body p { margin: 0; line-height: 1.7; font-size: 14px; }
-.chat-body p + p { margin-top: 8px; }
+.chat-body { padding: 16px 15px; background: #fff; border: 1px solid $cb-border; border-radius: 3px 18px 18px 18px; color: $cb-text; overflow-wrap: anywhere; }
+.chat-body p { margin: 0; line-height: 1.9; font-size: 14px; }
+.chat-body p + p { margin-top: 16px; }
 .chat-body a.message-url {
   color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px;
   overflow-wrap: anywhere;

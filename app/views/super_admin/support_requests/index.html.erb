@@ -1,9 +1,45 @@
-<%= render 'webmasters/shared/page_header', title: '問い合わせ・ヘルプ改善', description: '未対応の問い合わせを確認し、月ごとにヘルプの改善点を見つけます。安全上の報告を先に表示します。' %>
-<section class="wm-section"><h2>問い合わせ一覧</h2><nav class="wm-actions" aria-label="対応状況"><% SupportRequest::STATUSES.each do |key, label| %><%= link_to label, super_admin_support_requests_path(status: key), 'aria-current': (@status == key ? 'page' : nil) %><% end %></nav>
-<div class="wm-list"><% @requests.each do |request| %><article class="webmaster-card"><h3><%= SupportRequest::KINDS[request.kind] %> ／ <%= HelpCatalog::CATEGORIES[request.category] %></h3><p class="wm-meta"><%= SupportRequest::AUDIENCES[request.audience] %> ／ <%= request.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= SupportRequest::STATUSES[request.status] %></p><%= render "webmasters/shared/submission_author", submission: request %><div class="wm-body"><%= truncate(request.body, length: 150) %></div><div class="wm-actions"><%= link_to '詳細・対応状況を確認', super_admin_support_request_path(request) %></div></article><% end %></div>
-<% if @requests.empty? %><%= render 'webmasters/shared/empty', message: 'この対応状況の問い合わせはありません。' %><% end %><%= paginate @requests %></section>
-<section class="wm-section"><h2>週1回のご意見確認</h2><p>未対応の改善提案：<%= @suggestion_count %>件。ご意見は即時メール通知せず、週1回まとめて確認します。個別返信は原則不要です。</p><%= link_to 'ご意見箱を確認', super_admin_opinions_path %></section>
-<section class="wm-section"><h2>直近30日間のヘルプ改善</h2><p>検索 <%= @searches %>回 ／ 解決できた <%= @helpful %>件 ／ 解決しなかった <%= @unhelpful %>件</p><% total = @helpful + @unhelpful %><p>回答評価の解決割合：<%= total.positive? ? "#{(@helpful * 100.0 / total).round(1)}%" : '評価なし' %></p><p class="wm-meta">評価を送った方の割合です。全利用者の自己解決率ではありません。同じ回答への評価は同じブラウザーで1日1件にまとめます。検索・評価記録は90日で削除します。</p>
-<h3>問い合わせの多いカテゴリー</h3><ul><% @categories.each do |category, count| %><li><%= HelpCatalog::CATEGORIES[category] %>：<%= count %>件</li><% end %></ul>
-<h3>検索しても回答が見つからなかった言葉</h3><% if @missing_queries.empty? %><p>記録はありません。</p><% else %><ul><% @missing_queries.each do |query, count| %><li><%= query %>：<%= count %>回</li><% end %></ul><% end %>
-<h3>解決しなかった回答</h3><ul><% @unhelpful_articles.each do |id, count| %><% article = HelpCatalog.find(id) %><li><%= link_to(article ? article[:title] : '削除された回答', help_article_path(id)) %>：<%= count %>件</li><% end %></ul><p>毎月、多い問い合わせ・見つからなかった言葉・解決しなかった回答から、本文と検索キーワードを更新してください。</p></section>
+<%= render 'webmasters/shared/page_header', title: '問い合わせ・ヘルプ改善', description: '問い合わせへの対応と、ヘルプの改善状況を確認します。' %>
+<section class="wm-section">
+  <div class="wm-section-heading"><h2>問い合わせ一覧</h2><span class="wm-badge">安全上の報告を優先</span></div>
+  <nav class="wm-support-statuses" aria-label="対応状況">
+    <% SupportRequest::STATUSES.each do |key, label| %>
+      <%= link_to label, super_admin_support_requests_path(status: key), class: 'wm-button wm-button--secondary', 'aria-current': (@status == key ? 'page' : nil) %>
+    <% end %>
+  </nav>
+  <div class="wm-list">
+    <% @requests.each do |request| %>
+      <article class="webmaster-card">
+        <div class="wm-card-heading"><h3><%= HelpCatalog::CATEGORIES[request.category] %></h3><span class="wm-badge <%= 'wm-badge--danger' if request.kind == 'safety' %>"><%= SupportRequest::KINDS[request.kind] %></span></div>
+        <p class="wm-meta"><%= SupportRequest::AUDIENCES[request.audience] %> ／ <%= request.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= SupportRequest::STATUSES[request.status] %></p>
+        <%= render 'webmasters/shared/submission_author', submission: request %>
+        <div class="wm-body"><%= truncate(request.body, length: 150) %></div>
+        <div class="wm-actions"><%= link_to '詳細・対応状況を確認', super_admin_support_request_path(request), class: 'wm-button' %></div>
+      </article>
+    <% end %>
+  </div>
+  <% if @requests.empty? %><%= render 'webmasters/shared/empty', message: 'この対応状況の問い合わせはありません。' %><% end %>
+  <%= paginate @requests %>
+</section>
+<section class="wm-section webmaster-card">
+  <div class="wm-card-heading"><h2>週1回のご意見確認</h2><span class="wm-badge">未対応 <%= @suggestion_count %>件</span></div>
+  <p class="wm-meta">ご意見は週1回まとめて確認します。即時メール通知・個別返信は原則ありません。</p>
+  <div class="wm-actions"><%= link_to 'ご意見箱を確認', super_admin_opinions_path, class: 'wm-button wm-button--secondary' %></div>
+</section>
+<section class="wm-section" aria-labelledby="help-improvement-heading">
+  <div class="wm-section-heading"><h2 id="help-improvement-heading">直近30日間のヘルプ改善</h2></div>
+  <% total = @helpful + @unhelpful %>
+  <dl class="wm-support-metrics">
+    <% [['検索回数', number_with_delimiter(@searches), '回'], ['解決できた', number_with_delimiter(@helpful), '件'], ['解決しなかった', number_with_delimiter(@unhelpful), '件'], ['回答評価の解決割合', total.positive? ? "#{(@helpful * 100.0 / total).round(1)}" : '評価なし', total.positive? ? '%' : '']].each do |label, value, unit| %>
+      <div class="webmaster-card"><dt><%= label %></dt><dd><strong><%= value %></strong><span><%= unit %></span></dd></div>
+    <% end %>
+  </dl>
+  <p class="wm-meta wm-support-caption">解決割合は回答を評価した方の集計です。全利用者の自己解決率ではありません。</p>
+  <div class="wm-support-reports">
+    <%= render 'improvement_table', title: '問い合わせの多いカテゴリー', label: 'カテゴリー', unit: '件', rows: @categories.sort_by { |_, count| -count }.map { |category, count| [HelpCatalog::CATEGORIES[category], count] } %>
+    <%= render 'improvement_table', title: '回答が見つからなかった検索', label: '検索した言葉', unit: '回', rows: @missing_queries.to_a %>
+    <% article_rows = @unhelpful_articles.map { |id, count| article = HelpCatalog.find(id); [article ? link_to(article[:title], help_article_path(id)) : '削除された回答', count] } %>
+    <%= render 'improvement_table', title: '解決しなかった回答', label: '回答タイトル', unit: '件', rows: article_rows %>
+  </div>
+  <div class="webmaster-card wm-support-caption"><h3>毎月の改善に活用</h3><p class="wm-meta">問い合わせ・検索語・回答評価を参考に、ヘルプの本文と検索キーワードを更新してください。</p></div>
+  <details class="wm-disclosure wm-support-caption"><summary>集計・保存期間について</summary><div class="wm-disclosure-content wm-meta">同じ回答への評価は同じブラウザーで1日1件にまとめます。検索・評価記録は90日で削除します。</div></details>
+</section>

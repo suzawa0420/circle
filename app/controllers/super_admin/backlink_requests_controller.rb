@@ -3,6 +3,7 @@ class SuperAdmin::BacklinkRequestsController < ApplicationController
 
   def index
     @status = BacklinkRequest::STATUSES.key?(params[:status]) ? params[:status] : 'pending'
+    @status_counts = BacklinkRequest.group(:status).count
     @requests = BacklinkRequest.includes(user: :admin_user).where(status: @status).order(submitted_at: :asc, id: :asc).page(params[:page]).per(30)
   end
 

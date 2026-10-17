@@ -1,5 +1,11 @@
 <%= render 'webmasters/shared/page_header', title: 'チャット・口コミの通報', description: '通報内容を確認し、対応状況を管理します。' %>
-<%= form_with url: super_admin_chat_reports_path, method: :get, class: 'wm-inline-form' do %><div class="wm-field"><%= label_tag :status, '対応状況' %><%= select_tag :status, options_for_select([['すべて', '']] + ChatReport::STATUSES.map { |key, label| [label, key] }, params[:status]) %></div><%= submit_tag '絞り込む' %><% end %>
+<%= form_with url: super_admin_chat_reports_path, method: :get, class: 'wm-report-filter' do %>
+  <%= label_tag :status, '対応状況' %>
+  <div class="wm-report-filter__controls">
+    <%= select_tag :status, options_for_select([['すべて', '']] + ChatReport::STATUSES.map { |key, label| [label, key] }, params[:status]) %>
+    <%= submit_tag '絞り込む' %>
+  </div>
+<% end %>
 <div class="wm-list">
   <% @reports.each do |report| %>
     <article class="webmaster-card">

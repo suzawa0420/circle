@@ -1,17 +1,25 @@
-<h1>リンク設置申請</h1>
-<nav class="wm-actions" aria-label="申請状況">
+<%= render 'webmasters/shared/page_header', title: 'リンク設置申請', description: '掲載先を確認し、特典の付与・差し戻しを管理します。' %>
+<nav class="wm-backlink-statuses" aria-label="申請状況">
   <% BacklinkRequest::STATUSES.each do |key, label| %>
-    <%= link_to "#{label}（#{BacklinkRequest.where(status: key).count}）", super_admin_backlink_requests_path(status: key), aria: { current: @status == key ? 'page' : nil } %>
+    <%= link_to super_admin_backlink_requests_path(status: key), class: 'wm-backlink-statuses__item', aria: { current: @status == key ? 'page' : nil } do %>
+      <span><%= label %></span><span class="wm-backlink-statuses__count"><%= @status_counts.fetch(key, 0) %></span>
+    <% end %>
   <% end %>
 </nav>
-<h2><%= BacklinkRequest::STATUSES[@status] %></h2>
-<% if @requests.empty? %><p>該当する申請はありません。</p><% end %>
-<% @requests.each do |request| %>
-  <article class="wm-card">
-    <h2><%= link_to request.user.name, super_admin_backlink_request_path(request) %></h2>
-    <p>申請日時：<%= l request.submitted_at, format: :short %></p>
-    <p class="backlink-placement"><%= request.placement_url %></p>
-    <%= link_to '申請を確認する', super_admin_backlink_request_path(request) %>
-  </article>
-<% end %>
+<section class="wm-section" aria-labelledby="backlink-list-heading">
+  <div class="wm-section-heading"><h2 id="backlink-list-heading"><%= BacklinkRequest::STATUSES[@status] %></h2><span class="wm-meta"><%= @requests.total_count %>件</span></div>
+  <% if @requests.empty? %>
+    <%= render 'webmasters/shared/empty', message: "#{BacklinkRequest::STATUSES[@status]}の申請はありません。" %>
+  <% end %>
+  <div class="wm-list">
+    <% @requests.each do |request| %>
+      <article class="webmaster-card">
+        <h3><%= link_to request.user.name, super_admin_backlink_request_path(request) %></h3>
+        <p class="wm-meta">申請日時：<%= l request.submitted_at, format: :short %></p>
+        <dl class="wm-details"><dt>掲載先</dt><dd class="backlink-placement"><%= request.placement_url %></dd></dl>
+        <div class="wm-actions"><%= link_to '申請を確認する', super_admin_backlink_request_path(request), class: 'wm-button' %></div>
+      </article>
+    <% end %>
+  </div>
+</section>
 <%= paginate @requests %>

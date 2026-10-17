@@ -9,7 +9,7 @@ class SuperAdmin::ChatReportsController < ApplicationController
   def index
     @reports = ChatReport.all
     @reports = @reports.where(status: params[:status]) if ChatReport::STATUSES.key?(params[:status])
-    @reports = @reports.includes(conversation: [:user, :member]).order(resolved_at: :asc, created_at: :desc).page(params[:page]).per(30)
+    @reports = @reports.includes(conversation: [:user, :member]).order(created_at: :desc, id: :desc).page(params[:page]).per(30)
   end
 
   def show

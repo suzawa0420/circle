@@ -90,8 +90,8 @@ class SupportRequestsTest < ActionDispatch::IntegrationTest
     assert_includes response.body, suggestion.body
     get super_admin_support_requests_path
     assert_includes response.body, '検索ゼロの言葉'
-    assert_includes response.body, '0.0%'
-    assert_includes response.body, '改善提案：1件'
+    assert_select '.wm-support-metrics dd', text: '0.0%'
+    assert_select '.wm-card-heading .wm-badge', text: '未対応 1件'
     assert_select "a[href='#{super_admin_support_request_path(suggestion)}']", count: 0
     get webmaster_path
     assert_select "a[href='#{super_admin_support_requests_path}']"

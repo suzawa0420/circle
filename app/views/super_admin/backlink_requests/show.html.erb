@@ -1,30 +1,54 @@
-<%= link_to '申請一覧へ戻る', super_admin_backlink_requests_path %>
-<h1>リンク設置申請の確認</h1>
-<div class="wm-card">
-  <% if @backlink_request.errors.any? %><p role="alert"><%= @backlink_request.errors.full_messages.join('。') %></p><% end %>
-  <h2><%= @backlink_request.user.name %></h2>
-  <p>状況：<strong><%= BacklinkRequest::STATUSES[@backlink_request.status] %></strong></p>
-  <p>申請日時：<%= l @backlink_request.submitted_at, format: :short %></p>
-  <p>掲載先：<%= link_to @backlink_request.placement_url, @backlink_request.placement_url, target: '_blank', rel: 'noopener noreferrer', class: 'backlink-placement' %></p>
-  <p>リンク先：<%= link_to backlink_destination(@backlink_request.user), backlink_destination(@backlink_request.user), target: '_blank', rel: 'noopener noreferrer' %></p>
-  <p>付与ポイント：10（サークルごとに1回）</p>
-  <% if @backlink_request.approved_at %><p>承認日時：<%= l @backlink_request.approved_at, format: :short %></p><% end %>
-  <% if @backlink_request.revoked_at %><p>取り消し日時：<%= l @backlink_request.revoked_at, format: :short %></p><% end %>
-  <% if @backlink_request.reviewed_by %><p>最終審査者：管理者 #<%= @backlink_request.reviewed_by_id %></p><% end %>
-  <% if @backlink_request.review_note.present? %><p>理由・連絡事項：<%= @backlink_request.review_note %></p><% end %>
-  <% if @backlink_request.status.in?(%w[pending approved]) %>
-    <p>掲載先を開き、主催者自身が管理するサークル・団体のWebサイトに、このサークルへのバナーまたは文字リンクが公開されていることを確認してください。SNS（Instagram・X〈旧Twitter〉・Threadsなど）や、Linktreeなどのリンクまとめサービスへの掲載は対象外です。</p>
+<%= link_to '申請一覧へ戻る', super_admin_backlink_requests_path, class: 'wm-button wm-button--secondary wm-backlink-back' %>
+<%= render 'webmasters/shared/page_header', title: 'リンク設置申請の確認', description: '掲載内容とリンク先を確認して、審査結果を登録します。' %>
+<% if @backlink_request.errors.any? %><div class="webmaster-flash" role="alert"><%= @backlink_request.errors.full_messages.join('。') %></div><% end %>
+<article class="webmaster-card">
+  <div class="wm-card-heading">
+    <h2><%= @backlink_request.user.name %></h2>
+    <span class="wm-badge <%= @backlink_request.status == 'pending' ? 'wm-badge--pending' : (@backlink_request.status.in?(%w[rejected revoked]) ? 'wm-badge--danger' : '') %>"><%= BacklinkRequest::STATUSES[@backlink_request.status] %></span>
+  </div>
+  <dl class="wm-details">
+    <dt>申請日時</dt><dd><%= l @backlink_request.submitted_at, format: :short %></dd>
+    <dt>掲載先</dt><dd><%= link_to @backlink_request.placement_url, @backlink_request.placement_url, target: '_blank', rel: 'noopener noreferrer', class: 'backlink-placement' %></dd>
+    <dt>リンク先</dt><dd><%= link_to backlink_destination(@backlink_request.user), backlink_destination(@backlink_request.user), target: '_blank', rel: 'noopener noreferrer' %></dd>
+    <dt>特典</dt><dd>10ポイント<span class="wm-meta">（サークルごとに1回）</span></dd>
+  </dl>
+  <% if @backlink_request.approved_at || @backlink_request.revoked_at || @backlink_request.reviewed_by || @backlink_request.review_note.present? %>
+    <details class="wm-disclosure wm-backlink-history" <%= 'open' if @backlink_request.review_note.present? %>>
+      <summary>審査履歴・連絡事項</summary>
+      <dl class="wm-details">
+        <% if @backlink_request.approved_at %><dt>承認日時</dt><dd><%= l @backlink_request.approved_at, format: :short %></dd><% end %>
+        <% if @backlink_request.revoked_at %><dt>取り消し日時</dt><dd><%= l @backlink_request.revoked_at, format: :short %></dd><% end %>
+        <% if @backlink_request.reviewed_by %><dt>最終審査者</dt><dd>管理者 #<%= @backlink_request.reviewed_by_id %></dd><% end %>
+        <% if @backlink_request.review_note.present? %><dt>理由・連絡事項</dt><dd><%= @backlink_request.review_note %></dd><% end %>
+      </dl>
+    </details>
+  <% end %>
+</article>
+<% if @backlink_request.status.in?(%w[pending approved]) %>
+  <section class="wm-section webmaster-card" aria-labelledby="backlink-check-heading">
+    <h2 id="backlink-check-heading">掲載内容の確認</h2>
+    <ul class="wm-backlink-checklist">
+      <li>主催者自身が管理するサークル・団体のWebサイトであること</li>
+      <li>このサークルへのバナーまたは文字リンクが公開されていること</li>
+    </ul>
+    <p class="wm-meta">SNS（Instagram・X〈旧Twitter〉・Threadsなど）や、Linktreeなどのリンクまとめサービスは対象外です。</p>
+  </section>
+  <section class="wm-section webmaster-card" aria-labelledby="backlink-review-heading">
+    <h2 id="backlink-review-heading">審査結果</h2>
     <%= form_with url: super_admin_backlink_request_path(@backlink_request), method: :patch, local: true do |f| %>
-      <%= f.label :review_note, '理由・連絡事項（主催者にも表示されます。差し戻し・取り消し時は必須）' %>
-      <%= f.text_area :review_note, value: @backlink_request.review_note, rows: 4, maxlength: 2000 %>
+      <div class="wm-field wm-backlink-review-note">
+        <%= f.label :review_note, '理由・連絡事項' %>
+        <%= f.text_area :review_note, value: @backlink_request.review_note, rows: 4, maxlength: 2000, aria: { describedby: 'backlink-review-hint' } %>
+        <p id="backlink-review-hint" class="wm-meta">主催者にも表示されます。差し戻し・取り消し時は必須です。</p>
+      </div>
       <div class="wm-actions">
-      <% if @backlink_request.status == 'pending' %>
-        <%= button_tag '承認して10ポイント付与', name: 'decision', value: 'approve', data: { confirm: '掲載内容を確認し、10ポイントを付与しますか？' } %>
-        <%= button_tag '差し戻す', name: 'decision', value: 'reject' %>
-      <% else %>
-        <%= button_tag '10ポイントの付与を取り消す', name: 'decision', value: 'revoke', data: { confirm: 'この特典の10ポイントを取り消しますか？' } %>
-      <% end %>
+        <% if @backlink_request.status == 'pending' %>
+          <%= button_tag '承認して10ポイント付与', name: 'decision', value: 'approve', class: 'wm-button', data: { confirm: '掲載内容を確認し、10ポイントを付与しますか？' } %>
+          <%= button_tag '差し戻す', name: 'decision', value: 'reject', class: 'wm-button wm-button--secondary' %>
+        <% else %>
+          <%= button_tag '10ポイントの付与を取り消す', name: 'decision', value: 'revoke', class: 'wm-button wm-button--danger', data: { confirm: 'この特典の10ポイントを取り消しますか？' } %>
+        <% end %>
       </div>
     <% end %>
-  <% end %>
-</div>
+  </section>
+<% end %>

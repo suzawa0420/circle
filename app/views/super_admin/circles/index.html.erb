@@ -32,19 +32,3 @@
   <% if @review_place_reviews.empty? %><%= render 'webmasters/shared/empty', message: '確認待ちの施設口コミはありません。' %><% end %>
   <%= paginate @review_place_reviews, param_name: :review_page %>
 </div></details>
-<section class="wm-section">
-  <div class="wm-section-heading"><h2>主催者一覧</h2></div>
-  <% if @admin_users.any? %><%= render 'bulk_selection', form_id: 'bulk-owners' %><% end %>
-  <div class="wm-list"><% @admin_users.each do |admin_user| %>
-    <article class="webmaster-card">
-      <label class="wm-selection"><%= check_box_tag 'owner_ids[]', admin_user.id, false, id: "bulk-owner-#{admin_user.id}", form: 'bulk-owners', data: { bulk_owner: true }, autocomplete: 'off' %>主催者 ID <%= admin_user.id %>を削除対象に選択</label>
-      <div class="wm-card-heading"><h3><%= admin_user.nickname.presence || "主催者 ID #{admin_user.id}" %></h3><span class="wm-badge">サークル <%= admin_user.users.size %>件</span></div>
-      <dl class="wm-details"><dt>メール</dt><dd><%= admin_user.email %></dd><dt>登録日</dt><dd><%= admin_user.created_at.strftime('%Y/%m/%d') %></dd></dl>
-      <% if admin_user.suspended? %><p class="wm-meta">利用停止理由：<%= admin_user.suspension_reason.presence || '未記録' %></p><% end %>
-      <% admin_user.users.each do |circle| %><div class="wm-circle-row"><%= link_to circle.name, circle_path(circle) %><%= link_to '編集', edit_user_path(circle), class: 'wm-button wm-button--secondary' %></div><%= render 'webmasters/shared/moderation_reasons', record: circle %><% end %>
-      <div class="wm-actions"><%= link_to '詳細・利用停止・削除', super_admin_account_path(admin_user, kind: 'owner'), class: 'wm-button wm-button--secondary' %></div>
-    </article>
-  <% end %></div>
-  <% if @admin_users.empty? %><%= render 'webmasters/shared/empty', message: '登録済みの主催者はいません。' %><% end %>
-  <%= paginate @admin_users %>
-</section>

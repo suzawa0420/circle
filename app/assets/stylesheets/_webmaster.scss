@@ -30,6 +30,16 @@
   .wm-page-header { position: static; display: block; height: auto; width: auto; margin-bottom: 28px; background: transparent; }
   .wm-page-header p { color: #5c6d63; }
   .wm-section { margin: 28px 0; }
+  .wm-backlink-statuses { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .wm-backlink-statuses__item { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid $cb-system-border; border-radius: 8px; background: #fff; color: $cb-system-hover; text-decoration: none; font-size: 14px; }
+  .wm-backlink-statuses__item[aria-current=page] { background: $cb-system-soft; border-color: $cb-system; font-weight: 700; }
+  .wm-backlink-statuses__count { font-variant-numeric: tabular-nums; font-weight: 700; }
+  .wm-backlink-checklist { margin: 12px 0; padding-left: 20px; }
+  .wm-backlink-checklist li + li { margin-top: 8px; }
+  .wm-backlink-review-note { margin-top: 16px; }
+  .wm-backlink-review-note textarea { width: 100%; min-width: 0; }
+  .wm-backlink-back { margin-bottom: 16px; }
+  .wm-backlink-history { margin-top: 16px; }
   .wm-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
   .wm-list { display: grid; gap: 14px; }
   .wm-selection { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 0; cursor: pointer; overflow-wrap: anywhere; }
@@ -74,6 +84,7 @@
     .webmaster-subnav { padding: 10px 16px; }
     h1 { font-size: 23px; } h2 { font-size: 18px; } h3 { font-size: 16px; }
     .webmaster-grid { grid-template-columns: minmax(0,1fr); }
+    .wm-backlink-statuses { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .webmaster-card { padding: 18px; } .wm-section { margin: 24px 0; }
     .wm-card-heading { flex-wrap: wrap; }
     .wm-actions > .button_to { flex: 1 1 140px; } .wm-actions > .button_to > input[type=submit], .wm-actions > .button_to > button { width: 100%; }
@@ -121,3 +132,37 @@
 .wm-moderation-reasons h4 { font-size: 14px; font-weight: 700; margin: 0 0 8px; }
 .wm-moderation-reasons p { font-size: 13px; color: #5c6d63; margin: 6px 0; }
 .wm-moderation-reasons ul { margin: 8px 0 0; padding-left: 20px; font-size: 14px; }
+
+.webmaster-page {
+  .wm-support-statuses { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .wm-support-statuses a[aria-current=page] { background: $cb-system-soft !important; border-color: $cb-system !important; }
+  .wm-support-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; }
+  .wm-support-metrics dt { color: #5c6d63; font-size: 13px; }
+  .wm-support-metrics dd { display: flex; align-items: baseline; gap: 4px; margin: 8px 0 0; font-variant-numeric: tabular-nums; }
+  .wm-support-metrics strong { font-size: 26px; line-height: 1.3; }
+  .wm-support-metrics dd span { font-size: 13px; }
+  .wm-support-caption { margin-top: 14px; }
+  .wm-support-reports { display: grid; gap: 16px; margin-top: 24px; }
+  .wm-support-report h3 { margin-bottom: 16px; }
+  .wm-support-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 14px; }
+  .wm-support-table th, .wm-support-table td { padding: 12px; border-bottom: 1px solid #dce7df; text-align: left; overflow-wrap: anywhere; }
+  .wm-support-table thead th { background: #f4f7f5; color: #5c6d63; font-size: 13px; }
+  .wm-support-table tbody th { font-weight: 400; }
+  .wm-support-table th:last-child, .wm-support-table td:last-child { width: 76px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .wm-support-table tbody tr:last-child th, .wm-support-table tbody tr:last-child td { border-bottom: 0; }
+}
+@media (max-width: 767px) {
+  .webmaster-page {
+    .wm-support-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .wm-support-metrics .webmaster-card { padding: 14px; }
+    .wm-support-metrics strong { font-size: 23px; }
+  }
+}
+
+.webmaster-page {
+  .wm-report-filter { display: grid; gap: 8px; width: 100%; max-width: 560px; margin: 0 0 16px; }
+  .wm-report-filter > label { margin: 0; font-weight: 600; }
+  .wm-report-filter__controls { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .wm-report-filter__controls select { flex: 1 1 0; width: 0; min-width: 0; margin: 0; }
+  .wm-report-filter__controls input[type=submit] { flex: 0 0 auto; height: 48px; margin: 0; }
+}

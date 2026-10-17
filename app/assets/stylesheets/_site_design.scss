@@ -292,7 +292,7 @@
   .chat-talk__name { @include cb-type(card-title); }
   .chat-talk__preview { @include cb-type(compact); color: $cb-muted; }
   .chat-talk__circle, .chat-talk__status, .chat-talk__meta, .chat-date, .chat-message__name, .chat-message__meta, .chat-message time { font-size: 12px; color: $cb-muted; }
-  .chat-body p { @include cb-type(body); }
+  .chat-body p { @include cb-type(body); line-height: 1.9; }
   .chat-shell .chat-button { background: var(--cb-role-action, #{$cb-action}) !important; border-color: var(--cb-role-action, #{$cb-action}) !important; border-radius: $cb-radius-control; }
   .chat-body { border-color: $cb-border; color: $cb-text; }
   .chat-message--mine .chat-body { background: $cb-mint-soft; border-color: $cb-border; }

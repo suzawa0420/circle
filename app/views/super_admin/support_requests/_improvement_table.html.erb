@@ -1,0 +1,12 @@
+<section class="webmaster-card wm-support-report">
+  <h3><%= title %></h3>
+  <% if rows.empty? %>
+    <%= render 'webmasters/shared/empty', message: '直近30日間の記録はありません。' %>
+  <% else %>
+    <table class="wm-support-table">
+      <caption class="sr-only"><%= title %></caption>
+      <thead><tr><th scope="col"><%= label %></th><th scope="col">件数</th></tr></thead>
+      <tbody><% rows.each do |label, count| %><tr><th scope="row"><%= label %></th><td><%= number_with_delimiter(count) %><%= unit %></td></tr><% end %></tbody>
+    </table>
+  <% end %>
+</section>
