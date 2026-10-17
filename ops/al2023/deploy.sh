@@ -98,6 +98,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261017020000
     # Secondary sport references were retired on both servers before this release.
     bundle exec rails db:migrate:up VERSION=20261017030000
+    # Shared level-up notification baseline; nullable for existing circles.
+    bundle exec rails db:migrate:up VERSION=20261017040000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

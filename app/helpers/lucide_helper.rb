@@ -1,6 +1,7 @@
 # SVG geometry from lucide-static 1.52.0. See vendor/licenses/lucide-LICENSE.
 module LucideHelper
   ICONS = {
+    "arrow-right" => "<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>".freeze,
     "ban" => "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M4.929 4.929 19.07 19.071\"/>".freeze,
     "banknote" => "<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>".freeze,
     "bold" => "<path d=\"M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8\"/>".freeze,

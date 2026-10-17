@@ -1,0 +1,30 @@
+%dialog#circle-level-up.circle-level-up{ "aria-labelledby" => "circle-level-up-title", "aria-describedby" => "circle-level-up-benefit", data: { circle_level_up: true } }
+  .circle-level-up__confetti{ "aria-hidden" => "true" }
+  .circle-level-up__body
+    %button.circle-level-up__x{ type: "button", data: { level_up_close: true }, "aria-label" => "ポップアップを閉じる" }
+      = lucide_icon "x", **{ "aria-hidden" => "true" }
+    .circle-level-up__emblem{ "aria-hidden" => "true" }
+      = lucide_icon "trophy"
+    %h2#circle-level-up-title おめでとうございます！
+    %p.circle-level-up__subtitle サークルがレベルアップしました
+    .circle-level-up__levels{ "aria-label" => "レベル#{level_up[:from]}から#{level_up[:to]}へレベルアップ" }
+      %span.circle-level-up__old{ "aria-hidden" => "true" }
+        %small Lv.
+        = level_up[:from]
+      %span.circle-level-up__arrow{ "aria-hidden" => "true" }
+        = lucide_icon "arrow-right"
+      %span.circle-level-up__new{ "aria-hidden" => "true" }
+        %small Lv.
+        = level_up[:to]
+    %p#circle-level-up-benefit.circle-level-up__benefit
+      レベルが高いほど、人気順で
+      %br
+      上位に表示されやすくなります
+    %p.circle-level-up__invitation
+      次の活動予定を登録して、
+      %br
+      参加のきっかけを増やしましょう。
+    = link_to new_user_schedule_path(@user), class: "circle-level-up__primary", autofocus: true do
+      = lucide_icon "calendar-plus", **{ "aria-hidden" => "true" }
+      スケジュールを登録する
+    %button.circle-level-up__close{ type: "button", data: { level_up_close: true } } 閉じる

@@ -354,6 +354,10 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
 			@blogs = Blog.where(user_id: @user.id).order(created_at: "DESC")
       @blogs_imp = 0
 
+      if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
+        @level_up = CircleLevelNotification.consume(@user, level: view_context.circle_level_status(@user)[:level])
+      end
+
 			if @admin_user.users.any?
 			else
 				redirect_to "/user/add"

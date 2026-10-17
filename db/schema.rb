@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_17_030000) do
+ActiveRecord::Schema.define(version: 2026_10_17_040000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -861,6 +861,7 @@ ActiveRecord::Schema.define(version: 2026_10_17_030000) do
     t.datetime "locked_at"
     t.bigint "admin_user_id"
     t.string "user_time"
+    t.integer "last_seen_circle_level"
     t.string "contact"
     t.string "twitter"
     t.string "instagram"
