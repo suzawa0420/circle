@@ -450,7 +450,11 @@
 .cb-site .account-access .account-access__links a { color: $cb-action-hover; border-radius: $cb-radius-control; }
 @media (min-width: $cb-breakpoint-desktop) {
   body.cb-site { padding-top: 72px; }
-  .cb-site .circle-desktop-toolbar { padding-left: cb-space(6); padding-right: cb-space(6); }
+  // Align the full-width header/footer contents with the home portal's 1200px canvas.
+  .cb-site .circle-desktop-toolbar, .cb-site .footer_wrap .footer_copyright {
+    padding-left: max(24px, calc((100% - 1200px) / 2));
+    padding-right: max(24px, calc((100% - 1200px) / 2));
+  }
   .cb-site .participant-shell, .cb-site .chat-shell:not(.chat-thread), .cb-site .login-choice { margin-top: cb-space(8); }
 }
 .cb-site .dashboard-circle__tools .dashboard-copy { padding: cb-space(3) cb-space(2); gap: 6px; white-space: nowrap; }
