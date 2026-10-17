@@ -41,14 +41,18 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     refute User.publicly_visible.for_event(@sport.id).exists?
   end
 
-  test 'secondary sports also participate in event discovery and date sitemap' do
+  test 'event discovery and date sitemap use primary sport while circle search includes secondary sports' do
     today = Time.current.in_time_zone('Tokyo').to_date
     schedule = @circle.schedules.create!(day: today.iso8601, title: '体験会', venue: '公開体育館')
-    assert_includes EventSearchPage.populations(today: today, event: @sport), [@sport.id, @circle.prefecture_id]
-    assert_includes EventDaySitemap.each_path(today: today).to_a, EventSearchPage.path(event: @sport.ruby, date: today)
-    assert EventDayListing.new(date: today, event: @sport).schedules.exists?(schedule.id)
-    @circle.update_columns(publication_status: 'draft')
     assert_empty EventSearchPage.populations(today: today, event: @sport)
+    refute_includes EventDaySitemap.each_path(today: today).to_a, EventSearchPage.path(event: @sport.ruby, date: today)
+    refute EventDayListing.new(date: today, event: @sport).schedules.exists?(schedule.id)
+    assert User.publicly_visible.for_event(@sport.id).exists?(@circle.id)
+    assert_includes EventSearchPage.populations(today: today, event: @circle.event), [@circle.event_id, @circle.prefecture_id]
+    assert_includes EventDaySitemap.each_path(today: today).to_a, EventSearchPage.path(event: @circle.event.ruby, date: today)
+    assert EventDayListing.new(date: today, event: @circle.event).schedules.exists?(schedule.id)
+    @circle.update_columns(publication_status: 'draft')
+    assert_empty EventSearchPage.populations(today: today, event: @circle.event)
   end
 
   test 'owner edit omits retired discovery fields and preserves existing data' do
