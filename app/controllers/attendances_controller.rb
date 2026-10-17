@@ -95,7 +95,8 @@ before_action :set_attendances
 
     # 既に満員のスケジュールがあるかチェック
     full_schedules = schedules.select do |schedule|
-      schedule.name_schedules.where(answer: 1).size > schedule.recruitment_numbers && schedule.recruitment_numbers != 0
+      schedule.recruitment_numbers.present? && schedule.recruitment_numbers != 0 &&
+        schedule.name_schedules.where(answer: 1).where.not(name_id: @name.id).count >= schedule.recruitment_numbers
     end
 
     if full_schedules.present?
