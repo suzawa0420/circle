@@ -7,6 +7,7 @@ module WebmasterNavigationHelper
       ['通報', super_admin_chat_reports_path, ChatReport.where(status: 'pending').count],
       ['スパム確認', super_admin_chat_moderations_path, ChatMessage.where(moderation_status: 'held').count],
       ['ご意見箱', super_admin_opinions_path, support_counts.fetch('suggestion', 0)],
+      ['欠席申告', super_admin_no_show_reports_path, NoShowReport.where(status: 'pending').count],
       ['施設修正依頼', super_admin_place_information_reports_path, PlaceInformationReport.where(status: 'pending').count],
       ['リンク設置申請', super_admin_backlink_requests_path, BacklinkRequest.where(status: 'pending').count],
       ['投稿確認', super_admin_circles_path(anchor: 'pending-posts'),

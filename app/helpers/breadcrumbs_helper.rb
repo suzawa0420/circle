@@ -23,7 +23,7 @@ module BreadcrumbsHelper
     'member_email_verifications' => 'メールアドレス確認', 'admin_user_email_verifications' => 'メールアドレス確認',
     'backlink_requests' => '公式サイト連携', 'exhibitor_profiles' => '出展者プロフィール',
     'exhibitor_mypages' => '出展者マイページ', 'accounts' => 'アカウント管理',
-    'chat_reports' => 'チャット通報', 'chat_moderations' => 'チャット管理',
+    'chat_reports' => 'チャット通報', 'no_show_reports' => '欠席申告', 'chat_moderations' => 'チャット管理',
     'account_blocks' => 'ブロック管理', 'invalid_emails' => '無効メールアドレス管理',
     'db_keywords' => 'キーワード管理', 'db_validation_errors' => 'データ検証エラー',
     'db_searches' => 'データ検索', 'dashboard' => '管理トップ'

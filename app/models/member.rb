@@ -32,6 +32,13 @@
 class Member < ApplicationRecord
   include AccountModeration
   has_many :conversations, dependent: :destroy
+  def no_show_report_count
+    NoShowReport.counted.joins(:conversation).where(conversations: { member_id: id }).count
+  end
+  def unanswered_report_count
+    ConversationReplyReport.active.where(reporter_role: 'owner', conversations: { member_id: id })
+      .joins(conversation: :user).distinct.count('users.admin_user_id')
+  end
   has_many :received_conversation_reviews, -> { publicly_visible.where(author_role: 'owner') }, through: :conversations, source: :conversation_reviews
   before_update :reset_email_verification, if: :will_save_change_to_email?
   validates :nickname, length: { maximum: 30 }

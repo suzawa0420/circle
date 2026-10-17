@@ -20,15 +20,18 @@
           <span class="chat-profile__stars" aria-hidden="true"><span>★★★★★</span><span class="chat-profile__stars-fill" style="width: <%= review_star_score(score, reviews_count: count) * 20 %>%">★★★★★</span></span>
           <span class="chat-profile__score"><%= count.positive? ? "#{format('%.2f', score)}（#{count}件）" : '評価はまだありません' %></span>
         </span>
-        <% no_reply_count = person_role == 'owner' ? person.unanswered_report_count : 0 %>
+        <% no_reply_count = person.unanswered_report_count %>
         <% if no_reply_count.positive? %>
-          <span class="chat-profile__no-reply">初回返信なしの報告：<%= no_reply_count %>人</span>
+          <span class="chat-profile__no-reply">返信なしの報告：<%= no_reply_count %>人</span>
+        <% end %>
+        <% if person_role == 'member' && person.is_a?(Member) && NoShowReport.profile_viewable_by?(current_admin_user, webmaster: webmaster?) && person.no_show_report_count.positive? %>
+          <span class="chat-profile__no-reply chat-profile__no-show" title="主催者・運営限定。未確認の申告を含みます。">連絡なしの欠席 <%= person.no_show_report_count %>件</span>
         <% end %>
       <% end %>
       <% if local_assigns[:manage_accounts] && webmaster? %>
         <%= link_to(person_role == 'owner' ? '主催者の管理' : '参加者の管理', person_role == 'owner' ? super_admin_account_path(person.admin_user, kind: 'owner') : super_admin_account_path(person), class: 'chat-profile__manage wm-button wm-button--secondary') %>
       <% elsif viewer_role.present? && viewer_role != person_role %>
-        <%= link_to '評価する', '#evaluation', class: 'chat-profile__evaluate', data: { open_evaluation: true }, aria: { label: "#{name}を評価する" } %>
+        <%= link_to '#evaluation', class: 'chat-profile__evaluate', data: { open_evaluation: true }, aria: { label: "#{name}を評価する" } do %><%= lucide_icon 'square-pen' %><span>評価する</span><% end %>
       <% else %>
         <span class="chat-profile__evaluate chat-profile__evaluate--disabled"><%= viewer_role.present? ? 'あなたのプロフィール' : '評価は当事者のみ' %></span>
       <% end %>

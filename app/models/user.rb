@@ -75,7 +75,9 @@ class User < ApplicationRecord
   include SportDiscovery
   has_one :backlink_request, dependent: :destroy
   def unanswered_report_count
-    Conversation.reported_unanswered.where(user_id: id).count
+    legacy = Conversation.reported_unanswered.where(user_id: id).select(:id)
+    reports = ConversationReplyReport.active.where(reporter_role: 'member').select(:conversation_id)
+    Conversation.where(user_id: id).where(id: legacy).or(Conversation.where(user_id: id, id: reports)).distinct.count(:member_id)
   end
 
   # Ransack 4+ requires an explicit public search surface. Never expose

@@ -12,7 +12,7 @@
       <p>このお問い合わせは初回返信がないと報告されています。メッセージを返信すると減点が解除されます。</p>
     </aside>
   <% end %>
-  <% unless @conversation.practice_match? %>
+  <% if !@conversation.practice_match? && @role == 'owner' %>
   <details class="chat-context"><summary>受付状況</summary>
   <div class="chat-card chat-person">
     <p id="chat-acceptance-status" class="cb-system-notice"><strong class="cb-system-notice__label">システム通知</strong><%= @conversation.accepted_at ? '受付済み' : (@role == 'owner' ? '返信すると受付済みになり、双方に評価権が発生します' : '主催者の返信をお待ちください') %></p>
@@ -28,7 +28,13 @@
   </section>
   <div id="chat-latest" tabindex="-1"></div>
   <section id="chat-reply" class="chat-composer" aria-labelledby="chat-reply-title" tabindex="-1">
-    <h2 id="chat-reply-title">返信する</h2>
+    <div class="chat-composer-heading">
+      <span class="chat-composer-heading__icon"><%= lucide_icon 'square-pen' %></span>
+      <div>
+        <p class="chat-composer-recipient"><%= @conversation.participant_name(@role == 'owner' ? 'member' : 'owner') %><%= 'さん' if @role == 'owner' && !@conversation.practice_match? %>へ</p>
+        <h2 id="chat-reply-title">メッセージを返信</h2>
+      </div>
+    </div>
     <% if @conversation.actor(@role).suspended? %>
       <p>利用停止中のため送信できません。過去の会話は確認できます。</p>
     <% elsif (@role == 'owner' || @conversation.practice_match?) && !current_admin_user.email_verified? %>
@@ -46,7 +52,7 @@
         <p class="chat-upload-error" data-upload-error role="alert" hidden></p>
         <div class="chat-compose-row">
         <%= f.label :image, class: 'chat-image-picker', title: '写真を1枚選ぶ（10MBまで）' do %>
-          <%= lucide_icon 'camera' %><span class="chat-visually-hidden">写真を1枚選ぶ（10MBまで）</span>
+          <%= lucide_icon 'camera' %><span>写真を追加</span>
           <%= f.file_field :image, accept: 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif', class: 'chat-image-input', aria: { label: '写真を1枚選ぶ（10MBまで）' } %>
         <% end %>
         <%= f.label :body, 'メッセージ', class: 'chat-visually-hidden' %>
@@ -56,28 +62,52 @@
       <% end %>
     <% end %>
   </section>
-  <details class="chat-card chat-controls"><summary><%= @conversation.practice_match? ? 'ブロック' : 'ブロック・返信がない場合' %></summary>
-    <% if @conversation["#{@role}_blocked"] %>
+  <% if @conversation["#{@role}_blocked"] %>
+    <div class="chat-card chat-controls">
+      <p>ご自身の設定によりメッセージの送信を停止しています。</p>
       <%= button_to '自分のブロックを解除', block_conversation_path(@conversation), method: :delete %>
-    <% else %>
-      <%= button_to '相手をブロック', block_conversation_path(@conversation), data: { confirm: '双方の送信を停止します。よろしいですか？' } %>
+    </div>
+  <% end %>
+  <details class="chat-card chat-controls"><summary><span class="chat-section-label"><%= lucide_icon 'clock' %><span><%= @role == 'owner' && !@conversation.practice_match? ? '返信なし・連絡なしの欠席' : '返信がない場合' %></span></span></summary>
+    <% if @role == 'owner' && !@conversation.practice_match? %>
+      <div class="chat-report-choices" aria-label="報告の種類">
+        <label><input type="radio" name="report-kind" value="reply" data-report-kind <%= 'checked' unless @no_show_draft&.errors&.any? %>>返信がない</label>
+        <label><input type="radio" name="report-kind" value="absence" data-report-kind <%= 'checked' if @no_show_draft&.errors&.any? %>>連絡なしの欠席</label>
+      </div>
+      <div data-report-panel="absence"><%= render 'no_show_form' %></div>
     <% end %>
-    <% if !@conversation.practice_match? && @role == 'member' && !@conversation.accepted_at && @conversation.chat_messages.deliverable.where(sender_role: 'member').exists? %>
-      <% if @conversation.respond_check == 'NG' %><p>返信がないことを報告済みです。</p>
-      <% elsif @conversation.no_reply_reportable_at && Time.current >= @conversation.no_reply_reportable_at %>
-        <%= button_to '返信がないことを報告', no_reply_conversation_path(@conversation), id: 'chat-no-reply', data: { confirm: '主催者から返信がないことを報告しますか？' } %>
+    <div data-report-panel="reply">
+    <% if @conversation.practice_match? %>
+      <p>やり取りでお困りの場合は運営へご相談ください。</p>
+      <%= link_to '運営に相談する', new_support_request_path(category: 'message'), class: 'chat-support-link' %>
+    <% elsif @conversation.blocked? %>
+      <p>送信停止中の会話は、未返信として報告できません。</p>
+    <% elsif @conversation.no_reply_reported_by?(@role) %>
+      <p>返信がないことを報告済みです。相手が返信するとプロフィールの報告人数から外れます。</p>
+    <% else %>
+      <% reportable_at = @conversation.reply_reportable_at(@role) %>
+      <p>やり取りから3日以上返信がない場合に報告できます。</p>
+      <p class="chat-review-help">人数のみ表示。返信が届くと集計から外れます。</p>
+      <% if reportable_at && Time.current >= reportable_at %>
+        <%= button_to '返信がないことを報告する', no_reply_conversation_path(@conversation), id: 'chat-no-reply', class: 'chat-button', data: { confirm: '返信がないことを報告しますか？相手のプロフィールの報告人数に反映されます。' } %>
+      <% elsif reportable_at %>
+        <p class="chat-review-help">報告可能日時：<%= l(reportable_at, format: '%-m月%-d日 %H:%M') %></p>
+        <button type="button" disabled>返信がないことを報告する</button>
       <% else %>
-        <p>問い合わせが届いてから3日以上、主催者の初回返信がない場合に報告できます。スパム確認中の未配信メッセージは対象外です。</p>
+        <p class="chat-review-help">現在、返信待ちはありません。</p>
+        <button type="button" disabled>返信がないことを報告する</button>
       <% end %>
     <% end %>
+    </div>
   </details>
+  <%= render 'no_show_reports' unless @conversation.practice_match? %>
   <% unless @conversation.practice_match? %>
   <details class="chat-card chat-evaluation" id="evaluation">
-    <summary>口コミを投稿する</summary>
-    <p>やり取りの感想を教えてください。参加した方は、サークルの雰囲気についても書けます。</p>
-    <% if @conversation.review_deadline %><p class="cb-system-notice"><strong class="cb-system-notice__label">口コミの投稿期限</strong>投稿期限：<%= l(@conversation.review_deadline, format: '%Y年%-m月%-d日（%a）%H時%M分') %></p><% end %>
-    <p class="chat-review-help">相手が投稿しなくても、投稿期限が過ぎるとあなたの口コミは公開されます。双方が投稿した場合は、その時点で公開されます。公開までは相手の内容は見えません。ニックネーム・サークル名も表示されます。</p>
-    <p class="chat-review-help">連絡先などの個人情報は書かないでください。高評価や削除の強要、報復は禁止です。</p>
+    <summary><span class="chat-section-label"><%= lucide_icon 'square-pen' %><span>口コミを投稿する</span></span></summary>
+    <p>やり取りの感想を教えてください。</p>
+    <% if @conversation.review_deadline %><p class="chat-review-deadline">投稿期限：<%= l(@conversation.review_deadline, format: '%-m月%-d日 %H:%M') %></p><% end %>
+    <p class="chat-review-help">双方の投稿完了、または期限後に公開されます。公開までは相手の内容は見えません。</p>
+    <details class="chat-review-guidelines"><summary>公開・投稿のルール</summary><p class="chat-review-help">ニックネーム・サークル名も公開されます。連絡先などの個人情報は書かないでください。高評価や削除の強要、報復は禁止です。</p></details>
     <p id="chat-acceptance-notice" class="cb-system-notice" hidden><strong class="cb-system-notice__label">システム通知</strong>主催者から返信が届きました。<%= link_to "ページを更新して口コミを書く", conversation_path(@conversation, refresh: 1, anchor: "evaluation") %></p>
     <% if @conversation.actor(@role).suspended? %>
       <p>利用停止中のため口コミを投稿できません。</p>
@@ -106,7 +136,6 @@
         <% if @role == 'member' %>
           <div class="chat-attendance">
             <%= f.label :participated do %><%= f.check_box :participated, checked: @own_review&.participated? %><span>このサークルに参加しました</span><% end %>
-            <p class="chat-review-help">実際に参加した方だけチェックしてください。</p>
           </div>
         <% end %>
         <%= f.label :comment, '感想（6〜2000文字）' %>
@@ -138,5 +167,5 @@
 <% end %>
 </main>
 
-<a href="#chat-reply" class="chat-reply-shortcut"><%= lucide_icon 'undo-2' %><span>返信</span></a>
+<a href="#chat-reply" class="chat-reply-shortcut <%= 'chat-reply-shortcut--participant' if @role == 'member' && !@conversation.practice_match? %>"><%= lucide_icon 'undo-2' %><span>返信</span></a>
 <%= render 'conversations/image_viewer' %>

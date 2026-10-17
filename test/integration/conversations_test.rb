@@ -18,7 +18,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
         assert_select '.chat-thread-heading a[href="#chat-reply"]', text: '返信欄へ'
         assert_select 'a.chat-reply-shortcut[href="#chat-reply"]', text: '返信'
         assert_select 'section#chat-reply[tabindex="-1"]' do
-          assert_select 'h2#chat-reply-title', text: '返信する'
+          assert_select 'h2#chat-reply-title', text: 'メッセージを返信'
           assert_select 'form[action=?]', message_conversation_path(@conversation) do
             assert_select 'textarea[name="message[body]"][rows="4"]', count: 1
             assert_select 'input[type="submit"][value="送信"]', count: 1
@@ -36,6 +36,31 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_select '#chat-reply', text: /ブロック中のため/
     assert_select '#chat-reply form', count: 0
     assert_select 'a.chat-reply-shortcut[href="#chat-reply"]'
+    assert_select 'input[value="自分のブロックを解除"]'
+  end
+
+  test 'conversation presentation uses inline identities and participant reply actions without acceptance notice' do
+    accept_conversation
+    [@owner, @member].each do |actor|
+      sign_in actor
+      get conversation_path(@conversation)
+      assert_response :success
+      assert_select '.chat-message__heading' do
+        assert_select '.chat-avatar'
+        assert_select '.message-role'
+        assert_select '.chat-message__name'
+      end
+      assert_select 'input[value="相手をブロック"]', count: 0
+      assert_select '.chat-controls summary', text: actor == @owner ? '返信なし・連絡なしの欠席' : '返信がない場合'
+      if actor == @member
+        assert_select '#chat-acceptance-status', count: 0
+        assert_select '.chat-reply-shortcut--participant'
+      else
+        assert_select '#chat-acceptance-status', count: 1
+        assert_select '.chat-reply-shortcut--participant', count: 0
+      end
+      sign_out actor
+    end
   end
 
   test 'owner opens the page of the first unread message before the read cursor advances' do
@@ -90,13 +115,13 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     assert_equal 1, @circle.unanswered_report_count
     get circle_path(@circle)
     assert_response :success
-    assert_select '.circle-reply-notice strong', text: '1人から、初回返信がないとの報告があります'
+    assert_select '.circle-reply-notice strong', text: '1人から、返信がないとの報告があります'
     assert_select '.circle-reply-notice', text: /3日以上/
     assert_select '.circle-reply-notice', text: /参加者さくら/, count: 0
     get new_user_conversation_path(@circle)
     assert_redirected_to conversation_path(@conversation)
     get conversation_path(@conversation)
-    assert_select '.chat-profile__no-reply', text: '初回返信なしの報告：1人'
+    assert_select '.chat-profile__no-reply', text: '返信なしの報告：1人'
     sign_out @member
     accept_conversation
     assert_equal 0, @circle.unanswered_report_count
@@ -133,7 +158,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     sign_in @other_member
     get new_user_conversation_path(@circle)
     assert_response :success
-    assert_select '.circle-reply-notice strong', text: '1人から、初回返信がないとの報告があります'
+    assert_select '.circle-reply-notice strong', text: '1人から、返信がないとの報告があります'
     assert_not_includes css_select('.circle-reply-notice').first.text, @member.nickname
   end
 

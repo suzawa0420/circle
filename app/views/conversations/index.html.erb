@@ -4,7 +4,7 @@
   <% if @penalty_count.to_i.positive? || @penalty_only %>
     <aside class="chat-card chat-penalty-summary">
       <strong>未返信報告の減点対象：<%= @penalty_count %>件（1件につき30ポイント）</strong>
-      <p>配信から3日以上、初回返信がなく参加者から報告されたメッセージです。返信すると減点が解除されます。旧お問い合わせは対象外です。</p>
+      <p>やり取りを始めてから3日以上、初回返信がなく参加者から報告されたメッセージです。返信すると減点が解除されます。旧お問い合わせは対象外です。</p>
       <%= link_to(@penalty_only ? 'すべてのメッセージを見る' : '減点対象だけを見る', conversations_path(circle_id: params[:circle_id], penalty: @penalty_only ? nil : '1')) %>
     </aside>
   <% end %>
@@ -37,6 +37,7 @@
             <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
           <% end %>
           <% if conversation.review_prompt_due?(role) %><span class="chat-review-prompt-badge"><%= conversation.peer_review_waiting?(role) ? '口コミが届いています・あなたも投稿できます' : '感想を募集中' %></span><% end %>
+          <% if @no_show_conversation_ids.include?(conversation.id) %><span class="chat-review-prompt-badge">欠席の申告・本人の説明を確認</span><% end %>
           <span class="chat-talk__preview"><%= 'あなた：' if latest&.sender_role == role %><%= latest&.preview_text %></span>
           <span class="chat-talk__status"><%= conversation.practice_match? ? '対戦・練習試合' : (conversation.accepted_at ? '受付済み' : '返信待ち') %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
           <% if role == 'owner' && !conversation.practice_match? %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>

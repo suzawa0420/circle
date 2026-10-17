@@ -10,6 +10,20 @@
         <% if @review_count.positive? %><a class="public-profile-score" href="#reviews" aria-label="主催者からの口コミ：5点満点中<%= format('%.2f', @member.received_review_score) %>、<%= @review_count %>件"><%= render 'expression', positive: true %><strong><%= format('%.2f', @member.received_review_score) %></strong><span>/ 5</span><span>（<%= @review_count %>件）</span></a><% else %><p class="public-profile-no-score">口コミはまだありません</p><% end %>
       </div>
     </div>
+    <%= render 'conversations/no_reply_notice', person: @member %>
+    <% if @show_no_show_summary && @member.no_show_report_count.positive? %>
+      <aside class="circle-reply-notice" aria-label="主催者限定の欠席申告">
+        <strong>連絡なしの欠席 <%= @member.no_show_report_count %>件</strong>
+        <p>主催者・運営限定。未確認の申告を含みます。</p>
+      </aside>
+    <% end %>
+    <% if @own_no_show_reports.any? %>
+      <aside class="circle-reply-notice" aria-label="ご自身への欠席申告">
+        <strong>ご自身の参加予定について申告があります</strong>
+        <p>会話画面で内容を確認し、説明・異議申し立てを送れます。</p>
+        <% @own_no_show_reports.each do |report| %><p><%= link_to "#{report.conversation.user.name}との申告を確認", conversation_path(report.conversation, anchor: 'attendance-reports') %></p><% end %>
+      </aside>
+    <% end %>
     <div class="public-profile-section">
       <h2>自己紹介</h2>
       <% if @member.profile.present? %><div class="public-profile-bio"><%= simple_format @member.profile %></div><% else %><p class="public-profile-placeholder">自己紹介はまだ登録されていません。</p><% end %>

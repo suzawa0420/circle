@@ -41,6 +41,49 @@ class Conversation < ApplicationRecord
   has_many :chat_messages, dependent: :destroy
   has_many :conversation_reviews, dependent: :destroy
   has_many :chat_reports, dependent: :destroy
+  has_many :conversation_reply_reports, dependent: :destroy
+  has_many :no_show_reports, dependent: :destroy
+
+  def unanswered_message_for(role)
+    raise NotAllowed, 'この操作はできません。' unless ROLES.include?(role) && !practice_match?
+    peer = role == 'member' ? 'owner' : 'member'
+    last_reply = chat_messages.deliverable.where(sender_role: peer).delivery_order.first
+    outgoing = chat_messages.deliverable.where(sender_role: role)
+    if last_reply
+      delivered_at = last_reply.released_at || last_reply.created_at
+      outgoing = outgoing.where('(COALESCE(released_at, created_at), id) > (?, ?)', delivered_at, last_reply.id)
+    end
+    outgoing.reorder(Arel.sql('COALESCE(released_at, created_at) ASC'), id: :asc).first
+  end
+
+  def reply_reportable_at(role)
+    message = unanswered_message_for(role)
+    (message.released_at || message.created_at) + NO_REPLY_WAIT if message
+  end
+
+  def no_reply_reported_by?(role)
+    return true if role == 'member' && self.class.reported_unanswered.exists?(id)
+    conversation_reply_reports.active.where(reporter_role: role).exists?
+  end
+
+  def report_no_reply!(role)
+    with_lock do
+      ensure_active_sender!(role)
+      raise NotAllowed, 'メールアドレスを確認してください。' unless actor(role).email_verified?
+      raise NotAllowed, '送信停止中の会話は未返信として報告できません。' if blocked?
+      message = unanswered_message_for(role)
+      raise NotAllowed, '返信待ちの配信済みメッセージがありません。' unless message
+      if (message.released_at || message.created_at) + NO_REPLY_WAIT > Time.current
+        raise NotAllowed, 'やり取りの中で、自分のメッセージに3日以上返信がない場合に報告できます。'
+      end
+      report = conversation_reply_reports.find_or_initialize_by(reporter_role: role)
+      report.update!(chat_message: message)
+      if role == 'member' && !accepted_at
+        update!(respond_check: 'NG')
+        refresh_circle_score!
+      end
+    end
+  end
 
   def self.for_member!(user, member)
     raise NotAllowed, '利用停止中のため、新しい問い合わせはできません。' if member.reload.suspended? || user.admin_user.reload.suspended?

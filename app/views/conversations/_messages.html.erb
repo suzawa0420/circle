@@ -7,10 +7,12 @@
   <% else %>
   <% mine = message.sender_role == @role %>
   <article id="chat-message-<%= message.id %>" class="chat-message chat-message--<%= message.sender_role %> <%= 'chat-message--mine' if mine %>">
-    <% unless mine %><%= render 'avatar', conversation: @conversation, role: message.sender_role %><% end %>
     <div class="chat-message__content">
-      <span class="message-role message-role--<%= message.sender_role %>"><%= message.sender_label %></span>
-      <% unless mine %><strong class="chat-message__name"><%= @conversation.participant_name(message.sender_role) %></strong><% end %>
+      <div class="chat-message__heading">
+        <%= render 'avatar', conversation: @conversation, role: message.sender_role %>
+        <span class="message-role message-role--<%= message.sender_role %>"><%= message.sender_label %></span>
+        <strong class="chat-message__name"><%= @conversation.participant_name(message.sender_role) %></strong>
+      </div>
       <% unless message.delivered? %><p class="chat-moderation-note"><%= message.moderation_status == 'held' ? '運営が確認しています。相手にはまだ配信されていません。' : '運営が配信を見送りました。相手には配信されていません。' %></p><% end %>
       <div class="chat-message__row">
         <div class="chat-body"><%= render 'conversations/image', message: message %><%= chat_message_body(message.body) if message.body.present? %></div>

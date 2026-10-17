@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     delete :review, action: :delete_review, on: :member
     post :report, on: :member
     post :no_reply, on: :member
+    post :no_show_report, on: :member
+    patch :no_show_response, on: :member
   end
   resource :member_email_verification, only: [:show, :create, :update] do
     get :confirm
@@ -213,6 +215,7 @@ Rails.application.routes.draw do
     resources :places, only: :index
     resources :chat_moderations, only: [:index, :update]
     resources :chat_reports, only: [:index, :show, :update]
+    resources :no_show_reports, only: [:index, :show, :update]
     resources :circles, only: [:index, :destroy]
     patch 'circles/:id/moderation', to: 'moderation#circle', as: :circle_moderation
     patch 'blogs/:id/moderation', to: 'moderation#blog', as: :blog_moderation

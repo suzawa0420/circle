@@ -1,0 +1,14 @@
+<section class="chat-absence-form" aria-label="連絡なしの欠席を報告">
+  <p class="chat-review-help">参加確定後の、連絡なしの欠席が対象です。</p>
+  <% if @conversation.accepted_at %>
+    <%= form_with model: (@no_show_draft || NoShowReport.new), url: no_show_report_conversation_path(@conversation), scope: :no_show_report, local: true do |f| %>
+      <% if @no_show_draft&.errors&.any? %><p role="alert"><%= @no_show_draft.errors.full_messages.join('、') %></p><% end %>
+      <%= f.label :scheduled_at, '参加予定日時' %>
+      <%= f.datetime_local_field :scheduled_at, required: true %>
+      <label class="chat-confirmation"><%= f.check_box :participation_confirmed, required: true %><span>参加が確定していた</span></label>
+      <label class="chat-confirmation"><%= f.check_box :no_advance_notice, required: true %><span>事前連絡なく、当日も欠席した</span></label>
+      <p class="chat-review-help">主催者・運営限定。本人は説明を送れます。</p>
+      <%= f.submit '欠席を報告する', class: 'chat-button', data: { disable_with: '保存中…' } %>
+    <% end %>
+  <% else %><p>参加者とやり取りを始めてから報告できます。</p><% end %>
+</section>

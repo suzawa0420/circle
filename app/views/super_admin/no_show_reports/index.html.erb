@@ -1,0 +1,12 @@
+<%= render 'webmasters/shared/page_header', title: '連絡なしの欠席についての申告', description: '主催者の申告と参加者本人の説明を確認します。無回答だけでは確認済みにはしません。' %>
+<div class="wm-list">
+<% @reports.each do |report| %>
+  <article class="webmaster-card">
+    <h2><%= report.conversation.member.nickname %>さん ／ <%= report.conversation.user.name %></h2>
+    <p><%= l(report.scheduled_at, format: '%Y年%-m月%-d日 %H:%M') %>・<%= NoShowReport::STATUSES.fetch(report.status) %><%= '・本人の説明あり' if report.member_responded_at %></p>
+    <%= link_to '申告と説明を確認', super_admin_no_show_report_path(report), class: 'wm-button' %>
+  </article>
+<% end %>
+</div>
+<% if @reports.empty? %><%= render 'webmasters/shared/empty', message: '欠席についての申告はありません。' %><% end %>
+<%= paginate @reports %>

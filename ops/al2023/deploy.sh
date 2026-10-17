@@ -90,6 +90,10 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261016010000
     # One-time invitation after the peer submits a blind review.
     bundle exec rails db:migrate:up VERSION=20261016020000
+    # Bidirectional, deduplicated unanswered-message reports on public profiles.
+    bundle exec rails db:migrate:up VERSION=20261017000000
+    # Private attendance claims and the participant's explanation/appeal.
+    bundle exec rails db:migrate:up VERSION=20261017010000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

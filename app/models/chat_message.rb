@@ -2,6 +2,7 @@ class ChatMessage < ApplicationRecord
   mount_uploader :image, ChatImageUploader
   belongs_to :conversation
   has_many :chat_reports, dependent: :nullify
+  has_many :conversation_reply_reports, dependent: :destroy
   validates :sender_role, inclusion: { in: Conversation::ROLES + ['system'] }
   validates :body, length: { maximum: 2000 }
   validates :body, presence: true, unless: :image?

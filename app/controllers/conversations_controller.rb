@@ -25,6 +25,7 @@ class ConversationsController < ApplicationController
     @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
       .includes(:conversation_reviews, :member, :source_user, user: :admin_user).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
     ids = @conversations.map(&:id)
+    @no_show_conversation_ids = NoShowReport.where(conversation_id: ids).distinct.pluck(:conversation_id)
     @penalty_ids = Conversation.reported_unanswered.where(id: ids).pluck(:id)
     @latest_messages = visible.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id).delivery_order.index_by(&:conversation_id)
     @unread_counts = %w[member owner].index_with do |role|
@@ -137,17 +138,32 @@ class ConversationsController < ApplicationController
   end
 
   def no_reply
-    raise Conversation::NotAllowed, 'この操作はできません。' unless @role == 'member' && !@conversation.practice_match?
-    @conversation.with_lock do
-      raise Conversation::NotAllowed, '配信済みのお問い合わせがありません。' unless @conversation.chat_messages.deliverable.where(sender_role: 'member').exists?
-      raise Conversation::NotAllowed, '返信済みの問い合わせです。' if @conversation.accepted_at
-      if Time.current < @conversation.no_reply_reportable_at
-        raise Conversation::NotAllowed, '未返信の報告は、お問い合わせが届いてから3日後にできます。'
-      end
-      @conversation.update!(respond_check: 'NG')
-      @conversation.refresh_circle_score!
-    end
+    @conversation.report_no_reply!(@role)
     redirect_to conversation_path(@conversation), notice: '返信がないことを報告しました。'
+  end
+
+  def no_show_report
+    raise Conversation::NotAllowed, '主催者のみ報告できます。' unless @role == 'owner' && !@conversation.practice_match?
+    @conversation.ensure_active_sender!('owner')
+    raise Conversation::NotAllowed, 'メールアドレスを確認してください。' unless current_admin_user.email_verified?
+    @no_show_draft = @conversation.no_show_reports.new(params.require(:no_show_report).permit(:scheduled_at, :participation_confirmed, :no_advance_notice))
+    @conversation.with_lock do
+      @no_show_draft.save!
+    end
+    redirect_to conversation_path(@conversation, anchor: 'attendance-reports'), notice: '欠席についての申告を記録しました。参加者本人は説明・異議申し立てを送れます。'
+  rescue ActiveRecord::RecordInvalid
+    show
+    render :show, status: :unprocessable_entity
+  end
+
+  def no_show_response
+    raise Conversation::NotAllowed, '参加者本人のみ説明を送れます。' unless @role == 'member' && !@conversation.practice_match?
+    report = @conversation.no_show_reports.find(params[:report_id])
+    report.with_lock do
+      report.update!(member_response: params.require(:no_show_report).permit(:member_response)[:member_response].to_s,
+                     member_responded_at: Time.current)
+    end
+    redirect_to conversation_path(@conversation, anchor: 'attendance-reports'), notice: '説明・異議申し立てを保存しました。返信がないことだけを理由に運営確認済みにはしません。'
   end
 
   private

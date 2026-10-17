@@ -88,6 +88,8 @@ jobs:
       - run: bundle exec ruby test/security/registration_turnstile_test.rb
       - run: node test/security/registration_turnstile_js_test.js
       - run: node test/security/conversation_receipts_js_test.js
+      - run: bundle exec rails test test/integration/conversation_reply_reports_test.rb
+      - run: bundle exec rails test test/integration/no_show_reports_test.rb
       - run: node test/security/chat_images_js_test.js
       - run: node test/security/home_screen_install_js_test.js
       - run: node test/security/webmaster_bulk_selection_js_test.js

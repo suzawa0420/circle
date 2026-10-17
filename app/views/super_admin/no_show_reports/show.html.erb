@@ -1,0 +1,17 @@
+<%= render 'webmasters/shared/page_header', title: '欠席の申告と本人の説明', description: '当事者双方の内容を確認して判断してください。' %>
+<article class="webmaster-card">
+  <h2><%= @report.conversation.member.nickname %>さん ／ <%= @report.conversation.user.name %></h2>
+  <p>参加予定：<%= l(@report.scheduled_at, format: '%Y年%-m月%-d日 %H:%M') %></p>
+  <p>主催者の確認：参加確定・事前連絡なし・当日欠席</p>
+  <% if @report.confirmation_details.present? %><h3>参加確定の補足</h3><%= simple_format @report.confirmation_details %><% end %>
+  <% if @report.details.present? %><h3>状況の補足</h3><%= simple_format @report.details %><% end %>
+  <h3>本人の説明・異議申し立て</h3>
+  <% if @report.member_response.present? %><%= simple_format @report.member_response %><% else %><p>まだ説明は届いていません。無回答を事実確認の根拠にはしません。</p><% end %>
+  <%= link_to '会話履歴を確認', super_admin_conversation_path(@report.conversation), class: 'wm-button wm-button--secondary' %>
+  <%= form_with model: @report, url: super_admin_no_show_report_path(@report), method: :patch do |f| %>
+    <% if @report.errors.any? %><p role="alert"><%= @report.errors.full_messages.join('、') %></p><% end %>
+    <div class="wm-field"><%= f.label :status, '確認状況' %><%= f.select :status, NoShowReport::STATUSES.map { |key, label| [label, key] } %></div>
+    <div class="wm-field"><%= f.label :operational_memo, '運営メモ（利用者には非公開）' %><%= f.text_area :operational_memo, rows: 4, maxlength: 4000 %></div>
+    <%= f.submit '確認状況とメモを保存' %>
+  <% end %>
+</article>

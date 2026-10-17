@@ -1,0 +1,23 @@
+<% reports = @conversation.no_show_reports.order(created_at: :desc) %>
+<% if reports.any? %>
+  <details id="attendance-reports" class="chat-card chat-attendance-reports" aria-label="欠席の申告・説明">
+    <summary><span class="chat-section-label"><%= lucide_icon 'calendar-days' %><span>欠席の申告・説明</span></span><span class="chat-attendance-count"><%= reports.count %>件</span></summary>
+    <p class="chat-review-help">当事者・運営のみ閲覧できます。</p>
+    <% reports.each do |report| %>
+      <article class="chat-attendance-report">
+        <div class="chat-attendance-heading"><h3><%= l(report.scheduled_at, format: '%-m月%-d日 %H:%M') %></h3><span class="chat-attendance-status"><%= NoShowReport::STATUSES.fetch(report.status) %></span></div>
+        <div class="chat-attendance-facts"><span>参加確定</span><span>事前連絡なし</span><span>当日欠席</span></div>
+        <% if report.confirmation_details.present? || report.details.present? %><details class="chat-review-guidelines"><summary>補足内容</summary><%= simple_format report.confirmation_details %><%= simple_format report.details %></details><% end %>
+        <% if report.member_response.present? %><div class="chat-attendance-response"><strong>本人の説明</strong><%= simple_format report.member_response %></div><% end %>
+        <% if @role == 'member' %>
+          <%= form_with url: no_show_response_conversation_path(@conversation), method: :patch, scope: :no_show_report, local: true do |f| %>
+            <%= hidden_field_tag :report_id, report.id %>
+            <%= f.label :member_response, '説明・異議申し立て', for: "absence-response-#{report.id}" %>
+            <%= f.text_area :member_response, id: "absence-response-#{report.id}", value: report.member_response, rows: 3, required: true, minlength: 6, maxlength: 2000, placeholder: '事情や訂正したい内容（6〜2000文字）' %>
+            <%= f.submit '説明を保存', class: 'chat-button' %>
+          <% end %>
+        <% end %>
+      </article>
+    <% end %>
+  </details>
+<% end %>

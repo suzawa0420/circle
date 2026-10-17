@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_16_020000) do
+ActiveRecord::Schema.define(version: 2026_10_17_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,6 +182,18 @@ ActiveRecord::Schema.define(version: 2026_10_16_020000) do
     t.index ["chat_message_id"], name: "index_chat_reports_on_chat_message_id"
     t.index ["conversation_id"], name: "index_chat_reports_on_conversation_id"
     t.index ["conversation_review_id"], name: "index_chat_reports_on_conversation_review_id"
+  end
+
+  create_table "conversation_reply_reports", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "chat_message_id", null: false
+    t.string "reporter_role", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_message_id"], name: "index_conversation_reply_reports_on_chat_message_id"
+    t.index ["conversation_id", "reporter_role"], name: "index_reply_reports_on_conversation_and_role", unique: true
+    t.index ["conversation_id"], name: "index_conversation_reply_reports_on_conversation_id"
+    t.check_constraint "reporter_role::text = ANY (ARRAY['member'::character varying, 'owner'::character varying]::text[])", name: "reply_reports_valid_role"
   end
 
   create_table "conversation_reviews", force: :cascade do |t|
@@ -596,6 +608,25 @@ ActiveRecord::Schema.define(version: 2026_10_16_020000) do
     t.integer "gender"
   end
 
+  create_table "no_show_reports", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.datetime "scheduled_at", null: false
+    t.boolean "participation_confirmed", default: false, null: false
+    t.boolean "no_advance_notice", default: false, null: false
+    t.text "confirmation_details", null: false
+    t.text "details", null: false
+    t.text "member_response"
+    t.datetime "member_responded_at"
+    t.string "status", default: "pending", null: false
+    t.text "operational_memo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "scheduled_at"], name: "index_no_show_reports_on_conversation_id_and_scheduled_at", unique: true
+    t.index ["conversation_id"], name: "index_no_show_reports_on_conversation_id"
+    t.index ["status"], name: "index_no_show_reports_on_status"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'confirmed'::character varying, 'dismissed'::character varying]::text[])", name: "no_show_reports_valid_status"
+  end
+
   create_table "opinions", force: :cascade do |t|
     t.text "opinion"
     t.datetime "created_at", null: false
@@ -894,6 +925,9 @@ ActiveRecord::Schema.define(version: 2026_10_16_020000) do
     t.index ["user_id"], name: "index_users_groups_on_user_id"
   end
 
+  add_foreign_key "no_show_reports", "conversations"
+  add_foreign_key "conversation_reply_reports", "chat_messages"
+  add_foreign_key "conversation_reply_reports", "conversations"
   add_foreign_key "applications", "members"
   add_foreign_key "backlink_requests", "users"
   add_foreign_key "backlink_requests", "webmasters", column: "reviewed_by_id"
