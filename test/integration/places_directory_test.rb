@@ -7,8 +7,10 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     category = Category.create!(name: '球技', kana: 'places-ball', order: '1')
     @basketball = Event.create!(name: 'バスケ', ruby: 'places-basketball', category: category, place: 1, order: '1')
     @tennis = Event.create!(name: 'テニス', ruby: 'places-tennis', category: category, place: 1, order: '2')
-    @tokyo = Prefecture.create!(name: '東京都', kana: 'places-tokyo', order: '1')
-    @osaka = Prefecture.create!(name: '大阪府', kana: 'places-osaka', order: '2')
+    # ID 50 is reserved for "nationwide" and omitted from facility area filters.
+    # PostgreSQL sequences do not roll back, so auto IDs can hit it by test order.
+    @tokyo = Prefecture.create!(id: 13, name: '東京都', kana: 'places-tokyo', order: '1')
+    @osaka = Prefecture.create!(id: 27, name: '大阪府', kana: 'places-osaka', order: '2')
     @city = City.create!(name: '目黒区', city_kana: 'meguro', prefecture_id: @tokyo.id)
     other_city = City.create!(name: '大阪市', city_kana: 'osaka', prefecture_id: @osaka.id)
     @gym = facility('中央体育館', @tokyo, @city, @basketball)
