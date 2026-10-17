@@ -42,24 +42,28 @@ module SchedulesHelper
   end
 
   def event_listing_structured_data
+    return unless public_structured_data_page? && @schedules.any?
     title = @event_day_title || @event_hub_title
-    path = @event_day_path || @event_hub_path
-    query = params[:page].to_i > 1 ? "?page=#{params[:page].to_i}" : ''
     breadcrumb_data = site_breadcrumb_structured_data
+    entries = @schedules.map do |schedule|
+      { 'url' => "https://circle-book.com#{user_schedule_path(schedule.user_id, schedule.id)}",
+        'name' => schedule.title.presence || "#{schedule.user.event&.name}の活動" }
+    end
+    list = structured_collection(entries, offset: @schedules.offset_value, name: title)
     {
       '@context' => 'https://schema.org',
       '@graph' => [
         breadcrumb_data&.except('@context'),
-        { '@type' => 'ItemList', name: title, url: 'https://circle-book.com' + path + query,
-          itemListElement: @schedules.each_with_index.map { |schedule, i| { '@type' => 'ListItem', position: @schedules.offset_value + i + 1, url: "https://circle-book.com#{user_schedule_path(schedule.user_id, schedule.id)}", name: schedule.title.presence || "#{schedule.user.event&.name}の活動" } } }
+        list.except('@context')
       ].compact
     }
   end
 
-  def public_event_structured_data(schedule, user:)
+  def public_event_structured_data(schedule, user:, accepted_count: 0)
     # Required date/time and a public venue must be supplied by the organizer;
     # never infer them from private venue/address fields or a circle profile.
-    return unless schedule.time_s && schedule.venue.present?
+    return unless public_structured_data_page? && user.publicly_visible? && schedule.time_s && schedule.venue.present?
+    return if user.prefecture.name.to_s.include?('オンライン')
     date = Date.iso8601(schedule.day)
     zone = Time.find_zone!('Tokyo')
     start = zone.local(date.year, date.month, date.day, schedule.time_s.hour, schedule.time_s.min)
@@ -67,12 +71,14 @@ module SchedulesHelper
     image = 'https://circle-book.com' + image if image.start_with?('/')
     data = {
       '@context' => 'https://schema.org', '@type' => 'Event',
+      '@id' => "https://circle-book.com#{user_schedule_path(user, schedule)}#event",
       name: schedule.title.presence || "#{user.event.name}の活動", startDate: start.iso8601,
       url: "https://circle-book.com#{user_schedule_path(user, schedule)}", image: image,
       eventStatus: "https://schema.org/#{schedule.recruitment == '中止' ? 'EventCancelled' : 'EventScheduled'}",
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       location: { '@type' => 'Place', name: schedule.venue, address: { '@type' => 'PostalAddress', addressRegion: user.prefecture.name, addressCountry: 'JP' } },
-      organizer: { '@type' => 'Organization', name: user.name, url: "https://circle-book.com#{circle_path(user)}" }
+      organizer: { '@type' => 'Organization', '@id' => circle_schema_id(user), name: user.name, url: "https://circle-book.com#{circle_path(user)}" },
+      mainEntityOfPage: { '@type' => 'WebPage', '@id' => structured_page_url }
     }
     if schedule.time_e
       ending = zone.local(date.year, date.month, date.day, schedule.time_e.hour, schedule.time_e.min)
@@ -80,7 +86,27 @@ module SchedulesHelper
       data[:endDate] = ending.iso8601
     end
     data[:description] = strip_tags(schedule.note).squish.truncate(500) if schedule.note.present?
+    status = public_schedule_status(schedule, accepted_count: accepted_count)
+    cost = schedule.cost.to_s.strip
+    price = if cost == '無料'
+      0
+    elsif cost.match?(/\A[¥￥]?\s*(?:\d+|\d{1,3}(?:,\d{3})+)\s*円?\z/)
+      cost.delete('¥￥,円 ').to_i
+    end
+    if price && !%w[cancelled ended].include?(status[:key])
+      data[:offers] = { '@type' => 'Offer', url: data[:url], price: price, priceCurrency: 'JPY',
+        availability: "https://schema.org/#{status[:key] == 'full' ? 'SoldOut' : 'InStock'}" }
+    end
     data
+  rescue Date::Error
+    nil
+  end
+
+  def public_schedule_page_structured_data(schedule, user:)
+    return unless public_structured_data_page? && user.publicly_visible?
+    { '@context' => 'https://schema.org', '@type' => 'WebPage', '@id' => structured_page_url,
+      'url' => structured_page_url, 'name' => schedule.title.presence || "#{user.event.name}の活動",
+      'about' => { '@type' => 'Organization', '@id' => circle_schema_id(user), 'name' => user.name.to_s } }
   end
 
   def schedule_image_source(schedule, user: schedule.user)

@@ -15,11 +15,14 @@ module MatchesHelper
   end
 
   def match_page_structured_data(matching)
+    return unless public_structured_data_page? && matching.user.publicly_visible?
     url = "https://circle-book.com#{match_path(matching.user_id)}"
     {
       '@type' => 'WebPage', '@id' => url, 'url' => url,
       'name' => "#{matching.user.name}の対戦相手・練習試合の募集",
-      'dateModified' => match_updated_at(matching)&.iso8601
+      'dateModified' => match_updated_at(matching)&.iso8601,
+      'description' => structured_text(matching.comment).presence,
+      'about' => { '@type' => 'Organization', '@id' => circle_schema_id(matching.user), 'name' => matching.user.name.to_s }
     }.compact
   end
 

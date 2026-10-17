@@ -18,6 +18,22 @@ crumb :circle_search_show do |q|
   parent :root
 end
 
+crumb :circle_filter_landing do |event, prefecture, group, age|
+  label = [group&.name, age&.name].compact.join('・')
+  link "#{label}向けの募集", CircleFilterLanding.path(event: event, prefecture: prefecture, group: group, age: age)
+  if group && age
+    parent :circle_filter_landing, event, prefecture, group, nil
+  elsif event && prefecture
+    parent :event_prefecture_show, event, prefecture
+  elsif event
+    parent :event_show, event
+  elsif prefecture
+    parent :prefecture_show, prefecture
+  else
+    parent :circle_index
+  end
+end
+
   ## events配下
   crumb :event_show do |event|
     link "#{event.name}", event_path(event.ruby)

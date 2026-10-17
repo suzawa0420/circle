@@ -1,4 +1,4 @@
-- set_meta_tags title: circle_listing_title,keywords: "#{@prefecture.name},#{@city.name},#{@tag.name},サークル,チーム"
+- set_meta_tags title: circle_listing_title,description: circle_tag_listing_description,keywords: "#{@prefecture.name},#{@city.name},#{@tag.name},サークル,チーム"
 = render "users/parts/local_business_user_list"
 .main.users-index
   .container
@@ -12,3 +12,5 @@
       = render "/users/users_list"
     - else @users.count == 0
       = render "/tags/no_hit"
+
+    = render "circles/commons/audience_links"

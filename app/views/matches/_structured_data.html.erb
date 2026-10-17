@@ -1,10 +1,10 @@
 <% data = if local_assigns[:matching]
-  match_page_structured_data(matching).merge('@context' => 'https://schema.org')
+  match_page_structured_data(matching)&.merge('@context' => 'https://schema.org')
 else
-  { '@context' => 'https://schema.org', '@type' => 'ItemList',
-    'itemListElement' => @matches.each_with_index.map { |match, index|
-      { '@type' => 'ListItem', 'position' => @matches.offset_value + index + 1,
-        'item' => match_page_structured_data(match) }
-    } }
+  entries = @matches.filter_map do |match|
+    item = match_page_structured_data(match)
+    { 'item' => item } if item
+  end
+  structured_collection(entries, offset: @matches.offset_value, name: match_listing_heading)
 end %>
-<script type="application/ld+json"><%= raw json_escape(data.to_json) %></script>
+<%= render 'shared/structured_data', data: data %>

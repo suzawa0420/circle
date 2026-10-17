@@ -149,7 +149,7 @@ private
     head :forbidden unless can_manage_circle?(@user)
   end
 	def matches_with_user_details
-		Match.includes(user: [:event, :prefecture]).where(user_id: User.publicly_visible.select(:id))
+		Match.includes(user: [:event, :prefecture, :admin_user]).where(user_id: User.publicly_visible.select(:id))
 	end
 
 	def match_params

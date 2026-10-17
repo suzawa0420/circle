@@ -36,8 +36,10 @@
     <% end %>
   </div>
 </article>
-<% if (data = public_event_structured_data(@schedule, user: @user)) %>
+<% if (data = public_event_structured_data(@schedule, user: @user, accepted_count: accepted_count)) %>
   <script type="application/ld+json"><%= raw json_escape(data.to_json) %></script>
+<% else %>
+  <%= render 'shared/structured_data', data: public_schedule_page_structured_data(@schedule, user: @user) %>
 <% end %>
 <%= link_to "#{@user.prefecture.name}の#{@user.event.name}開催予定を見る", event_listing_path(event: @user.event.ruby, pref: @user.prefecture.kana), class: 'schedule-detail__back' %>
 

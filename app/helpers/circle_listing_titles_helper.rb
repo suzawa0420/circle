@@ -1,4 +1,8 @@
 module CircleListingTitlesHelper
+  def circle_tag_listing_description
+    "#{circle_listing_subject}。活動場所・日程・参加費と募集内容を比較できます。参加できる年代や初心者の受け入れ、次回の活動予定は各団体の詳細で確認してください。"
+  end
+
   # Use the same filtered, paginated relation as the list. total_count removes
   # pagination, retains visibility/area/tag predicates, and uses the list cache.
   def circle_listing_title

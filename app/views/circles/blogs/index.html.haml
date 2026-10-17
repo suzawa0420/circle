@@ -1,5 +1,6 @@
 - set_meta_tags title: "#{@user.name}の活動ブログ｜#{@user.prefecture.name}の#{@user.event.txt}｜サークルブック", description: "#{@user.prefecture.name}で活動している#{@user.event.txt}、#{@user.name}の活動ブログ", og: { image: @user.ogp_img }, twitter: { card: 'summary_large_image'}
 - breadcrumb :circle_blog_index, @user
+= render 'shared/structured_data', data: blog_listing_structured_data(@blogs)
 
 .user_main.user-show
   .container

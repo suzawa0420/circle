@@ -71,6 +71,9 @@
     <section class="place-detail-section" aria-labelledby="place-reviews-title">
       <h2 id="place-reviews-title">口コミ・評価</h2>
       <% if @place_reviews.present? %>
+        <% if review_aggregate_rating(@place.average_score, review_count: @place_reviews.count) %>
+          <p>総合評価：<%= render 'layouts/review_score', review_score: @place.average_score.to_f, reviews_count: @place_reviews.count %></p>
+        <% end %>
         <dl class="place-review-summary">
           <% {"コスパの良さ" => @place.average_price, "設備の充実" => @place.average_facility, "アクセスの良さ" => @place.average_access, "予約の難易度" => @place.average_reservation}.each do |label, score| %>
             <div><dt><%= label %></dt><dd><%= render "place_reviews/review_score", review_score: score.to_f %></dd></div>

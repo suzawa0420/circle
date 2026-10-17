@@ -46,7 +46,7 @@ class ReviewsController < ApplicationController
   end
 
   def all_reviews
-    @reviews = Review.includes(:user, :member).order(updated_at: :desc).page(params[:page]).per(30)
+    @reviews = Review.where(user_id: User.publicly_visible.select(:id)).includes(:user, :member).order(updated_at: :desc).page(params[:page]).per(30)
     @b1_name = 'サークルブック内の口コミ・評価'
     @b1_url = ''
   end

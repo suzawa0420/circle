@@ -1,5 +1,6 @@
 - set_meta_tags title: "#{@question.content}｜#{@user.name}の質問コーナー",og: {title: "#{@user.name}の質問コーナー｜#{@question.content}",description: "",image: "https://res.cloudinary.com/hgvtbyy8v/image/upload/l_text:Sawarabi%20Gothic_60:#{@question.content},y_-35,co_rgb:333333,w_900,c_fit/v1586676520/qa_vipkmx.jpg"},twitter: { card: 'summary_large_image'}
 .user_main.users-index
+  = render 'shared/structured_data', data: question_page_structured_data(@question, user: @user)
   .container.bg_white
     = link_to user_questions_path(@user) do
       %span.cb-text-link 質問一覧へ戻る
@@ -19,7 +20,7 @@
       .qa_profile_wrap
         = render "/users/parts/user_name", user: @user
         .reset
-        .qa_answer.speech_bubble_a
+        .qa_answer.speech_bubble_a#answer
           - if @question.answer.present?
             = raw Rinku.auto_link(simple_format @question.answer)
           - else

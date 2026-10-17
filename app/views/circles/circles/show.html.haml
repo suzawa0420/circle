@@ -364,7 +364,7 @@
           %h2.user_sub_title
             = lucide_icon "smile"
             口コミ・評価
-          - @user.reviews.order(created_at: :DESC).first(3).each do |review|
+          - circle_displayed_reviews(@user).each do |review|
             = render "/reviews/review_comment", review: review
           .review_link_b= link_to ">>口コミをもっと見る",user_reviews_path(@user)
 

@@ -1,5 +1,6 @@
 - set_meta_tags title: "#{@blog.title}｜#{@user.name}｜#{@user.prefecture.name}の#{@user.event.txt}｜サークルブック", description: @blog.content, og: { image: @blog.ogp_img }
 - breadcrumb :blog_show, @blog
+= render 'shared/structured_data', data: blog_post_structured_data(@blog)
 
 .user_main.user-show
   .container
@@ -41,6 +42,8 @@
                     .post-top= @user.name.truncate(40)
                     .post-bottom
                       = "作成日：#{time_tag @blog.created_at.to_date}"
+                      - if @blog.updated_at.to_i > @blog.created_at.to_i
+                        %time{ datetime: @blog.updated_at.iso8601 }= "更新日：#{@blog.updated_at.strftime('%Y年%-m月%-d日')}"
             .post_share.blog_share
               .share_btn_tw
                 - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?

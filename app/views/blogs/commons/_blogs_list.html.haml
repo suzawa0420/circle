@@ -1,3 +1,4 @@
+= render 'shared/structured_data', data: blog_listing_structured_data(blogs)
 - if admin_user_signed_in? && current_admin_user.first_user
   .post_message
     = link_to(circle_path(current_admin_user.first_user)) do

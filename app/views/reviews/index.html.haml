@@ -1,4 +1,5 @@
 - set_meta_tags title: "#{@user.name}の口コミ・評価"
+= render 'shared/structured_data', data: circle_profile_structured_data(@user, reviews: @reviews.to_a)
 .user_main.users-index
   .container
     .users-index-item

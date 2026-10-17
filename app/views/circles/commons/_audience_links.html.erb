@@ -1,0 +1,13 @@
+<% if params[:page].blank? || params[:page] == '1' %>
+  <% links = @tag ? [circle_tag_audience_link].compact : circle_audience_links %>
+  <% if links.any? %>
+    <section class="cb-audience-directory cb-city-directory" aria-label="年代・募集対象からサークルを探す">
+      <h2><%= @tag ? '募集対象も指定して探す' : '年代・募集対象から探す' %></h2>
+      <nav class="cb-city-directory__links" aria-label="年代・募集対象別のサークル募集">
+        <% links.each do |link| %>
+          <%= link_to link[:label], link[:path] %>
+        <% end %>
+      </nav>
+    </section>
+  <% end %>
+<% end %>

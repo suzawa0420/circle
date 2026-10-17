@@ -1,10 +1,1 @@
-<% if users.present? %>
-  <% offset = users.respond_to?(:offset_value) ? users.offset_value.to_i : 0 %>
-  <script type="application/ld+json"><%= raw json_escape({
-    '@context' => 'https://schema.org', '@type' => 'ItemList',
-    'itemListElement' => users.each_with_index.map { |user, index|
-      { '@type' => 'ListItem', 'position' => offset + index + 1,
-        'url' => "https://circle-book.com#{circle_path(user.id)}" }
-    }
-  }.to_json) %></script>
-<% end %>
+<%= render 'shared/structured_data', data: circle_listing_structured_data(users) %>

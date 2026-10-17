@@ -1,4 +1,5 @@
 - set_meta_tags title: circle_listing_title
+= render 'circles/markups/circles_list', users: @users if @users
 - breadcrumb :circle_search_show, params[:q]
 
 .main.users-index.directory-listing

@@ -36,6 +36,6 @@
     <% end %>
     <p class="event-results__note">募集状況は変更されることがあります。参加条件・会場の詳細は各イベントでご確認ください。</p>
     <%= render 'schedules/event_discovery' %>
-    <script type="application/ld+json"><%= raw json_escape(event_listing_structured_data.to_json) %></script>
+    <%= render 'shared/structured_data', data: event_listing_structured_data %>
   </div>
 </main>

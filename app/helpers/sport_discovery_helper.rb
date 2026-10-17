@@ -1,5 +1,10 @@
 module SportDiscoveryHelper
   SPORT_GUIDES = {
+    'tennis' => '硬式テニスの仲間を探せます。初心者の受け入れ、練習と試合の割合、開催コート、ラケットの持参・貸出、参加費を確認しましょう。ソフトテニスの募集は別の一覧から探せます。',
+    'camping' => 'キャンプを一緒に楽しむ仲間の募集です。初心者・一人参加の受け入れ、テントや調理道具の貸出、集合・出発場所、日帰り・宿泊、交通費を含む参加費を確認して選びましょう。',
+    'gathering' => 'カフェ会・交流会の参加先を探せます。参加年代、人数、会場、飲食代を含む参加費、初参加の受け入れを確認して、自分に合う集まりを選びましょう。',
+    'futsal' => 'フットサルを一緒に楽しむ仲間の募集です。初心者の受け入れ、経験者との組み分け、男女の募集条件、開催コート、シューズと参加費を確認しましょう。',
+    'volleyball' => 'バレーボールの仲間を探せます。6人制・9人制、男女混合などの活動内容、経験の目安、ネットの高さ、練習場所と参加費を確認して選びましょう。',
     'karate' => '空手の仲間・体験参加者の募集です。流派や稽古内容、大人・子どもの対象、初心者の受け入れ、体験費用を確認して選びましょう。',
     'handicraft' => '手芸・ハンドメイドを一緒に楽しむ仲間の募集です。編み物やアクセサリーなどの制作内容、材料・道具の持参、参加費を確認しましょう。',
     'karaoke' => 'カラオケを楽しむ仲間の募集です。曲のジャンル、参加年代、開催人数、会場と料金を確認して、自分に合う集まりを探しましょう。',
@@ -33,6 +38,6 @@ module SportDiscoveryHelper
   def region_discovery_sports(prefecture)
     users = User.publicly_visible.where_pref(prefecture.id).where(switch: '募集中')
     ids = users.select(:event_id)
-    Event.where(id: ids).where(ruby: %w[basketball volleyball badminton futsal student-group reading mountain soft-tennis pickleball ski karate handicraft karaoke]).order(:order)
+    Event.where(id: ids).where.not(ruby: [nil, '', 'nil']).order(:order, :id)
   end
 end

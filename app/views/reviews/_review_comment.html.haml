@@ -1,4 +1,4 @@
-.review_contents
+.review_contents{ id: "review-#{review.id}" }
   .review_l
     - if review.member.present? && review.member.image_profile.present?
       = lazysizes_image_tag review.member.image_profile.url, class: 'member_icon'

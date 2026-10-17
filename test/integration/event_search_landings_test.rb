@@ -104,7 +104,7 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
       assert_select 'meta[name=robots][content*=noindex]'
       assert_select 'h1', text: /2ページ目/
       assert_select '.event-results__discovery', count: 0
-      assert_equal 21, structured_graph.last['itemListElement'].first['position']
+      assert_select 'script[type="application/ld+json"]', count: 0
     end
   end
 
@@ -181,7 +181,8 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
     assert_equal '2026-10-14T21:00:00+09:00', event['endDate']
     assert_equal '公開体育館', event.dig('location', 'name')
     assert_not_includes event.to_json, '非公開'
-    assert_nil event['offers'], 'Do not invent a numeric price from free text'
+    assert_equal 500, event.dig('offers', 'price')
+    assert_equal 'JPY', event.dig('offers', 'priceCurrency')
     @schedule.update!(time_s: '23:00', time_e: '01:00', recruitment: '中止')
     get user_schedule_path(@circle, @schedule)
     event = css_select('script[type="application/ld+json"]').map { |node| JSON.parse(node.text) }.find { |data| data['@type'] == 'Event' }

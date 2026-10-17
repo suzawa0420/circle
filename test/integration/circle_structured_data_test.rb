@@ -18,11 +18,11 @@ class CircleStructuredDataTest < ActionDispatch::IntegrationTest
 
     get circle_path(@circle)
     assert_response :success
-    business = structured_data('LocalBusiness')
+    business = structured_data('Organization')
     assert_equal text, business['name']
-    assert_equal text, business['priceRange']
+    refute business.key?('priceRange')
     assert_equal "#{text}で活動している#{text}", business['description']
-    assert_equal text, business['address']['addressRegion']
+    assert_equal text, business['areaServed']['name']
     assert_equal text, business['review'].first['reviewBody']
     assert_equal text, business['review'].first['author']['name']
     faq = structured_data('FAQPage')
@@ -35,31 +35,33 @@ class CircleStructuredDataTest < ActionDispatch::IntegrationTest
   test 'optional rating and FAQ stay absent when there are no records' do
     get circle_path(@circle)
     assert_response :success
-    business = structured_data('LocalBusiness')
+    business = structured_data('Organization')
     refute business.key?('aggregateRating')
     refute business.key?('review')
     refute structured_nodes.any? { |data| data['@type'] == 'FAQPage' }
-    assert_equal [@circle.pic_profile, @circle.gallery_01, @circle.gallery_02,
-      @circle.gallery_03, @circle.gallery_04, @circle.pic_header].map(&:url), business['image']
-    assert_equal '', business['priceRange']
+    refute business.key?('image')
+    refute business.key?('priceRange')
+    assert_equal "https://circle-book.com#{circle_path(@circle)}#organization", business['@id']
   end
 
-  test 'ratings retain total counts while review and question examples are limited to five' do
+  test 'ratings retain total counts while examples match visible reviews and only real answers' do
     @circle.update_columns(review_score: '4')
     6.times do |i|
       @circle.reviews.create!(review: 1, comment: "楽しく参加しました#{i}")
-      @circle.questions.create!(content: "参加についての質問#{i}", answer: nil)
+      @circle.questions.create!(content: "参加についての質問#{i}", answer: i.zero? ? 'はい、参加できます。' : nil)
     end
     get circle_path(@circle)
     assert_response :success
-    business = structured_data('LocalBusiness')
+    business = structured_data('Organization')
     assert_equal 6, business['aggregateRating']['reviewCount']
     assert_equal 4.0, business['aggregateRating']['ratingValue']
-    assert_equal 5, business['review'].size
+    assert_equal 3, business['review'].size
+    assert_equal 3, css_select('.review_contents[id]').length
+    assert_equal 1, business['review'].first['reviewRating']['bestRating']
     assert_equal 'ゲストユーザー', business['review'].first['author']['name']
     faq = structured_data('FAQPage')
-    assert_equal 5, faq['mainEntity'].size
-    assert_equal '未回答の質問です。回答するまで、しばらくお待ちください。', faq['mainEntity'].first['acceptedAnswer']['text']
+    assert_equal 1, faq['mainEntity'].size
+    assert_equal 'はい、参加できます。', faq['mainEntity'].first['acceptedAnswer']['text']
   end
 
   test 'circle ratings declare the real zero to five scale including fractional ratings below one' do
@@ -68,7 +70,7 @@ class CircleStructuredDataTest < ActionDispatch::IntegrationTest
       @circle.update_columns(review_score: score.to_s)
       get circle_path(@circle)
       assert_response :success
-      rating = structured_data('LocalBusiness')['aggregateRating']
+      rating = structured_data('Organization')['aggregateRating']
       assert_equal score, rating['ratingValue']
       assert_equal 0, rating['worstRating']
       assert_equal 5, rating['bestRating']
@@ -82,7 +84,7 @@ class CircleStructuredDataTest < ActionDispatch::IntegrationTest
       @circle.update_columns(review_score: score)
       get circle_path(@circle)
       assert_response :success
-      refute structured_data('LocalBusiness').key?('aggregateRating')
+      refute structured_data('Organization').key?('aggregateRating')
     end
   end
 

@@ -1,7 +1,11 @@
 - set_meta_tags title: circle_listing_title
 - set_meta_tags noindex: true unless @filtered_landing
 - set_meta_tags description: "#{circle_listing_subject}。活動日・活動場所・募集内容を比較して、参加できるサークルを探せます。" if @filtered_landing
-- breadcrumb :circle_search_index, params[:q]
+- if @filtered_landing
+  - breadcrumb :circle_filter_landing, @event, @prefecture, Array(@search_groups).first, Array(@search_ages).first
+- else
+  - breadcrumb :circle_search_index, params[:q]
+= render 'circles/markups/circles_list', users: @users if @users
 
 .main.users-index.directory-listing
   .container
@@ -16,3 +20,6 @@
       = render "/circles/commons/users_list", users: @users, listing_data: @listing_data
     - else
       = render "/circles/commons/no_hit"
+
+    - if @filtered_landing
+      = render "circles/commons/discovery"
