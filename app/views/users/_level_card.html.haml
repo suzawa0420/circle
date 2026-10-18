@@ -23,24 +23,74 @@
     %summary
       レベルの上がり方
       = lucide_icon "chevron-down", **{ "aria-hidden" => "true" }
-    .dashboard-level__ranking
-      %strong レベルが高いほど、人気順で上位に表示されやすくなります
-      %p 掲載条件が同じ場合に優先され、同じレベルでは対象の活動が新しい順です。
-    %p.dashboard-level__description
-      %strong まずは活動日を登録しましょう。
-      日程・場所があると、参加希望者が予定を立てやすくなります。
-    %p 合計が1増えると1レベル上がり、小数部分が次のレベルへの進捗になります。
-    %button.dashboard-copy{ type: "button", data: { level_up_preview: true }, "aria-haspopup" => "dialog", "aria-controls" => @level_up ? "circle-level-up" : "circle-level-preview" } お祝い演出を試す
-    %ul
-      %li スケジュール登録：0.1
-      %li ブログ投稿：0.2
-      %li 質問への回答：0.3
-      %li 高評価の口コミ：2.0
-      %li リンク設置特典：10.0（審査後・1サークル1回）
-      %li サークル情報入力特典：5.0（画像を含む7項目の入力完了・1サークル1回）
-    %p 掲載順の活動日時が更新されるのは、新規ブログ・新規活動予定・質問への初回回答です。編集・削除・同じ内容の再投稿では更新されません。
-    = link_to "未返信報告の減点対象を確認する", conversations_path(circle_id: user.id, penalty: '1')
-    %p 投稿などを削除すると合計も減ります。サイト内メッセージが配信されてから3日以上、初回返信がなく参加者から報告された場合、1件につき30ポイント減点されます。旧お問い合わせは減点対象外です。
+    .dashboard-level__guide-content
+      .dashboard-level__ranking
+        %strong 人気順で上位に表示されやすくなります
+        %p 掲載条件が同じ場合は、レベルが高い順。同じレベルでは、対象の活動が新しい順です。
+      %p.dashboard-level__description
+        %strong まずは活動日を登録しましょう。
+        日程・場所があると、参加希望者が予定を立てやすくなります。
+      .dashboard-level__conversion
+        %span ポイントとレベル
+        %strong 1ポイント ＝ 1レベル
+        %p 例：合計7.4 → Lv.7 ／ 進捗40％
+      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-activity-points" }
+        %h3#level-activity-points ふだんの活動で獲得
+        %table.dashboard-level__points-table
+          %thead
+            %tr
+              %th{ scope: "col" } 活動
+              %th{ scope: "col" } 1件あたり
+          %tbody
+            - [["スケジュール登録", "0.1"], ["ブログ投稿", "0.2"], ["質問への回答", "0.3"], ["高評価の口コミ", "2.0"]].each do |name, points|
+              %tr
+                %th{ scope: "row" }= name
+                %td
+                  %strong= "+#{points}"
+                  %span pt
+      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-bonus-points" }
+        %h3#level-bonus-points 初回限定の特典
+        %p.dashboard-level__guide-note どちらも1サークルにつき1回です。
+        %table.dashboard-level__points-table
+          %thead
+            %tr
+              %th{ scope: "col" } 特典・条件
+              %th{ scope: "col" } 獲得ポイント
+          %tbody
+            %tr
+              %th{ scope: "row" }
+                リンク設置特典
+                %span.dashboard-level__condition リンク設置後、審査完了で獲得
+              %td
+                %strong +10.0
+                %span pt
+            %tr
+              %th{ scope: "row" }
+                サークル情報入力特典
+                %span.dashboard-level__condition 画像を含む7項目の入力完了で獲得
+              %td
+                %strong +5.0
+                %span pt
+      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-activity-order" }
+        %h3#level-activity-order 掲載順の活動日時について
+        %dl.dashboard-level__activity-rules
+          %div
+            %dt 更新される
+            %dd 新規ブログ・新規活動予定・質問への初回回答
+          %div
+            %dt 更新されない
+            %dd 編集・削除・同じ内容の再投稿
+      %section.dashboard-level__deductions{ "aria-labelledby" => "level-point-deductions" }
+        %h3#level-point-deductions 合計が減る場合
+        %ul
+          %li 投稿などを削除すると、その分のポイントも減ります。
+          %li
+            %strong 未返信報告は1件につき−30ポイント
+            %span サイト内メッセージの配信から3日以上、初回返信がなく、参加者から報告された場合が対象です。
+        %p.dashboard-level__guide-note 旧お問い合わせは減点対象外です。
+        = link_to "未返信報告の減点対象を確認する", conversations_path(circle_id: user.id, penalty: '1'), class: "dashboard-level__deduction-link"
+      .dashboard-level__preview-action
+        %button.dashboard-copy{ type: "button", data: { level_up_preview: true }, "aria-haspopup" => "dialog", "aria-controls" => @level_up ? "circle-level-up" : "circle-level-preview" } お祝い演出を試す
 
   - if local_assigns[:breakdown].present?
     %details.dashboard-level__breakdown

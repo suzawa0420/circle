@@ -109,3 +109,55 @@
   .organizer-dashboard .dashboard-circle__information { flex-basis: 100%; }
   .organizer-dashboard .dashboard-circle__tools { width: 100%; flex-direction: row; }
 }
+
+
+.cb-site .organizer-dashboard .dashboard-level__guide-content {
+  padding: 4px 0 20px; color: $cb-text; font-size: 13px; line-height: 1.8;
+  .dashboard-level__ranking { margin: 0 0 18px; }
+  .dashboard-level__description { margin: 0 0 20px; font-size: 13px; }
+  .dashboard-level__description strong { display: block; margin-bottom: 4px; color: $cb-text; }
+  h3 { margin: 0 0 12px; font-size: 15px; font-weight: 700; line-height: 1.6; }
+  .dashboard-level__guide-section { margin-top: 24px; }
+  .dashboard-level__guide-note { margin: 0 0 12px; font-size: 12px; color: $cb-muted; }
+}
+.cb-site .organizer-dashboard .dashboard-level__conversion {
+  padding: 16px; border: 1px solid $cb-border; border-radius: 10px; background: $cb-canvas;
+  > span { display: block; font-size: 12px; color: $cb-muted; }
+  > strong { display: block; margin: 4px 0; font-size: 19px; line-height: 1.5; color: $cb-action-hover; }
+  p { margin: 8px 0 0; font-size: 12px; color: $cb-muted; }
+}
+.cb-site .organizer-dashboard .dashboard-level__points-table {
+  width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 13px;
+  th, td { padding: 12px 8px; border-bottom: 1px solid $cb-border; vertical-align: middle; }
+  thead th { background: $cb-canvas; color: $cb-muted; font-size: 11px; font-weight: 500; }
+  th:first-child { text-align: left; width: 64%; }
+  th:last-child, td { text-align: right; }
+  tbody th { font-weight: 500; }
+  td { white-space: nowrap; }
+  td strong { font-size: 21px; font-variant-numeric: tabular-nums; color: $cb-action-hover; }
+  td > span { margin-left: 4px; color: $cb-muted; font-size: 11px; }
+  .dashboard-level__condition { display: block; margin-top: 4px; font-size: 11px; font-weight: 400; color: $cb-muted; line-height: 1.7; }
+}
+.cb-site .organizer-dashboard .dashboard-level__activity-rules {
+  margin: 0;
+  > div { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid $cb-border; }
+  dt { font-size: 12px; font-weight: 600; color: $cb-action-hover; }
+  dd { margin: 0; font-size: 12px; }
+}
+.cb-site .organizer-dashboard .dashboard-level__deductions {
+  margin-top: 24px; padding: 16px; border: 1px solid #ead7b2; border-radius: 10px; background: $cb-warning-soft;
+  h3 { color: $cb-warning-text; }
+  ul { margin: 0 0 12px; padding-left: 18px; }
+  li { list-style: disc; margin-bottom: 12px; font-size: 12px; }
+  li strong, li span { display: block; }
+  li strong { margin-bottom: 4px; color: $cb-warning-text; }
+  .dashboard-level__guide-note { margin-bottom: 8px; }
+  .dashboard-level__deduction-link { font-size: 12px; color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
+}
+.cb-site .organizer-dashboard .dashboard-level__preview-action { margin-top: 20px; }
+@media (max-width: 359px) {
+  .cb-site .organizer-dashboard .dashboard-level__points-table {
+    th, td { padding: 10px 6px; }
+    td strong { font-size: 19px; }
+  }
+}

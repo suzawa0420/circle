@@ -30,7 +30,7 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level__guide', text: /旧お問い合わせは減点対象外/
     assert_select '.dashboard-level__breakdown tfoot td', text: '0.1'
     assert_select ".dashboard-action-grid a[href='#{user_schedules_path(@circle)}']", text: /スケジュール/
-    assert_select ".dashboard-action-grid a[href='#{new_circle_blog_path(@circle)}']", text: /ブログを書く/
+    assert_select ".dashboard-action-grid a[href='#{new_circle_blog_path(@circle)}']", text: /ブログ/
     assert_select '.dashboard-level__description', text: /まずは活動日を登録/
     assert_select '.dashboard-level__actions a', text: '口コミを依頼する', count: 0
     get user_reviews_path(@circle)
