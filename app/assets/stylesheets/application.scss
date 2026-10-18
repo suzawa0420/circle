@@ -5087,7 +5087,8 @@ li.current_page {
   width: 70vw;
   max-height: 60vw;
   overflow-y: scroll;
-  z-index: 10;
+  // Above the fixed site header and navigation (z-index: 1000).
+  z-index: 1200;
 }
 
 /* チェックボックスの初期設定 */
