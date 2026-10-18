@@ -10,7 +10,7 @@
     <dt>申請日時</dt><dd><%= l @backlink_request.submitted_at, format: :short %></dd>
     <dt>掲載先</dt><dd><%= link_to @backlink_request.placement_url, @backlink_request.placement_url, target: '_blank', rel: 'noopener noreferrer', class: 'backlink-placement' %></dd>
     <dt>リンク先</dt><dd><%= link_to backlink_destination(@backlink_request.user), backlink_destination(@backlink_request.user), target: '_blank', rel: 'noopener noreferrer' %></dd>
-    <dt>特典</dt><dd>10ポイント<span class="wm-meta">（サークルごとに1回）</span></dd>
+    <dt>特典</dt><dd>10レベル<span class="wm-meta">（サークルごとに1回）</span></dd>
   </dl>
   <% if @backlink_request.approved_at || @backlink_request.revoked_at || @backlink_request.reviewed_by || @backlink_request.review_note.present? %>
     <details class="wm-disclosure wm-backlink-history" <%= 'open' if @backlink_request.review_note.present? %>>
@@ -43,10 +43,10 @@
       </div>
       <div class="wm-actions">
         <% if @backlink_request.status == 'pending' %>
-          <%= button_tag '承認して10ポイント付与', name: 'decision', value: 'approve', class: 'wm-button', data: { confirm: '掲載内容を確認し、10ポイントを付与しますか？' } %>
+          <%= button_tag '承認して10レベル付与', name: 'decision', value: 'approve', class: 'wm-button', data: { confirm: '掲載内容を確認し、10レベルを付与しますか？' } %>
           <%= button_tag '差し戻す', name: 'decision', value: 'reject', class: 'wm-button wm-button--secondary' %>
         <% else %>
-          <%= button_tag '10ポイントの付与を取り消す', name: 'decision', value: 'revoke', class: 'wm-button wm-button--danger', data: { confirm: 'この特典の10ポイントを取り消しますか？' } %>
+          <%= button_tag '10レベルの付与を取り消す', name: 'decision', value: 'revoke', class: 'wm-button wm-button--danger', data: { confirm: 'この特典の10レベルを取り消しますか？' } %>
         <% end %>
       </div>
     <% end %>

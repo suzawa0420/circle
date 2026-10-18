@@ -1,17 +1,17 @@
 <main class="backlink-page">
   <%= link_to '主催者管理画面へ戻る', "/users/#{@user.id}/mypage" %>
-  <h1>リンク設置で10ポイント獲得</h1>
+  <h1>リンク設置で＋10レベル</h1>
   <p class="backlink-lead"><strong><%= @user.name %></strong>のサイトから、サークルブックのサークルページを紹介しませんか？</p>
-  <p>ご自身で管理するサークル・団体のサイトにリンクを設置すると、確認後にこのサークルへ10ポイントを付与します。トップページやフッターなど、訪問者が見つけやすい場所への設置をおすすめします。</p>
+  <p>ご自身で管理するサークル・団体のサイトにリンクを設置すると、確認後にこのサークルに＋10レベルの特典を適用します。トップページやフッターなど、訪問者が見つけやすい場所への設置をおすすめします。</p>
   <section>
     <h2>申請の流れ</h2>
     <ol>
       <li>サイトにバナーまたは文字リンクを設置</li>
       <li>このページで、リンクを設置したページのURLを報告</li>
-      <li>運営が掲載内容を確認し、承認後に10ポイント付与</li>
+      <li>運営が掲載内容を確認し、承認後に＋10レベル</li>
     </ol>
     <p>1サークルにつき1回限りです。複数のサークルを運営している場合は、それぞれのサークルで申請してください。ログインせずに閲覧できるページへ設置をお願いします。</p>
-    <p>リンクの掲載を継続してください。削除などが確認された場合、付与を取り消すことがあります。付与に期限はありませんが、レベルへの反映は通常の掲載・更新条件に従います。</p>
+    <p>レベルの上限はLv.100です。リンクの掲載を継続してください。削除などが確認された場合、特典を取り消すことがあります。特典に期限はありませんが、レベルへの反映は通常の掲載・更新条件に従います。</p>
   </section>
   <section>
     <h2>バナー画像</h2>
@@ -43,7 +43,7 @@
     <% if @backlink_request.persisted? %>
       <div class="backlink-status">
         <strong><%= BacklinkRequest::STATUSES[@backlink_request.status] %></strong>
-        <% if @backlink_request.status == 'approved' %><p>10ポイントを付与しました。サークルレベルの内訳で確認できます。</p><% end %>
+        <% if @backlink_request.status == 'approved' %><p>＋10レベルの特典を適用しました。サークルレベルの内訳で確認できます。</p><% end %>
         <% if @backlink_request.status == 'pending' %><p>申請を受け付けました。運営による確認をお待ちください。</p><% end %>
         <% if @backlink_request.status == 'revoked' %><p>今回の特典の付与は取り消されています。</p><% end %>
         <% if @backlink_request.review_note.present? %><p><%= @backlink_request.review_note %></p><% end %>

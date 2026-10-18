@@ -17,7 +17,7 @@
       - if @user.pic_profile.blank? || @user.pic_header.blank?
         / プロフィール画像
         .advice_wrap
-          %span.box-title ポイント
+          %span.box-title 掲載のヒント
           %p
             %span.marker>
               = "アイコン画像" if @user.pic_profile.blank?
@@ -34,7 +34,7 @@
       - elsif @user.gallery_01.blank? && @user.gallery_02.blank? && @user.gallery_03.blank? && @user.gallery_04.blank?
         / ギャラリー画像
         .advice_wrap
-          %span.box-title ポイント
+          %span.box-title 掲載のヒント
           %p
             %span.marker> サークル画像(最大4枚)
             があると良いです！
@@ -46,7 +46,7 @@
           = link_to ">>サークル画像の設定", edit_user_path(@user), data: {"turbolinks" => false}
       - elsif @blogs.empty?
         .advice_wrap
-          %span.box-title ポイント
+          %span.box-title 掲載のヒント
           %p
             %span.marker> ブログ投稿
             があると良いです！
@@ -58,7 +58,7 @@
           = link_to ">>ブログの新規投稿", new_circle_blog_path(@user)
       - elsif @user.reviews.empty?
         .advice_wrap
-          %span.box-title ポイント
+          %span.box-title 掲載のヒント
           %p
             %span.marker> 口コミ投稿
             を募集しませんか？

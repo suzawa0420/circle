@@ -19,7 +19,7 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level > details', count: 3
     assert_select '.dashboard-level > details[open]', count: 0
     assert_select '.dashboard-level__rivals > summary', text: /ライバルサークルを見る/
-    assert_select '.dashboard-level__reward a', text: 'リンク設置で10ポイント獲得'
+    assert_select '.dashboard-level__reward a', text: 'リンク設置で＋10レベル'
     assert_operator response.body.index('活動を管理'), :<, response.body.index('id="circle-level-title"')
     assert_select '.dashboard-level__value strong', text: '0'
     assert_select 'progress[value="10"]'
@@ -28,7 +28,12 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level__breakdown tbody tr', count: 7
     assert_select '.dashboard-level__breakdown th', text: 'メッセージ未返信'
     assert_select '.dashboard-level__guide', text: /旧お問い合わせは減点対象外/
-    assert_select '.dashboard-level__breakdown tfoot td', text: '0.1'
+    assert_select '.dashboard-level__breakdown tfoot td', text: 'Lv.0'
+    assert_select '.dashboard-level__conversion', count: 0
+    assert_select '.dashboard-level__gains-table td > span', text: 'レベル', count: 6
+    assert_select '[data-level-up-preview], [data-level-up-replay], #circle-level-preview', count: 0
+    refute_includes css_select('.dashboard-level').map(&:text).join, 'ポイント'
+    refute_match(/\bpt\b/, css_select('.dashboard-level').map(&:text).join)
     assert_select ".dashboard-action-grid a[href='#{user_schedules_path(@circle)}']", text: /スケジュール/
     assert_select ".dashboard-action-grid a[href='#{new_circle_blog_path(@circle)}']", text: /ブログ/
     assert_select '.dashboard-level__description', text: /まずは活動日を登録/

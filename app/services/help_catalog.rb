@@ -101,7 +101,7 @@ class HelpCatalog
       { paragraph: "主催者管理画面で対象サークルを選び、基本情報、ブログ、スケジュールなどを編集してください。" },
       { paragraph: "募集を止める場合は基本情報の募集状態を変更します。保存後、サークルの公開ページも確認してください。" }
     ], action: :owner_dashboard },
-    { id: 'ranking', audience: 'owner', category: 'listing', title: 'サークルの表示順・レベルについて知りたい', keywords: '順位 上位 検索 ランキング ポイント', content: [
+    { id: 'ranking', audience: 'owner', category: 'listing', title: 'サークルの表示順・レベルについて知りたい', keywords: '順位 上位 検索 ランキング レベル', content: [
       { paragraph: "表示順は一覧の並び替え条件によって変わります。サークルレベルの内訳は主催者管理画面で確認できます。" },
       { paragraph: "活動スケジュール・ブログ・質問への回答などを、実際の活動に合わせて更新してください。更新だけで特定の順位を保証するものではありません。" }
     ], action: :owner_dashboard },

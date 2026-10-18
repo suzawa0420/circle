@@ -59,7 +59,7 @@ class CircleProfileCompletionTest < ActionDispatch::IntegrationTest
     get "/users/#{@circle.id}/mypage"
     assert_response :success
     assert_select '#circle-level-up-title', text: 'サークル情報の入力が完了しました！'
-    assert_select '.circle-level-up__subtitle', text: '初回特典として5ポイント獲得！'
+    assert_select '.circle-level-up__subtitle', text: '初回特典で＋5レベル！'
     assert_select '.circle-level-up__old', text: /Lv\.\s*2/
     assert_select '.circle-level-up__new', text: /Lv\.\s*7/
     assert_select ".circle-level-up__primary[href='#{new_user_schedule_path(@circle)}']"
@@ -121,7 +121,7 @@ class CircleProfileCompletionTest < ActionDispatch::IntegrationTest
     get "/users/#{@circle.id}/mypage"
     assert @circle.reload.profile_completion_rewarded_at
     assert_in_delta 0, @circle.cb_point
-    assert_select '.circle-level-up__levels[aria-label="5ポイント獲得"]'
+    assert_select '.circle-level-up__levels[aria-label="現在のレベル0"]'
     assert_select '.circle-level-up__old', count: 0
     @circle.update!(user_time: Time.current.to_s)
     CircleScoreUpdater.new.refresh(@circle)
@@ -135,7 +135,7 @@ class CircleProfileCompletionTest < ActionDispatch::IntegrationTest
     @circle.schedules.insert_all!(Array.new(900) { { user_id: @circle.id, title: '練習', day: (Date.current + 7).to_s, created_at: Time.current, updated_at: Time.current } })
     get "/users/#{@circle.id}/mypage"
     assert_select '.circle-level-up__old', count: 0
-    assert_select '.circle-level-up__levels[aria-label="5ポイント獲得"]'
+    assert_select '.circle-level-up__levels[aria-label="現在のレベル100"]'
     assert_select '.dashboard-level__value strong', text: '100'
     assert_in_delta 105, @circle.reload.cb_point
     @owner.update!(check: 1)

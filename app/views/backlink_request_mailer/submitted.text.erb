@@ -1,9 +1,9 @@
-リンク設置のポイント申請が届きました。
+リンク設置のレベル特典申請が届きました。
 
 サークル名：<%= @request.user.name %>
 掲載先URL：<%= @request.placement_url %>
 申請日時：<%= l @request.submitted_at, format: :short %>
-付与ポイント：<%= BacklinkRequest::POINTS %>
+加算レベル：＋<%= BacklinkRequest::POINTS %>
 
 管理画面で掲載内容を確認し、承認または差し戻しを行ってください。
 <%= super_admin_backlink_request_url(@request, host: 'circle-book.com', protocol: 'https') %>

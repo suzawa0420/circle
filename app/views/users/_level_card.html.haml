@@ -14,11 +14,11 @@
   - else
     %p.dashboard-level__message
       次のレベルまで
-      %strong= "あと#{format('%.1f', status[:remaining])}"
+      %strong= "あと#{format('%.1f', status[:remaining])}レベル"
   %progress.dashboard-level__progress{ max: 100, value: status[:progress], "aria-label" => status[:maximum] ? "最高レベル達成" : "次のレベルへの進捗" }
     = "#{status[:progress]}%"
   .dashboard-level__actions.dashboard-level__reward
-    = link_to "リンク設置で10ポイント獲得", circle_backlink_request_path(user), class: "dashboard-copy"
+    = link_to "リンク設置で＋10レベル", circle_backlink_request_path(user), class: "dashboard-copy"
   %details.dashboard-level__guide
     %summary
       レベルの上がり方
@@ -30,47 +30,47 @@
       %p.dashboard-level__description
         %strong まずは活動日を登録しましょう。
         日程・場所があると、参加希望者が予定を立てやすくなります。
-      .dashboard-level__conversion
-        %span ポイントとレベル
-        %strong 1ポイント ＝ 1レベル
-        %p 例：合計7.4 → Lv.7 ／ 進捗40％
-      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-activity-points" }
-        %h3#level-activity-points ふだんの活動で獲得
-        %table.dashboard-level__points-table
+      .dashboard-level__progress-example
+        %strong 少しずつの更新も、次のレベルへ
+        %p 0.1レベルずつの加算も進捗に反映され、合計1レベル分で表示レベルが上がります。
+      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-activity-gains" }
+        %h3#level-activity-gains ふだんの活動でレベルアップ
+        %table.dashboard-level__gains-table
           %thead
             %tr
               %th{ scope: "col" } 活動
               %th{ scope: "col" } 1件あたり
           %tbody
-            - [["スケジュール登録", "0.1"], ["ブログ投稿", "0.2"], ["質問への回答", "0.3"], ["高評価の口コミ", "2.0"]].each do |name, points|
+            - [["スケジュール登録", "0.1"], ["ブログ投稿", "0.2"], ["質問への回答", "0.3"], ["高評価の口コミ", "2"]].each do |name, levels|
               %tr
                 %th{ scope: "row" }= name
                 %td
-                  %strong= "+#{points}"
-                  %span pt
-      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-bonus-points" }
-        %h3#level-bonus-points 初回限定の特典
+                  %strong= "+#{levels}"
+                  %span レベル
+      %section.dashboard-level__guide-section{ "aria-labelledby" => "level-bonus-gains" }
+        %h3#level-bonus-gains 初回限定の特典
         %p.dashboard-level__guide-note どちらも1サークルにつき1回です。
-        %table.dashboard-level__points-table
+        %table.dashboard-level__gains-table
           %thead
             %tr
               %th{ scope: "col" } 特典・条件
-              %th{ scope: "col" } 獲得ポイント
+              %th{ scope: "col" } 加算レベル
           %tbody
             %tr
               %th{ scope: "row" }
                 リンク設置特典
                 %span.dashboard-level__condition リンク設置後、審査完了で獲得
               %td
-                %strong +10.0
-                %span pt
+                %strong +10
+                %span レベル
             %tr
               %th{ scope: "row" }
                 サークル情報入力特典
                 %span.dashboard-level__condition 画像を含む7項目の入力完了で獲得
               %td
-                %strong +5.0
-                %span pt
+                %strong +5
+                %span レベル
+        %p.dashboard-level__guide-note レベルの上限はLv.100です。
       %section.dashboard-level__guide-section{ "aria-labelledby" => "level-activity-order" }
         %h3#level-activity-order 掲載順の活動日時について
         %dl.dashboard-level__activity-rules
@@ -80,25 +80,23 @@
           %div
             %dt 更新されない
             %dd 編集・削除・同じ内容の再投稿
-      %section.dashboard-level__deductions{ "aria-labelledby" => "level-point-deductions" }
-        %h3#level-point-deductions 合計が減る場合
+      %section.dashboard-level__deductions{ "aria-labelledby" => "level-deductions" }
+        %h3#level-deductions レベルが下がる場合
         %ul
-          %li 投稿などを削除すると、その分のポイントも減ります。
+          %li 投稿などを削除すると、加算されたレベルも減ります。
           %li
-            %strong 未返信報告は1件につき−30ポイント
+            %strong 未返信報告は1件につき−30レベル
             %span サイト内メッセージの配信から3日以上、初回返信がなく、参加者から報告された場合が対象です。
         %p.dashboard-level__guide-note 旧お問い合わせは減点対象外です。
         = link_to "未返信報告の減点対象を確認する", conversations_path(circle_id: user.id, penalty: '1'), class: "dashboard-level__deduction-link"
-      .dashboard-level__preview-action
-        %button.dashboard-copy{ type: "button", data: { level_up_preview: true }, "aria-haspopup" => "dialog", "aria-controls" => @level_up ? "circle-level-up" : "circle-level-preview" } お祝い演出を試す
 
   - if local_assigns[:breakdown].present?
     %details.dashboard-level__breakdown
       %summary
-        ポイントの内訳を見る
+        レベルの内訳を見る
         = lucide_icon "chevron-down", **{ "aria-hidden" => "true" }
       %table
-        %caption 現在の加算・減点の内訳
+        %caption 現在のレベルの加算・減少の内訳
         %thead
           %tr
             %th{ scope: "col" } 項目
@@ -108,17 +106,21 @@
           - breakdown.each do |name, unit, total|
             %tr
               %th{ scope: "row" }= name
-              %td= format("%.1f", unit)
-              %td= format("%.1f", total.to_f)
+              %td
+                %span= format("%.1f", unit)
+                %small レベル
+              %td
+                %span= format("%.1f", total.to_f)
+                %small レベル
         %tfoot
           %tr
-            %th{ scope: "row", colspan: 2 } 現在の合計
-            %td= format("%.1f", user.cb_point)
-      %p 合計が1増えると1レベル上がります。小数部分は次のレベルへの進捗です。表示はLv.0〜100です。
+            %th{ scope: "row", colspan: 2 } 現在のレベル
+            %td= "Lv.#{status[:level]}"
+      %p 小数部分は次のレベルへの進捗に反映されます。表示はLv.0〜100です。
       - if user.admin_user.check.present? && user.admin_user.check != 0
-        %p 現在は掲載ルールによる減点が適用されています。
+        %p 現在は掲載ルールによるレベルの減少が適用されています。
       - elsif user.user_time.blank? || user.user_time.to_time <= Time.zone.now.ago(1.year)
-        %p 直近1年の更新がないため、現在の合計は0です。サークル情報を更新すると投稿等の内訳が再反映されます。
+        %p 直近1年の更新がないため、現在はLv.0です。サークル情報を更新すると活動に応じたレベルが再反映されます。
   - if local_assigns.key?(:rivals)
     %details.dashboard-level__rivals
       %summary

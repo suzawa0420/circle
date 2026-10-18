@@ -52,7 +52,7 @@ class LegacyContactScoreTest < ActionDispatch::IntegrationTest
     @conversation.update!(respond_check: 'NG')
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     get conversations_path
-    assert_select '.chat-talk .chat-penalty-badge', text: '未返信報告 −30ポイント', count: 1
+    assert_select '.chat-talk .chat-penalty-badge', text: '未返信報告 −30レベル', count: 1
     get conversations_path(penalty: '1', circle_id: @circle.id)
     assert_select '.chat-talk', count: 1
     get conversation_path(@conversation)

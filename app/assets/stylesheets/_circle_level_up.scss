@@ -44,8 +44,6 @@
     svg { flex: none; width: 20px; height: 20px; }
   }
   &__close { display: block; width: 100%; min-height: 44px; margin-top: 6px; border: 0; border-radius: 8px; background: transparent; color: $cb-muted; font-size: 14px; }
-  &__replay { display: block; width: 100%; min-height: 44px; margin: -16px 0 12px; padding: 8px 0; border: 0; border-radius: 8px; background: transparent; color: $cb-action-hover; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
-  &__replay[hidden] { display: none; }
   &__confetti { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
   &__paper { position: absolute; width: 7px; height: 11px; border-radius: 1px; background: $cb-action; will-change: transform, opacity; }
   &__paper:nth-child(3n) { background: #e3b44e; }
@@ -60,6 +58,5 @@
   }
   @media (prefers-reduced-motion: reduce) {
     &__confetti { display: none; }
-    &[data-motion-consented="true"] .circle-level-up__confetti { display: block; }
   }
 }

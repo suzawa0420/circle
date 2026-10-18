@@ -1,27 +1,18 @@
-- preview = !!level_up[:preview]
-- dialog_id = preview ? 'circle-level-preview' : 'circle-level-up'
-%dialog.circle-level-up{ id: dialog_id, "aria-labelledby" => "#{dialog_id}-title", "aria-describedby" => "#{dialog_id}-benefit", data: { circle_level_up: preview ? "false" : "true" } }
+- dialog_id = 'circle-level-up'
+%dialog.circle-level-up{ id: dialog_id, "aria-labelledby" => "#{dialog_id}-title", "aria-describedby" => "#{dialog_id}-benefit", data: { circle_level_up: "true" } }
   .circle-level-up__confetti{ "aria-hidden" => "true" }
   .circle-level-up__body
     %button.circle-level-up__x{ type: "button", data: { level_up_close: true }, "aria-label" => "ポップアップを閉じる" }
       = lucide_icon "x", **{ "aria-hidden" => "true" }
     .circle-level-up__emblem{ "aria-hidden" => "true" }
       = lucide_icon "trophy"
-    - if preview
-      %h2{ id: "#{dialog_id}-title" } レベルアップのお祝い演出
-      %p.circle-level-up__subtitle 演出のお試しです。現在のレベルは変わりません。
-    - elsif level_up[:profile_completion_bonus]
+    - if level_up[:profile_completion_bonus]
       %h2{ id: "#{dialog_id}-title" } サークル情報の入力が完了しました！
-      %p.circle-level-up__subtitle 初回特典として5ポイント獲得！
+      %p.circle-level-up__subtitle= level_up[:to] - level_up[:from] >= 5 ? '初回特典で＋5レベル！' : '初回限定の入力完了特典を獲得！'
     - else
       %h2{ id: "#{dialog_id}-title" } おめでとうございます！
       %p.circle-level-up__subtitle サークルがレベルアップしました
-    - if preview
-      .circle-level-up__levels{ "aria-label" => "現在のレベル#{level_up[:to]}" }
-        %span.circle-level-up__new{ "aria-hidden" => "true" }
-          %small Lv.
-          = level_up[:to]
-    - elsif level_up[:to] > level_up[:from]
+    - if level_up[:to] > level_up[:from]
       .circle-level-up__levels{ "aria-label" => "レベル#{level_up[:from]}から#{level_up[:to]}へレベルアップ" }
         %span.circle-level-up__old{ "aria-hidden" => "true" }
           %small Lv.
@@ -32,11 +23,11 @@
           %small Lv.
           = level_up[:to]
     - else
-      .circle-level-up__levels{ "aria-label" => "5ポイント獲得" }
+      .circle-level-up__levels{ "aria-label" => "現在のレベル#{level_up[:to]}" }
         %span.circle-level-up__new{ "aria-hidden" => "true" }
-          ＋5
-          %small ポイント
-    %button.circle-level-up__replay{ type: "button", hidden: true, data: { level_up_replay: true } } お祝いの演出をもう一度見る
+          %small Lv.
+          = level_up[:to]
+      %p.circle-level-up__subtitle= level_up[:to] == 100 ? '最高レベルに到達しています' : 'レベルへの反映は、掲載・更新状況に応じて変わります。'
     %p.circle-level-up__benefit{ id: "#{dialog_id}-benefit" }
       レベルが高いほど、人気順で
       %br

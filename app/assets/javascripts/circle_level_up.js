@@ -32,18 +32,9 @@
     restorePage();
   }
 
-  function motionControls(dialog) {
-    var replay = dialog.querySelector('[data-level-up-replay]');
-    var supported = typeof Element.prototype.animate === 'function';
-    replay.hidden = !supported;
-    replay.textContent = motionPreference.matches ? '紙吹雪を表示する（動きあり）' : 'お祝いの演出をもう一度見る';
-  }
-
-  function celebrate(dialog, requested) {
+  function celebrate(dialog) {
     stopConfetti();
-    if ((motionPreference.matches && !requested) || typeof Element.prototype.animate !== 'function') return;
-    // Only an explicitly labelled tap can opt into motion on a reduced-motion device.
-    dialog.dataset.motionConsented = motionPreference.matches && requested ? 'true' : 'false';
+    if (motionPreference.matches || typeof Element.prototype.animate !== 'function') return;
     var layer = dialog.querySelector('.circle-level-up__confetti');
     var width = document.documentElement.clientWidth;
     var height = window.innerHeight;
@@ -98,7 +89,7 @@
       requestAnimationFrame(function () {
         if (activeDialog !== dialog || !dialog.open || autoPlayed || document.visibilityState === 'hidden') return;
         autoPlayed = true;
-        celebrate(dialog, false);
+        celebrate(dialog);
       });
     }, 300);
   }
@@ -109,7 +100,6 @@
     dialog.dataset.levelUpShown = 'true';
     activeDialog = dialog;
     autoPlayed = false;
-    motionControls(dialog);
     previousFocus = document.activeElement;
     previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
@@ -130,18 +120,8 @@
   }
 
   document.addEventListener('click', function (event) {
-    var preview = event.target.closest('[data-level-up-preview]');
-    if (preview) {
-      var target = document.getElementById(preview.getAttribute('aria-controls'));
-      if (target) openDialog(target);
-      return;
-    }
     if (!activeDialog) return;
-    if (event.target.closest('[data-level-up-replay]')) {
-      cancelOpening();
-      autoPlayed = true;
-      celebrate(activeDialog, true);
-    } else if (event.target.closest('[data-level-up-close], .circle-level-up__primary')) close();
+    if (event.target.closest('[data-level-up-close], .circle-level-up__primary')) close();
     else if (event.target === activeDialog) {
       var bounds = activeDialog.getBoundingClientRect();
       if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();
@@ -149,9 +129,7 @@
   });
   function motionChanged() {
     if (!activeDialog) return;
-    activeDialog.dataset.motionConsented = 'false';
     if (motionPreference.matches) stopConfetti();
-    motionControls(activeDialog);
   }
   if (motionPreference.addEventListener) motionPreference.addEventListener('change', motionChanged);
   else if (motionPreference.addListener) motionPreference.addListener(motionChanged);

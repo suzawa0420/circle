@@ -3,7 +3,7 @@
   <p class="chat-muted"><%= member_signed_in? ? 'サークルへの問い合わせ・参加の相談' : '参加の相談・対戦や練習試合の相談' %></p>
   <% if @penalty_count.to_i.positive? || @penalty_only %>
     <aside class="chat-card chat-penalty-summary">
-      <strong>未返信報告の減点対象：<%= @penalty_count %>件（1件につき30ポイント）</strong>
+      <strong>未返信報告によるレベルの減少：<%= @penalty_count %>件（1件につき−30レベル）</strong>
       <p>やり取りを始めてから3日以上、初回返信がなく参加者から報告されたメッセージです。返信すると減点が解除されます。旧お問い合わせは対象外です。</p>
       <%= link_to(@penalty_only ? 'すべてのメッセージを見る' : '減点対象だけを見る', conversations_path(circle_id: params[:circle_id], penalty: @penalty_only ? nil : '1')) %>
     </aside>
@@ -34,7 +34,7 @@
           <strong class="chat-talk__name"><%= conversation.participant_name(incoming) %><%= "さん" if incoming == "member" && !conversation.practice_match? %></strong>
           <% if role == 'owner' %><span class="chat-talk__circle"><%= conversation.user.name %></span><% end %>
           <% if role == 'owner' && @penalty_ids.include?(conversation.id) %>
-            <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
+            <span class="chat-penalty-badge">未返信報告 −30レベル</span>
           <% end %>
           <% if conversation.review_prompt_due?(role) %><span class="chat-review-prompt-badge"><%= conversation.peer_review_waiting?(role) ? '口コミが届いています・あなたも投稿できます' : '感想を募集中' %></span><% end %>
           <% if @no_show_conversation_ids.include?(conversation.id) %><span class="chat-review-prompt-badge">欠席の申告・本人の説明を確認</span><% end %>

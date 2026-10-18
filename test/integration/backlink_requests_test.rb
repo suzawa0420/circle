@@ -17,6 +17,8 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
     login_owner
     get circle_backlink_request_path(@circle)
     assert_response :success
+    assert_select 'h1', text: 'リンク設置で＋10レベル'
+    refute_includes response.body, 'ポイント'
     assert_select '#backlink-url[value=?]', "https://circle-book.com/circles/#{@circle.id}"
     assert_select 'textarea#backlink-banner', text: /<img/
     assert_select 'textarea#backlink-text', text: /サークルブック/
@@ -41,6 +43,8 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
       end
     end
     mail = BacklinkRequestMailer.submitted(request)
+    refute_includes mail.subject, 'ポイント'
+    assert_includes mail.body.decoded, '加算レベル：＋10'
     assert_equal ['circlebook26@gmail.com'], mail.to
     assert_includes mail.body.encoded, 'https://circle-book.com/super_admin/backlink_requests/'
   end

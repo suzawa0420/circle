@@ -17,13 +17,11 @@ The responsive dialog prioritizes new schedule registration, aligns the old and
 new level text on their baseline, and plays one short, silent green/gold
 confetti burst. Native dialog focus handling, Escape/close controls, scroll
 restoration, reduced-motion preferences and Turbolinks cache cleanup are
-supported. Decorative particles never intercept clicks. Preview replay
-controls were initially limited to the preview. The open production dialog now
-offers an explicit replay action as well. On reduced-motion devices it labels
-replay as a motion opt-in, without showing a reason for suppressed motion. Initial
-automatic playback waits for a visible document and a short opening delay.
-The owner's level guide also opens a clearly labelled preview at the current
-level. This client-only action does not grant points or consume a notification.
+supported. Decorative particles never intercept clicks. Manual replay and
+preview controls have been removed. Only a real notification opens the
+celebration; reduced-motion preferences suppress animation without showing a
+reason. Automatic playback waits for a visible document and a short opening
+delay. User-facing gains, deductions and rewards use level units.
 
 ## Rollout and recovery
 

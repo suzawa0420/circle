@@ -9,7 +9,7 @@
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
   <% if @role == 'owner' && Conversation.reported_unanswered.exists?(@conversation.id) %>
     <aside class="chat-card chat-penalty-summary">
-      <span class="chat-penalty-badge">未返信報告 −30ポイント</span>
+      <span class="chat-penalty-badge">未返信報告 −30レベル</span>
       <p>このお問い合わせは初回返信がないと報告されています。メッセージを返信すると減点が解除されます。</p>
     </aside>
   <% end %>

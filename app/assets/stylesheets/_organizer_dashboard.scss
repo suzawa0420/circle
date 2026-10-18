@@ -120,22 +120,21 @@
   .dashboard-level__guide-section { margin-top: 24px; }
   .dashboard-level__guide-note { margin: 0 0 12px; font-size: 12px; color: $cb-muted; }
 }
-.cb-site .organizer-dashboard .dashboard-level__conversion {
-  padding: 16px; border: 1px solid $cb-border; border-radius: 10px; background: $cb-canvas;
-  > span { display: block; font-size: 12px; color: $cb-muted; }
-  > strong { display: block; margin: 4px 0; font-size: 19px; line-height: 1.5; color: $cb-action-hover; }
-  p { margin: 8px 0 0; font-size: 12px; color: $cb-muted; }
+.cb-site .organizer-dashboard .dashboard-level__progress-example {
+  padding: 14px 16px; border-radius: 10px; background: $cb-mint-soft;
+  > strong { display: block; font-size: 14px; line-height: 1.6; color: $cb-action-hover; }
+  p { margin: 6px 0 0; font-size: 12px; color: $cb-muted; }
 }
-.cb-site .organizer-dashboard .dashboard-level__points-table {
+.cb-site .organizer-dashboard .dashboard-level__gains-table {
   width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 13px;
   th, td { padding: 12px 8px; border-bottom: 1px solid $cb-border; vertical-align: middle; }
   thead th { background: $cb-canvas; color: $cb-muted; font-size: 11px; font-weight: 500; }
-  th:first-child { text-align: left; width: 64%; }
+  th:first-child { text-align: left; width: 60%; }
   th:last-child, td { text-align: right; }
   tbody th { font-weight: 500; }
   td { white-space: nowrap; }
   td strong { font-size: 21px; font-variant-numeric: tabular-nums; color: $cb-action-hover; }
-  td > span { margin-left: 4px; color: $cb-muted; font-size: 11px; }
+  td > span { display: block; margin-top: 2px; color: $cb-muted; font-size: 11px; }
   .dashboard-level__condition { display: block; margin-top: 4px; font-size: 11px; font-weight: 400; color: $cb-muted; line-height: 1.7; }
 }
 .cb-site .organizer-dashboard .dashboard-level__activity-rules {
@@ -154,9 +153,9 @@
   .dashboard-level__guide-note { margin-bottom: 8px; }
   .dashboard-level__deduction-link { font-size: 12px; color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
 }
-.cb-site .organizer-dashboard .dashboard-level__preview-action { margin-top: 20px; }
+.cb-site .dashboard-level__breakdown td small { display: block; font-size: 11px; color: $cb-muted; }
 @media (max-width: 359px) {
-  .cb-site .organizer-dashboard .dashboard-level__points-table {
+  .cb-site .organizer-dashboard .dashboard-level__gains-table {
     th, td { padding: 10px 6px; }
     td strong { font-size: 19px; }
   }
