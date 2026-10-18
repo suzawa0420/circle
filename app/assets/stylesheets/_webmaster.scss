@@ -122,6 +122,10 @@
   .wm-inline-form, .wm-field { min-width: 0; }
   .wm-field { grid-template-columns: minmax(0, 1fr); }
   .wm-field input[type=search] { width: 100%; min-width: 0; }
+  .wm-conversation-search { display: grid; gap: 8px; }
+  .wm-conversation-search__controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; min-width: 0; }
+  .wm-conversation-search__controls input[type=search] { flex: 1 1 160px; width: 0; min-width: 0; margin: 0; }
+  .wm-conversation-search__controls input[type=submit], .wm-conversation-search__controls .wm-button { margin: 0; }
 }
 
 .webmaster-page .webmaster-login .webmaster-remember { display: flex; align-items: center; gap: 10px; min-height: 44px; }

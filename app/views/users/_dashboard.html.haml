@@ -63,11 +63,6 @@
 - elsif @user.moderation_status == "blocked"
   .dashboard-notice
     %strong このサークルは公開停止中です
-- if @respond_check_count > 0
-  .dashboard-notice
-    %strong= "返信についての報告が#{@respond_check_count}件あります"
-    %p 応募者から返信が届いていないと報告されています。
-    = link_to "お問い合わせを確認する →", "/users/#{@user.id}/contact_list"
 = render "/users/alert"
 
 - if admin_user_signed_in? && @user.admin_user_id == current_admin_user.id && @user.profile_completion_rewarded_at.nil?
@@ -115,6 +110,7 @@
   .dashboard-section__heading
     %h2 アカウント設定
   .dashboard-action-list
+    = render "dashboard_action", title: "主催者プロフィール編集", description: "すべてのサークルで共通のプロフィール", icon: "user-round", path: edit_organizer_profile_path
     = render "dashboard_action", title: "ログアウト", description: "別のアカウントでログインする", icon: "lock-keyhole", path: destroy_admin_user_session_path, link_options: { method: :delete }
     = render "dashboard_action", title: "メールアドレス・パスワード", description: "ログイン情報を変更する", icon: "lock-keyhole", path: edit_admin_user_registration_path
     = render "dashboard_action", title: "サークルを削除する", description: "ブログ・スケジュールなどもすべて削除されます", icon: "trash-2", path: user_path(@user), link_options: { method: :delete, data: { confirm: circle_deletion_confirmation(@user) } }
@@ -126,8 +122,3 @@
     = link_to "ヘルプセンター・よくある質問", faq_path
     = link_to "ご意見・改善提案（原則返信なし）", new_support_request_path(kind: "suggestion", category: "other")
     = link_to "FAQで解決しない問い合わせ", new_support_request_path
-
-- if @user.user_contacts.where(contact_del: nil).exists?
-  %section.dashboard-section{ "aria-label" => "過去のお問い合わせ" }
-    .dashboard-action-list
-      = render "dashboard_action", title: "旧お問い合わせ管理", description: "以前に届いたお問い合わせを確認", icon: "mail", path: "/users/#{@user.id}/contact_list", badge: (@respond_check_count > 0 ? "要確認 #{@respond_check_count}" : nil)

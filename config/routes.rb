@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     get :confirm
   end
   resources :member_profiles, only: :show
+  resource :organizer_profile, only: [:edit, :update]
 
   devise_for :webmasters, only: :sessions, path: 'webmaster',
     path_names: { sign_in: 'login', sign_out: 'logout' },

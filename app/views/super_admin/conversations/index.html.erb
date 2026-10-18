@@ -1,9 +1,12 @@
 <%= render 'webmasters/shared/page_header', title: 'メッセージ管理', description: '参加の相談と主催者同士の対戦・練習試合の相談を、最新のメッセージ順に確認できます。' %>
 <section class="webmaster-card">
-  <%= form_with url: super_admin_conversations_path, method: :get, local: true, class: 'wm-inline-form' do |f| %>
-    <div class="wm-field"><%= f.label :q, 'サークル名・参加者のニックネーム' %><%= f.search_field :q, value: @query, maxlength: 100, placeholder: '名前で会話を探す' %></div>
-    <%= f.submit '検索する' %>
-    <% if @query.present? %><%= link_to '検索を解除', super_admin_conversations_path, class: 'wm-button wm-button--secondary' %><% end %>
+  <%= form_with url: super_admin_conversations_path, method: :get, local: true, class: 'wm-conversation-search' do |f| %>
+    <%= f.label :q, 'サークル名・参加者のニックネーム' %>
+    <div class="wm-conversation-search__controls">
+      <%= f.search_field :q, value: @query, maxlength: 100, placeholder: '名前で会話を探す' %>
+      <%= f.submit '検索する' %>
+      <% if @query.present? %><%= link_to '検索を解除', super_admin_conversations_path, class: 'wm-button wm-button--secondary' %><% end %>
+    </div>
   <% end %>
 </section>
 <section class="wm-section wm-list">

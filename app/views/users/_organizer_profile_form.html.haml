@@ -1,0 +1,42 @@
+- if @admin_user.errors.any?
+  .form-error
+    以下の項目でエラーが発生いたしました。
+    %br/
+- @admin_user.errors.full_messages.each do |message|
+  .form-error_message
+    ・#{message}
+.member_profile_edit
+  = form_for @admin_user, url: profile_update_path do |f|
+    .label_item プロフィール公開
+    .radio_button
+      = f.radio_button :open, 1, checked: (@admin_user.open != 2)
+      公開 #{f.radio_button :open, 2}非公開
+    .label_item プロフィール画像
+    = succeed "\u203B10MB\u4EE5\u4E0B\u306Ejpg\u304Bpng\u306E\u307F\u5BFE\u5FDC" do
+      %br/
+    #img_field_profile{:onclick => "$('#file_profile').click()"}
+      - if @admin_user.image_profile.present?
+        = image_tag(@admin_user.image_profile.url)
+      - else
+        = lucide_icon "image"
+    = f.file_field :image_profile, class: "image", style: "display:none;", id: "file_profile"
+    .label_item
+      %span.label.label_danger> 必須
+      ニックネーム（16文字以内）
+    = f.text_field :nickname, class: 'form-control', placeholder: "サークルブック"
+    - if @admin_user.gender.blank?
+      .label_item 性別
+      = succeed "\u203B\u767B\u9332\u5F8C\u3001\u5909\u66F4\u306F\u3067\u304D\u307E\u305B\u3093" do
+        %br/
+      .radio_button
+        = f.radio_button :gender, 1
+        男性 #{f.radio_button :gender, 2}女性 #{f.radio_button :gender, 0}その他
+    .label_item 年代
+    = f.select :age,                                                                                          |
+        [["10代", "10代"], ["20代", "20代"], ["30代", "30代"], ["40代", "40代"], ["50代", "50代"], ["60代以上", "60代以上"]], |
+      :prompt => "選択してください"                                                                                   |
+    .label_item お住まい
+    = f.collection_select :prefecture_id, Prefecture.where.not(id: 50).order(:order => :asc), :id, :name, :prompt => "選択してください"
+    .label_item 自己紹介
+    = f.text_area :profile, class: 'form-control text_area_s', placeholder: "運動をするのが好きです！".html_safe
+    = f.submit "更新する", data: { disable_with: '更新中...' }

@@ -1,0 +1,10 @@
+- set_meta_tags title: "主催者プロフィール編集", noindex: true
+.main.users-edit
+  .container
+    %h1.cb-page-title 主催者プロフィール編集
+    %p このプロフィールは、管理しているすべてのサークルで共通です。
+    .form.users-form
+      .form-body.cont-body
+        = render "users/organizer_profile_form", profile_update_path: organizer_profile_path
+    - if (circle = current_admin_user.users.order(:id).first)
+      = link_to "マイページに戻る", "/users/#{circle.id}/mypage"
