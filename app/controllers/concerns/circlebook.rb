@@ -4,6 +4,7 @@ module Circlebook
     # サークルブックポイント（サクブポイント）
     def cb_point(user)
       @backlink_point = BacklinkRequest.exists?(user_id: user.id, status: 'approved') ? BacklinkRequest::POINTS : 0
+      @profile_completion_point = user.profile_completion_rewarded_at.present? ? CircleProfileCompletionReward::POINTS : 0
       @schedule_point = user.schedules.count * 0.1
       @blog_point = user.blogs.count * 0.2
       @qa_point = Question.where(user_id: user.id).where.not(answer: [nil, '']).count * 0.3
@@ -21,7 +22,7 @@ module Circlebook
         user.cb_point = 0
       else
         # user.cb_point = @blog_point + @schedule_point + @qa_point + @review_point + @contact_point - @respond_point
-        user.cb_point = @blog_point + @schedule_point + @qa_point + @review_point + @backlink_point - @respond_point
+        user.cb_point = @blog_point + @schedule_point + @qa_point + @review_point + @backlink_point + @profile_completion_point - @respond_point
       end
 
     end

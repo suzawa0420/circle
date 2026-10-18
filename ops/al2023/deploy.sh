@@ -102,6 +102,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261017040000
     # Public inquiry source attached to its chat message.
     bundle exec rails db:migrate:up VERSION=20261017050000
+    # One-time profile completion reward and its shared notification receipt.
+    bundle exec rails db:migrate:up VERSION=20261018000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

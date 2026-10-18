@@ -1,0 +1,20 @@
+- missing = CircleProfileCompletionReward.missing_items(user)
+- completed = 7 - missing.length
+%section.dashboard-profile-completion{ "aria-labelledby" => "profile-completion-title" }
+  .dashboard-profile-completion__heading
+    %h2#profile-completion-title サークル情報を完成させよう
+    %span 初回限定
+  %p.dashboard-profile-completion__reward
+    あと#{missing.length}項目で
+    %strong ＋5レベル
+  %p.dashboard-profile-completion__description 写真や活動情報をそろえて、参加希望者にサークルの魅力を伝えましょう。
+  %progress{ max: 7, value: completed, "aria-label" => "サークル情報：7項目中#{completed}項目入力済み" }
+    = "#{completed} / 7"
+  %p.dashboard-profile-completion__count= "#{completed} / 7項目 入力済み"
+  %ul
+    - missing.each do |item|
+      %li
+        = link_to edit_user_path(user, anchor: item[:anchor]) do
+          %span= item[:label]
+          = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
+  %p.dashboard-profile-completion__note すべて入力して保存すると、5ポイントを1回だけ獲得できます。レベル上限は100です。

@@ -123,6 +123,8 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
 
 		if @user.save
 
+      CircleProfileCompletionReward.grant(@user)
+
       if @user.unique_id.blank?
         @user.unique_id = "#{@user.id}" + SecureRandom.alphanumeric(20)
       end
@@ -216,6 +218,7 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
     end
 
 		if @user.update(user_params)
+      CircleProfileCompletionReward.grant(@user) if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
 			# like検索用
 			@user.grouping = @user.users_groups.includes(:group).map{|g| g.group.name}
 			@user.average_age = @user.users_ages.includes(:age).map{|a| a.age.name}
@@ -336,6 +339,9 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
 
     @ng_accounts = User.where(admin_user_id: @user.admin_user_id, ng_account: "NG")
     @respond_check_count = UserContact.where(user_id: @user.id, respond_check: "NG").count
+    if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
+      CircleProfileCompletionReward.grant(@user)
+    end
     cb_point(@user)
 
 		# 管理者判定
@@ -355,7 +361,9 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
       @blogs_imp = 0
 
       if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
-        @level_up = CircleLevelNotification.consume(@user, level: view_context.circle_level_status(@user)[:level])
+        @level_up = CircleLevelNotification.consume(@user,
+          level: view_context.circle_level_status(@user)[:level],
+          without_bonus_level: view_context.circle_level_status(@user, points: @user.cb_point - @profile_completion_point)[:level])
       end
 
 			if @admin_user.users.any?

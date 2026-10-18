@@ -25,7 +25,7 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select 'progress[value="10"]'
     assert_select '.dashboard-level__message', text: /あと0.9/
     assert_select '.dashboard-level__ranking strong', text: /人気順で上位/
-    assert_select '.dashboard-level__breakdown tbody tr', count: 6
+    assert_select '.dashboard-level__breakdown tbody tr', count: 7
     assert_select '.dashboard-level__breakdown th', text: 'メッセージ未返信'
     assert_select '.dashboard-level__guide', text: /旧お問い合わせは減点対象外/
     assert_select '.dashboard-level__breakdown tfoot td', text: '0.1'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_17_050000) do
+ActiveRecord::Schema.define(version: 2026_10_18_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -863,6 +863,8 @@ ActiveRecord::Schema.define(version: 2026_10_17_050000) do
     t.bigint "admin_user_id"
     t.string "user_time"
     t.integer "last_seen_circle_level"
+    t.datetime "profile_completion_rewarded_at"
+    t.datetime "profile_completion_notified_at"
     t.string "contact"
     t.string "twitter"
     t.string "instagram"

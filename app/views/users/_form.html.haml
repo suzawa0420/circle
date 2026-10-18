@@ -106,7 +106,7 @@
       .check_boxes
         = f.collection_check_boxes(:group_ids, Group.all.order(:id => :asc), :id, :name)
     .label_item 会費・費用
-    = f.text_field :cost, class: 'form-control', placeholder: "500円"
+    = f.text_field :cost, class: 'form-control', placeholder: "500円（無料の場合は「無料」）"
     .label_item サークル目標
     = f.text_field :goal, class: 'form-control', placeholder: "ゆくる、楽しく活動をする！"
     %p お問い合わせはサイト内のメッセージに届きます。
@@ -174,7 +174,7 @@
               = f.label :remove_gallery_04 do
                 = f.check_box :remove_gallery_04
                 ④削除
-    .label_item サークルの詳細情報
+    #circle-introduction.label_item サークルの詳細情報
     .rich_text_sub
       .rich_text_notes ▼文字の装飾は最後に行ってください
       = f.hidden_field :appeal, id: :article_text

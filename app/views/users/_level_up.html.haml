@@ -5,17 +5,27 @@
       = lucide_icon "x", **{ "aria-hidden" => "true" }
     .circle-level-up__emblem{ "aria-hidden" => "true" }
       = lucide_icon "trophy"
-    %h2#circle-level-up-title おめでとうございます！
-    %p.circle-level-up__subtitle サークルがレベルアップしました
-    .circle-level-up__levels{ "aria-label" => "レベル#{level_up[:from]}から#{level_up[:to]}へレベルアップ" }
-      %span.circle-level-up__old{ "aria-hidden" => "true" }
-        %small Lv.
-        = level_up[:from]
-      %span.circle-level-up__arrow{ "aria-hidden" => "true" }
-        = lucide_icon "arrow-right"
-      %span.circle-level-up__new{ "aria-hidden" => "true" }
-        %small Lv.
-        = level_up[:to]
+    - if level_up[:profile_completion_bonus]
+      %h2#circle-level-up-title サークル情報の入力が完了しました！
+      %p.circle-level-up__subtitle 初回特典として5ポイント獲得！
+    - else
+      %h2#circle-level-up-title おめでとうございます！
+      %p.circle-level-up__subtitle サークルがレベルアップしました
+    - if level_up[:to] > level_up[:from]
+      .circle-level-up__levels{ "aria-label" => "レベル#{level_up[:from]}から#{level_up[:to]}へレベルアップ" }
+        %span.circle-level-up__old{ "aria-hidden" => "true" }
+          %small Lv.
+          = level_up[:from]
+        %span.circle-level-up__arrow{ "aria-hidden" => "true" }
+          = lucide_icon "arrow-right"
+        %span.circle-level-up__new{ "aria-hidden" => "true" }
+          %small Lv.
+          = level_up[:to]
+    - else
+      .circle-level-up__levels{ "aria-label" => "5ポイント獲得" }
+        %span.circle-level-up__new{ "aria-hidden" => "true" }
+          ＋5
+          %small ポイント
     %p#circle-level-up-benefit.circle-level-up__benefit
       レベルが高いほど、人気順で
       %br

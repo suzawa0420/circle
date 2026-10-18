@@ -1,0 +1,23 @@
+@import "design_mixins";
+
+.cb-site .dashboard-profile-completion {
+  @include cb-card;
+  margin: 24px 0;
+  &__heading { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+  &__heading h2 { margin: 0; font-size: 20px; line-height: 1.4; font-weight: 700; }
+  &__heading > span { padding: 2px 8px; border-radius: 999px; background: $cb-mint-soft; color: $cb-action-hover; font-size: 12px; }
+  &__reward { margin: 16px 0 8px; font-size: 18px; line-height: 1.6; }
+  &__reward strong { color: $cb-action-hover; white-space: nowrap; }
+  &__description { font-size: 14px; line-height: 1.8; }
+  progress { display: block; width: 100%; height: 8px; margin-top: 16px; appearance: none; border: 0; border-radius: 4px; overflow: hidden; background: $cb-mint-soft; color: $cb-action; }
+  progress::-webkit-progress-bar { background: $cb-mint-soft; }
+  progress::-webkit-progress-value { background: $cb-action; }
+  progress::-moz-progress-bar { background: $cb-action; }
+  &__count { margin-top: 6px; color: $cb-muted; text-align: right; font-size: 12px; }
+  ul { margin: 12px 0 0; padding: 0; list-style: none; }
+  li + li { border-top: 1px solid $cb-border; }
+  li a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 10px 0; font-size: 14px; color: $cb-action-hover; overflow-wrap: anywhere; }
+  li svg { flex: none; width: 18px; height: 18px; }
+  &__note { margin: 12px 0 0; color: $cb-muted; font-size: 12px; line-height: 1.8; }
+}
+.cb-site .users-edit :is(#img_field_header, #img_field_profile, #circle-introduction, #user_area, #user_schedule, #user_recruitment, #user_cost) { scroll-margin-top: 100px; }
