@@ -20,6 +20,7 @@ module BreadcrumbsHelper
     'webmasters' => 'ウェブマスター', 'attendances' => '出欠管理', 'reviews' => '口コミ・評価',
     'questions' => '質問コーナー', 'event_questions' => '質問一覧', 'opinions' => 'ご意見',
     'links' => 'サークルリンク', 'user_contacts' => 'お問い合わせ', 'member_profiles' => '参加者プロフィール',
+    'organizer_profiles' => '主催者プロフィール',
     'member_email_verifications' => 'メールアドレス確認', 'admin_user_email_verifications' => 'メールアドレス確認',
     'backlink_requests' => '公式サイト連携', 'exhibitor_profiles' => '出展者プロフィール',
     'exhibitor_mypages' => '出展者マイページ', 'accounts' => 'アカウント管理',
