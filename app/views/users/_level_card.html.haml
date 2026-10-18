@@ -30,6 +30,7 @@
       %strong まずは活動日を登録しましょう。
       日程・場所があると、参加希望者が予定を立てやすくなります。
     %p 合計が1増えると1レベル上がり、小数部分が次のレベルへの進捗になります。
+    %button.dashboard-copy{ type: "button", data: { level_up_preview: true }, "aria-haspopup" => "dialog", "aria-controls" => @level_up ? "circle-level-up" : "circle-level-preview" } お祝い演出を試す
     %ul
       %li スケジュール登録：0.1
       %li ブログ投稿：0.2

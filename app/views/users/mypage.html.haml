@@ -5,6 +5,8 @@
       = render "dashboard"
       - if @level_up
         = render "level_up", level_up: @level_up
+      - elsif admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
+        = render "level_up", level_up: { preview: true, to: circle_level_status(@user)[:level] }
       = render "/layouts/ads/picte_mypage", user: @user
       = render "/layouts/ad_square"
       .ad_space

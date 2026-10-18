@@ -17,6 +17,10 @@ class CircleLevelNotificationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '#circle-level-up', count: 0
     assert_equal 2, @circle.reload.last_seen_circle_level
+    assert_select '#circle-level-preview[data-circle-level-up="false"]', count: 1
+    assert_select '[data-level-up-preview][aria-controls="circle-level-preview"]', count: 1
+    assert_select '#circle-level-preview-title', text: 'レベルアップのお祝い演出'
+    assert_select '#circle-level-preview', text: /現在のレベルは変わりません/
   end
 
   test 'schedule creation crosses an integer level and celebrates once on return to the dashboard' do
@@ -32,6 +36,8 @@ class CircleLevelNotificationTest < ActionDispatch::IntegrationTest
     assert_select '#circle-level-up .circle-level-up__new', text: /Lv\.\s*1/
     assert_select "#circle-level-up a[href='#{new_user_schedule_path(@circle)}']", text: /スケジュールを登録する/
     assert_select '[data-level-up-close]', count: 2
+    assert_select '#circle-level-up button[type="button"][data-level-up-replay]', count: 1
+    assert_select '#circle-level-up [data-level-up-motion-status]', count: 0
     get "/users/#{@circle.id}/mypage"
     assert_select '#circle-level-up', count: 0
   end

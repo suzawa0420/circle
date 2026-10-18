@@ -3,6 +3,9 @@
   var running = [];
   var previousOverflow = null;
   var previousFocus = null;
+  var openingTimer = null;
+  var autoPlayed = false;
+  var boundDialogs = new WeakSet();
   var motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function stopConfetti() {
@@ -12,6 +15,7 @@
   }
 
   function restorePage() {
+    cancelOpening();
     stopConfetti();
     if (previousOverflow !== null) document.documentElement.style.overflow = previousOverflow;
     previousOverflow = null;
@@ -28,8 +32,18 @@
     restorePage();
   }
 
-  function celebrate(dialog) {
-    if (motionPreference.matches || typeof Element.prototype.animate !== 'function') return;
+  function motionControls(dialog) {
+    var replay = dialog.querySelector('[data-level-up-replay]');
+    var supported = typeof Element.prototype.animate === 'function';
+    replay.hidden = !supported;
+    replay.textContent = motionPreference.matches ? '紙吹雪を表示する（動きあり）' : 'お祝いの演出をもう一度見る';
+  }
+
+  function celebrate(dialog, requested) {
+    stopConfetti();
+    if ((motionPreference.matches && !requested) || typeof Element.prototype.animate !== 'function') return;
+    // Only an explicitly labelled tap can opt into motion on a reduced-motion device.
+    dialog.dataset.motionConsented = motionPreference.matches && requested ? 'true' : 'false';
     var layer = dialog.querySelector('.circle-level-up__confetti');
     var width = document.documentElement.clientWidth;
     var height = window.innerHeight;
@@ -70,36 +84,84 @@
     });
   }
 
-  function start() {
-    var dialog = document.querySelector('[data-circle-level-up]');
-    if (!dialog || dialog.dataset.levelUpShown === 'true') return;
+  function cancelOpening() {
+    if (openingTimer !== null) window.clearTimeout(openingTimer);
+    openingTimer = null;
+  }
+
+  function scheduleOpening() {
+    if (!activeDialog || autoPlayed || openingTimer !== null || document.visibilityState === 'hidden') return;
+    var dialog = activeDialog;
+    // Give the newly opened page time to become visible before the short burst.
+    openingTimer = window.setTimeout(function () {
+      openingTimer = null;
+      requestAnimationFrame(function () {
+        if (activeDialog !== dialog || !dialog.open || autoPlayed || document.visibilityState === 'hidden') return;
+        autoPlayed = true;
+        celebrate(dialog, false);
+      });
+    }, 300);
+  }
+
+  function openDialog(dialog) {
+    if (activeDialog === dialog && dialog.open) return;
+    if (activeDialog) close();
     dialog.dataset.levelUpShown = 'true';
     activeDialog = dialog;
+    autoPlayed = false;
+    motionControls(dialog);
     previousFocus = document.activeElement;
     previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
-    dialog.addEventListener('close', function () { if (activeDialog === dialog) restorePage(); });
-    dialog.addEventListener('cancel', function (event) { event.preventDefault(); close(); });
+    if (!boundDialogs.has(dialog)) {
+      boundDialogs.add(dialog);
+      dialog.addEventListener('close', function () { if (activeDialog === dialog && !dialog.open) restorePage(); });
+      dialog.addEventListener('cancel', function (event) { event.preventDefault(); close(); });
+    }
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
-    // Wait for layout so mobile browsers have the dialog's final coordinates.
-    requestAnimationFrame(function () {
-      if (activeDialog === dialog && dialog.open) celebrate(dialog);
-    });
+    scheduleOpening();
+  }
+
+  function start() {
+    var dialog = document.querySelector('[data-circle-level-up="true"]');
+    if (!dialog || dialog.dataset.levelUpShown === 'true') return;
+    openDialog(dialog);
   }
 
   document.addEventListener('click', function (event) {
+    var preview = event.target.closest('[data-level-up-preview]');
+    if (preview) {
+      var target = document.getElementById(preview.getAttribute('aria-controls'));
+      if (target) openDialog(target);
+      return;
+    }
     if (!activeDialog) return;
-    if (event.target.closest('[data-level-up-close], .circle-level-up__primary')) close();
+    if (event.target.closest('[data-level-up-replay]')) {
+      cancelOpening();
+      autoPlayed = true;
+      celebrate(activeDialog, true);
+    } else if (event.target.closest('[data-level-up-close], .circle-level-up__primary')) close();
     else if (event.target === activeDialog) {
       var bounds = activeDialog.getBoundingClientRect();
       if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();
     }
   });
-  function motionChanged() { if (motionPreference.matches) stopConfetti(); }
+  function motionChanged() {
+    if (!activeDialog) return;
+    activeDialog.dataset.motionConsented = 'false';
+    if (motionPreference.matches) stopConfetti();
+    motionControls(activeDialog);
+  }
   if (motionPreference.addEventListener) motionPreference.addEventListener('change', motionChanged);
   else if (motionPreference.addListener) motionPreference.addListener(motionChanged);
   document.addEventListener('DOMContentLoaded', start);
   document.addEventListener('turbolinks:load', start);
   document.addEventListener('turbolinks:before-cache', close);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') {
+      cancelOpening();
+      stopConfetti();
+    } else scheduleOpening();
+  });
 })();

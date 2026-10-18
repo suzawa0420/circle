@@ -1,17 +1,27 @@
-%dialog#circle-level-up.circle-level-up{ "aria-labelledby" => "circle-level-up-title", "aria-describedby" => "circle-level-up-benefit", data: { circle_level_up: true } }
+- preview = !!level_up[:preview]
+- dialog_id = preview ? 'circle-level-preview' : 'circle-level-up'
+%dialog.circle-level-up{ id: dialog_id, "aria-labelledby" => "#{dialog_id}-title", "aria-describedby" => "#{dialog_id}-benefit", data: { circle_level_up: preview ? "false" : "true" } }
   .circle-level-up__confetti{ "aria-hidden" => "true" }
   .circle-level-up__body
     %button.circle-level-up__x{ type: "button", data: { level_up_close: true }, "aria-label" => "ポップアップを閉じる" }
       = lucide_icon "x", **{ "aria-hidden" => "true" }
     .circle-level-up__emblem{ "aria-hidden" => "true" }
       = lucide_icon "trophy"
-    - if level_up[:profile_completion_bonus]
-      %h2#circle-level-up-title サークル情報の入力が完了しました！
+    - if preview
+      %h2{ id: "#{dialog_id}-title" } レベルアップのお祝い演出
+      %p.circle-level-up__subtitle 演出のお試しです。現在のレベルは変わりません。
+    - elsif level_up[:profile_completion_bonus]
+      %h2{ id: "#{dialog_id}-title" } サークル情報の入力が完了しました！
       %p.circle-level-up__subtitle 初回特典として5ポイント獲得！
     - else
-      %h2#circle-level-up-title おめでとうございます！
+      %h2{ id: "#{dialog_id}-title" } おめでとうございます！
       %p.circle-level-up__subtitle サークルがレベルアップしました
-    - if level_up[:to] > level_up[:from]
+    - if preview
+      .circle-level-up__levels{ "aria-label" => "現在のレベル#{level_up[:to]}" }
+        %span.circle-level-up__new{ "aria-hidden" => "true" }
+          %small Lv.
+          = level_up[:to]
+    - elsif level_up[:to] > level_up[:from]
       .circle-level-up__levels{ "aria-label" => "レベル#{level_up[:from]}から#{level_up[:to]}へレベルアップ" }
         %span.circle-level-up__old{ "aria-hidden" => "true" }
           %small Lv.
@@ -26,7 +36,8 @@
         %span.circle-level-up__new{ "aria-hidden" => "true" }
           ＋5
           %small ポイント
-    %p#circle-level-up-benefit.circle-level-up__benefit
+    %button.circle-level-up__replay{ type: "button", hidden: true, data: { level_up_replay: true } } お祝いの演出をもう一度見る
+    %p.circle-level-up__benefit{ id: "#{dialog_id}-benefit" }
       レベルが高いほど、人気順で
       %br
       上位に表示されやすくなります
