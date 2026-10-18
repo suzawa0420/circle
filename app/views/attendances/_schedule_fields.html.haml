@@ -1,0 +1,24 @@
+%fieldset.attendance-date-group
+  %legend
+    = Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")
+    - if schedule.time_s.present?
+      %span.attendance-date-time
+        = schedule.time_s.strftime('%H:%M')
+        - if schedule.time_e.present?
+          = "–#{schedule.time_e.strftime('%H:%M')}"
+  .attendance-date-details
+    %p.attendance-date-venue
+      = lucide_icon "map-pin", **{ "aria-hidden" => "true" }
+      = schedule.member_venue.presence || schedule.venue
+    - if schedule.title.present?
+      %p= schedule.title
+  .attendance-date-inputs
+    .attendance-input-group
+      = f.label :answer, "出欠"
+      = f.select :answer, [["◯ 参加", 1], ["× 不参加", 0]], prompt: "選択してください"
+    .attendance-input-group
+      = f.label :comment do
+        コメント
+        %span.attendance-optional 任意
+      = f.text_field :comment, class: 'form-control', placeholder: "遅刻・早退などの連絡があれば入力"
+  = f.hidden_field :schedule_id, value: schedule.id

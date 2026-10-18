@@ -1,0 +1,19 @@
+- if f.object.errors.any?
+  .attendance-form-errors{ role: "alert" }
+    %p 入力内容を確認してください。
+    %ul
+      - f.object.errors.full_messages.each do |message|
+        %li= message
+.attendance-person-fields
+  .attendance-input-group
+    = f.label :name do
+      名前
+      %span.attendance-required 必須
+    = f.text_field :name, class: 'form-control', placeholder: "ヤマダ", autocomplete: "name"
+  %fieldset.attendance-gender-group
+    %legend 性別
+    .attendance-gender-options
+      - [["男性", 1], ["女性", 2], ["その他", 0]].each do |label, value|
+        = f.label :gender, value: value do
+          = f.radio_button :gender, value
+          %span= label

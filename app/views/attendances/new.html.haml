@@ -1,41 +1,23 @@
 - set_meta_tags noindex: true,title: "【限定公開】出欠確認｜#{@user.name}",og: {title: "【限定公開】出欠確認｜#{@user.name}",description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}", image: image_url("/images/attendance_ogp.png")}
-.user_main.users-index
+.user_main.users-index.attendance-page.attendance-response-page
   .container
-    .users-index-item.attendances_modal
-      .form-body.cont-body.form
-        = form_for(@name, url: attendances_path(@user.unique_id), html: {method: 'post'}) do |f|
-          .label_item
-            %span.label.label_danger> 必須
-            名前
-          %br/
-          = f.text_field :name, class: 'form-control', placeholder: "ヤマダ"
-          .label_item 性別
-          %br/
-          .radio_btn
-            = f.radio_button :gender, 1
-            = f.label :gender, "男性", {value: 1}
-            = f.radio_button :gender, 2
-            = f.label :gender, "女性", {value: 2}
-            = f.radio_button :gender, 0
-            = f.label :gender, "その他", {value: 0}
-          %br/
-
+    .attendance-response-heading
+      %h1 出欠を回答する
+      %p 日程ごとに参加・不参加を選んでください。
+    .attendance-response-panel
+      .attendance-response-content
+        = form_for(@name, url: attendances_path(@user.unique_id), html: {method: 'post', class: 'attendance-response-form'}) do |f|
+          = render "attendances/person_fields", f: f
           - @schedules.each do |schedule|
             - if schedule.recruitment_numbers.present?
               - if schedule.name_schedules.where(answer: 1).count >= schedule.recruitment_numbers && schedule.recruitment_numbers != 0
               - else
                 = f.fields_for :name_schedules do |name_schedule|
-                  = render "/schedules/attendances/label_day", schedule: schedule
-                  = name_schedule.select :answer, [ ['◯ 参加', 1], ['× 不参加', 0]], |
-                    :prompt => "選択してください"                                       |
-                  = name_schedule.text_field :comment, class: 'form-control', placeholder: "コメント"
-                  = name_schedule.hidden_field :schedule_id, value: schedule.id
+                  = render "attendances/schedule_fields", f: name_schedule, schedule: schedule
 
             - else
               = f.fields_for :name_schedules do |name_schedule|
-                = render "/schedules/attendances/label_day", schedule: schedule
-                = name_schedule.select :answer, [ ['◯ 参加', 1], ['× 不参加', 0]], |
-                  :prompt => "選択してください"                                       |
-                = name_schedule.text_field :comment, class: 'form-control', placeholder: "コメント"
-                = name_schedule.hidden_field :schedule_id, value: schedule.id
-          = f.submit "更新する", data: { disable_with: '更新中...' }
+                = render "attendances/schedule_fields", f: name_schedule, schedule: schedule
+          .attendance-submit-actions
+            = f.submit "出欠を登録する", class: "attendance-save-button", data: { disable_with: '保存中...' }
+            = link_to "出欠一覧に戻る", attendances_path(@user.unique_id), class: "attendance-return-link"

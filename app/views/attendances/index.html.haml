@@ -1,74 +1,76 @@
 - set_meta_tags noindex: true,title: "【限定公開】出欠確認｜#{@user.name}",og: {title: "【限定公開】出欠確認｜#{@user.name}",description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}", image: image_url("/images/attendance_ogp.png")}
-.user_main.users-index
+- archived = params[:archive] == "1"
+.user_main.users-index.attendance-page
   .container
-    .users-index-item
-      %h1.top_title 出欠連絡（メンバー限定公開）
-      = render "/users/parts/user_name", user: @user
-      - if webmaster? || admin_user_signed_in?
-        - if can_manage_circle?(@user) && params[:archive] != "1"
-          .join_txt ＼ メンバーに共有すれば簡単に出欠管理！ ／
-          .attendance_url_copy
-            .copyTarget= request.url
-          %button.copyBtn
-            .requirement_copy
-              = lucide_icon "copy"
-              URLをコピーする！
-      - if params[:archive] != "1"
-        - if @names.blank?
-          %img.attendance_img{:src => "/images/attendance_ogp.png"}/
-
-        .join_txt
-          ＼登録なしで回答できます／
-        .attendances_modal.center
-          = link_to "新規で出欠回答する！", new_attendance_path(@user.unique_id), class: "join_btn"
-
-        .attendance_txt
-          ◎出欠内容の変更と追加
-          %br/
-          →名前のリンクをクリックしてください
-        .attendance_txt
-          ◎各イベントの詳細確認
-          %br/
-          →日程のリンクをクリックしてください
+    %header.attendance-heading
+      %span.attendance-label メンバー限定公開
+      %h1 出欠確認
+      = link_to circle_path(@user), class: "attendance-circle" do
+        = circle_avatar_tag @user, class: "attendance-circle__avatar"
+        %span= @user.name
+    - if can_manage_circle?(@user) && !archived
+      %section.attendance-share{ "aria-label" => "メンバーへの共有" }
+        %h2 メンバーに出欠を確認する
+        %p このページのURLを共有すると、登録なしで回答できます。
+        .attendance-share__controls
+          .attendance-share__url.copyTarget= request.url
+          %button.copyBtn.attendance-copy{ type: "button" }
+            = lucide_icon "copy", **{ "aria-hidden" => "true" }
+            URLをコピー
+    - unless archived
+      .attendance-intro
+        %div
+          %h2 次の活動への参加予定を教えてください
+          %p 会員登録なしで、名前と出欠を入力できます。
+        = link_to new_attendance_path(@user.unique_id), class: "attendance-answer-button" do
+          = lucide_icon "calendar-check", **{ "aria-hidden" => "true" }
+          新規で出欠回答する
+    %section.attendance-results{ "aria-labelledby" => "attendance-results-title" }
+      .attendance-results__heading
+        %h2#attendance-results-title= archived ? "過去の出欠" : "日程と回答状況"
+        - if @schedules.present?
+          %p.attendance-scroll-hint
+            左右にスクロールして日程を確認
+            = lucide_icon "arrow-right", **{ "aria-hidden" => "true" }
+      - unless archived
+        %ul.attendance-guide
+          %li 名前を選ぶと、出欠の変更・追加ができます。
+          %li 日付を選ぶと、活動の詳細を確認できます。
       - if @schedules.present?
-        - if @schedules.count >= 3
-          .scroll_txt
-            右にスクロールすると他の日程も見れます→
-      .attendances_table_wrap
-        %table
-          %thead
-            %tr
-              %th.day.fixed.day_title 日程
-              %th.status_title ステータス
-
-              - @names.each.with_index(1) do |name, i|
-                %th
-                  - if params[:archive] != "1"
-                    - if name.gender == 1
-                      %span.blue= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
-                    - elsif name.gender == 2
-                      %span.pink= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
+        .attendances_table_wrap.attendance-table-scroll{ role: "region", "aria-label" => "出欠一覧（横にスクロールできます）", tabindex: "0" }
+          %table{ "aria-label" => "日程ごとの出欠回答" }
+            %thead
+              %tr
+                %th.day.fixed.day_title 日程
+                %th.status_title ステータス
+                - @names.each.with_index(1) do |name, i|
+                  %th
+                    - if params[:archive] != "1"
+                      - if name.gender == 1
+                        %span.blue= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
+                      - elsif name.gender == 2
+                        %span.pink= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
+                      - else
+                        %span.purple= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
                     - else
-                      %span.purple= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
-                  - else
-                    - if name.gender == 1
-                      %span.blue= name.name
-                    - elsif name.gender == 2
-                      %span.pink= name.name
-                    - else
-                      %span.purple= name.name
+                      - if name.gender == 1
+                        %span.blue= name.name
+                      - elsif name.gender == 2
+                        %span.pink= name.name
+                      - else
+                        %span.purple= name.name
 
-          = render "/schedules/attendances/answer_list"
-        .schedule_archive
-          - if params[:archive] == "1"
-            %a{:href => "#{request.path}"} &gt;&gt; 現在の出欠を確認する
-          - elsif @past_schedules.present?
-            %a{:href => "#{request.path}?archive=1"} &gt;&gt; 過去の出欠を確認する
-          - else
-        - if params[:archive] != "1"
-          .join_txt
-            ＼登録なしで回答できます／
-          .attendances_modal.center
-            = link_to "新規で出欠回答する！", new_attendance_path(@user.unique_id), class: "join_btn"
-      = render "/layouts/ad_square"
-      .ad_space
+            = render "/schedules/attendances/answer_list"
+      - else
+        %p.attendance-empty= archived ? "過去の活動日程はありません。" : "現在、回答できる活動日程はありません。"
+      %nav.attendance-archive{ "aria-label" => "現在と過去の出欠" }
+        - if archived
+          = link_to "現在の出欠を確認する", attendances_path(@user.unique_id)
+        - elsif @past_schedules.present?
+          = link_to "過去の出欠を確認する", attendances_path(@user.unique_id, archive: 1)
+    - if !archived && @schedules.present?
+      .attendance-bottom-action
+        %p 登録なしで回答できます
+        = link_to "新規で出欠回答する", new_attendance_path(@user.unique_id), class: "attendance-answer-button"
+    = render "/layouts/ad_square"
+    .ad_space
