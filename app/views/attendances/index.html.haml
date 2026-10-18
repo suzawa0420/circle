@@ -13,11 +13,12 @@
         %h2 メンバーに出欠を確認する
         %p このページのURLを共有すると、登録なしで回答できます。
         .attendance-share__controls
-          .attendance-share__url.copyTarget= request.url
+          .attendance-share__url.copyTarget{ tabindex: "0", role: "region", "aria-label" => "共有URL（横にスクロールして全文を確認できます）" }= request.url
           %button.copyBtn.attendance-copy{ type: "button" }
             = lucide_icon "copy", **{ "aria-hidden" => "true" }
             URLをコピー
     - unless archived
+      = image_tag "/images/attendance_ogp.png", class: "attendance-illustration", alt: "ログイン不要で日程ごとに出欠を回答できる画面のイメージ", width: 1200, height: 630
       .attendance-intro
         %div
           %h2 次の活動への参加予定を教えてください

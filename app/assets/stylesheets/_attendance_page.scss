@@ -15,7 +15,8 @@
   .attendance-share { @include cb-card; margin-bottom: cb-space(6); }
   .attendance-share p { color: $cb-muted; @include cb-type(compact); }
   .attendance-share__controls { display: flex; align-items: center; flex-wrap: wrap; gap: cb-space(3); margin-top: cb-space(4); }
-  .attendance-share__url { flex: 1 1 220px; min-width: 0; overflow-wrap: anywhere; padding: cb-space(3); background: $cb-canvas; border-radius: $cb-radius-control; @include cb-type(compact); }
+  .attendance-share__url { flex: 1 1 220px; min-width: 0; max-width: 100%; white-space: nowrap; overflow-x: auto; overflow-wrap: normal; word-break: normal; padding: cb-space(3); background: $cb-canvas; border-radius: $cb-radius-control; @include cb-type(compact); @include cb-focus; }
+  .attendance-illustration { display: block; width: 100%; max-width: 600px; height: auto; margin: 0 auto cb-space(6); border: 1px solid $cb-border; border-radius: $cb-radius-card; }
   .attendance-copy { @include cb-button(secondary); flex: none; margin: 0; }
   .attendance-intro { margin-bottom: cb-space(6); display: flex; align-items: center; flex-wrap: wrap; gap: cb-space(4); }
   .attendance-intro > div { flex: 1 1 300px; }
@@ -81,7 +82,7 @@
   .attendance-gender-options label { display: inline-flex; align-items: center; gap: cb-space(2); min-height: 44px; margin: 0; font-weight: 400; }
   .attendance-gender-options input[type=radio] { position: static; width: 20px; height: 20px; margin: 0; accent-color: $cb-action; }
   .attendance-date-group { @include cb-card; margin: 0; min-width: 0; }
-  .attendance-date-group > legend { float: none; width: auto; max-width: 100%; @include cb-type(card-title); padding: 0 cb-space(2); margin: 0 0 cb-space(2); border: 0; }
+  .attendance-date-group > .attendance-date-heading { @include cb-type(card-title); padding: 0; margin: 0 0 cb-space(3); overflow-wrap: anywhere; }
   .attendance-date-time { display: inline-block; }
   .attendance-date-details { margin: 0 0 cb-space(4); color: $cb-muted; @include cb-type(compact); overflow-wrap: anywhere; }
   .attendance-date-details p { margin: 0; }

@@ -1,5 +1,5 @@
-%fieldset.attendance-date-group
-  %legend
+%section.attendance-date-group{ role: "group", "aria-labelledby" => f.field_id(:schedule_heading) }
+  %h2.attendance-date-heading{ id: f.field_id(:schedule_heading) }
     = Time.parse(schedule.day).strftime("%-m月%-d日(#{%w(日 月 火 水 木 金 土)[Time.parse(schedule.day).wday]})")
     - if schedule.time_s.present?
       %span.attendance-date-time
