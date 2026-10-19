@@ -72,6 +72,18 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Event OGP renderer (2026-10-19)
+
+Public schedule detail pages generate 1200 × 630 PNGs with a square image,
+up to three title lines and one public `venue` line. Member-only venue names,
+addresses and map fields are never selected by the image endpoint.
+`install_ogp_renderer.sh` installs `librsvg2-tools` on each server during verified
+deployment preparation. The existing Japanese fonts and ImageMagick handle
+text fallback and photo composition. No database migration is added. Generated
+PNGs are cached under `tmp/cache/schedule-ogp`; changed schedules or circle
+images receive a new versioned URL. A normal revert deployment restores the
+previous application; the additional renderer package may safely remain.
+
 ## Retiring secondary sports (2026-10-17)
 
 Secondary activities were already hidden from the edit form, but stored values

@@ -3,6 +3,7 @@
 require 'cgi'
 require 'digest'
 require 'json'
+require 'open3'
 require 'tmpdir'
 
 # A deterministic image, built exclusively from the public event information.
@@ -84,13 +85,17 @@ class ScheduleOgpImage
       photo.destroy!
 
       svg_path = File.join(directory, 'layout.svg')
+      layout_path = File.join(directory, 'layout.png')
       output_path = File.join(directory, 'ogp.png')
       File.write(svg_path, layout_svg)
       # Librsvg/fontconfig supplies fallback fonts for Japanese and Latin text.
       # Text is XML-escaped; no user data becomes a file path or command.
+      _output, _error, status = Open3.capture3('rsvg-convert', '--output', layout_path, svg_path)
+      raise MiniMagick::Error, 'OGP SVG rendering failed' unless status.success?
+
       MiniMagick::Tool::Convert.new do |command|
         command.background 'white'
-        command << "rsvg:#{svg_path}"
+        command << layout_path
         command << photo_path
         command.geometry '+48+75'
         command.composite

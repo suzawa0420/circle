@@ -81,6 +81,7 @@ jobs:
             cd /var/www/circle
             git fetch --no-tags origin "$DEPLOY_REF"
             git show "$DEPLOY_SHA:ops/al2023/install_ruby.sh" | bash
+            git show "$DEPLOY_SHA:ops/al2023/install_ogp_renderer.sh" | bash
             git show "$DEPLOY_SHA:ops/al2023/deploy.sh" | sudo -n runuser -u ec2-user -g nginx -- bash -s -- prepare "$DEPLOY_SHA"
   activate:
     needs: prepare
