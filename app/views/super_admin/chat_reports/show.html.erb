@@ -19,6 +19,7 @@
 <section class="wm-section wm-thread"><div class="wm-section-heading"><h2>会話履歴</h2></div>
   <% @messages.each do |message| %><article class="webmaster-card wm-message wm-message--<%= message.sender_role %>"><div class="wm-card-heading"><span class="message-role message-role--<%= message.automatic? ? "owner" : message.sender_role %>"><%= message.sender_label %></span><time class="wm-meta"><%= message.created_at.strftime('%Y/%m/%d %H:%M') %></time></div><div class="wm-body"><%= render 'conversations/message_revision', message: message %><%= render 'conversations/message_content', message: message %></div></article><% end %>
   <%= paginate @messages %>
+  <%= render 'conversations/member_suspension_notice', conversation: @report.conversation, messages: @messages, webmaster: true %>
 </section>
 
 <%= render 'conversations/image_viewer' %>

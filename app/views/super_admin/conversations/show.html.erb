@@ -13,6 +13,7 @@
       <div class="wm-body"><%= render 'conversations/message_revision', message: message %><%= render 'conversations/message_content', message: message %></div>
     </article>
   <% end %>
+  <%= render 'conversations/member_suspension_notice', conversation: @conversation, messages: @messages, webmaster: true %>
   <% if @messages.empty? %><%= render 'webmasters/shared/empty', message: 'メッセージはありません。' %><% end %>
   <%= paginate @messages %>
 </section>
