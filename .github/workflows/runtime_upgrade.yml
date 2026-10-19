@@ -36,7 +36,7 @@ jobs:
       DISABLE_SPRING: '1'
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y imagemagick fonts-droid-fallback libpq-dev nginx
+      - run: sudo apt-get update && sudo apt-get install -y imagemagick libmagickcore-6.q16-7-extra fonts-droid-fallback libpq-dev nginx
       - run: python3 ops/al2023/test_origin_guard.py
       - run: python3 -m unittest discover -s ops/al2023 -p test_sync_assets.py
       - run: python3 -m unittest discover -s ops/al2023 -p test_asset_compatibility.py
