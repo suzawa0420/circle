@@ -21,13 +21,15 @@ class ConversationsController < ApplicationController
       visible = visible.or(ChatMessage.where(sender_role: 'member', conversation_id: Conversation.where(source_user_id: current_admin_user.users.select(:id)).select(:id)))
     end
     # Automatic guidance alone must not expose an inquiry held before delivery.
-    latest = visible.where(conversation_id: inbox_scope.select(:id)).where.not(sender_role: 'system').select('conversation_id, MAX(COALESCE(released_at, created_at)) AS delivered_at, MAX(id) AS latest_id').group(:conversation_id)
+    latest = visible.where(conversation_id: inbox_scope.select(:id)).where.not(sender_role: 'system').select('conversation_id, MAX(GREATEST(COALESCE(released_at, created_at), edited_at, deleted_at)) AS delivered_at, MAX(id) AS latest_id').group(:conversation_id)
+    notes = inbox_private_notes
+    note_activity = notes.select('conversation_id, MAX(updated_at) AS noted_at').group(:conversation_id)
     @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
-      .includes(:conversation_reviews, :member, :source_user, user: :admin_user).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
+      .joins("LEFT JOIN (#{note_activity.to_sql}) inbox_notes ON inbox_notes.conversation_id = conversations.id")
+      .select('conversations.*, GREATEST(inbox.delivered_at, inbox_notes.noted_at) AS inbox_updated_at')
+      .includes(:conversation_reviews, :member, :source_user, user: :admin_user)
+      .order(Arel.sql('GREATEST(inbox.delivered_at, inbox_notes.noted_at) DESC, inbox.latest_id DESC, conversations.id DESC')).page(params[:page]).per(20)
     ids = @conversations.map(&:id)
-    notes = ConversationNote.none
-    notes = notes.or(ConversationNote.for_account(current_member)) if member_signed_in?
-    notes = notes.or(ConversationNote.for_account(current_admin_user)) if admin_user_signed_in?
     @private_notes = notes.where(conversation_id: ids).index_by { |note| [note.conversation_id, note.member_id, note.admin_user_id] }
     @no_show_conversation_ids = NoShowReport.where(conversation_id: ids).distinct.pluck(:conversation_id)
     @penalty_ids = Conversation.reported_unanswered.where(id: ids).pluck(:id)
@@ -55,12 +57,13 @@ class ConversationsController < ApplicationController
   def private_note
     body = params.require(:note).permit(:body).fetch(:body).to_s
     attributes = ConversationNote.account_attributes(private_note_account(@conversation))
-    ConversationNote.transaction do
+    note = ConversationNote.transaction do
       note = @conversation.conversation_notes.find_by(attributes) || @conversation.conversation_notes.create_or_find_by!(attributes)
       note.with_lock { note.update!(body: body) }
+      note
     end
     respond_to do |format|
-      format.json { render json: { saved: true } }
+      format.json { render json: { saved: true, updated_at: note.updated_at.iso8601(6) } }
       format.html { redirect_to conversations_path, notice: 'メモを保存しました。' }
     end
   rescue ActiveRecord::RecordInvalid
@@ -202,6 +205,20 @@ class ConversationsController < ApplicationController
   end
 
   private
+
+  def inbox_private_notes
+    notes = ConversationNote.none
+    if member_signed_in?
+      member_conversations = Conversation.where(member_id: current_member.id, source_user_id: nil)
+      notes = notes.or(ConversationNote.for_account(current_member).where(conversation_id: member_conversations.select(:id)))
+    end
+    if admin_user_signed_in?
+      owner_conversations = Conversation.for_owner(current_admin_user)
+      owner_conversations = owner_conversations.where('conversations.member_id IS NULL OR conversations.member_id <> ?', current_member.id) if member_signed_in?
+      notes = notes.or(ConversationNote.for_account(current_admin_user).where(conversation_id: owner_conversations.select(:id)))
+    end
+    notes
+  end
 
   helper_method :private_note_account
   def private_note_account(conversation)

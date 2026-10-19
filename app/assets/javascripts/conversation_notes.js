@@ -5,6 +5,28 @@
     var status = form.querySelector('.chat-private-note__state');
     var retry = form.querySelector('.chat-private-note__retry');
     var saved = input.value, timer, pending = null, composing = false;
+    var item = form.closest('.chat-talk-item');
+    function activityValue(value) { return Date.parse(String(value).replace(/(\.\d{3})\d+/, '$1')); }
+    function reorder() {
+      if (!item || document.activeElement === input) return;
+      var list = item.parentNode;
+      var siblings = Array.from(list.children);
+      var target = siblings.find(function (row) { return row !== item && activityValue(row.dataset.inboxUpdatedAt) < activityValue(item.dataset.inboxUpdatedAt); });
+      if (target) list.insertBefore(item, target);
+    }
+    function updateActivity(timestamp) {
+      if (!item || !timestamp || !Number.isFinite(activityValue(timestamp))) return;
+      if (activityValue(timestamp) > activityValue(item.dataset.inboxUpdatedAt)) item.dataset.inboxUpdatedAt = timestamp;
+      var time = item.querySelector('time');
+      if (time) {
+        var updated = new Date(activityValue(item.dataset.inboxUpdatedAt));
+        var today = new Date();
+        time.dateTime = item.dataset.inboxUpdatedAt;
+        var localDate = function (date) { return new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(date); };
+        time.textContent = localDate(updated) === localDate(today) ? new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(updated) : localDate(updated);
+      }
+      reorder();
+    }
     function dirty() { return pending !== null || input.value !== saved; }
     function message(text, success) { status.textContent = text; status.dataset.saved = String(!!success); }
     function save() {
@@ -25,6 +47,7 @@
       }).then(function (data) {
         if (data.saved !== true) throw new Error('Save failed');
         saved = value;
+        updateActivity(data.updated_at);
         pending = null;
         if (dirty()) return save();
         message('保存済み', true);
@@ -44,9 +67,10 @@
     }
     function compositionStart() { composing = true; window.clearTimeout(timer); }
     function compositionEnd() { composing = false; changed(); }
+    function blur() { save().then(reorder); }
     function submit(event) { event.preventDefault(); save(); }
     input.addEventListener('input', changed);
-    input.addEventListener('blur', save);
+    input.addEventListener('blur', blur);
     input.addEventListener('compositionstart', compositionStart);
     input.addEventListener('compositionend', compositionEnd);
     form.addEventListener('submit', submit);
@@ -54,7 +78,7 @@
     return { dirty: dirty, save: save, cleanup: function () {
       window.clearTimeout(timer);
       input.removeEventListener('input', changed);
-      input.removeEventListener('blur', save);
+      input.removeEventListener('blur', blur);
       input.removeEventListener('compositionstart', compositionStart);
       input.removeEventListener('compositionend', compositionEnd);
       form.removeEventListener('submit', submit);

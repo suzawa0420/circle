@@ -5,23 +5,27 @@ const source = fs.readFileSync('app/assets/javascripts/conversation_notes.js', '
 function element(values = {}) {
   return Object.assign({ events: {}, dataset: {}, addEventListener(name, fn) { this.events[name] = fn; }, removeEventListener(name) { delete this.events[name]; } }, values);
 }
-function setup() {
+function setup({ rows = null, focused = false } = {}) {
   const timers = new Map(), calls = [], visits = [];
   let serial = 0;
   const input = element({ value: '' });
   const status = element({ textContent: '' });
   const retry = element({ hidden: true });
-  const form = element({ action: '/conversations/private/messages-note', querySelector: selector => selector.includes('__input') ? input : selector.includes('__state') ? status : selector.includes('__retry') ? retry : { value: 'synthetic-csrf' } });
-  const document = element({ readyState: 'loading', querySelectorAll: () => [form] });
+  const time = {};
+  const list = rows && { children: rows, insertBefore(item, target) { const current = rows.indexOf(item); rows.splice(current, 1); rows.splice(rows.indexOf(target), 0, item); } };
+  const item = rows && rows[1];
+  if (rows) rows.forEach(row => { row.parentNode = list; row.querySelector = () => time; });
+  const form = element({ closest: () => item, action: '/conversations/private/messages-note', querySelector: selector => selector.includes('__input') ? input : selector.includes('__state') ? status : selector.includes('__retry') ? retry : { value: 'synthetic-csrf' } });
+  const document = element({ activeElement: focused ? input : null, readyState: 'loading', querySelectorAll: () => [form] });
   const window = element({ setTimeout(fn) { const id = ++serial; timers.set(id, fn); return id; }, clearTimeout(id) { timers.delete(id); }, Turbolinks: { visit(url) { visits.push(url); } } });
   vm.runInNewContext(source, { document, window, fetch(url, options) {
     return new Promise(resolve => calls.push({ url, options, resolve }));
   } });
   document.events.DOMContentLoaded();
-  return { input, status, retry, form, document, window, calls, timers, visits,
+  return { input, status, retry, form, document, window, calls, timers, visits, rows, time,
     type(value) { input.value = value; input.events.input(); },
     tick() { const tasks = Array.from(timers.values()); timers.clear(); tasks.forEach(fn => fn()); },
-    finish(index, good = true, redirected = false) { calls[index].resolve({ ok: good, redirected, json: async () => ({ saved: true }) }); }
+    finish(index, good = true, redirected = false, updated_at) { calls[index].resolve({ ok: good, redirected, json: async () => ({ saved: true, updated_at }) }); }
   };
 }
 const settle = () => new Promise(resolve => setImmediate(resolve));
@@ -76,5 +80,15 @@ const settle = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(revert.visits.length, 0);
   revert.finish(1); await settle();
   assert.deepEqual(revert.visits, ['/after-revert']);
+  const latest = { dataset: { inboxUpdatedAt: '2026-10-19T12:00:00.000000Z' } };
+  const older = { dataset: { inboxUpdatedAt: '2026-10-18T20:00:00.000000+09:00' } };
+  const ordered = setup({ rows: [latest, older], focused: true });
+  ordered.type('新しいメモ'); ordered.tick();
+  ordered.finish(0, true, false, '2026-10-19T22:00:00.123456+09:00'); await settle();
+  assert.equal(ordered.rows[0], latest, 'do not move an input while the user is typing');
+  ordered.document.activeElement = null;
+  ordered.input.events.blur(); await settle();
+  assert.equal(ordered.rows[0], older, 'move the latest saved memo above older messages after blur');
+  assert.equal(ordered.time.dateTime, '2026-10-19T22:00:00.123456+09:00');
   console.log('Private note autosave: IME, serialization, retry, clearing, navigation and session expiry passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

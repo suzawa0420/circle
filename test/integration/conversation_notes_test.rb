@@ -7,7 +7,7 @@ class ConversationNotesTest < ActionDispatch::IntegrationTest
 
   setup { create_chat_records }
 
-  test 'each participant has a private note with no message or inbox ordering changes' do
+  test 'each participant has a private note without changing messages or read state' do
     sign_in @member
     before = @conversation.attributes
     assert_no_difference 'ChatMessage.count' do
@@ -109,7 +109,79 @@ class ConversationNotesTest < ActionDispatch::IntegrationTest
     assert_equal 2, @conversation.conversation_notes.count
   end
 
+  test 'inbox sorts by own memo or visible message activity while peer notes and reads stay private' do
+    other = Conversation.for_member!(@circle, @other_member)
+    message = other.send_message!('member', 'こちらも参加希望です。')
+    @conversation.chat_messages.update_all(created_at: 3.hours.ago, updated_at: 3.hours.ago)
+    message.update_columns(created_at: 2.hours.ago, updated_at: 2.hours.ago)
+    sign_in @owner
+    assert_inbox_order other, @conversation
+    save_note '日程を確認する'
+    assert_inbox_order @conversation, other
+    peer_note = other.conversation_notes.create!(member: @other_member, body: '相手に見えないメモ')
+    peer_note.update_columns(updated_at: 1.day.from_now)
+    assert_inbox_order @conversation, other
+    message.update_columns(edited_at: 1.minute.from_now)
+    assert_inbox_order other, @conversation
+    @conversation.chat_messages.where(sender_role: 'member').first.update_column(:recipient_read_at, 2.minutes.from_now)
+    assert_inbox_order other, @conversation
+    @conversation.chat_messages.where(sender_role: 'member').first.update_column(:deleted_at, 3.minutes.from_now)
+    assert_inbox_order @conversation, other
+  end
+
+  test 'own memo sorting is applied before pagination and supports participant accounts' do
+    @conversation.chat_messages.update_all(created_at: 2.days.ago, updated_at: 2.days.ago)
+    20.times do |index|
+      circle = @circle.dup
+      circle.update!(name: "並び順検証#{index}")
+      conversation = Conversation.for_member!(circle, @member)
+      conversation.chat_messages.create!(sender_role: 'owner', body: '新しいメッセージ', created_at: 1.day.ago)
+    end
+    sign_in @member
+    get conversations_path
+    assert_select 'form[action=?]', private_note_conversation_path(@conversation), count: 0
+    save_note '次の参加予定を記録'
+    get conversations_path
+    assert_select '.chat-talk-item', count: 20
+    assert_select '.chat-talk-item:first-child form[action=?]', private_note_conversation_path(@conversation)
+  end
+
+  test 'a held peer message never changes the recipients order' do
+    other = Conversation.for_member!(@circle, @other_member)
+    other.send_message!('member', '参加を希望します。')
+    @conversation.chat_messages.update_all(created_at: 1.hour.ago, updated_at: 1.hour.ago)
+    held = @conversation.chat_messages.create!(sender_role: 'member', body: '未配信', moderation_status: 'held', edited_at: 1.day.from_now)
+    sign_in @owner
+    assert_inbox_order other, @conversation
+    held.moderate!('approve')
+    assert_inbox_order @conversation, other
+  end
+
+  test 'practice match notes sort only for their author and dual logins use the displayed account' do
+    source_owner = AdminUser.create!(email: 'note-order-practice@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    source = @circle.dup
+    source.update!(name: '並び順検証チーム', admin_user: source_owner)
+    practice = Conversation.for_circles!(@circle, source)
+    practice.chat_messages.create!(sender_role: 'member', body: '対戦相談', created_at: 1.hour.ago)
+    note = practice.conversation_notes.create!(admin_user: source_owner, body: '相談側のメモ')
+    note.update_column(:updated_at, 1.day.from_now)
+    sign_in @owner
+    assert_inbox_order @conversation, practice
+    practice.conversation_notes.create!(admin_user: @owner, body: '受信側のメモ')
+    assert_inbox_order practice, @conversation
+    sign_in @member
+    # The ordinary thread now shows the participant side, so the owner's note must not affect it.
+    @conversation.conversation_notes.create!(admin_user: @owner, body: '主催者側のみ', updated_at: 2.days.from_now)
+    assert_inbox_order practice, @conversation
+  end
+
   private
+
+  def assert_inbox_order(*conversations)
+    get conversations_path
+    assert_response :success
+    assert_equal conversations.map { |conversation| conversation_path(conversation) }, css_select('.chat-talk').map { |link| link['href'].split('#').first }
+  end
 
   def sign_in(account)
     scope = account.is_a?(Member) ? :member : :admin_user

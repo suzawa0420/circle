@@ -28,7 +28,8 @@
       <% incoming = role == 'member' ? 'owner' : 'member' %>
       <% latest = @latest_messages[conversation.id] %>
       <% unread = @unread_counts[role].fetch(conversation.id, 0) %>
-      <article class="chat-talk-item">
+      <% updated_at = conversation.inbox_updated_at.in_time_zone %>
+      <article class="chat-talk-item" data-inbox-updated-at="<%= updated_at.iso8601(6) %>">
       <%= link_to conversation_path(conversation, anchor: ('evaluation' if conversation.review_prompt_due?(role))), class: "chat-talk #{'chat-talk--unread' if unread.positive?}" do %>
         <%= render 'avatar', conversation: conversation, role: incoming %>
         <span class="chat-talk__content">
@@ -41,7 +42,7 @@
           <span class="chat-talk__preview"><%= 'あなた：' if latest&.sender_role == role %><%= latest&.preview_text %></span>
           <% if conversation.practice_match? %><span class="chat-talk__kind">対戦・練習試合</span><% end %>
         </span>
-        <span class="chat-talk__meta"><% if latest %><time datetime="<%= latest.created_at.iso8601 %>"><%= latest.created_at.to_date == Date.current ? latest.created_at.strftime('%H:%M') : latest.created_at.strftime('%-m/%-d') %></time><% end %><% if unread.positive? %><span class="chat-badge" aria-label="未読<%= unread %>件"><%= unread %></span><% end %></span>
+        <span class="chat-talk__meta"><time datetime="<%= updated_at.iso8601 %>"><%= updated_at.to_date == Date.current ? updated_at.strftime('%H:%M') : updated_at.strftime('%-m/%-d') %></time><% if unread.positive? %><span class="chat-badge" aria-label="未読<%= unread %>件"><%= unread %></span><% end %></span>
       <% end %>
       <% account_ids = ConversationNote.account_attributes(private_note_account(conversation)) %>
       <% note = @private_notes[[conversation.id, account_ids[:member_id], account_ids[:admin_user_id]]] %>
