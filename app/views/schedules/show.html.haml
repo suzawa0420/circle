@@ -1,4 +1,4 @@
-- set_meta_tags title: @meta_title,description: @meta_description,og: {image: @schedule.ogp_img},twitter: { card: 'summary_large_image'}
+- set_meta_tags title: @meta_title,description: @meta_description,og: {image: { _: @schedule.ogp_img, width: 1200, height: 630, type: 'image/png', alt: @schedule.title }},twitter: { card: 'summary_large_image', image: @schedule.ogp_img }
 .user_main.users-index.ad_bottom_space.schedule-detail
   .container
     = render "/schedules/public_detail"

@@ -3,11 +3,7 @@
 module ScheduleDecorator
 
   def ogp_img
-    if top_image.present?
-      self.top_image.url
-    else
-      default_ogp_image_url
-    end
+    ogp_user_schedule_url(user_id, id, format: :png, v: ScheduleOgpImage.version_for(self))
   end
 
 end

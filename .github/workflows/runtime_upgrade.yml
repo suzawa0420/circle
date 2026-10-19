@@ -36,7 +36,7 @@ jobs:
       DISABLE_SPRING: '1'
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y imagemagick libpq-dev nginx
+      - run: sudo apt-get update && sudo apt-get install -y imagemagick fonts-droid-fallback libpq-dev nginx
       - run: python3 ops/al2023/test_origin_guard.py
       - run: python3 -m unittest discover -s ops/al2023 -p test_sync_assets.py
       - run: python3 -m unittest discover -s ops/al2023 -p test_asset_compatibility.py
@@ -76,6 +76,8 @@ jobs:
       - name: Test shared site design and navigation
         run: |
           bundle exec ruby test/helpers/ogp_meta_tags_test.rb
+          bundle exec ruby test/services/schedule_ogp_image_test.rb
+          bundle exec rails test test/integration/schedule_ogp_images_test.rb
           bundle exec ruby test/helpers/circle_listing_titles_helper_test.rb
           bundle exec rails test test/integration/site_design_test.rb test/integration/breadcrumbs_test.rb test/integration/matches_design_test.rb test/integration/home_portal_test.rb test/integration/circle_faq_test.rb test/integration/circle_structured_data_test.rb test/helpers/structured_data_helper_test.rb test/integration/circle_contact_warning_test.rb test/integration/circle_inquiry_guidance_test.rb
       - name: Test public structured data and audience discovery

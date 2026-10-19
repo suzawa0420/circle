@@ -60,15 +60,11 @@ class OgpMetaTagsTest < Minitest::Test
     assert_equal @view.default_ogp_image_url, record.ogp_img
   end
 
-  def test_blog_and_schedule_without_images_use_the_default
+  def test_blog_without_images_uses_the_default
     circle = Struct.new(:pic_profile, :pic_header).new(nil, nil)
     blog = decorated_record(BlogDecorator, image_01: nil, user: circle)
-    schedule = decorated_record(ScheduleDecorator, top_image: nil)
     assert_equal @view.default_ogp_image_url, blog.ogp_img
-    assert_equal @view.default_ogp_image_url, schedule.ogp_img
     blog.define_singleton_method(:image_01) { Upload.new('blog.jpg') }
-    schedule.define_singleton_method(:top_image) { Upload.new('event.jpg') }
     assert_equal 'blog.jpg', blog.ogp_img
-    assert_equal 'event.jpg', schedule.ogp_img
   end
 end
