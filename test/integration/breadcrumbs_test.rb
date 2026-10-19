@@ -151,7 +151,8 @@ class BreadcrumbsTest < ActionDispatch::IntegrationTest
   end
 
   test 'all application GET routes have a breadcrumb label fallback' do
-    excluded = %w[healthcheck sitemaps listing_images chat_images redirect]
+    # Binary image responses do not render page navigation.
+    excluded = %w[healthcheck sitemaps listing_images chat_images schedule_ogp_images redirect]
     Rails.application.routes.routes.each do |route|
       next unless route.verb.include?('GET')
       controller = route.defaults[:controller]
