@@ -2,6 +2,8 @@
 
 # Image requests do not need page navigation, session state or attendance data.
 class ScheduleOgpImagesController < ActionController::Base
+  rescue_from ActiveRecord::RecordNotFound, with: -> { head :not_found }
+
   def show
     circle = User.publicly_visible.find(params[:user_id])
     schedule = circle.schedules.select(:id, :user_id, :title, :day, :time_s,

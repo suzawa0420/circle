@@ -167,7 +167,7 @@ Rails.application.routes.draw do
 		resources :matches, only: [:new, :create]
 		resources :links, only: [:new, :create]
     resources :schedules do
-      get :ogp, on: :member, to: 'schedule_ogp_images#show', defaults: { format: 'png' }
+      get :ogp, on: :member, to: 'schedule_ogp_images#show'
     end
     resources :questions
     resources :reviews
