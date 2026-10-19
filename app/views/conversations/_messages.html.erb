@@ -16,8 +16,12 @@
       </div>
       <% unless message.delivered? %><p class="chat-moderation-note"><%= message.moderation_status == 'held' ? '運営が確認しています。相手にはまだ配信されていません。' : '運営が配信を見送りました。相手には配信されていません。' %></p><% end %>
       <div class="chat-message__row">
-        <div class="chat-body"><%= render 'conversations/image', message: message %><%= chat_message_body(message.body) if message.body.present? %></div>
+        <div class="chat-body <%= 'chat-body--deleted' if message.deleted_at %>">
+          <%= render 'conversations/message_content', message: message %>
+          <%= render 'conversations/message_actions', message: message if message.changeable_by?(@role) %>
+        </div>
         <div class="chat-message__meta">
+          <%= render 'conversations/message_revision', message: message %>
           <% if mine %><span class="chat-read-receipt" data-message-id="<%= message.id %>"><%= message.receipt_text(@conversation) %></span><% end %>
           <time datetime="<%= message.created_at.iso8601 %>" title="<%= message.created_at.strftime('%Y年%-m月%-d日 %H:%M') %>"><%= message.created_at.strftime('%H:%M') %></time>
         </div>

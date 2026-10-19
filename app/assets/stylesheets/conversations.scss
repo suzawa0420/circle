@@ -292,3 +292,15 @@ body.cb-site .chat-shell .chat-review-prompt-badge { display: inline-block; marg
 .chat-inquiry-context__description { margin: 8px 0; font-size: 13px; line-height: 1.7; letter-spacing: 0; color: $cb-system-hover; }
 
 @media (max-width: 360px) { .chat-inquiry-context__description { font-size: 12px; } }
+
+.chat-message__actions { display: flex; align-items: flex-start; justify-content: flex-end; gap: 14px; margin-top: 8px; font-size: 11px; color: $cb-muted; }
+.chat-message__actions summary { cursor: pointer; }
+.chat-message__actions .chat-message__delete-form { margin: 0; }
+.chat-message__actions .chat-message__delete { margin: 0; padding: 0; min-height: 24px; border: 0; background: transparent; color: $cb-muted; font-size: 11px; line-height: 2; text-decoration: underline; cursor: pointer; }
+.chat-message__edit[open] { flex: 1; min-width: 0 !important; }
+.chat-message__edit form { width: min(220px, 43vw); max-width: 100%; }
+.chat-message__edit textarea { display: block; width: 100%; max-width: 100%; margin: 6px 0; color: $cb-text; font-size: 16px; }
+.chat-message__edit .chat-message__edit-help { font-size: 11px; line-height: 1.6; color: $cb-muted; margin-bottom: 8px; }
+.chat-body.chat-body--deleted { background: #f1f3f5; border-radius: 12px; color: $cb-muted; }
+.chat-body .chat-deletion-notice { font-size: 12px; }
+.chat-revision { font-size: 11px; color: $cb-muted; }

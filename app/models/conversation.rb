@@ -20,14 +20,14 @@ class Conversation < ApplicationRecord
 
   NO_REPLY_WAIT = 3.days
   scope :reported_unanswered, -> {
-    delivered_inquiries = ChatMessage.deliverable.where(sender_role: 'member')
+    delivered_inquiries = ChatMessage.deliverable.where(sender_role: 'member', deleted_at: nil)
       .where('COALESCE(chat_messages.released_at, chat_messages.created_at) <= ?', NO_REPLY_WAIT.ago)
       .select(:conversation_id)
     where(source_user_id: nil, respond_check: 'NG', accepted_at: nil, id: delivered_inquiries)
   }
 
   def no_reply_reportable_at
-    first_inquiry = chat_messages.deliverable.where(sender_role: 'member')
+    first_inquiry = chat_messages.deliverable.where(sender_role: 'member', deleted_at: nil)
       .order(Arel.sql('COALESCE(chat_messages.released_at, chat_messages.created_at) ASC, id ASC')).first
     (first_inquiry.released_at || first_inquiry.created_at) + NO_REPLY_WAIT if first_inquiry
   end
@@ -47,8 +47,8 @@ class Conversation < ApplicationRecord
   def unanswered_message_for(role)
     raise NotAllowed, 'この操作はできません。' unless ROLES.include?(role) && !practice_match?
     peer = role == 'member' ? 'owner' : 'member'
-    last_reply = chat_messages.deliverable.where(sender_role: peer).delivery_order.first
-    outgoing = chat_messages.deliverable.where(sender_role: role)
+    last_reply = chat_messages.deliverable.where(sender_role: peer, deleted_at: nil).delivery_order.first
+    outgoing = chat_messages.deliverable.where(sender_role: role, deleted_at: nil)
     if last_reply
       delivered_at = last_reply.released_at || last_reply.created_at
       outgoing = outgoing.where('(COALESCE(released_at, created_at), id) > (?, ?)', delivered_at, last_reply.id)

@@ -9,10 +9,10 @@
       <div class="wm-card-heading"><strong><%= message.conversation.user.name %></strong><%= render 'conversations/kind_badge', conversation: message.conversation %><span class="wm-badge"><%= message.spam_score %>点</span></div>
       <p class="wm-meta"><%= message.conversation.participant_name('member') %> ／ <%= message.created_at.strftime('%Y/%m/%d %H:%M') %> ／ <%= ChatMessage::STATUSES.fetch(message.moderation_status) %></p>
       <ul><% message.spam_reasons.each do |reason| %><% label, points = ChatSpamDetector::REASONS.fetch(reason, ['その他', 0]) %><li><%= label %>（<%= points %>点）</li><% end %></ul>
-      <div class="wm-body"><%= render 'conversations/image', message: message %><%= chat_message_body(message.body) %></div>
+      <div class="wm-body"><%= render 'conversations/message_revision', message: message %><%= render 'conversations/message_content', message: message %></div>
       <div class="wm-actions">
         <%= link_to '会話を確認', super_admin_conversation_path(message.conversation), class: 'wm-button wm-button--secondary' %>
-        <% if message.moderation_status == 'held' %>
+        <% if message.moderation_status == 'held' && message.deleted_at.nil? %>
           <%= button_to '配信を許可', super_admin_chat_moderation_path(message), method: :patch, params: { decision: 'approve' }, class: 'wm-button', data: { confirm: 'この投稿を相手に配信しますか？' } %>
           <%= button_to 'スパムと確認', super_admin_chat_moderation_path(message), method: :patch, params: { decision: 'spam' }, class: 'wm-button wm-button--secondary', data: { confirm: '相手には配信せず、本文のURLを今後のスパム判定に使います。よろしいですか？' } %>
         <% end %>

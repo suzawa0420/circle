@@ -2,7 +2,7 @@ class ConversationsController < ApplicationController
   before_action :authenticate_chat_account!
   before_action :private_page
   before_action :load_conversation, except: [:index, :new, :create]
-  before_action :require_verified_chat_sender, only: [:new, :create, :message, :review]
+  before_action :require_verified_chat_sender, only: [:new, :create, :message, :review, :update_message, :delete_message]
   before_action :require_japanese_member_profile, only: [:new, :create, :message]
   rescue_from Conversation::NotAllowed, with: :invalid_action
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record
@@ -106,6 +106,18 @@ class ConversationsController < ApplicationController
     redirect_to conversation_path(@conversation), notice: @conversation.practice_match? ? 'ブロックしました。過去の履歴は残ります。' : 'ブロックしました。評価権や過去の履歴は残ります。'
   end
 
+  def update_message
+    message = @conversation.chat_messages.find(params[:message_id])
+    message.revise!(@role, body: params.require(:message).permit(:body).fetch(:body))
+    redirect_to conversation_path(@conversation, anchor: "chat-message-#{message.id}"), notice: 'メッセージを編集しました。'
+  end
+
+  def delete_message
+    message = @conversation.chat_messages.find(params[:message_id])
+    message.revise!(@role, delete: true)
+    redirect_to conversation_path(@conversation, anchor: "chat-message-#{message.id}"), notice: 'メッセージを削除しました。'
+  end
+
   def unblock
     @conversation.with_lock { @conversation.update!("#{@role}_blocked" => false) }
     redirect_to conversation_path(@conversation), notice: 'ご自身のブロックを解除しました。'
@@ -197,7 +209,7 @@ class ConversationsController < ApplicationController
 
   helper_method :history_version
   def history_version
-    Digest::SHA256.hexdigest(@messages.map { |m| [m.id, m.moderation_status, m.released_at&.iso8601(6)] }.to_json)
+    Digest::SHA256.hexdigest(@messages.map { |m| [m.id, m.moderation_status, m.released_at&.iso8601(6), m.edited_at&.iso8601(6), m.deleted_at&.iso8601(6), m.changeable_by?(@role)] }.to_json)
   end
 
   def private_page

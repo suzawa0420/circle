@@ -1,0 +1,5 @@
+<% if message.deleted_at %>
+  <span class="chat-revision" title="<%= l(message.deleted_at, format: :long) %>">削除済み</span>
+<% elsif message.edited_at %>
+  <span class="chat-revision" title="<%= l(message.edited_at, format: :long) %>">編集済み</span>
+<% end %>

@@ -19,6 +19,46 @@ class ChatMessage < ApplicationRecord
 
   def delivered? = moderation_status.in?(%w[delivered approved])
 
+  CHANGE_WINDOW = 12.hours
+
+  def changeable_by?(role, now: Time.current)
+    !automatic? && sender_role == role && deleted_at.nil? &&
+      created_at.present? && created_at <= now && created_at + CHANGE_WINDOW > now
+  end
+
+  def deletion_notice
+    "#{conversation.participant_name(sender_role)}さんがメッセージを削除しました。"
+  end
+
+  def revise!(role, body: nil, delete: false)
+    conversation.with_lock do
+      with_lock do
+        raise Conversation::NotAllowed, '自分が送信した12時間以内のメッセージのみ編集・削除できます。' unless changeable_by?(role)
+        conversation.ensure_active_sender!(role)
+        if delete
+          # Retain the record and moderation evidence; all displays hide its contents.
+          update!(deleted_at: Time.current)
+        else
+          return false if self.body == body.to_s
+          self.body = body.to_s
+          self.edited_at = Time.current
+          if sender_role == 'member'
+            result = ChatSpamDetector.evaluate(conversation, self.body)
+            self.spam_score, self.spam_reasons, self.spam_fingerprint = result.score, result.reasons, result.fingerprint
+            if result.held? || !delivered?
+              self.moderation_status = 'held'
+              self.reviewed_at = nil
+              self.released_at = nil
+              self.recipient_read_at = nil
+            end
+          end
+          save!
+        end
+        true
+      end
+    end
+  end
+
   def receipt_text(conversation)
     return moderation_status == 'held' ? '運営確認中' : '未配信' unless delivered?
     conversation.message_read?(self) ? '既読' : '未読'
@@ -28,7 +68,7 @@ class ChatMessage < ApplicationRecord
     raise ArgumentError unless decision.in?(%w[approve spam])
     conversation.with_lock do
       with_lock do
-        return false unless moderation_status == 'held'
+        return false unless moderation_status == 'held' && deleted_at.nil?
         update!(moderation_status: decision == 'approve' ? 'approved' : 'spam', reviewed_at: Time.current,
                 released_at: decision == 'approve' ? Time.current : nil, recipient_read_at: nil)
         if decision == 'approve'
@@ -44,7 +84,9 @@ class ChatMessage < ApplicationRecord
   end
 
   def preview_text
+    return deletion_notice if deleted_at
     content = image? ? ['写真', body.presence].compact.join('：') : body
+    content = "（編集済み）#{content}" if edited_at
     delivered? ? content : "［#{STATUSES.fetch(moderation_status)}］#{content}"
   end
 

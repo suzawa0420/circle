@@ -1,0 +1,6 @@
+<% if message.deleted_at %>
+  <p class="chat-deletion-notice"><%= message.deletion_notice %></p>
+<% else %>
+  <%= render 'conversations/image', message: message %>
+  <%= message.automatic? ? automatic_message_body(message.body) : chat_message_body(message.body) %>
+<% end %>
