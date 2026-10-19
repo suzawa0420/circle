@@ -56,7 +56,7 @@ class ScheduleOgpImage
   # Conservative glyph widths keep both Japanese and unbroken Latin text
   # inside their columns. Work on graphemes so combining marks stay together.
   def wrap(value, size:, width:, lines:)
-    text = ActionView::Base.full_sanitizer.sanitize(value.to_s).squish
+    text = CGI.unescapeHTML(ActionView::Base.full_sanitizer.sanitize(value.to_s)).squish
     characters = text.scan(/\X/).first(1000)
     result = []
     lines.times do |line_index|

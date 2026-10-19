@@ -40,11 +40,11 @@ class ScheduleOgpImageTest < Minitest::Test
   end
 
   def test_svg_escapes_user_text_and_contains_only_the_public_venue
-    @schedule.title = '<b>初心者歓迎</b> & %[@secret]'
+    @schedule.title = '<b>初心者歓迎</b> & 交流会'
     @schedule.venue = '東京都新宿区'
     xml = Nokogiri::XML(@image.send(:layout_svg)) { |config| config.strict }
     texts = xml.xpath('//*[local-name()="text"]').map(&:text)
-    assert_includes texts.join, '初心者歓迎 &'
+    assert_includes texts, '初心者歓迎 & 交流会'
     assert_includes texts, '東京都新宿区'
     assert_equal 1, texts.count('東京都新宿区')
     assert_empty xml.xpath('//*[local-name()="b"]')
