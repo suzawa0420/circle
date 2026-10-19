@@ -78,6 +78,8 @@ jobs:
           bundle exec ruby test/helpers/ogp_meta_tags_test.rb
           bundle exec ruby test/services/schedule_ogp_image_test.rb
           bundle exec rails test test/integration/schedule_ogp_images_test.rb
+          bundle exec rails test test/integration/schedule_sharing_test.rb
+          node test/security/schedule_share_js_test.js
           bundle exec ruby test/helpers/circle_listing_titles_helper_test.rb
           bundle exec rails test test/integration/site_design_test.rb test/integration/breadcrumbs_test.rb test/integration/matches_design_test.rb test/integration/home_portal_test.rb test/integration/circle_faq_test.rb test/integration/circle_structured_data_test.rb test/helpers/structured_data_helper_test.rb test/integration/circle_contact_warning_test.rb test/integration/circle_inquiry_guidance_test.rb
       - name: Test public structured data and audience discovery

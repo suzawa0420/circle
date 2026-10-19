@@ -50,7 +50,6 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 
       record_circle_activity(@user, @schedule)
 
-      @schedule = Schedule.where(user_id: @user.id).last
       @schedule.date = Time.parse(@schedule.day).strftime("%Y年%-m月%-d日(#{%w(日曜日 月曜日 火曜日 水曜日 木曜日 金曜日 土曜日)[Time.parse(@schedule.day).wday]})")
       if @copy_schedule
         if @schedule.top_image.blank?
@@ -65,8 +64,9 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
       cb_point(@user)
       @user.save
 
-      flash[:notice] = "追加しました！"
-      redirect_to user_schedules_path
+      flash[:created_schedule_id] = @schedule.id
+      flash[:notice] = 'イベントを作成しました。' unless @user.publicly_visible?
+      redirect_to user_schedule_path(@user, @schedule)
     else
       set_copy_schedules
       @btn_name = "新規作成"

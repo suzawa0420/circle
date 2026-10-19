@@ -25,13 +25,14 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     assert_select ".schedule-detail__management a[href='#{edit_user_schedule_path(@circle, @source)}'] svg.cb-icon--square-pen"
     assert_select ".schedule-detail__management a[href='#{new_user_schedule_path(@circle, copy: @source.id)}'] svg.cb-icon--copy"
     assert_select '.schedule-detail__management a[href*=copy_mode] svg.cb-icon--calendar-plus'
-    assert_select '.schedule-detail__share a[target=_blank][rel=noopener] svg.cb-icon--share-2'
+    assert_select '.schedule-share a[target=_blank][rel~=noopener] svg.cb-icon--external-link', count: 2
     assert_select ".schedule-detail__actions a[href='#{circle_path(@circle)}'].schedule-detail__button svg.cb-icon--info"
     assert_select ".schedule-detail__actions a[href='#{user_schedules_path(@circle)}'].schedule-detail__button svg.cb-icon--calendar-days"
     delete destroy_admin_user_session_path
     get user_schedule_path(@circle, @source)
     assert_select '.schedule-detail__management', count: 0
-    assert_select '.schedule-detail__share .schedule-detail__button', count: 1
+    assert_select '.schedule-share [data-share-destination]', count: 2
+    assert_select '.schedule-share [data-share-copy]', count: 2
   end
 
   test 'creation and owner detail provide both copy actions' do
@@ -73,8 +74,8 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     assert_difference 'Schedule.count', 1 do
       post user_schedules_path(@circle), params: { copy: @source.id, schedule: attributes }
     end
-    assert_redirected_to user_schedules_path(@circle)
     created = @circle.schedules.order(:id).last
+    assert_redirected_to user_schedule_path(@circle, created)
     assert_equal '2027-01-07', created.day
     assert_equal '翌週の練習', created.title
     assert_equal '19:00', created.time_s.strftime('%H:%M')
@@ -113,8 +114,8 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     end
     post user_schedules_path(@circle), params: { copy: @source.id,
       schedule: { day: '2027-01-05', title: @source.title, venue: @source.venue } }
-    assert_redirected_to user_schedules_path(@circle)
     created = @circle.schedules.order(:id).last
+    assert_redirected_to user_schedule_path(@circle, created)
     assert created.top_image.present?
     assert_equal File.binread(@source.top_image.path), File.binread(created.top_image.path)
   ensure

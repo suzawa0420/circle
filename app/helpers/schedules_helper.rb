@@ -1,6 +1,26 @@
 module SchedulesHelper
   SCHEDULE_WEEKDAYS = %w[日 月 火 水 木 金 土].freeze
 
+  # Never carry request parameters or a member-only URL into a public share.
+  def schedule_share_url(schedule)
+    "https://circle-book.com#{user_schedule_path(schedule.user_id, schedule.id)}"
+  end
+
+  def schedule_share_text(schedule)
+    plain = ->(value, length) { CGI.unescapeHTML(strip_tags(value.to_s)).squish.truncate(length) }
+    date = Date.iso8601(schedule.day)
+    lines = [plain.call(schedule.title.presence || 'イベント', 50), '',
+      "#{date.strftime('%Y年%-m月%-d日')}（#{SCHEDULE_WEEKDAYS[date.wday]}）"]
+    lines << calendar_schedule_time(schedule) if schedule.time_s || schedule.time_e
+    lines << "場所：#{plain.call(schedule.venue, 25)}" if schedule.venue.present?
+    lines.concat(['', '詳細・お問い合わせはこちら']).join("\n")
+  end
+
+  def schedule_share_intent(destination, text:, url:)
+    base = destination == :threads ? 'https://www.threads.com/intent/post' : 'https://twitter.com/intent/tweet'
+    "#{base}?#{ { text: text, url: url }.to_query }"
+  end
+
   def event_listing_heading(title)
     period = @relative_day.presence || (@event_date.present? ? @day : nil)
     context = "#{@prefecture&.name || '全国'}の#{@event&.name}"

@@ -1,8 +1,15 @@
 <% accepted_count = @schedule.name_schedules.where(answer: 1).count %>
 <% status = public_schedule_status(@schedule, accepted_count: accepted_count) %>
 <% date = Date.iso8601(@schedule.day) %>
+<% shareable = @user.publicly_visible? %>
+<% share_owner = can_manage_circle?(@user) %>
+<% just_created = shareable && share_owner && flash[:created_schedule_id].to_s == @schedule.id.to_s %>
 <%= link_to event_listing_path({ event: @user.event.ruby, pref: @user.prefecture.kana }, date: date), class: 'schedule-detail__back' do %>
   <%= lucide_icon 'chevron-right' %><%= calendar_schedule_date(date) %>の<%= @user.event.name %>一覧
+<% end %>
+
+<% if just_created %>
+  <%= render 'schedules/share', schedule: @schedule, owner: true, created: true %>
 <% end %>
 
 <article class="schedule-detail__card">
@@ -91,9 +98,11 @@
 <% end %>
 
 <p class="schedule-detail__notice">募集状況は変更されることがあります。参加前に主催者からの案内をご確認ください。</p>
-<div class="schedule-detail__share">
-  <%= link_to 'https://twitter.com/intent/tweet?' + { url: request.original_url, text: "#{@user.name}の活動｜#{@schedule.title}" }.to_query, class: 'schedule-detail__button schedule-detail__button--participant', target: '_blank', rel: 'noopener' do %><%= lucide_icon 'share-2' %><span>この活動を共有</span><% end %>
-</div>
+<% if shareable && !just_created %>
+  <%= render 'schedules/share', schedule: @schedule, owner: share_owner, created: false %>
+<% elsif just_created %>
+  <%= link_to '#schedule-share', class: 'schedule-detail__back', data: { schedule_share_reopen: true } do %><%= lucide_icon 'share-2' %>このイベントをSNSで知らせる<% end %>
+<% end %>
 
 <% if @schedules.where.not(id: @schedule.id).exists? || @past_schedules.where.not(id: @schedule.id).exists? %>
   <section class="schedule-detail__related">

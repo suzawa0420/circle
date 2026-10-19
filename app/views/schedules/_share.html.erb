@@ -1,0 +1,30 @@
+<% share_url = schedule_share_url(schedule) %>
+<% share_text = schedule_share_text(schedule) %>
+<% regular_heading = owner ? 'このイベントをSNSで知らせる' : '友だちにこのイベントを共有する' %>
+<details id="schedule-share" class="schedule-share schedule-detail__card" data-schedule-share data-share-url="<%= share_url %>" data-share-title="<%= schedule.title %>" data-share-heading="<%= regular_heading %>" data-share-created="<%= created %>" <%= 'open' if created %>>
+  <summary class="schedule-share__summary">
+    <%= lucide_icon 'share-2' %>
+    <h2 data-share-heading><%= created ? 'イベントを公開しました！' : regular_heading %></h2>
+    <%= lucide_icon 'chevron-down', class: 'schedule-share__chevron' %>
+  </summary>
+  <div class="schedule-share__body">
+    <p class="schedule-share__lead"><%= created ? 'SNSでイベントを知らせましょう。' : '投稿文を調整して、SNSやメッセージで気軽に共有できます。' %></p>
+    <%= image_tag schedule.ogp_img, alt: '共有されるイベント画像のプレビュー', width: 1200, height: 630, loading: 'lazy', decoding: 'async', class: 'schedule-share__preview' %>
+    <label for="schedule-share-text" class="schedule-share__label">投稿文</label>
+    <%= text_area_tag nil, share_text, id: 'schedule-share-text', class: 'schedule-share__text', rows: 7, maxlength: 1000, data: { share_text: true }, aria: { describedby: 'schedule-share-help' } %>
+    <p id="schedule-share-help" class="schedule-share__help">公開URLは共有時に自動で追加されます。投稿先の画面で内容を確認して投稿してください。</p>
+    <div class="schedule-share__actions">
+      <%= link_to schedule_share_intent(:x, text: share_text, url: share_url), class: 'schedule-detail__button schedule-share__post', target: '_blank', rel: 'noopener noreferrer', data: { share_destination: 'x' } do %><%= lucide_icon 'external-link' %><span>Xに投稿</span><% end %>
+      <%= link_to schedule_share_intent(:threads, text: share_text, url: share_url), class: 'schedule-detail__button schedule-share__post', target: '_blank', rel: 'noopener noreferrer', data: { share_destination: 'threads' } do %><%= lucide_icon 'external-link' %><span>Threadsに投稿</span><% end %>
+      <button type="button" class="schedule-detail__button" data-share-copy="post"><%= lucide_icon 'copy' %><span>投稿文をコピー</span></button>
+      <button type="button" class="schedule-detail__button" data-share-copy="url"><%= lucide_icon 'link' %><span>URLをコピー</span></button>
+      <button type="button" class="schedule-detail__button schedule-share__native" data-share-native hidden><%= lucide_icon 'share-2' %><span>ほかのアプリで共有</span></button>
+    </div>
+    <noscript><p class="schedule-share__help">コピーするには、投稿文と下の公開URLを選択してください。</p></noscript>
+    <label for="schedule-share-url" class="schedule-share__label schedule-share__url-label">イベントの公開URL</label>
+    <%= text_field_tag nil, share_url, id: 'schedule-share-url', class: 'schedule-share__url', readonly: true %>
+    <p class="schedule-share__status" data-share-status role="status" aria-live="polite" aria-atomic="true"></p>
+    <textarea data-share-manual class="schedule-share__text" readonly hidden aria-label="手動でコピーする内容"></textarea>
+    <% if created %><button type="button" class="schedule-share__later" data-share-dismiss>あとで共有する</button><% end %>
+  </div>
+</details>
