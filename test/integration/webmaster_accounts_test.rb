@@ -29,6 +29,37 @@ class WebmasterAccountsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'account search navigates normally and filters suspended participants and owners' do
+    @member.update!(suspended_at: Time.current)
+    @owner.update!(suspended_at: Time.current)
+    active_owner = AdminUser.create!(email: 'active-owner@example.test', password: 'test-password-123')
+    login_master
+
+    [['member', @member, @other_member], ['owner', @owner, active_owner]].each do |kind, suspended, active|
+      get super_admin_accounts_path, params: { kind: kind, state: 'suspended' }
+      assert_response :success
+      assert_select 'form.wm-account-search[method="get"]' do
+        assert_select '[data-remote="true"]', count: 0
+        assert_select 'input[name="kind"][value=?]', kind
+        assert_select 'select[name="state"] option[selected][value="suspended"]', count: 1
+      end
+      assert_select 'form.wm-account-search[data-remote="true"]', count: 0
+      assert_includes response.body, suspended.email
+      assert_not_includes response.body, active.email
+      assert_select '.wm-account-card__actions', count: 1 do
+        assert_select '.wm-badge', text: '利用停止中'
+        assert_select 'a', text: '詳細を確認'
+      end
+
+      get super_admin_accounts_path, params: { kind: kind, state: 'suspended', q: active.email }
+      assert_response :success
+      assert_select '.wm-account-card', count: 0
+      get super_admin_accounts_path, params: { kind: kind }
+      assert_includes response.body, suspended.email
+      assert_includes response.body, active.email
+    end
+  end
+
   test 'confirmation required and suspension can be reversed' do
     login_master
     patch super_admin_account_path(@member), params: { operation: 'suspend', reason: '不適切な投稿' }

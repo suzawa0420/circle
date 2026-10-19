@@ -170,3 +170,19 @@
   .wm-report-filter__controls select { flex: 1 1 0; width: 0; min-width: 0; margin: 0; }
   .wm-report-filter__controls input[type=submit] { flex: 0 0 auto; height: 48px; margin: 0; }
 }
+
+.webmaster-page {
+  .wm-account-search { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 1fr); align-items: end; gap: 16px; margin-top: 20px; }
+  .wm-account-search__filter { display: flex; align-items: end; gap: 12px; min-width: 0; }
+  .wm-account-search__filter .wm-field { flex: 1; min-width: 0; }
+  .wm-account-search input[type=search], .wm-account-search select { width: 100%; height: 48px; margin: 0; }
+  .wm-account-search__filter input[type=submit] { flex-shrink: 0; height: 48px; margin: 0; }
+  .wm-account-card { display: grid; gap: 16px; }
+  .wm-account-card__identity { min-width: 0; overflow-wrap: anywhere; }
+  .wm-account-card__identity .wm-meta { margin-top: 4px; }
+  .wm-account-card__actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .wm-account-card__actions .wm-button { margin: 0; flex-shrink: 0; }
+}
+@media (max-width: 767px) {
+  .webmaster-page .wm-account-search { grid-template-columns: minmax(0, 1fr); }
+}

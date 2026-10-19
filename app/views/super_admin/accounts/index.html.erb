@@ -1,21 +1,25 @@
 <%= render 'webmasters/shared/page_header', title: "#{@label}管理", description: '登録情報・やり取り・通報を確認し、利用停止や解除を行います。' %>
 <div class="wm-actions"><%= link_to '参加者', super_admin_accounts_path, class: 'wm-button' %><%= link_to '主催者', super_admin_accounts_path(kind: 'owner'), class: 'wm-button' %></div>
-<%= form_with url: super_admin_accounts_path, method: :get, class: 'wm-inline-form' do %>
+<%= form_with url: super_admin_accounts_path, method: :get, local: true, class: 'wm-account-search' do %>
   <%= hidden_field_tag :kind, @kind %>
   <div class="wm-field"><%= label_tag :q, 'ニックネーム・メールアドレス' %><%= search_field_tag :q, params[:q] %></div>
+  <div class="wm-account-search__filter">
   <div class="wm-field"><%= label_tag :state, '利用状態' %><%= select_tag :state, options_for_select([['すべて', ''], ['利用停止中', 'suspended']], params[:state]) %></div><%= submit_tag '検索' %>
+  </div>
 <% end %>
 <section class="wm-section wm-list">
 <% if @kind == 'owner' && @accounts.any? %><%= render 'super_admin/circles/bulk_selection', form_id: 'bulk-account-owners' %><% end %>
-<% @accounts.each do |account| %><article class="webmaster-card">
+<% @accounts.each do |account| %><article class="webmaster-card wm-account-card">
   <% if @kind == 'owner' %><label class="wm-selection"><%= check_box_tag 'owner_ids[]', account.id, false, id: "bulk-account-owner-#{account.id}", form: 'bulk-account-owners', data: { bulk_owner: true }, autocomplete: 'off' %>主催者 ID <%= account.id %>を削除対象に選択</label><% end %>
-  <h2><%= account.nickname.presence || "#{@label} ID #{account.id}" %></h2><p class="wm-meta"><%= account.email %></p>
-  <p><span class="wm-badge"><%= account.suspended? ? '利用停止中' : '利用中' %></span></p>
+  <div class="wm-account-card__identity"><h2><%= account.nickname.presence || "#{@label} ID #{account.id}" %></h2><p class="wm-meta"><%= account.email %></p></div>
+  <div class="wm-account-card__actions">
+    <span class="wm-badge<%= ' wm-badge--danger' if account.suspended? %>"><%= account.suspended? ? '利用停止中' : '利用中' %></span>
+    <%= link_to '詳細を確認', super_admin_account_path(account, kind: @kind), class: 'wm-button' %>
+  </div>
   <% if @kind == 'owner' %>
     <% if account.suspended? %><p class="wm-meta">利用停止理由：<%= account.suspension_reason.presence || '未記録' %></p><% end %>
     <% account.users.each do |circle| %><h3><%= link_to circle.name, circle_path(circle) %></h3><%= render 'webmasters/shared/moderation_reasons', record: circle %><% end %>
   <% end %>
-  <%= link_to '詳細を確認', super_admin_account_path(account, kind: @kind), class: 'wm-button' %>
 </article><% end %>
 <% if @accounts.empty? %><%= render 'webmasters/shared/empty', message: '条件に一致するアカウントはありません。' %><% end %>
 <%= paginate @accounts %>
