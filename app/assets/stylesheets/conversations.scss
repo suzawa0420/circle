@@ -313,7 +313,8 @@ body.cb-site .chat-inbox .chat-talk__preview { display: block; white-space: nowr
 .chat-talk__kind { display: block; font-size: 11px; color: $cb-muted; }
 .chat-private-note { margin: 12px 14px 14px; }
 .chat-private-note__heading { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; color: $cb-muted; font-size: 11px; }
-.chat-private-note__heading label { margin: 0; font-weight: normal; }
+.chat-private-note__heading label { display: inline-flex; align-items: center; gap: 4px; margin: 0; font-weight: normal; }
+.chat-private-note__lock { width: 12px; height: 12px; }
 .chat-private-note__state { margin-left: auto; }
 .chat-private-note__state[data-saved="true"] { color: $cb-action; }
 .chat-shell .chat-private-note .chat-private-note__input { width: 100%; min-width: 0; min-height: 38px; margin: 0; padding: 7px 10px; border: 1px solid $cb-border; border-radius: 6px; background: #f5f6f8; color: $cb-text; font-size: 16px; box-sizing: border-box; }

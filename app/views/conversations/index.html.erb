@@ -48,7 +48,9 @@
       <% note = @private_notes[[conversation.id, account_ids[:member_id], account_ids[:admin_user_id]]] %>
       <%= form_with url: private_note_conversation_path(conversation), scope: :note, method: :patch, local: true, class: 'chat-private-note', data: { private_note: true } do |f| %>
         <div class="chat-private-note__heading">
-          <%= f.label :body, '自分だけのメモ', for: "private-note-#{conversation.public_id}" %>
+          <%= f.label :body, for: "private-note-#{conversation.public_id}" do %>
+            <%= lucide_icon 'lock-keyhole', class: 'chat-private-note__lock', 'aria-hidden' => 'true' %><span>自分だけのメモ</span>
+          <% end %>
           <span class="chat-private-note__state" role="status" aria-live="polite"><%= '保存済み' if note&.body.present? %></span>
           <button type="button" class="chat-private-note__retry" hidden>再試行</button>
         </div>
