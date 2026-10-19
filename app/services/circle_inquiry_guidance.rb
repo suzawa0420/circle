@@ -3,6 +3,7 @@ class CircleInquiryGuidance
   DEFAULT_TEMPLATE = <<~TEXT.strip.freeze
     以下の内容をコピーして、ご回答ください。
 
+    名前： 例）鈴木
     性別： 例）男
     年代： 例）30代
     経歴： 例）初心者

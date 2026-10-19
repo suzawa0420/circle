@@ -77,6 +77,7 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     @circle.schedules.delete_all
     @circle.update!(template: '')
     assert_includes CircleInquiryGuidance.new(@circle).messages.join, CircleInquiryGuidance::DEFAULT_TEMPLATE
+    assert_includes CircleInquiryGuidance.new(@circle).messages.join, "名前： 例）鈴木\n性別： 例）男"
     3.times { |i| @circle.schedules.create!(title: '練習', venue: '体育館', day: (Date.current + i).to_s) }
     assert_includes CircleInquiryGuidance.new(@circle).messages.join, '他のスケジュールを見る'
   end
