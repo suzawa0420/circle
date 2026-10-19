@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   resources :conversations, only: [:index, :show] do
     get :messages, on: :member
+    patch :private_note, on: :member
     post :message, on: :member
     patch 'messages/:message_id', action: :update_message, on: :member, as: :update_message
     delete 'messages/:message_id', action: :delete_message, on: :member, as: :delete_message

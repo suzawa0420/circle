@@ -25,6 +25,10 @@ class ConversationsController < ApplicationController
     @conversations = inbox_scope.joins("INNER JOIN (#{latest.to_sql}) inbox ON inbox.conversation_id = conversations.id")
       .includes(:conversation_reviews, :member, :source_user, user: :admin_user).order('inbox.delivered_at DESC, inbox.latest_id DESC').page(params[:page]).per(20)
     ids = @conversations.map(&:id)
+    notes = ConversationNote.none
+    notes = notes.or(ConversationNote.for_account(current_member)) if member_signed_in?
+    notes = notes.or(ConversationNote.for_account(current_admin_user)) if admin_user_signed_in?
+    @private_notes = notes.where(conversation_id: ids).index_by { |note| [note.conversation_id, note.member_id, note.admin_user_id] }
     @no_show_conversation_ids = NoShowReport.where(conversation_id: ids).distinct.pluck(:conversation_id)
     @penalty_ids = Conversation.reported_unanswered.where(id: ids).pluck(:id)
     @latest_messages = visible.where(conversation_id: ids).select('DISTINCT ON (conversation_id) chat_messages.*').order(:conversation_id).delivery_order.index_by(&:conversation_id)
@@ -46,6 +50,24 @@ class ConversationsController < ApplicationController
     existing = Conversation.find_by(user: @user, member: current_member)
     return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists? && @inquiry_context.blank?
     @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
+  end
+
+  def private_note
+    body = params.require(:note).permit(:body).fetch(:body).to_s
+    attributes = ConversationNote.account_attributes(private_note_account(@conversation))
+    ConversationNote.transaction do
+      note = @conversation.conversation_notes.find_by(attributes) || @conversation.conversation_notes.create_or_find_by!(attributes)
+      note.with_lock { note.update!(body: body) }
+    end
+    respond_to do |format|
+      format.json { render json: { saved: true } }
+      format.html { redirect_to conversations_path, notice: 'メモを保存しました。' }
+    end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |format|
+      format.json { render json: { error: 'メモは300文字以内で入力してください。' }, status: :unprocessable_entity }
+      format.html { redirect_to conversations_path, alert: 'メモは300文字以内で入力してください。' }
+    end
   end
 
   def create
@@ -180,6 +202,11 @@ class ConversationsController < ApplicationController
   end
 
   private
+
+  helper_method :private_note_account
+  def private_note_account(conversation)
+    conversation.role_for(current_member, current_admin_user) == 'member' && !conversation.practice_match? ? current_member : current_admin_user
+  end
 
   def practice_match_request?
     (%w[new create].include?(action_name) && params[:kind] == 'practice_match') || @conversation&.practice_match?

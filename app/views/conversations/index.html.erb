@@ -28,22 +28,33 @@
       <% incoming = role == 'member' ? 'owner' : 'member' %>
       <% latest = @latest_messages[conversation.id] %>
       <% unread = @unread_counts[role].fetch(conversation.id, 0) %>
+      <article class="chat-talk-item">
       <%= link_to conversation_path(conversation, anchor: ('evaluation' if conversation.review_prompt_due?(role))), class: "chat-talk #{'chat-talk--unread' if unread.positive?}" do %>
         <%= render 'avatar', conversation: conversation, role: incoming %>
         <span class="chat-talk__content">
           <strong class="chat-talk__name"><%= conversation.participant_name(incoming) %><%= "さん" if incoming == "member" && !conversation.practice_match? %></strong>
-          <% if role == 'owner' %><span class="chat-talk__circle"><%= conversation.user.name %></span><% end %>
           <% if role == 'owner' && @penalty_ids.include?(conversation.id) %>
             <span class="chat-penalty-badge">未返信報告 −30レベル</span>
           <% end %>
           <% if conversation.review_prompt_due?(role) %><span class="chat-review-prompt-badge"><%= conversation.peer_review_waiting?(role) ? '口コミが届いています・あなたも投稿できます' : '感想を募集中' %></span><% end %>
           <% if @no_show_conversation_ids.include?(conversation.id) %><span class="chat-review-prompt-badge">欠席の申告・本人の説明を確認</span><% end %>
           <span class="chat-talk__preview"><%= 'あなた：' if latest&.sender_role == role %><%= latest&.preview_text %></span>
-          <span class="chat-talk__status"><%= conversation.practice_match? ? '対戦・練習試合' : (conversation.accepted_at ? '受付済み' : '返信待ち') %><%= '・ブロック中' if conversation.blocked? %><%= '・返信なしの報告あり' if conversation.respond_check == 'NG' %></span>
-          <% if role == 'owner' && !conversation.practice_match? %><span class="chat-talk__status">参加者の評価：<%= conversation.member.received_conversation_reviews.any? ? "#{format('%.2f', conversation.member.received_review_score)} / 5" : 'まだありません' %></span><% end %>
+          <% if conversation.practice_match? %><span class="chat-talk__kind">対戦・練習試合</span><% end %>
         </span>
         <span class="chat-talk__meta"><% if latest %><time datetime="<%= latest.created_at.iso8601 %>"><%= latest.created_at.to_date == Date.current ? latest.created_at.strftime('%H:%M') : latest.created_at.strftime('%-m/%-d') %></time><% end %><% if unread.positive? %><span class="chat-badge" aria-label="未読<%= unread %>件"><%= unread %></span><% end %></span>
       <% end %>
+      <% account_ids = ConversationNote.account_attributes(private_note_account(conversation)) %>
+      <% note = @private_notes[[conversation.id, account_ids[:member_id], account_ids[:admin_user_id]]] %>
+      <%= form_with url: private_note_conversation_path(conversation), scope: :note, method: :patch, local: true, class: 'chat-private-note', data: { private_note: true } do |f| %>
+        <div class="chat-private-note__heading">
+          <%= f.label :body, '自分だけのメモ', for: "private-note-#{conversation.public_id}" %>
+          <span class="chat-private-note__state" role="status" aria-live="polite"><%= '保存済み' if note&.body.present? %></span>
+          <button type="button" class="chat-private-note__retry" hidden>再試行</button>
+        </div>
+        <%= f.text_field :body, value: note&.body, id: "private-note-#{conversation.public_id}", placeholder: '○月○日、参加予定', maxlength: 300, autocomplete: 'off', class: 'chat-private-note__input' %>
+        <noscript><%= f.submit 'メモを保存' %></noscript>
+      <% end %>
+      </article>
     <% end %>
   </div>
   <%= paginate @conversations %>

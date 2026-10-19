@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_19_000000) do
+ActiveRecord::Schema.define(version: 2026_10_19_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -185,6 +185,21 @@ ActiveRecord::Schema.define(version: 2026_10_19_000000) do
     t.index ["chat_message_id"], name: "index_chat_reports_on_chat_message_id"
     t.index ["conversation_id"], name: "index_chat_reports_on_conversation_id"
     t.index ["conversation_review_id"], name: "index_chat_reports_on_conversation_review_id"
+  end
+
+  create_table "conversation_notes", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "member_id"
+    t.bigint "admin_user_id"
+    t.string "body", limit: 300, default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id"], name: "index_conversation_notes_on_admin_user_id"
+    t.index ["conversation_id", "admin_user_id"], name: "conversation_notes_owner_unique", unique: true, where: "(admin_user_id IS NOT NULL)"
+    t.index ["conversation_id", "member_id"], name: "conversation_notes_member_unique", unique: true, where: "(member_id IS NOT NULL)"
+    t.index ["conversation_id"], name: "index_conversation_notes_on_conversation_id"
+    t.index ["member_id"], name: "index_conversation_notes_on_member_id"
+    t.check_constraint "(member_id IS NOT NULL) <> (admin_user_id IS NOT NULL)", name: "conversation_notes_one_account"
   end
 
   create_table "conversation_reply_reports", force: :cascade do |t|
@@ -930,6 +945,9 @@ ActiveRecord::Schema.define(version: 2026_10_19_000000) do
     t.index ["user_id"], name: "index_users_groups_on_user_id"
   end
 
+  add_foreign_key "conversation_notes", "admin_users", on_delete: :cascade
+  add_foreign_key "conversation_notes", "conversations", on_delete: :cascade
+  add_foreign_key "conversation_notes", "members", on_delete: :cascade
   add_foreign_key "no_show_reports", "conversations"
   add_foreign_key "conversation_reply_reports", "chat_messages"
   add_foreign_key "conversation_reply_reports", "conversations"

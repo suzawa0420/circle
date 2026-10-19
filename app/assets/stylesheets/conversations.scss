@@ -304,3 +304,18 @@ body.cb-site .chat-shell .chat-review-prompt-badge { display: inline-block; marg
 .chat-body.chat-body--deleted { background: #f1f3f5; border-radius: 12px; color: $cb-muted; }
 .chat-body .chat-deletion-notice { font-size: 12px; }
 .chat-revision { font-size: 11px; color: $cb-muted; }
+
+.chat-talk-item + .chat-talk-item { border-top: 1px solid $cb-border; }
+.chat-inbox .chat-talk-item .chat-talk { padding: 14px 14px 0 !important; gap: 10px !important; border-bottom: 0; }
+.chat-inbox .chat-talk .chat-avatar { width: 36px; height: 36px; flex: none; }
+body.cb-site .chat-inbox .chat-talk__name { font-size: 14px; }
+body.cb-site .chat-inbox .chat-talk__preview { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 12px; margin-top: 3px; }
+.chat-talk__kind { display: block; font-size: 11px; color: $cb-muted; }
+.chat-private-note { margin: 12px 14px 14px; }
+.chat-private-note__heading { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; color: $cb-muted; font-size: 11px; }
+.chat-private-note__heading label { margin: 0; font-weight: normal; }
+.chat-private-note__state { margin-left: auto; }
+.chat-private-note__state[data-saved="true"] { color: $cb-action; }
+.chat-shell .chat-private-note .chat-private-note__input { width: 100%; min-width: 0; min-height: 38px; margin: 0; padding: 7px 10px; border: 1px solid $cb-border; border-radius: 6px; background: #f5f6f8; color: $cb-text; font-size: 16px; box-sizing: border-box; }
+.chat-shell .chat-private-note .chat-private-note__retry { margin: 0; padding: 0 4px; min-height: 28px; border: 0; background: transparent; font-size: 12px; color: $cb-action; text-decoration: underline; }
+.chat-private-note__retry[hidden] { display: none; }

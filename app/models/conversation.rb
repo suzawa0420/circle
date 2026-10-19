@@ -39,6 +39,7 @@ class Conversation < ApplicationRecord
   validates :member, presence: true, unless: :practice_match?
   validate :valid_circle_participants
   has_many :chat_messages, dependent: :destroy
+  has_many :conversation_notes, dependent: :destroy
   has_many :conversation_reviews, dependent: :destroy
   has_many :chat_reports, dependent: :destroy
   has_many :conversation_reply_reports, dependent: :destroy

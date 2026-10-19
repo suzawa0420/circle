@@ -106,6 +106,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261018000000
     # Message edits/deletions: additive timestamps, original moderation evidence retained.
     bundle exec rails db:migrate:up VERSION=20261019000000
+    # Account-private inbox notes, with independent ownership for each participant.
+    bundle exec rails db:migrate:up VERSION=20261019010000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;
