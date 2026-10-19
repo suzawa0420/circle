@@ -52,7 +52,9 @@ class SuperAdmin::AccountsController < ApplicationController
     if operation == 'suspend' && reason.blank?
       return redirect_to confirm_super_admin_account_path(@account, kind: @kind, operation: operation), alert: '停止理由を入力してください。'
     end
-    @account.update!(suspended_at: operation == 'suspend' ? Time.current : nil, suspension_reason: operation == 'suspend' ? reason : nil)
+    @account.with_lock do
+      @account.update!(suspended_at: operation == 'suspend' ? Time.current : nil, suspension_reason: operation == 'suspend' ? reason : nil)
+    end
     redirect_to super_admin_account_path(@account, kind: @kind), notice: operation == 'suspend' ? '利用を停止しました。' : '利用停止を解除しました。'
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotDestroyed, ActiveRecord::InvalidForeignKey
     redirect_to super_admin_account_path(@account, kind: @kind), alert: '更新できませんでした。入力内容や関連データを確認してください。'

@@ -1,4 +1,5 @@
 class ChatMessage < ApplicationRecord
+  MEMBER_SUSPENSION_NOTICE = '運営により、この参加者の利用を停止しました。'.freeze
   mount_uploader :image, ChatImageUploader
   belongs_to :conversation
   has_many :chat_reports, dependent: :nullify
@@ -95,6 +96,7 @@ class ChatMessage < ApplicationRecord
   end
 
   def sender_label
-    automatic? ? '自動案内' : (sender_role == 'owner' || conversation.practice_match? ? '主催者' : '参加者')
+    return body == MEMBER_SUSPENSION_NOTICE ? '運営からのお知らせ' : 'サークルからの自動案内' if automatic?
+    sender_role == 'owner' || conversation.practice_match? ? '主催者' : '参加者'
   end
 end

@@ -32,6 +32,7 @@
 class Member < ApplicationRecord
   include AccountModeration
   has_many :conversations, dependent: :destroy
+  after_update :append_suspension_notices, if: -> { saved_change_to_suspended_at?(from: nil) && suspended? }
   def no_show_report_count
     NoShowReport.counted.joins(:conversation).where(conversations: { member_id: id }).count
   end
@@ -113,6 +114,19 @@ class Member < ApplicationRecord
     last_application = applications.order(applied_at: :desc).first
     return true if last_application.nil?
     last_application.applied_at < 1.month.ago
+  end
+
+  private
+
+  def append_suspension_notices
+    # Keep held-only inquiries hidden and record notices in the suspension transaction.
+    delivered_conversations = ChatMessage.deliverable.where.not(sender_role: 'system').select(:conversation_id)
+    conversations.where(id: delivered_conversations).find_each do |conversation|
+      conversation.with_lock do
+        # System messages never schedule email or count as unread participant messages.
+        conversation.chat_messages.create!(sender_role: 'system', body: ChatMessage::MEMBER_SUSPENSION_NOTICE)
+      end
+    end
   end
 
 end

@@ -71,6 +71,90 @@ class WebmasterAccountsTest < ActionDispatch::IntegrationTest
     @conversation.send_message!('member', '利用再開後は送信できます')
   end
 
+  test 'suspension adds an operational notice to each delivered conversation without email or unread counts' do
+    other_circle = @circle.dup.tap { |circle| circle.name = '別の会話先'; circle.save! }
+    other_conversation = Conversation.for_member!(other_circle, @member)
+    other_conversation.send_message!('member', 'こちらにも参加を希望しています。')
+    untouched = Conversation.for_member!(@circle, @other_member)
+    [@conversation, other_conversation].each do |conversation|
+      conversation.mark_read!('owner', through: conversation.chat_messages.maximum(:id))
+    end
+    other_conversation.update!(owner_blocked: true)
+
+    login_master
+    get confirm_super_admin_account_path(@member, operation: 'suspend')
+    token = css_select('input[name="confirmation"]').first['value']
+    assert_difference('ChatMessage.where(sender_role: "system", body: ChatMessage::MEMBER_SUSPENSION_NOTICE).count', 2) do
+      assert_no_difference('ActionMailer::Base.deliveries.size') do
+        patch super_admin_account_path(@member), params: { operation: 'suspend', reason: '運営専用の調査内容です', confirmation: token }
+      end
+    end
+    assert @member.reload.suspended?
+    [@conversation, other_conversation].each do |conversation|
+      conversation.reload
+      notice = conversation.chat_messages.order(:id).last
+      assert notice.automatic?
+      assert notice.delivered?
+      assert_equal ChatMessage::MEMBER_SUSPENSION_NOTICE, notice.body
+      assert_nil conversation.owner_notification_due_at
+      assert_nil conversation.member_notification_due_at
+      assert_equal 0, conversation.chat_messages.unread_by('owner', conversation.owner_read_message_id).count
+    end
+    assert_empty untouched.chat_messages
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      travel 10.minutes do
+        ChatMaintenance.run
+      end
+    end
+    get super_admin_conversation_path(@conversation)
+    follow_redirect! if response.redirect?
+    assert_select '.wm-message--system .message-role--owner', text: '運営からのお知らせ', count: 1
+    delete destroy_webmaster_session_path
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_select '.inquiry-guidance__message .message-role', text: '運営からのお知らせ', count: 1
+    assert_includes response.body, ChatMessage::MEMBER_SUSPENSION_NOTICE
+    assert_not_includes response.body, '運営専用の調査内容です'
+    get messages_conversation_path(@conversation), as: :json
+    assert_includes response.parsed_body['html'], ChatMessage::MEMBER_SUSPENSION_NOTICE
+    get conversations_path
+    assert_select '.mobile-bottom-nav__badge', count: 0
+  end
+
+  test 'suspension notices follow state transitions and roll back with account changes' do
+    notice_scope = @conversation.chat_messages.where(sender_role: 'system', body: ChatMessage::MEMBER_SUSPENSION_NOTICE)
+    assert_no_difference('notice_scope.count') do
+      Member.transaction do
+        @member.update!(suspended_at: Time.current, suspension_reason: '停止理由')
+        assert_equal 1, notice_scope.count
+        raise ActiveRecord::Rollback
+      end
+    end
+    assert_not @member.reload.suspended?
+    assert_difference('notice_scope.count', 1) { @member.update!(suspended_at: Time.current) }
+    assert_no_difference('notice_scope.count') do
+      @member.update!(suspended_at: 1.minute.from_now, suspension_reason: '停止理由の追記')
+      @member.update!(nickname: '表示名の変更')
+      @member.update!(suspended_at: nil)
+    end
+    assert_difference('notice_scope.count', 1) { @member.update!(suspended_at: Time.current) }
+  end
+
+  test 'suspension does not expose held-only inquiries or create messages in empty conversations' do
+    @conversation.chat_messages.destroy_all
+    @conversation.update!(owner_notification_due_at: nil)
+    @conversation.send_message!('member', '取材させていただけませんか？')
+    empty_circle = @circle.dup.tap { |circle| circle.name = '空の会話先'; circle.save! }
+    empty_conversation = Conversation.for_member!(empty_circle, @member)
+    assert_no_difference('ChatMessage.count') { @member.update!(suspended_at: Time.current) }
+    assert_empty empty_conversation.chat_messages
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get conversations_path
+    assert_not_includes response.body, @member.nickname
+    assert_nil @conversation.reload.owner_notification_due_at
+  end
+
   test 'report status memo and reopening remain private' do
     report = ChatReport.create!(conversation: @conversation, reporter_role: 'member', reason: '不適切な内容の報告です')
     login_master
