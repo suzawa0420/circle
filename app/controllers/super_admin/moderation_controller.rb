@@ -4,7 +4,17 @@ class SuperAdmin::ModerationController < ApplicationController
 
   def circle
     user = User.find(params[:id])
-    user.update_column(:moderation_status, moderation_status)
+    status = moderation_status
+    attributes = { moderation_status: status }
+    # Legacy review entries may have no saved reasons. Remember what was
+    # accepted so subsequent edits do not send them back to the review queue.
+    if status == 'clear'
+      if user.moderation_reasons.empty?
+        attributes[:moderation_reasons] = ModerationReasonReport.snapshot(user.moderation_rule_reasons)
+      end
+      attributes[:moderation_checked_at] = user.moderation_checked_at || Time.current
+    end
+    user.update_columns(attributes)
     redirect_to super_admin_circles_path, notice: "サークルの確認状態を更新しました"
   end
 

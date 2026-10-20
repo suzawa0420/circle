@@ -153,7 +153,14 @@ class User < ApplicationRecord
 		# Category and location labels are supplied by the site; only owner-written
 		# name and introduction count toward the Japanese-language check.
     reasons = moderation_rule_reasons
-    if reasons.any?
+    # A clear decision with saved evidence means a webmaster accepted these
+    # reasons. Profile edits must not repeatedly enqueue the same concern.
+    approved_reasons = if moderation_status == "clear" && moderation_checked_at.present?
+      moderation_reasons.map { |reason| reason['code'] }
+    else
+      []
+    end
+    if (reasons - approved_reasons).any?
       self.moderation_status = "review"
       self.moderation_reasons = ModerationReasonReport.snapshot(reasons)
       self.moderation_checked_at = Time.current

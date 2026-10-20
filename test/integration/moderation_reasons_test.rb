@@ -116,6 +116,58 @@ class ModerationReasonsTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) { get circle_blog_path(@circle, blog) }
   end
 
+  test 'approved circle stays clear after repeated profile and publication changes' do
+    @circle.update!(name: 'Outdoor Basketball', appeal: 'We play basketball every week. ' * 10)
+    @circle.reload
+    reasons = @circle.moderation_reasons
+    checked_at = @circle.moderation_checked_at
+    login_master
+    patch super_admin_circle_moderation_path(@circle), params: { moderation_status: 'clear' }
+    assert_redirected_to super_admin_circles_path
+
+    [{ name: 'Outdoor Basketball Club' }, { appeal: 'Everyone is welcome. ' * 15 },
+     { sport_details: { 'activity_style' => 'Basketball' } }, { appeal: 'Short description' },
+     { appeal: 'We welcome new basketball players. ' * 10 }].each do |attributes|
+      @circle.reload.update!(attributes)
+      assert_equal 'clear', @circle.reload.moderation_status
+    end
+    assert_equal reasons, @circle.moderation_reasons
+    assert_equal checked_at, @circle.moderation_checked_at
+    get super_admin_circles_path
+    assert_select 'a', text: 'Outdoor Basketball Club', count: 0
+  end
+
+  test 'existing clear decisions with saved reasons are respected' do
+    @circle.update!(name: 'Outdoor Basketball', appeal: 'We play basketball every week. ' * 10)
+    # This is how the approval endpoint stored decisions before this fix.
+    @circle.update_column(:moderation_status, 'clear')
+    @circle.reload.update!(appeal: 'New basketball players are welcome. ' * 10)
+    assert_equal 'clear', @circle.reload.moderation_status
+  end
+
+  test 'approving a legacy circle remembers reasons even without saved evidence' do
+    @circle.update!(name: 'Outdoor Basketball', appeal: 'We play basketball every week. ' * 10)
+    @circle.update_columns(moderation_reasons: [], moderation_checked_at: nil)
+    login_master
+    patch super_admin_circle_moderation_path(@circle), params: { moderation_status: 'clear' }
+    assert_equal ['non_japanese_profile'], @circle.reload.moderation_reasons.map { |r| r['code'] }
+    assert @circle.moderation_checked_at
+    @circle.update!(name: 'Outdoor Basketball Club')
+    assert_equal 'clear', @circle.reload.moderation_status
+  end
+
+  test 'new concerns still flag an approved circle and blocked circles stay blocked' do
+    @circle.update!(name: 'Outdoor Basketball', appeal: 'We play basketball every week. ' * 10)
+    login_master
+    patch super_admin_circle_moderation_path(@circle), params: { moderation_status: 'clear' }
+    @circle.reload.update!(contact: '深夜舒壓')
+    assert_equal 'review', @circle.reload.moderation_status
+    assert_includes @circle.moderation_reasons.map { |r| r['code'] }, 'adult_service_promotion'
+    patch super_admin_circle_moderation_path(@circle), params: { moderation_status: 'blocked' }
+    @circle.reload.update!(name: 'Outdoor Basketball Club')
+    assert_equal 'blocked', @circle.reload.moderation_status
+  end
+
   private
   def login_master
     post webmaster_session_path, params: { webmaster: { email: @master.email, password: 'test-password-123' } }
