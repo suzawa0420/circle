@@ -9,7 +9,7 @@
 - listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
 - show_picte_ad = picte_camera_event?(@event)
-- cache [users, is_master_account, show_picte_ad, 'seo-list-v8-picte', 'stored-image-extension-v1'] do
+- cache [users, is_master_account, show_picte_ad, 'seo-list-v9-picte-after-two', 'stored-image-extension-v1'] do
   %ul.circle-results-grid
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
@@ -101,7 +101,7 @@
                     = tag.name
 
 
-      - if show_picte_ad && i == [4, users.size].min
+      - if show_picte_ad && i == [2, users.size].min
         %li.picte-ad-slot
           = render 'layouts/ads/picte', placement: 'search'
 

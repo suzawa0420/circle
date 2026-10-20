@@ -28,7 +28,7 @@ class PicteAdsTest < ActionDispatch::IntegrationTest
     assert_select '.picte-ad', count: 0
   end
 
-  test 'camera ad occurs once after the fourth circle and on empty camera searches' do
+  test 'camera ad occurs once after the second circle and on empty camera searches' do
     @circle.update!(event: @camera)
     4.times do |i|
       copy = @circle.dup
@@ -37,7 +37,7 @@ class PicteAdsTest < ActionDispatch::IntegrationTest
     end
     get event_path('camera')
     assert_select '.circle-results-grid > .user_item_wrap', count: 5
-    assert_select '.circle-results-grid > li:nth-child(5).picte-ad-slot', count: 1
+    assert_select '.circle-results-grid > li:nth-child(3).picte-ad-slot', count: 1
     assert_select '.picte-ad', count: 1
     get circles_search_index_path, params: { detailed: '1', event_id: @camera.id, q: '見つからない写真部' }
     assert_response :success
