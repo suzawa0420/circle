@@ -1,0 +1,63 @@
+.cb-site .circle-readmore {
+  --circle-readmore-height: 320px;
+  --circle-readmore-surface: #{$cb-surface};
+  margin-bottom: 16px;
+  scroll-margin-top: 100px;
+
+  &--reviews { --circle-readmore-height: 480px; }
+  &--questions { --circle-readmore-height: 340px; }
+  &--organizer { --circle-readmore-height: 240px; }
+  &--blogs {
+    --circle-readmore-height: 560px;
+    --circle-readmore-surface: #{$cb-canvas};
+  }
+}
+.cb-site .circle-readmore__content {
+  position: relative;
+  overflow: hidden;
+  transition: max-height .25s ease;
+}
+.cb-site .circle-readmore__body { display: flow-root; }
+.cb-site .circle-readmore.is-collapsed .circle-readmore__content::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--circle-readmore-surface));
+  pointer-events: none;
+}
+.cb-site .circle-readmore__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 320px);
+  min-height: 46px;
+  margin: 8px auto 0;
+  padding: 10px 24px;
+  border: 1px solid $cb-border;
+  border-radius: 999px;
+  background: $cb-surface;
+  color: $cb-action-hover;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  &:hover { background: $cb-mint-soft; border-color: $cb-action; }
+  &:focus-visible { outline: 2px solid $cb-action; outline-offset: 3px; }
+  &[hidden] { display: none; }
+}
+.cb-site .circle-readmore__chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+.cb-site .circle-readmore__button[aria-expanded='true'] .circle-readmore__chevron {
+  transform: translateY(2px) rotate(225deg);
+}
+.cb-site .circle-readmore__archive { text-align: center; margin: 16px 0 24px; }
+.cb-site .circle-readmore__archive a { color: $cb-action-hover; text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) {
+  .cb-site .circle-readmore__content { transition: none; }
+}

@@ -29,9 +29,10 @@ class CircleRelatedContentView
   end
 
   def circle_blog_path(user_id, id); "/circles/#{user_id}/blogs/#{id}"; end
+  def circle_blogs_path(user); "/circles/#{user.id}/blogs"; end
   def circle_path(id); "/circles/#{id}"; end
-  def link_to(path)
-    @links << path
+  def link_to(*args)
+    @links << args.last
     ''
   end
   def render(path)
@@ -72,7 +73,7 @@ class SearchQueriesTest
     related = User.publicly_visible.where.not(id: user.id).order(id: :desc).limit(5)
     expected_related = related.pluck(:id)
     view, queries, records = render_related(user, related)
-    assert_equal expected_blogs.map { |id| "/circles/#{user.id}/blogs/#{id}" } + expected_related.map { |id| "/circles/#{id}" }, view.links
+    assert_equal expected_blogs.map { |id| "/circles/#{user.id}/blogs/#{id}" } + ["/circles/#{user.id}/blogs"] + expected_related.map { |id| "/circles/#{id}" }, view.links
     assert_equal 1, view.ads
     assert_equal 2, queries.size
     refute queries.any? { |sql| sql.match?(/COUNT\(|SELECT 1 AS one/i) }
@@ -87,7 +88,7 @@ class SearchQueriesTest
       Blog.delete_all
       blog_count.times { |i| Blog.create!(user_id: user.id, moderation_status: 'clear', created_at: Time.at(i)) }
       view, = render_related(user, User.publicly_visible.where(id: @users.drop(1).first(circle_count).map(&:id)).limit(5))
-      assert_equal blog_count + circle_count, view.links.size
+      assert_equal blog_count + circle_count + (blog_count.positive? ? 1 : 0), view.links.size
       assert_equal(blog_count >= 3 || circle_count >= 3 ? 1 : 0, view.ads)
     end
     Blog.create!(user_id: user.id, moderation_status: 'clear', created_at: Time.at(500))

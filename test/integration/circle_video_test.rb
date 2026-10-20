@@ -17,7 +17,7 @@ class CircleVideoTest < ActionDispatch::IntegrationTest
 
     get circle_path(@circle)
     assert_response :success
-    assert_select '.cb-reading-body + .circle-video', count: 1
+    assert_select '.circle-readmore--introduction + .circle-video', count: 1
     assert_select '.circle-video__preview img[src="https://i.ytimg.com/vi/Abcde_123-4/hqdefault.jpg"]'
     assert_select 'dialog[data-video-id="Abcde_123-4"]'
     assert_select '.circle-video iframe', count: 0

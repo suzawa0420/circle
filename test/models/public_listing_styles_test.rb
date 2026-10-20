@@ -29,7 +29,7 @@ class PublicListingStylesTest < ActiveSupport::TestCase
 
   test 'detail asset preserves gallery FAQ warnings and mobile navigation without editor styles' do
     css = Rails.application.assets.find_asset('public_detail.css').to_s
-    %w[.header_imege .popup .circle-faq__question .circle-contact-warning .mobile-circle-summary .readmore-content].each do |selector|
+    %w[.header_imege .popup .circle-faq__question .circle-contact-warning .mobile-circle-summary .circle-readmore__content].each do |selector|
       assert_includes css, selector
     end
     refute_includes css, '.trix-button-group'

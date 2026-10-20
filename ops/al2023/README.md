@@ -72,6 +72,19 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Circle detail read-more controls (2026-10-20)
+
+Long circle introductions, reviews, questions, blogs and organizer profiles share
+an on-page expand/collapse control with a fading preview. Controls appear only
+when rendered content exceeds the section's preview height; short content and
+pages without JavaScript remain fully readable. Private organizer profiles stay
+hidden. Blog and review archive links remain available, and existing item limits
+and structured data are preserved. No new database migration is required.
+
+The public detail CSS includes the shared controls and their dynamic states.
+Deploy through the normal asset preparation and rolling Puma restart workflow;
+an application revert restores the previous display without a database rollback.
+
 ## Circle introduction videos (2026-10-20)
 
 Each circle can save one optional YouTube URL in its basic-information form.

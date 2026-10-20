@@ -2,7 +2,13 @@
   %h2.user_sub_title
     = lucide_icon "messages-square"
     質問コーナー
-  = render "questions/accordion", questions: @questions
+  .circle-readmore.circle-readmore--questions{ data: { circle_readmore: true } }
+    #circle-questions-content.circle-readmore__content
+      .circle-readmore__body
+        = render "questions/accordion", questions: @questions
+    %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-questions-content", "aria-label" => "質問コーナーをもっと見る", data: { readmore_label: "質問コーナー" } }
+      %span{ data: { readmore_text: true } } もっと見る
+      %span.circle-readmore__chevron{ "aria-hidden" => "true" }
 - if AccountBlock.find_by(ip_address: request.remote_ip)
 - else
   .user_qa_btn

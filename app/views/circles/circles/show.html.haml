@@ -350,12 +350,18 @@
           %h2.user_sub_title
             = lucide_icon "book-open"
             サークルの詳細内容
-          - if @user.appeal.include?("<div>")
-            .profile_list_p.profile_list_a.rich_text_sub.cb-reading-body
-              = raw Rinku.auto_link(sanitize @user.appeal, tags: %w(p a br strong ul li div), attributes:  %w(id class href))
-          - else
-            .profile_list_p.profile_list_a.cb-reading-body
-              = raw Rinku.auto_link(simple_format @user.appeal)
+          .circle-readmore.circle-readmore--introduction{ data: { circle_readmore: true } }
+            #circle-introduction-content.circle-readmore__content
+              .circle-readmore__body
+                - if @user.appeal.include?("<div>")
+                  .profile_list_p.profile_list_a.rich_text_sub.cb-reading-body
+                    = raw Rinku.auto_link(sanitize @user.appeal, tags: %w(p a br strong ul li div), attributes:  %w(id class href))
+                - else
+                  .profile_list_p.profile_list_a.cb-reading-body
+                    = raw Rinku.auto_link(simple_format @user.appeal)
+            %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-introduction-content", "aria-label" => "サークルの詳細内容をもっと見る", data: { readmore_label: "サークルの詳細内容" } }
+              %span{ data: { readmore_text: true } } もっと見る
+              %span.circle-readmore__chevron{ "aria-hidden" => "true" }
 
         = render "users/youtube_video", user: @user
         = render "mobile_contact"
@@ -365,9 +371,15 @@
           %h2.user_sub_title
             = lucide_icon "smile"
             口コミ・評価
-          - circle_displayed_reviews(@user).each do |review|
-            = render "/reviews/review_comment", review: review
-          .review_link_b= link_to ">>口コミをもっと見る",user_reviews_path(@user)
+          .circle-readmore.circle-readmore--reviews{ data: { circle_readmore: true } }
+            #circle-reviews-content.circle-readmore__content
+              .circle-readmore__body
+                - circle_displayed_reviews(@user).each do |review|
+                  = render "/reviews/review_comment", review: review
+            %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-reviews-content", "aria-label" => "口コミ・評価をもっと見る", data: { readmore_label: "口コミ・評価" } }
+              %span{ data: { readmore_text: true } } もっと見る
+              %span.circle-readmore__chevron{ "aria-hidden" => "true" }
+          .review_link_b= link_to "口コミの一覧を見る", user_reviews_path(@user)
 
           .border
 
@@ -415,17 +427,15 @@
                     = lucide_icon "map-pin"
                     = @user.admin_user.prefecture.name
 
-            - if @user.admin_user.profile.size >= 200
-              .reset
-              .readmore
-                %input#check_admin_prof.readmore-check{:type => "checkbox"}/
-                .readmore-content
+            .reset
+            .circle-readmore.circle-readmore--organizer{ data: { circle_readmore: true } }
+              #circle-organizer-content.circle-readmore__content
+                .circle-readmore__body
                   .admin_user_txt
                     = raw Rinku.auto_link(simple_format(@user.admin_user.profile))
-                %label.readmore-label{:for => "check_admin_prof"}
-            - else
-              .admin_user_txt
-                = raw Rinku.auto_link(simple_format(@user.admin_user.profile))
+              %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-organizer-content", "aria-label" => "主催者のプロフィールをもっと見る", data: { readmore_label: "主催者のプロフィール" } }
+                %span{ data: { readmore_text: true } } もっと見る
+                %span.circle-readmore__chevron{ "aria-hidden" => "true" }
           .reset
 
     = render "/layouts/ad_square"

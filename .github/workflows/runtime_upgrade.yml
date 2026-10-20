@@ -87,7 +87,7 @@ jobs:
           bundle exec rails test test/integration/schedule_sharing_test.rb
           node test/security/schedule_share_js_test.js
           bundle exec ruby test/helpers/circle_listing_titles_helper_test.rb
-          bundle exec rails test test/integration/site_design_test.rb test/integration/breadcrumbs_test.rb test/integration/matches_design_test.rb test/integration/home_portal_test.rb test/integration/circle_faq_test.rb test/integration/circle_structured_data_test.rb test/helpers/structured_data_helper_test.rb test/integration/circle_contact_warning_test.rb test/integration/circle_inquiry_guidance_test.rb
+          bundle exec rails test test/integration/site_design_test.rb test/integration/breadcrumbs_test.rb test/integration/matches_design_test.rb test/integration/home_portal_test.rb test/integration/circle_faq_test.rb test/integration/circle_readmore_test.rb test/integration/circle_structured_data_test.rb test/helpers/structured_data_helper_test.rb test/integration/circle_contact_warning_test.rb test/integration/circle_inquiry_guidance_test.rb
       - name: Test public structured data and audience discovery
         run: bundle exec rails test test/integration/public_structured_data_coverage_test.rb test/integration/circle_audience_discovery_test.rb
       - name: Test circle levels and ranking activity
@@ -113,6 +113,7 @@ jobs:
       - run: node test/security/sport_discovery_tracking_js_test.js
       - run: node test/security/circle_inquiry_tracking_js_test.js
       - run: node test/security/circle_search_navigation_js_test.js
+      - run: node test/security/circle_readmore_js_test.js
       - run: bundle exec ruby test/uploaders/image_uploader_url_check.rb
       - run: bundle exec ruby test/performance/unicorn_readiness_test.rb
       - run: bundle exec rails assets:precompile
