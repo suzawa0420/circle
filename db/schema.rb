@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_20_000000) do
+ActiveRecord::Schema.define(version: 2026_10_20_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -863,6 +863,7 @@ ActiveRecord::Schema.define(version: 2026_10_20_000000) do
     t.string "average_age"
     t.string "cost"
     t.string "web"
+    t.string "youtube_url"
     t.text "appeal"
     t.string "password"
     t.string "goal"

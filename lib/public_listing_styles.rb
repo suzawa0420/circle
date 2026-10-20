@@ -29,7 +29,8 @@ class PublicListingStyles
     if input[:name] == 'public_detail'
       globs += %w[app/views/circles/circles/* app/views/users/parts/* app/views/users/_question_card*
         app/views/users/_contact_warning* app/views/bookmarks/* app/views/reviews/* app/views/questions/_accordion*
-        app/views/conversations/_no_reply_notice* app/assets/javascripts/circle_contact_warning.js]
+        app/views/conversations/_no_reply_notice* app/assets/javascripts/circle_contact_warning.js
+        app/views/users/_youtube_video* app/assets/javascripts/circle_video.js]
     end
     if input[:name] == 'public_directory'
       globs += %w[app/views/places/* app/views/schedules/index* app/views/schedules/_calendar*

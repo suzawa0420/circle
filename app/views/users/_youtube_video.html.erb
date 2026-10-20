@@ -1,0 +1,18 @@
+<% if (video_id = user.youtube_video_id) %>
+  <section class="circle-video" aria-labelledby="circle-video-heading">
+    <h2 id="circle-video-heading" class="user_sub_title"><%= lucide_icon 'play' %>サークルの紹介動画</h2>
+    <a class="circle-video__preview" href="https://www.youtube.com/watch?v=<%= video_id %>" data-circle-video-open aria-label="サークルの紹介動画を再生" aria-haspopup="dialog" aria-controls="circle-video-dialog">
+      <%= image_tag "https://i.ytimg.com/vi/#{video_id}/hqdefault.jpg", alt: 'YouTube紹介動画のプレビュー', loading: 'lazy', width: 480, height: 360 %>
+      <span class="circle-video__play"><%= lucide_icon 'play' %></span>
+      <span class="circle-video__caption">紹介動画を再生</span>
+    </a>
+    <dialog id="circle-video-dialog" class="circle-video__dialog" aria-labelledby="circle-video-title" data-circle-video-dialog data-video-id="<%= video_id %>">
+      <div class="circle-video__toolbar">
+        <h2 id="circle-video-title">サークルの紹介動画</h2>
+        <button type="button" class="circle-video__close" data-circle-video-close autofocus><%= lucide_icon 'x' %>閉じる</button>
+      </div>
+      <div class="circle-video__player" data-circle-video-player></div>
+      <p class="circle-video__fallback"><a href="https://www.youtube.com/watch?v=<%= video_id %>" target="_blank" rel="noopener noreferrer">再生できない場合はYouTubeで見る</a></p>
+    </dialog>
+  </section>
+<% end %>

@@ -2,6 +2,7 @@ ja:
   activerecord:
     attributes:
       user:
+        youtube_url: 紹介動画のURL
         email: メールアドレス
         password: パスワード
         password_confirmation: 確認用パスワード

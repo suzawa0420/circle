@@ -218,6 +218,17 @@ class User < ApplicationRecord
     :format => /\A#{URI::regexp(%w(http https))}\z/
 	}
 
+  validates :youtube_url, length: { maximum: 255 }, allow_blank: true
+  validate do
+    if youtube_url.present? && youtube_video_id.nil?
+      errors.add(:youtube_url, 'にはYouTubeの動画URLを入力してください')
+    end
+  end
+
+  def youtube_video_id
+    YoutubeVideo.id(youtube_url)
+  end
+
   validate do
     CircleProfilePolicy::FIELDS.each do |field|
       if CircleProfilePolicy.prohibited?(public_send(field))

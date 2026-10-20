@@ -72,6 +72,19 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Circle introduction videos (2026-10-20)
+
+Each circle can save one optional YouTube URL in its basic-information form.
+Normal, shared, Shorts, embed and live video URLs are parsed locally; non-YouTube
+hosts, channel/playlist links and malformed video IDs fail server-side validation.
+The public detail page shows a thumbnail below its introduction and opens the
+player on demand. Closing the dialog removes the iframe and stops playback.
+
+Deployment explicitly applies `20261020010000` before either Puma restarts.
+This adds a nullable `users.youtube_url` string without a backfill or new index.
+Asset preparation retains video styles in the public detail CSS. Roll back the
+application with a revert deployment; keep the additive column and its data.
+
 ## Event OGP renderer (2026-10-19)
 
 Public schedule detail pages generate 1200 × 630 PNGs with a square image,

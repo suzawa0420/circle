@@ -357,6 +357,7 @@
             .profile_list_p.profile_list_a.cb-reading-body
               = raw Rinku.auto_link(simple_format @user.appeal)
 
+        = render "users/youtube_video", user: @user
         = render "mobile_contact"
         .border
 

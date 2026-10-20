@@ -110,6 +110,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261019010000
     # PICTE ads: daily aggregate click counters, without visitor identifiers.
     bundle exec rails db:migrate:up VERSION=20261020000000
+    # Optional YouTube introduction URL; add before activating either server.
+    bundle exec rails db:migrate:up VERSION=20261020010000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

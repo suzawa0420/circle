@@ -179,6 +179,10 @@
       .rich_text_notes ▼文字の装飾は最後に行ってください
       = f.hidden_field :appeal, id: :article_text
       %trix-editor{:input => "article_text", :placeholder => "サークルブックは週１回、都内で活動しています！興味がある人は気軽にご連絡ください！"}
+    .label_item
+      = f.label :youtube_url, '紹介動画（YouTube URL）'
+    = f.url_field :youtube_url, class: 'form-control', placeholder: 'https://www.youtube.com/watch?v=...', maxlength: 255, 'aria-describedby': 'youtube-url-help'
+    %p#youtube-url-help YouTubeの動画URLを1本登録できます。共有URL・Shortsにも対応しています。空欄にして更新すると削除できます。
     - if @path.is('users#edit')
       .warning_txt ※更新完了に少し時間がかかります
       = f.submit "更新する", data: { disable_with: '更新中...' }
