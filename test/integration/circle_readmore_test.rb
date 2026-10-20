@@ -66,4 +66,17 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     assert_includes css, 'linear-gradient('
     assert_includes css, 'prefers-reduced-motion'
   end
+
+  test 'readmore stylesheet can compile independently through the asset manifest' do
+    css = Rails.application.assets.find_asset('_circle_readmore.css').to_s
+    assert_includes css, '.circle-readmore__button'
+    assert_includes css, '.circle-readmore--organizer'
+  end
+
+  test 'public detail JavaScript includes the shared readmore and video controls' do
+    javascript = Rails.application.assets.find_asset('public_detail.js').to_s
+    %w[data-circle-readmore data-circle-video-open .circle-faq__question].each do |selector|
+      assert_includes javascript, selector
+    end
+  end
 end

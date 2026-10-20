@@ -1,6 +1,9 @@
 // Native loading and CSS popups; Swiper remains for multi-photo related posts.
 //= require public_listing
 //= require circle_contact_warning
+//= require circle_readmore
+//= require circle_faq
+//= require circle_video
 //= require swiper.min
 
 (function () {
