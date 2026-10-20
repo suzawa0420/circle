@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   root 'home#index'
+  post 'picte-ad-clicks', to: 'picte_ad_clicks#create', as: :picte_ad_clicks
   get '/circle-images/:kind/:id/:fingerprint.:format', to: 'listing_images#show',
     as: :listing_image, defaults: { format: 'jpg' },
     constraints: { kind: /profile|header|detail_header/, id: /\d+/, fingerprint: /[a-f0-9]{24}/, format: /jpg|webp/ }
@@ -207,6 +208,7 @@ Rails.application.routes.draw do
 
   # 管理画面（SuperAdmin）
   namespace :super_admin do
+    resources :picte_ad_clicks, only: :index
     resources :place_information_reports, only: [:index, :show, :update]
     resources :backlink_requests, only: [:index, :show, :update]
     resource :bulk_owner_deletion, only: [:create, :destroy]

@@ -20,6 +20,7 @@ module WebmasterNavigationHelper
       ['ブロック', account_blocks_path, 0],
       ['無効メール', invalid_emails_path, 0],
       ['検索キーワード', db_keywords_path, 0],
+      ['PICTE広告クリック数', super_admin_picte_ad_clicks_path, 0],
       ['入力エラー', db_validation_errors_path, 0],
       ['サークル・主催者', super_admin_circles_path, 0],
       ['参加者管理', super_admin_accounts_path, 0]

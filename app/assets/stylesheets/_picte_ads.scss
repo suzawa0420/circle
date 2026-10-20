@@ -1,0 +1,40 @@
+@import "brand_palette";
+
+.picte-ad {
+  width: 100%; min-width: 0; overflow: hidden; margin: 20px 0;
+  background: $cb-surface; border: 1px solid $cb-border; border-radius: 12px;
+}
+.picte-ad .picte-ad__link {
+  display: block; color: $cb-text; text-decoration: none; opacity: 1; letter-spacing: normal;
+  &:hover, &:active { opacity: 1; color: $cb-text; text-decoration: none; }
+  &:focus-visible { outline: 3px solid $cb-action; outline-offset: -3px; }
+}
+.picte-ad__label {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  color: $cb-muted; font-size: 11px; line-height: 1.6;
+}
+.picte-ad__pr { flex-shrink: 0; padding: 0 5px; border: 1px solid $cb-input-border; border-radius: 3px; }
+.picte-ad .picte-ad__image { display: block; width: 100%; height: auto; margin: 0; border-radius: 0; aspect-ratio: 1280 / 853; object-fit: cover; }
+.picte-ad__body { padding: 22px 20px; }
+.picte-ad .picte-ad__title { font-size: 23px; font-weight: 700; line-height: 1.55; margin: 0 0 12px; color: $cb-text; }
+.picte-ad .picte-ad__description { font-size: 14px; line-height: 1.85; margin: 0 0 12px; color: $cb-text; }
+.picte-ad .picte-ad__detail { color: $cb-muted; font-size: 12px; line-height: 1.7; margin: 0 0 18px; }
+.picte-ad__cta {
+  display: flex; justify-content: center; align-items: center; gap: 6px; min-height: 48px;
+  padding: 12px 8px; border-radius: 6px; background: $cb-action; color: $cb-surface; font-size: 13px; font-weight: 600;
+}
+.picte-ad__link:hover .picte-ad__cta { background: $cb-action-hover; }
+.circle-results-grid > .picte-ad-slot { width: 96%; margin: 0 auto; }
+.organizer-dashboard .picte-ad { max-width: 640px; }
+@media (min-width: 900px) {
+  .circle-results-grid > .picte-ad-slot { grid-column: 1 / -1; width: 100%; }
+  .picte-ad-slot .picte-ad__link { display: grid; grid-template-columns: 1fr 1fr; }
+  .picte-ad-slot .picte-ad__label { grid-column: 1 / -1; }
+  .picte-ad-slot .picte-ad__image { height: 100%; }
+  .picte-ad-slot .picte-ad__body { align-self: center; padding: 28px; }
+  .picte-ad-slot .picte-ad__title { font-size: 25px; }
+}
+@media (max-width: 359px) {
+  .picte-ad__body { padding: 18px 14px; }
+  .picte-ad .picte-ad__title { font-size: 21px; }
+}

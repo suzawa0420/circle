@@ -108,6 +108,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261019000000
     # Account-private inbox notes, with independent ownership for each participant.
     bundle exec rails db:migrate:up VERSION=20261019010000
+    # PICTE ads: daily aggregate click counters, without visitor identifiers.
+    bundle exec rails db:migrate:up VERSION=20261020000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

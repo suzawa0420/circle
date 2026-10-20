@@ -78,6 +78,9 @@
       = render "dashboard_action", title: "出欠管理", description: "メンバーの参加を確認", icon: "users", path: attendances_path(@user.unique_id)
     = render "dashboard_action", title: "ブログ", description: "活動の様子を投稿", icon: "pencil", path: new_circle_blog_path(@user)
 
+- if picte_camera_event?(@user.event)
+  = render 'layouts/ads/picte', placement: 'mypage'
+
 - if admin_user_signed_in? && @user.admin_user_id == current_admin_user.id
   = render "users/level_card", user: @user, breakdown: [["スケジュール登録", 0.1, @schedule_point], ["ブログ投稿", 0.2, @blog_point], ["Q&Aの回答", 0.3, @qa_point], ["高評価の口コミ", 2.0, @review_point], ["リンク設置特典", 10.0, @backlink_point], ["サークル情報入力特典", 5.0, @profile_completion_point], ["メッセージ未返信", -30.0, -@respond_point]], rivals: @users.includes(:event, :prefecture).limit(5)
 

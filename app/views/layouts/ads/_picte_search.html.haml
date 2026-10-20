@@ -1,4 +1,0 @@
-- if Time.now.strftime("%Y/%m/%d") <= "2023/07/14" && request.path.match(/\/camera(\/)?/)
-  - if request.path.match(/\/tokyo(\/)?/) || request.path.match(/\/kanagawa(\/)?/) || request.path.match(/\/chiba(\/)?/) || request.path.match(/\/saitama(\/)?/)
-    %a(href="https://www.instagram.com/p/Cs9731HvJGF?banner=search" target="_blank" rel="noopener noreferrer")
-      %img.lazyload{alt: "PICTE写真展", "data-src" => "/images/ads/picte_20230717.png", class: "gallery_wrap"}/

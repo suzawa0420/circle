@@ -1,0 +1,13 @@
+<% organizer = placement == 'mypage' %>
+<aside class="picte-ad" aria-label="PR：PICTEの写真展">
+  <%= link_to picte_ad_url(placement), class: 'picte-ad__link', target: '_blank', rel: 'sponsored noopener', data: { picte_ad_click: placement, picte_click_url: picte_ad_clicks_path, turbolinks: false } do %>
+    <div class="picte-ad__label"><span class="picte-ad__pr">PR</span><span>PICTE｜<%= organizer ? '写真サークルの主催者の方へ' : '写真展をもっと身近に' %></span></div>
+    <%= image_tag '/images/ads/picte-share-exhibition.jpg', alt: '壁に並んだ写真作品を鑑賞する来場者', class: 'picte-ad__image', width: 1280, height: 853, loading: 'lazy', decoding: 'async' %>
+    <div class="picte-ad__body">
+      <h2 class="picte-ad__title"><% if organizer %>撮影の次は、<br>みんなで写真展へ。<% else %>撮った写真を、<br>写真展に飾ってみませんか。<% end %></h2>
+      <p class="picte-ad__description"><% if organizer %>サークルの仲間と、写真展に出展してみませんか。<br>印刷・準備・会場対応はPICTEにお任せ。<% else %>写真データを送れば、印刷・準備はお任せ。<br>はじめてでも、全国から出展できます。<% end %></p>
+      <p class="picte-ad__detail"><%= organizer ? '全国から参加OK・在廊不要' : '会場に行けなくても参加OK' %></p>
+      <span class="picte-ad__cta">写真展への出展について見る <%= lucide_icon 'external-link', **{ 'aria-hidden' => 'true' } %></span>
+    </div>
+  <% end %>
+</aside>

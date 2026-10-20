@@ -6,7 +6,7 @@ require 'set'
 # conditional markup and pagination as well as the stylesheet itself.
 class PublicListingStyles
   SOURCE_GLOBS = %w[
-    app/views/layouts/* app/views/shared/* app/views/circles/commons/*
+    app/views/layouts/* app/views/layouts/ads/* app/views/shared/* app/views/circles/commons/*
     app/views/circles/circles/index* app/views/circles/search/*
     app/views/circles/events/**/*.haml app/views/circles/prefectures/**/*.haml
     app/views/circles/tags/**/*.haml app/views/tags/*.haml

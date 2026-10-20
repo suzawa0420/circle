@@ -1,0 +1,23 @@
+<%= render 'webmasters/shared/page_header', title: 'PICTE広告のクリック数', description: '検索結果と主催者マイページの広告クリックを確認できます。' %>
+<section class="wm-section webmaster-card">
+  <h2>累計クリック数</h2>
+  <dl class="wm-support-metrics">
+    <% PicteAdClickCount::PLACEMENTS.each do |placement, label| %>
+      <div><dt><%= label %></dt><dd><strong><%= number_with_delimiter(@totals.fetch(placement, 0)) %></strong> 回</dd></div>
+    <% end %>
+  </dl>
+  <p class="wm-meta">クリック回数の集計です。同じ人による複数回のクリックも含みます。日本時間で日別に集計し、表示回数・クリック率は計測しません。</p>
+</section>
+<section class="wm-section webmaster-card">
+  <h2>直近30日間</h2>
+  <table class="wm-support-table">
+    <thead><tr><th scope="col">日付</th><th scope="col">検索結果</th><th scope="col">マイページ</th></tr></thead>
+    <tbody>
+      <% 30.times do |offset| %>
+        <% date = @today - offset %>
+        <tr><th scope="row"><%= date.strftime('%m/%d') %></th><td><%= number_with_delimiter(@daily.fetch([date, 'search'], 0)) %></td><td><%= number_with_delimiter(@daily.fetch([date, 'mypage'], 0)) %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+  <p class="wm-meta">JavaScriptが無効な場合や、通信・ブラウザーの制限によりクリックを記録できない場合があります。</p>
+</section>

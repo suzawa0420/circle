@@ -8,6 +8,7 @@
 //= require circle_search_navigation
 //= require circle_city_search
 //= require sport_discovery_tracking
+//= require picte_ad_tracking
 
 (function () {
   function ready() {

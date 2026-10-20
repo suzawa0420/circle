@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_19_010000) do
+ActiveRecord::Schema.define(version: 2026_10_20_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -652,6 +652,15 @@ ActiveRecord::Schema.define(version: 2026_10_19_010000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "index_opinions_on_user_id"
+  end
+
+  create_table "picte_ad_click_counts", force: :cascade do |t|
+    t.date "recorded_on", null: false
+    t.string "placement", null: false
+    t.bigint "click_count", default: 0, null: false
+    t.index ["recorded_on", "placement"], name: "index_picte_ad_click_counts_on_recorded_on_and_placement", unique: true
+    t.check_constraint "click_count >= 0", name: "picte_ad_click_count_nonnegative"
+    t.check_constraint "placement::text = ANY (ARRAY['search'::character varying, 'mypage'::character varying]::text[])", name: "picte_ad_placement"
   end
 
   create_table "place_information_reports", force: :cascade do |t|

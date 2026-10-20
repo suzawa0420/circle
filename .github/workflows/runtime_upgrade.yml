@@ -75,6 +75,8 @@ jobs:
         run: bundle exec rails test test/integration/attendance_answers_test.rb
       - name: Test shared site design and navigation
         run: |
+          bundle exec rails test test/integration/picte_ads_test.rb
+          node test/security/picte_ad_tracking_js_test.js
           bundle exec ruby test/helpers/ogp_meta_tags_test.rb
           bundle exec ruby test/services/schedule_ogp_image_test.rb
           bundle exec rails test test/integration/schedule_ogp_images_test.rb

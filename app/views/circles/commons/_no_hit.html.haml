@@ -11,5 +11,7 @@
     .no_hit_top トップページに戻る
   = link_to(new_admin_user_registration_path) do
     .no_hit_new 新しくサークルを登録する
+- if picte_camera_event?(@event)
+  = render 'layouts/ads/picte', placement: 'search'
 = render "/layouts/ad_square"
 .ad_space

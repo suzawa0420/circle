@@ -4,6 +4,14 @@ require Rails.root.join('lib/public_listing_styles')
 class PublicListingStylesTest < ActiveSupport::TestCase
   self.fixture_table_names = []
 
+  test 'listing asset keeps PICTE ad styles from its nested shared partial' do
+    css = Rails.application.assets.find_asset('public_listing.css').to_s
+    %w[.picte-ad .picte-ad__label .picte-ad__image .picte-ad__title .picte-ad__cta .picte-ad-slot].each do |selector|
+      assert_includes css, selector
+    end
+    assert_includes css, '1280/853'
+  end
+
   test 'compiled listing asset preserves shared sorting controls and selected state' do
     css = Rails.application.assets.find_asset('public_listing.css').to_s
     assert_match(/\.cb-sort\{[^}]*display:\s*flex/, css)
