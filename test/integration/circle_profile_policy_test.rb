@@ -1,6 +1,7 @@
 require 'test_helper'
 require_relative '../support/chat_records'
 require_relative '../../db/migrate/20261016000000_review_late_night_relaxation_profiles'
+require_relative '../../db/migrate/20261021000000_review_delivery_service_profiles'
 
 class CircleProfilePolicyTest < ActionDispatch::IntegrationTest
   self.fixture_table_names = []
@@ -84,6 +85,74 @@ class CircleProfilePolicyTest < ActionDispatch::IntegrationTest
     ['AV鑑賞', 'HEARTWAVE99', '夜のカフェ会', '夜間のヨガでリフレッシュ', '舒壓ヨガの交流会', '夜間舒壓交流會'].each do |name|
       @circle.update!(name: name, contact: 'Telegram：@sample LINE ID：sample')
       assert_equal 'clear', @circle.reload.moderation_status, name
+    end
+  end
+
+  test 'the reported delivery service profile is held and its public detail is hidden' do
+    @circle.update!(name: '日本椿うさぎ', appeal: <<~TEXT)
+      東京・大阪｜厳選された高品質なデリバリーサービス
+      完全予約制・本人対応・対面でのお支払い
+      ご案内・ご予約は責任をもって対応いたします。
+      ご予約：Gleezy：sample／TG：@sample line:sample
+    TEXT
+    assert_equal 'review', @circle.reload.moderation_status
+    assert_equal ['adult_service_promotion'], @circle.moderation_reasons.pluck('code')
+    assert @circle.moderation_checked_at.present?
+    refute @circle.publicly_visible?
+    assert_not_includes User.publicly_visible, @circle
+    assert_raises(ActiveRecord::RecordNotFound) { get circle_path(@circle) }
+  end
+
+  test 'delivery promotion variations are reviewed in every public profile field' do
+    CircleProfilePolicy::FIELDS.each do |field|
+      circle = @circle.dup
+      circle.public_send("#{field}=", '高品質なデリバリーサービス')
+      assert CircleProfilePolicy.review?(circle), field
+    end
+    ['高品質デリバリーサービス', '高級なデリバリーサービス', '高級デリバリーサービス',
+     '厳選されたデリバリーサービス', '高 品 質なデリバリー・サービス',
+     "高品質なデリバリー\u200bサービス", '高品質なデリバリー<b>サービス</b>',
+     '高品質なﾃﾞﾘﾊﾞﾘｰｻｰﾋﾞｽ', '&#39640;品質なデリバリーサービス'].each do |text|
+      @circle.goal = text
+      assert CircleProfilePolicy.review?(@circle), text
+    end
+  end
+
+  test 'delivery backfill is idempotent and preserves existing moderation decisions' do
+    @circle.update_columns(appeal: '高品質なデリバリーサービス', moderation_status: 'clear')
+    allowed = @circle.dup
+    allowed.appeal = '高品質な食材で料理会。お弁当のデリバリーサービスも利用します。' * 4
+    allowed.save!
+    detail = allowed.dup
+    detail.save!
+    detail.update_columns(sport_details: { 'activity_style' => '&#39640;品質なデリバリーサービス' })
+    held = @circle.dup
+    held.moderation_status = 'review'
+    held.save!
+    held.update_columns(moderation_reasons: [{ 'code' => 'manual', 'message' => '以前の理由' }])
+    blocked = @circle.dup
+    blocked.moderation_status = 'blocked'
+    blocked.save!
+    checked_at = nil
+    2.times do
+      ReviewDeliveryServiceProfiles.new.up
+      assert_equal 'review', @circle.reload.moderation_status
+      assert_equal 'review', detail.reload.moderation_status
+      assert_equal ['adult_service_promotion'], @circle.moderation_reasons.pluck('code')
+      assert_equal 'clear', allowed.reload.moderation_status
+      assert_equal 'blocked', blocked.reload.moderation_status
+      assert_equal ['manual'], held.reload.moderation_reasons.pluck('code')
+      assert_equal checked_at, @circle.moderation_checked_at if checked_at
+      checked_at = @circle.moderation_checked_at
+    end
+    assert_raises(ActiveRecord::RecordNotFound) { get circle_path(@circle) }
+  end
+
+  test 'ordinary deliveries and reservations remain allowed' do
+    ['デリバリーサービスを利用して食事会', '高品質な食材で料理会',
+     '完全予約制のヨガ教室', '参加費は対面でのお支払いです'].each do |text|
+      @circle.update!(goal: text)
+      assert_equal 'clear', @circle.reload.moderation_status, text
     end
   end
 

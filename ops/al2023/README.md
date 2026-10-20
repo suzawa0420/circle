@@ -72,6 +72,21 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Delivery-service promotion moderation (2026-10-21)
+
+Profiles containing euphemistic phrases such as `高品質なデリバリーサービス`,
+`高級なデリバリーサービス` or `厳選されたデリバリーサービス` are held for
+review and excluded from public detail pages, listings and sitemap discovery.
+Ordinary delivery or reservation terms alone do not trigger this rule.
+
+Deployment explicitly applies data migration `20261021000000` before either
+Puma restarts. It holds matching existing clear profiles and records the reason
+and check time without changing content or existing review/blocked decisions.
+There is no schema change. Both servers then perform the normal rolling hot
+restart and server4 refreshes the sitemap. Revert the application through the
+normal workflow if needed; do not automatically republish held profiles or
+reverse later human moderation decisions.
+
 ## Circle detail read-more controls (2026-10-20)
 
 Long circle introductions, reviews, questions, blogs and organizer profiles share
