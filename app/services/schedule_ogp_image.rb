@@ -8,7 +8,7 @@ require 'tmpdir'
 
 # A deterministic image, built exclusively from the public event information.
 class ScheduleOgpImage
-  VERSION = '1'
+  VERSION = '2'
   WIDTH = 1200
   HEIGHT = 630
   WEEKDAYS = %w[日 月 火 水 木 金 土].freeze
@@ -153,7 +153,22 @@ class ScheduleOgpImage
     end.join
     <<~SVG
       <svg xmlns="http://www.w3.org/2000/svg" xml:lang="ja" font-family="sans-serif" width="#{WIDTH}" height="#{HEIGHT}" viewBox="0 0 #{WIDTH} #{HEIGHT}">
-        <rect width="1200" height="630" fill="white"/>
+        <defs>
+          <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f0f8ed"/>
+            <stop offset="0.55" stop-color="#fafcf7"/>
+            <stop offset="1" stop-color="#eff6e9"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="630" fill="url(#background)"/>
+        <path d="M0 579 C240 526 360 650 658 580 S1010 535 1200 568 V630 H0Z" fill="#e4efdd" opacity="0.55"/>
+        <path d="M0 611 C270 555 455 662 740 610 S1030 588 1200 604 V630 H0Z" fill="#dcead5" opacity="0.4"/>
+        <g fill="#d7e7cc" opacity="0.5">
+          <path d="M1115 0 C1085 34 1103 64 1150 78 C1164 41 1151 14 1115 0Z"/>
+          <path d="M1200 31 C1158 26 1136 48 1137 86 C1178 88 1199 68 1200 31Z"/>
+          <path d="M1176 99 C1147 105 1141 128 1157 154 C1184 138 1189 120 1176 99Z"/>
+        </g>
+        <path d="M1163 -12 C1128 39 1125 96 1158 161" fill="none" stroke="#cfdfc5" stroke-width="2" opacity="0.5"/>
         #{title}
         #{icon('calendar-days', y: 306)}
         #{svg_text(date_label, x: 632, y: 337, size: 32)}
