@@ -1,0 +1,47 @@
+<%= form_with model: @column, local: true, class: 'column-editor', data: { column_editor: true } do |f| %>
+  <% if @column.errors.any? %><div class="webmaster-flash webmaster-flash--warning" role="alert"><p>入力内容を確認してください。</p><ul><% @column.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
+  <div class="wm-field"><%= f.label :title, '記事タイトル（必須）' %><%= f.text_field :title, required: true, maxlength: 200, placeholder: '例：社会人バスケに初参加するときの服装・持ち物' %></div>
+  <div class="column-editor__row">
+    <div class="wm-field"><%= f.label :audience, '読んでほしい人' %><%= f.select :audience, Column::AUDIENCES.map { |value, label| [label, value] } %></div>
+    <div class="wm-field"><%= f.label :event_id, '関連する種目' %><%= f.collection_select :event_id, @events, :id, :name, { include_blank: 'すべての種目' } %></div>
+  </div>
+  <div class="wm-field"><%= f.label :description, '記事の要約' %><%= f.text_area :description, rows: 3, placeholder: '誰の、どんな迷いを解決する記事かを短くまとめます。' %></div>
+  <div class="wm-field">
+    <%= f.label :image, '見出し画像（JPEG・PNG、20MB以下）' %><%= f.file_field :image, accept: 'image/jpeg,image/png' %><%= f.hidden_field :image_cache %>
+    <% if @column.image.identifier.present? %><%= image_tag @column.image.url, class: 'column-editor__image', alt: '現在の見出し画像' %><label class="column-check"><%= f.check_box :remove_image %> 画像を削除する</label><% end %>
+    <p class="wm-meta">ご自身で用意した掲載可能な画像を選んでください。商品画像の自動取得は行いません。</p>
+  </div>
+  <section class="column-editor__writing" aria-labelledby="column-writing-title">
+    <h2 id="column-writing-title">本文</h2>
+    <div class="column-editor__templates">
+      <button type="button" class="wm-button wm-button--secondary" data-column-template="participant">持ち物記事の構成を入れる</button>
+      <button type="button" class="wm-button wm-button--secondary" data-column-template="organizer">主催者向け記事の構成を入れる</button>
+    </div>
+    <p class="wm-meta">構成は本文が空のときだけ挿入できます。見出し・太字・箇条書き・リンクが使えます。画像は上の見出し画像から追加してください。</p>
+    <%= f.hidden_field :text, id: 'column-article-text', value: column_editor_content(@column) %>
+    <%= tag.trix_editor input: 'column-article-text', class: 'column-editor__body', 'aria-label': '記事本文', placeholder: '読者が迷っていることと、選び方を書いてください。' %>
+    <noscript><p>本文の編集にはJavaScriptを有効にしてください。</p></noscript>
+  </section>
+  <section aria-labelledby="column-products-title">
+    <h2 id="column-products-title">紹介する商品・道具</h2>
+    <p class="wm-meta">商品名と選び方を入力し、各サービスで発行した紹介リンクを貼ります。片方だけでも使えます。最大12件。記事の本文の後に表示します。</p>
+    <div data-column-products>
+      <% @column.column_products.build if @column.column_products.empty? %>
+      <%= f.fields_for :column_products do |product_form| %><%= render 'product_fields', f: product_form %><% end %>
+    </div>
+    <button type="button" class="wm-button wm-button--secondary" data-column-add-product>商品を追加する</button>
+    <template data-column-product-template><%= f.fields_for :column_products, ColumnProduct.new, child_index: 'NEW_PRODUCT' do |product_form| %><%= render 'product_fields', f: product_form %><% end %></template>
+  </section>
+  <label class="column-check"><%= f.check_box :affiliate %> アフィリエイトを含む記事として広告表記を表示する</label>
+  <p class="wm-meta">商品リンクがある場合は自動で広告表記を表示します。Amazonリンクがあれば、Amazonアソシエイトの参加表記も表示します。</p>
+  <p class="column-editor__status" role="status" data-column-editor-status>現在：<%= @column.new_record? ? '未保存' : (@column.published? ? '公開中' : '下書き') %>。プレビューには保存済みの内容が表示されます。</p>
+  <div class="wm-actions column-editor__actions">
+    <%= f.button '下書き保存', name: 'intent', value: 'draft', type: 'submit', class: 'wm-button wm-button--secondary', data: { disable_with: '保存中…', confirm: (@column.persisted? && @column.published? ? 'この記事を非公開の下書きに戻しますか？' : nil) } %>
+    <%= f.button '公開する', name: 'intent', value: 'publish', type: 'submit', class: 'wm-button', data: { disable_with: '保存中…' } %>
+    <% if @column.persisted? %><%= link_to '保存済みの記事をプレビュー', column_path(@column), target: '_blank', rel: 'noopener', class: 'wm-button wm-button--secondary' %><% end %>
+    <%= link_to '一覧に戻る', columns_path, class: 'wm-button wm-button--secondary' %>
+  </div>
+  <% if @column.persisted? %><p class="wm-meta">記事URL：<%= column_url(@column) %></p><% end %>
+<% end %>
+<template id="column-template-participant"><h1>まず結論：初参加に必要なもの</h1><p>参加先に持ち物と貸出品を確認したうえで、足りないものを準備しましょう。</p><h1>買う前に主催者へ確認すること</h1><ul><li>会場で指定されている服装・シューズ</li><li>借りられる道具と、持参が必要な道具</li></ul><h1>必須の持ち物と選び方</h1><p>必要な理由、選ぶ基準、どんな人に合うかを記入してください。</p><h1>新品・中古・借りるものの分け方</h1><p>予算だけでなく、状態・サイズ・送料・到着予定も比較しましょう。</p><h1>今すぐ買わなくてもよいもの</h1><p>初回に購入しなくても困らないものを整理してください。</p></template>
+<template id="column-template-organizer"><h1>まず結論：活動に必要な備品</h1><p>想定する人数と活動内容を記入し、会場で借りられるものを確認しましょう。</p><h1>人数に合わせた必要数</h1><p>道具の種類ごとに、必要数とその理由を記入してください。</p><h1>購入前の確認ポイント</h1><ul><li>サイズ・素材・色分け</li><li>保管・持ち運び・洗濯</li><li>追加購入のしやすさと納期</li></ul><h1>予算を抑える方法</h1><p>会場の貸出品、新品のセット、中古の状態と総額を比較してください。</p><h1>参加者への案内文</h1><p>持参してほしいものと、主催者側で用意するものをまとめてください。</p></template>

@@ -1,17 +1,8 @@
-.main.user-show
+- set_meta_tags title: @column.title, description: (@column.description.presence || strip_tags(@column.text.to_s).truncate(150))
+.main.column-page
   .container
-    .form.users-form
-      .form-body
-        - if webmaster?
-          - if webmaster?
-            .post-edit
-              .post-edit_btn
-                = link_to( "編集", edit_column_path)
-                ／
-                \#{link_to( "削除", column_path, method: :delete, data: {confirm: "投稿を削除しますか？"})}
-      .post-body
-        = image_tag @column.image.url , class:'content_image_one' if @column.image.present?
-        .cont-width
-          %h3.blog_title= @column.title
-          = raw Rinku.auto_link(simple_format @column.description)
-          = raw Rinku.auto_link(simple_format @column.text)
+    - if @preview
+      .column-preview-notice
+        %p= @column.published? ? '運営プレビュー：この記事は公開中です。' : '運営プレビュー：下書きのため一般には公開されません。'
+        = link_to '記事の編集に戻る', edit_column_path(@column)
+    = render 'article'

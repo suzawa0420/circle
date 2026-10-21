@@ -1,0 +1,34 @@
+<article class="column-article">
+  <header class="column-article__header">
+    <p class="column-article__eyebrow">サークルブック編集部</p>
+    <h1><%= @column.title %></h1>
+    <p class="column-article__meta"><%= Column::AUDIENCES.fetch(@column.audience) %><% if @column.event %> · <%= @column.event.name %><% end %> · 更新日：<%= @column.updated_at.strftime('%Y年%-m月%-d日') %></p>
+    <% if @column.description.present? %><p class="column-article__lead"><%= @column.description %></p><% end %>
+    <% if @column.affiliate? %>
+      <aside class="column-article__disclosure" aria-label="広告について">
+        <p>広告：この記事にはアフィリエイトリンクが含まれます。リンク経由の購入により、サークルブックが報酬を受け取る場合があります。</p>
+        <% if @column.amazon_links? %><p>Amazonのアソシエイトとして、サークルブックは適格販売により収入を得ています。</p><% end %>
+      </aside>
+    <% end %>
+  </header>
+  <% if @column.image.identifier.present? %><%= image_tag @column.image.url, class: 'column-article__image', alt: '', loading: 'lazy' %><% end %>
+  <div class="column-article__body"><%= column_body_html(@column) %></div>
+  <% if @column.column_products.any? %>
+    <section class="column-products" aria-labelledby="column-products-heading">
+      <h2 id="column-products-heading">紹介した道具・購入先</h2>
+      <p>必要なものだけ選び、価格・状態・サイズ・送料・到着予定は購入先でご確認ください。</p>
+      <% @column.column_products.each do |product| %>
+        <article class="column-product">
+          <h3><%= product.name %></h3>
+          <% if product.description.present? %><div class="column-product__description"><%= simple_format(h(product.description)) %></div><% end %>
+          <div class="column-product__links">
+            <% if product.amazon_url.present? %><%= column_product_link(product, 'amazon') %><% end %>
+            <% if product.mercari_url.present? %><%= column_product_link(product, 'mercari') %><% end %>
+          </div>
+        </article>
+      <% end %>
+    </section>
+  <% end %>
+  <% if @column.event&.ruby.present? %><%= link_to "#{@column.event.name}のサークルを探す", event_path(@column.event.ruby), class: 'column-article__back' %><% end %>
+  <%= link_to '紹介記事の一覧を見る', columns_path, class: 'column-article__back' %>
+</article>

@@ -1,0 +1,20 @@
+<div class="column-directory">
+  <p class="column-article__eyebrow">サークルブック編集部</p>
+  <h1>サークルの準備ガイド</h1>
+  <p>初参加の持ち物から、主催者の備品選びまで。</p>
+  <nav class="column-directory__filters" aria-label="記事の対象者">
+    <%= link_to 'すべて', columns_path, 'aria-current': (params[:audience].blank? ? 'page' : nil) %>
+    <% Column::AUDIENCES.except('all').each do |key, label| %><%= link_to label, columns_path(audience: key), 'aria-current': (params[:audience] == key ? 'page' : nil) %><% end %>
+  </nav>
+  <div class="column-directory__list">
+    <% @columns.each do |column| %>
+      <article class="column-directory__card">
+        <p class="column-article__meta"><%= Column::AUDIENCES.fetch(column.audience) %><% if column.event %> · <%= column.event.name %><% end %></p>
+        <h2><%= link_to column.title, column_path(column) %></h2>
+        <% if column.description.present? %><p><%= truncate(column.description, length: 140) %></p><% end %>
+      </article>
+    <% end %>
+  </div>
+  <% if @columns.empty? %><p class="column-directory__empty">記事を準備しています。</p><% end %>
+  <%= paginate @columns %>
+</div>

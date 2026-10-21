@@ -20,6 +20,13 @@ SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new(
 SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
   add root_path, lastmod: nil, changefreq: 'weekly', priority: 0.3
 
+  if Column.published.exists?
+    add columns_path, changefreq: 'weekly', priority: 0.5
+    Column.published.find_each do |column|
+      add column_path(column), lastmod: column.updated_at, changefreq: 'monthly', priority: 0.5
+    end
+  end
+
   User.publicly_visible.find_each do |user|
     add circle_path(user), :lastmod => user.updated_at, :priority => 0.3, :changefreq => 'weekly'
   end

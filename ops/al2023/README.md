@@ -87,6 +87,39 @@ restart and server4 refreshes the sitemap. Revert the application through the
 normal workflow if needed; do not automatically republish held profiles or
 reverse later human moderation decisions.
 
+## Editorial articles and affiliate links (2026-10-21)
+
+The webmaster dashboard's **紹介記事・コラム** opens `/columns`. The editor at
+`/columns/new` supports draft/publish, a Trix body, a cover image, participant or
+organizer targeting, an optional sport and up to twelve product cards. Each card
+accepts an official Amazon and/or Mercari affiliate URL. The editor includes
+starter outlines for a first-visit checklist and an organizer equipment guide.
+Use **下書き保存**, then **保存済みの記事をプレビュー** to review saved content;
+**公開する** makes it public. Saving a published article as a draft unpublishes
+it after confirmation. New articles default to drafts. Existing columns keep
+their public URLs and publication state after migration.
+
+Product cards automatically enable advertising disclosure; Amazon links also
+enable the Amazon Associates statement. Rich body markup is sanitized, and
+external links in affiliate articles are marked `sponsored nofollow noopener`.
+Only generated HTTPS shop links on the supported domains are accepted in cards.
+No product images, prices, stock data or affiliate identifiers are fetched or
+generated. Paste the actual links from the respective affiliate accounts.
+
+Published guides appear on matching event pages for participants and in the
+organizer dashboard for organizers, including all-sports/all-audience guides.
+Drafts are excluded from these placements, public articles and the sitemap.
+Product-link clicks are atomically counted per shop and shown in the editor
+and management list. Webmaster previews do not count. These are click counts,
+not purchases or revenue; affiliate reports remain the source for those.
+
+Deployment requires `20261021010000` **before restarting either application
+server**, followed by normal asset compilation and rolling Puma restarts. It
+adds columns and the `column_products` table, without changing circle blogs.
+Rollback the application through the normal revert workflow while retaining
+the additive schema and article data. Do not run the migration's destructive
+`down` against production as a routine application rollback.
+
 ## Circle detail read-more controls (2026-10-20)
 
 Long circle introductions, reviews, questions, blogs and organizer profiles share

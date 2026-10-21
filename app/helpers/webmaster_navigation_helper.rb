@@ -16,7 +16,7 @@ module WebmasterNavigationHelper
       ['メッセージ', super_admin_conversations_path, 0],
       ['口コミ', super_admin_reviews_path, 0],
       ['施設', super_admin_places_path, 0],
-      ['コラム', columns_path, 0],
+      ['紹介記事・コラム', columns_path, 0],
       ['ブロック', account_blocks_path, 0],
       ['無効メール', invalid_emails_path, 0],
       ['検索キーワード', db_keywords_path, 0],

@@ -1,0 +1,7 @@
+<% guides = column_related_guides(event: event, audience: audience) %>
+<% if guides.any? %>
+  <section class="column-guide-links" aria-label="サークルの準備ガイド">
+    <h2><%= audience == 'organizer' ? '活動の準備・備品選び' : '初参加の準備・持ち物' %></h2>
+    <% guides.each do |guide| %><%= link_to guide.title, column_path(guide), class: 'column-guide-links__link' %><% end %>
+  </section>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_21_000000) do
+ActiveRecord::Schema.define(version: 2026_10_21_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -299,6 +299,20 @@ ActiveRecord::Schema.define(version: 2026_10_21_000000) do
     t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
+  create_table "column_products", force: :cascade do |t|
+    t.bigint "column_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.text "amazon_url"
+    t.text "mercari_url"
+    t.integer "position", default: 0, null: false
+    t.bigint "amazon_clicks", default: 0, null: false
+    t.bigint "mercari_clicks", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["column_id"], name: "index_column_products_on_column_id"
+  end
+
   create_table "columns", force: :cascade do |t|
     t.string "title"
     t.text "text"
@@ -306,6 +320,13 @@ ActiveRecord::Schema.define(version: 2026_10_21_000000) do
     t.datetime "updated_at", null: false
     t.text "description"
     t.string "image"
+    t.string "publication_status", default: "draft", null: false
+    t.datetime "published_at"
+    t.string "audience", default: "all", null: false
+    t.boolean "affiliate", default: false, null: false
+    t.bigint "event_id"
+    t.index ["event_id"], name: "index_columns_on_event_id"
+    t.index ["publication_status", "updated_at"], name: "index_columns_on_publication_status_and_updated_at"
   end
 
   create_table "db_keywords", force: :cascade do |t|
@@ -964,6 +985,8 @@ ActiveRecord::Schema.define(version: 2026_10_21_000000) do
   add_foreign_key "applications", "members"
   add_foreign_key "backlink_requests", "users"
   add_foreign_key "backlink_requests", "webmasters", column: "reviewed_by_id"
+  add_foreign_key "column_products", "columns"
+  add_foreign_key "columns", "events"
   add_foreign_key "blogs", "users"
   add_foreign_key "circle_activity_fingerprints", "users", on_delete: :cascade
   add_foreign_key "bookmarks", "members"

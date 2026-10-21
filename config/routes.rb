@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   get '/circle-images/:kind/:id/:fingerprint.:format', to: 'listing_images#show',
     as: :listing_image, defaults: { format: 'jpg' },
     constraints: { kind: /profile|header|detail_header/, id: /\d+/, fingerprint: /[a-f0-9]{24}/, format: /jpg|webp/ }
-  resources :columns
+  resources :columns do
+    post 'products/:id/click', to: 'column_product_clicks#create', as: :product_click
+  end
 
   get 'conversations/:conversation_id/images/:id', to: 'chat_images#show', as: :chat_image
 

@@ -1,78 +1,63 @@
 class ColumnsController < ApplicationController
-  before_action :set_column
-  before_action :require_webmaster!, only: [:new, :create, :edit, :update, :destroy]
-
+  layout -> { action_name == 'show' ? 'application' : account_layout }
+  before_action :require_webmaster!, except: [:index, :show]
+  before_action :find_column, only: [:show, :edit, :update, :destroy]
+  before_action :prepare_editor, only: [:new, :create, :edit, :update]
 
   def index
-    @columns = Column.all.order(created_at: "DESC")
-  end 
+    @columns = webmaster? ? Column.all : Column.published
+    @columns = @columns.where(audience: params[:audience]) if Column::AUDIENCES.key?(params[:audience])
+    @columns = @columns.includes(:event).order(updated_at: :desc, id: :desc).page(params[:page]).per(20)
+  end
 
   def new
-    @column = Column.new
+    @column = Column.new(publication_status: 'draft', affiliate: true)
   end
 
   def create
     @column = Column.new(column_params)
-
-    if @column.update(column_params)
-      redirect_to column_path(@column.id)
-    else
-      render "/columns/edit"
-    end 
-
+    save_column(:new)
   end
 
   def show
-    @column = Column.find(params[:id])
+    @preview = webmaster?
+    set_meta_tags noindex: true if @preview
   end
 
-
-
-  def edit
-    @column = Column.find(params[:id])
-    @column_button = "編集する"
-  end
+  def edit; end
 
   def update
-    @column = Column.find(params[:id])
-
-    if @column.update(column_params)
-      redirect_to column_path
-    else
-      render "/columns/edit"
-    end 
+    @column.assign_attributes(column_params)
+    save_column(:edit)
   end
 
   def destroy
-      @column = Column.find(params[:id])
-      @column.destroy   
-
-    redirect_to("/")
+    @column.destroy!
+    redirect_to columns_path, notice: '記事を削除しました。', status: :see_other
   end
-
-
-    def set_column
-      @columns = Column.all.order(created_at: "DESC")
-
-    if admin_user_signed_in?
-      @current_user = User.find_by(id: current_admin_user.id)
-    end
-
-    end
-
 
   private
-  def column_params
-    params.require(:column).permit(
-      :title, 
-      :text,
-      :description,
-      :image
-    )
+
+  def find_column
+    @column = (webmaster? ? Column.all : Column.published).includes(:column_products, :event).find(params[:id])
   end
 
+  def prepare_editor
+    @events = Event.order(:order, :id)
+  end
 
+  def save_column(template)
+    @column.publication_status = params[:intent] == 'publish' ? 'published' : 'draft'
+    if @column.save
+      redirect_to edit_column_path(@column), notice: @column.published? ? '記事を公開しました。' : '下書きを保存しました。', status: :see_other
+    else
+      render template, status: :unprocessable_entity
+    end
+  end
 
-
-
+  def column_params
+    params.require(:column).permit(:title, :text, :description, :image, :image_cache, :remove_image,
+      :audience, :event_id, :affiliate,
+      column_products_attributes: [:id, :name, :description, :amazon_url, :mercari_url, :position, :_destroy])
+  end
 end

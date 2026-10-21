@@ -1,0 +1,10 @@
+<fieldset class="column-product-fields">
+  <legend>紹介する商品・道具</legend>
+  <div class="wm-field"><%= f.label :name, '商品名・道具の種類' %><%= f.text_field :name, maxlength: 200, placeholder: '例：初心者向けの室内用シューズ' %></div>
+  <div class="wm-field"><%= f.label :description, 'こんな人向け・選び方' %><%= f.text_area :description, rows: 3, maxlength: 2000, placeholder: '必要な理由、サイズや素材の選び方、購入前に確認してほしいこと' %></div>
+  <div class="wm-field"><%= f.label :amazon_url, 'Amazonの紹介リンク' %><%= f.url_field :amazon_url, placeholder: 'https://amzn.to/…' %></div>
+  <div class="wm-field"><%= f.label :mercari_url, 'メルカリの紹介リンク（商品・検索結果）' %><%= f.url_field :mercari_url, placeholder: 'https://jp.mercari.com/…' %></div>
+  <div class="wm-field"><%= f.label :position, '表示順（小さい順）' %><%= f.number_field :position, min: 0, max: 999 %></div>
+  <% if f.object.persisted? %><p class="wm-meta">クリック数：Amazon <%= f.object.amazon_clicks %> ／ メルカリ <%= f.object.mercari_clicks %>（購入数ではありません）</p><% end %>
+  <label class="column-check"><%= f.check_box :_destroy %> この商品を削除する</label>
+</fieldset>
