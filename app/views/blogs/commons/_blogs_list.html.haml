@@ -8,7 +8,7 @@
 
 - show_lancul_ad = lancul_english_event?(@event)
 .blog-results-grid
-  - cache [blogs, show_lancul_ad, 'stored-image-extension-v3-lancul'] do
+  - cache [blogs, show_lancul_ad, 'stored-image-extension-v4-lancul-third-card'] do
     - blogs.each.with_index(1) do |blog, i|
       .form.users-form
         .blog-body
@@ -55,10 +55,10 @@
               = blog.user.prefecture.name
 
 
-      - if show_lancul_ad && i == [5, blogs.size].min
+      - if show_lancul_ad && i == [2, blogs.size].min
         .lancul-ad-slot
           = render 'layouts/ads/lancul', placement: 'blog_search'
-      - elsif i == 5
+      - elsif i == 5 && !show_lancul_ad
         .list_ad
           = render "/layouts/ad_square"
 

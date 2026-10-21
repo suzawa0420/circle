@@ -10,22 +10,23 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     @english = Event.create!(name: '英会話', ruby: 'english', category: @circle.category, order: '2')
   end
 
-  test 'English circle search shows one ad after five results or the last short result' do
+  test 'English circle search shows one ad after two results or the last short result' do
     get event_path(@circle.event.ruby)
     assert_select '.lancul-ad', count: 0
     @circle.update!(event: @english)
     get event_path('english')
     assert_ad 'search'
     assert_select '.circle-results-grid > li:nth-child(2).lancul-ad-slot', count: 1
-    5.times do |i|
+    9.times do |i|
       copy = @circle.dup
       copy.assign_attributes(name: "英会話サークル#{i}", unique_id: nil)
       copy.save!
     end
     get event_prefecture_path('english', @circle.prefecture.kana)
     assert_ad 'search'
-    assert_select '.circle-results-grid > li:nth-child(6).lancul-ad-slot', count: 1
-    assert_select '.circle-results-grid > .user_item_wrap', count: 6
+    assert_select '.circle-results-grid > li:nth-child(3).lancul-ad-slot', count: 1
+    assert_select '.circle-results-grid > .user_item_wrap', count: 10
+    assert_select '.circle-results-grid > .list_ad', count: 0
     get circles_path
     assert_select '.lancul-ad', count: 0
   end
@@ -48,6 +49,13 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     create_blog
     get blogs_event_path('english')
     assert_ad 'blog_search'
+    9.times do |i|
+      @circle.blogs.create!(title: "活動報告#{i}", content: "#{i}回目の英会話の活動で楽しく交流しました。" * 8)
+    end
+    get blogs_event_path('english')
+    assert_select '.blog-results-grid > .users-form', count: 10
+    assert_select '.blog-results-grid > div:nth-child(3).lancul-ad-slot', count: 1
+    assert_select '.blog-results-grid > .list_ad', count: 0
     get blogs_event_prefecture_path('english', @circle.prefecture.kana)
     assert_ad 'blog_search'
     get blogs_path
@@ -91,7 +99,7 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
 
   test 'optimized public listing CSS retains the shared ad styles' do
     css = Rails.application.assets.find_asset('public_listing.css').to_s
-    %w[.lancul-ad .lancul-ad__action .lancul-ad__pixel .lancul-ad-slot].each do |selector|
+    %w[.lancul-ad .lancul-ad__action .lancul-ad__pixel .lancul-ad-slot .lancul-ad__banner].each do |selector|
       assert_includes css, selector
     end
   end
@@ -111,6 +119,8 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
         assert_includes links.first['rel'].split, 'nofollow'
       end
       assert_select '.lancul-ad__pr', text: 'PR'
+      assert_select '.lancul-ad__banner-link[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+614CX"] img[width="300"][height="250"][src^="https://www29.a8.net/svt/bgt?"]', count: 1
+      assert_select 'img[width="1"][height="1"][src^="https://www19.a8.net/0.gif"]', count: 1
       assert_select 'img[width="1"][height="1"][src^="https://www14.a8.net/0.gif"]', count: 1
     end
   end

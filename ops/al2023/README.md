@@ -122,15 +122,17 @@ the additive schema and article data. Do not run the migration's destructive
 
 ## LanCul affiliate placements (2026-10-21)
 
-The approved LanCul A8 text creative for the registered Circlebook site appears
-only on English (`english`) discovery pages: after the fifth circle result (or
-last result on a shorter page), matching empty searches, English blog discovery
+The approved LanCul A8 creatives for the registered Circlebook site appear
+only on English (`english`) discovery pages: as the third card after two circle
+results (or last result on a shorter page), matching empty searches, English blog discovery
 lists, and English circle blog archives/details. Participant home pages show it
 below recommended circles only when English is a saved interest. Generic lists,
 other genres, public participant profiles and conversations do not show it.
-The first existing in-list ad is replaced, and fragment cache keys include the
-English placement flag. PR/disclosure, the supplied A8 link and its tracking
-pixel are shared by all placements. No price or time-limited offer is copied.
+English lists use one LanCul card in normal desktop grid flow, without the
+full-width in-list AdSense rows; the footer ad is retained. The official A8
+300x250 creative (013) is linked with its supplied tracking pixel, without
+cropping or editing. Fragment cache keys include the English placement flag.
+PR/disclosure, the supplied A8 links and their tracking pixels are shared by all placements. No price or time-limited offer is copied.
 
 No new migration is required. Deploy master through the normal runtime checks,
 asset compilation and rolling Puma hot restart on server4/server5. Existing

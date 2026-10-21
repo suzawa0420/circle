@@ -16,11 +16,16 @@
 .lancul-ad__action a:focus-visible { outline: 3px solid $cb-text; outline-offset: 3px; border-radius: 6px; }
 .lancul-ad .lancul-ad__disclosure { margin: 12px 0 0; color: $cb-muted; font-size: 11px; line-height: 1.7; }
 .lancul-ad .lancul-ad__pixel { position: absolute; width: 1px; height: 1px; margin: 0; border: 0; }
+.lancul-ad__banner-link { display: block; width: 300px; max-width: 100%; margin: 16px auto 0; }
+.lancul-ad .lancul-ad__banner { display: block; width: 100%; height: auto; aspect-ratio: 6 / 5; margin: 0; border: 0; border-radius: 0; }
+.lancul-ad__banner-link:focus-visible { outline: 3px solid $cb-action; outline-offset: 3px; }
 .circle-results-grid > .lancul-ad-slot { width: 96%; margin: 0 auto; }
 .blog-results-grid > .lancul-ad-slot { min-width: 0; }
 @media (min-width: 900px) {
-  .circle-results-grid > .lancul-ad-slot { grid-column: 1 / -1; width: 100%; }
-  .blog-results-grid > .lancul-ad-slot { grid-column: 1 / -1; }
+  .cb-site .circle-results-grid > .lancul-ad-slot,
+  .cb-site .blog-results-grid > .lancul-ad-slot { grid-column: auto; grid-row: auto; min-width: 0; width: 100%; margin: 0; }
+  .lancul-ad-slot .lancul-ad { display: flex; flex-direction: column; height: 100%; margin: 0; }
+  .lancul-ad-slot .lancul-ad__action { margin-top: auto; }
 }
 @media (max-width: 359px) {
   .lancul-ad { padding: 20px 16px; }
