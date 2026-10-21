@@ -43,6 +43,7 @@ class Member < ApplicationRecord
   has_many :received_conversation_reviews, -> { publicly_visible.where(author_role: 'owner') }, through: :conversations, source: :conversation_reviews
   before_update :reset_email_verification, if: :will_save_change_to_email?
   validates :nickname, length: { maximum: 30 }
+  validates :nickname, :profile, prohibited_promotion: true
   validates :nickname, :prefecture, :events, presence: true, on: :profile
   validates :profile, length: { maximum: 2000 }
   validate :valid_date_of_birth

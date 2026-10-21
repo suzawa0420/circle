@@ -15,7 +15,11 @@ class CircleProfilePolicy
   end
 
   def self.prohibited?(value)
-    normalized(value).match?(PROHIBITED)
+    normalized(value).match?(PROHIBITED) || prohibited_promotion?(value)
+  end
+
+  def self.prohibited_promotion?(value)
+    normalized(value).include?('日本椿兔')
   end
 
   def self.review?(profile)

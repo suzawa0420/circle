@@ -225,6 +225,8 @@ class User < ApplicationRecord
     end
   end
 
+  validates :template, prohibited_promotion: true
+
   def youtube_video_id
     YoutubeVideo.id(youtube_url)
   end

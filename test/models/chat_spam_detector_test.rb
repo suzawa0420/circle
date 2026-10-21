@@ -6,6 +6,53 @@ class ChatSpamDetectorTest < ActiveSupport::TestCase
   include ChatRecords
   setup { create_chat_records }
 
+  test 'blocked promotion cannot be sent by either role before or after acceptance' do
+    2.times do
+      %w[member owner].each do |role|
+        ['日本椿兔', 'Googleで「日本椿兔」と検索してください。',
+         '日 本・椿 兔', "日本椿\u200b兔", '日本椿&#20820;', '日本<b>椿</b>兔'].each do |body|
+          assert_no_difference ['ChatMessage.count', 'ActionMailer::Base.deliveries.size'] do
+            error = assert_raises(ActiveRecord::RecordInvalid) { @conversation.send_message!(role, body) }
+            assert error.record.errors.of_kind?(:body, :invalid), body
+          end
+        end
+      end
+      accept_conversation unless @conversation.accepted_at
+    end
+    assert @conversation.send_message!('member', '日本の椿を観察する会に参加したいです。').delivered?
+  end
+
+  test 'both roles cannot insert the blocked term by editing and legacy messages stay deletable' do
+    accept_conversation
+    %w[member owner].each do |role|
+      message = @conversation.send_message!(role, '参加日を確認します。')
+      assert_raises(ActiveRecord::RecordInvalid) { message.revise!(role, body: '日本椿兔') }
+      assert_equal '参加日を確認します。', message.reload.body
+      message.update_column(:body, '以前の日本椿兔の投稿')
+      assert message.revise!(role, delete: true)
+      assert message.reload.deleted_at
+    end
+  end
+
+  test 'participant and organizer profiles and automatic reply templates reject the blocked term' do
+    [@member, @owner].each do |actor|
+      %i[nickname profile].each do |field|
+        actor.assign_attributes(field => '日本椿兔です。')
+        refute actor.valid?, "#{actor.class} #{field}"
+        assert actor.errors.of_kind?(field, :invalid)
+        actor.reload
+      end
+      actor.update_column(:profile, '以前の日本椿兔の紹介です。')
+      assert actor.update(nickname: '通常の名前')
+    end
+    (CircleProfilePolicy::FIELDS + [:template]).each do |field|
+      circle = @circle.dup
+      circle.public_send("#{field}=", '日本椿兔のご案内です。')
+      refute circle.valid?, field
+      assert circle.errors.of_kind?(field, :invalid), field
+    end
+  end
+
   test 'adult advertisements are held with inspectable independent reasons' do
     result = ChatSpamDetector.evaluate(@conversation, "性愛預約服務 LINE ID: bad Telegram: @bad https://t.me/bad #宣傳 #台北 #台中 #服務 #廣告 #預約")
     assert result.held?

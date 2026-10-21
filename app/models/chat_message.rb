@@ -6,6 +6,7 @@ class ChatMessage < ApplicationRecord
   has_many :conversation_reply_reports, dependent: :destroy
   validates :sender_role, inclusion: { in: Conversation::ROLES + ['system'] }
   validates :body, length: { maximum: 2000 }
+  validates :body, prohibited_promotion: true
   validates :body, presence: true, unless: :image?
 
   STATUSES = { 'delivered' => '配信済み', 'held' => '運営確認中', 'approved' => '配信許可済み', 'spam' => 'スパムと確認・未配信' }.freeze

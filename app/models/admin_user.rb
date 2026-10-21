@@ -55,6 +55,7 @@ class AdminUser < ApplicationRecord
         :recoverable, :rememberable, :validatable
 
     validates :nickname, length: { maximum: 16 }
+    validates :nickname, :profile, prohibited_promotion: true
 
     mount_uploader :image_profile, ImageUploader
 
