@@ -31,4 +31,11 @@ class AffiliateAdsHelperTest < ActionView::TestCase
     refute_equal affiliate_ad_cache_key(original), affiliate_ad_cache_key(original.merge('enabled' => false))
     assert_nil affiliate_ad_cache_key(nil)
   end
+
+  test 'all listings share the same single insertion position including short lists' do
+    { 0 => [], 1 => [1], 2 => [2], 10 => [2] }.each do |total, expected|
+      positions = (1..total).select { |position| affiliate_ad_insert_after?(position, total: total) }
+      assert_equal expected, positions
+    end
+  end
 end

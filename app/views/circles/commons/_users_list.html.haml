@@ -9,7 +9,7 @@
 - users = listing_data.users
 - show_picte_ad = picte_camera_event?(@event)
 - affiliate_ad = affiliate_ad_for_event(@event, placement: 'search')
-- cache [users, show_picte_ad, affiliate_ad_cache_key(affiliate_ad), 'seo-list-v13-affiliate-label', 'stored-image-extension-v1'] do
+- cache [users, show_picte_ad, affiliate_ad_cache_key(affiliate_ad), 'seo-list-v14-affiliate-position', 'stored-image-extension-v1'] do
   %ul.circle-results-grid
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
@@ -102,7 +102,7 @@
         %li.picte-ad-slot
           = render 'layouts/ads/picte', placement: 'search'
 
-      - if affiliate_ad && i == [2, users.size].min
+      - if affiliate_ad && affiliate_ad_insert_after?(i, total: users.size)
         %li.affiliate-ad-slot
           = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'search'
 

@@ -9,7 +9,7 @@
 - affiliate_placement = blogs.empty? ? 'blog_search_empty' : 'blog_search'
 - affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement)
 .blog-results-grid
-  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'stored-image-extension-v6-affiliate-label'] do
+  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'stored-image-extension-v7-affiliate-position'] do
     - blogs.each.with_index(1) do |blog, i|
       .form.users-form
         .blog-body
@@ -56,7 +56,7 @@
               = blog.user.prefecture.name
 
 
-      - if affiliate_ad && i == [2, blogs.size].min
+      - if affiliate_ad && affiliate_ad_insert_after?(i, total: blogs.size)
         .affiliate-ad-slot
           = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'blog_search'
       - elsif i == 5 && !affiliate_ad

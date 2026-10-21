@@ -21,8 +21,11 @@
       <%= form.submit '絞り込む', name: nil %>
     <% end %>
     <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件のイベント</h2><p><%= '開催日順・' if @event_end_date %>募集中を優先<% unless %w[2 3].include?(params[:sort]) %>・同じ条件では日替わり表示<% end %></p></div>
+    <% affiliate_placement = @schedules.empty? ? 'event_search_empty' : 'event_search' %>
+    <% affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement) %>
     <% if @schedules.empty? %>
       <div class="event-results__empty"><h2>この条件のイベントはまだありません</h2><p>別の日付やエリア・ジャンルでも探してみてください。</p><%= link_to '今日のイベントを見る', today_events_path %></div>
+      <%= render 'layouts/ads/affiliate', ad: affiliate_ad, placement: affiliate_placement if affiliate_ad %>
     <% else %>
       <ul class="event-results__list">
         <% @schedules.each_with_index do |schedule, index| %>
@@ -30,6 +33,9 @@
           <li>
             <%= render 'schedules/event_card', schedule: schedule, user: schedule.user, status: { key: key, label: label }, eager: index.zero?, show_date: @event_end_date.present? %>
           </li>
+          <% if affiliate_ad && affiliate_ad_insert_after?(index + 1, total: @schedules.size) %>
+            <li class="affiliate-ad-slot"><%= render 'layouts/ads/affiliate', ad: affiliate_ad, placement: affiliate_placement %></li>
+          <% end %>
         <% end %>
       </ul>
       <%= paginate @schedules %>

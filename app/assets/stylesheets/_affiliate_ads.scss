@@ -19,9 +19,12 @@
 .affiliate-ad .affiliate-ad__pixel { position: absolute; width: 1px; height: 1px; margin: 0; border: 0; }
 .circle-results-grid > .affiliate-ad-slot { width: 96%; margin: 0 auto; }
 .blog-results-grid > .affiliate-ad-slot { min-width: 0; }
+.event-results__list > .affiliate-ad-slot { min-width: 0; }
+.event-results__list > .affiliate-ad-slot .affiliate-ad { margin: 0; }
 @media (min-width: 900px) {
   // A tall advertisement must never stretch the neighboring organic card.
-  .cb-site .circle-results-grid, .cb-site .blog-results-grid { align-items: start; }
+  .cb-site .circle-results-grid, .cb-site .blog-results-grid,
+  .cb-site .event-results__container .event-results__list { align-items: start; }
   .cb-site .circle-results-grid > .affiliate-ad-slot,
   .cb-site .blog-results-grid > .affiliate-ad-slot { grid-column: auto; grid-row: auto; min-width: 0; width: 100%; margin: 0; }
   .affiliate-ad-slot .affiliate-ad { margin: 0; }

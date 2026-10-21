@@ -12,9 +12,13 @@
       <%= render 'schedules/event_date_input', form: form %>
     <% end %>
     <div class="event-results__summary"><h2><strong><%= @result_count %></strong>件の開催予定</h2><p>開催日順・同じ日は募集中を優先して日替わり表示</p></div>
+    <% affiliate_placement = @schedules.empty? ? 'event_search_empty' : 'event_search' %>
+    <% affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement) %>
     <% if @schedules.empty? %>
       <div class="event-results__empty"><h2>この条件のイベントはまだありません</h2><p>エリアやジャンルを変えて探してみてください。</p><%= link_to '全国のイベントを見る', dates_path %></div>
+      <%= render 'layouts/ads/affiliate', ad: affiliate_ad, placement: affiliate_placement if affiliate_ad %>
     <% else %>
+      <% result_position = 0 %>
       <% @schedules.to_a.chunk(&:day).each do |day, schedules| %>
         <% date = Date.iso8601(day) %>
         <section class="event-results__date-group">
@@ -23,6 +27,10 @@
             <% schedules.each do |schedule| %>
               <% key, label = @day_listing.status(schedule) %>
               <li><%= render 'schedules/event_card', schedule: schedule, user: schedule.user, status: { key: key, label: label }, accepted_count: schedule[:accepted_count].to_i, show_date: true %></li>
+              <% result_position += 1 %>
+              <% if affiliate_ad && affiliate_ad_insert_after?(result_position, total: @schedules.size) %>
+                <li class="affiliate-ad-slot"><%= render 'layouts/ads/affiliate', ad: affiliate_ad, placement: affiliate_placement %></li>
+              <% end %>
             <% end %>
           </ul>
         </section>

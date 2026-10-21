@@ -21,6 +21,11 @@ module AffiliateAdsHelper
     ad && Digest::SHA256.hexdigest(ad.to_json)
   end
 
+  # Positions are one-based and counted across the entire displayed results page.
+  def affiliate_ad_insert_after?(position, total:)
+    total.positive? && position == [2, total].min
+  end
+
   private
 
   def affiliate_ad_for_genres(genres, placement)

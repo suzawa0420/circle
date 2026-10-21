@@ -5,7 +5,7 @@ lancul:
   approved: true
   name: 英会話カフェ LanCul
   events: [english]
-  placements: [search, search_empty, blog_search, blog_search_empty, circle_blogs, circle_blog, participant_mypage]
+  placements: [search, search_empty, event_search, event_search_empty, blog_search, blog_search_empty, circle_blogs, circle_blog, participant_mypage]
   title: 通い放題プランで、カフェ英会話を日常に。
   description: 外国人メイトとカフェで直接話せる。初心者も会話をリードしてもらえるから、まずは無料体験で雰囲気をチェック。
   link_label: カフェ英会話を無料体験

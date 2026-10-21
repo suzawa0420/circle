@@ -80,6 +80,59 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     assert_select '.affiliate-ad', count: 0
   end
 
+  test 'upcoming events insert one ad after two results across date groups and on every page' do
+    @circle.update!(event: @english)
+    21.times do |i|
+      @circle.schedules.create!(day: (Date.current + i).iso8601, title: "英会話イベント#{i}", venue: 'カフェ')
+    end
+    get '/dates/english'
+    assert_ad 'event_search'
+    assert_select '.event-results__card', count: 20
+    assert_equal %w[event event ad], event_result_order.first(3)
+    assert_select 'h1', text: /全21件/
+    get "/dates/english/#{@circle.prefecture.kana}", params: { page: 2 }
+    assert_ad 'event_search'
+    assert_equal %w[event ad], event_result_order
+    get dates_path
+    assert_select '.affiliate-ad', count: 0
+    get "/dates/#{Event.find_by!(ruby: 'chat-basketball').ruby}"
+    assert_select '.affiliate-ad', count: 0
+  end
+
+  test 'day and period event searches keep all events and put the ad third' do
+    @circle.update!(event: @english)
+    4.times do |i|
+      @circle.schedules.create!(day: Date.current.iso8601, title: "今日の英会話#{i}", venue: 'カフェ')
+    end
+    date_path = Date.current.strftime('%Y/%m/%d')
+    ["/dates/english/#{date_path}", '/dates/english/today', '/dates/english/this_week',
+     "/dates/english/#{@circle.prefecture.kana}/today"].each do |path|
+      get path
+      assert_ad 'event_search'
+      assert_select '.event-results__card', count: 4
+      assert_equal %w[event event ad event event], event_result_order
+    end
+    get dates_path, params: { event: 'english' }
+    assert_response :moved_permanently
+    follow_redirect!
+    assert_ad 'event_search'
+    assert_equal %w[event event ad], event_result_order.first(3)
+  end
+
+  test 'empty event searches show an ad only when its genre is selected' do
+    ['/dates/english', '/dates/english/tomorrow',
+     "/dates/english/#{@circle.prefecture.kana}/next_week"].each do |path|
+      get path
+      assert_ad 'event_search_empty'
+      assert_select '.event-results__empty', count: 1
+      assert_select '.event-results__card', count: 0
+    end
+    get dates_path
+    assert_select '.affiliate-ad', count: 0
+    get tomorrow_events_path
+    assert_select '.affiliate-ad', count: 0
+  end
+
   test 'participant ad follows current interests and does not appear in messages or public profiles' do
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     get member_path(@member)
@@ -117,6 +170,12 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def event_result_order
+    css_select('.event-results__list > li').map do |item|
+      item.at_css('.affiliate-ad') ? 'ad' : 'event'
+    end
+  end
 
   def create_blog
     @circle.blogs.create!(title: '英会話の活動報告', content: 'みんなで日常の出来事を話しながら交流しました。' * 8)
