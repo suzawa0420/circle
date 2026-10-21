@@ -19,7 +19,7 @@
       <p>必要なものだけ選び、価格・状態・サイズ・送料・到着予定は購入先でご確認ください。</p>
       <% @column.column_products.each do |product| %>
         <article class="column-product">
-          <% if product.image_url.present? && product.valid_amazon_image_url? %>
+          <% if product.respond_to?(:valid_amazon_image_url?) && product.image_url.present? && product.valid_amazon_image_url? %>
             <%= link_to product.amazon_url, class: 'column-product__image-link', target: '_blank', rel: 'sponsored nofollow noopener', data: (webmaster? ? {} : { column_shop: 'amazon', column_click_url: column_product_click_path(product.column_id, product) }) do %>
               <%= image_tag product.image_url, alt: product.name, class: 'column-product__image', loading: 'lazy', decoding: 'async', width: 240, height: 240, referrerpolicy: 'no-referrer' %>
             <% end %>
