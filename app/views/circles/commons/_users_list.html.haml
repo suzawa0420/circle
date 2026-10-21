@@ -9,7 +9,8 @@
 - listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
 - show_picte_ad = picte_camera_event?(@event)
-- cache [users, is_master_account, show_picte_ad, 'seo-list-v9-picte-after-two', 'stored-image-extension-v1'] do
+- show_lancul_ad = lancul_english_event?(@event)
+- cache [users, is_master_account, show_picte_ad, show_lancul_ad, 'seo-list-v10-lancul', 'stored-image-extension-v1'] do
   %ul.circle-results-grid
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
@@ -105,7 +106,11 @@
         %li.picte-ad-slot
           = render 'layouts/ads/picte', placement: 'search'
 
-      - if i == 5 || i == 10 || i == 15
+      - if show_lancul_ad && i == [5, users.size].min
+        %li.lancul-ad-slot
+          = render 'layouts/ads/lancul', placement: 'search'
+
+      - if (i == 5 && !show_lancul_ad) || i == 10 || i == 15
         %li.list_ad
           = render "/layouts/ad_square"
 

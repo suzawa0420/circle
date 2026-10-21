@@ -6,8 +6,9 @@
     = link_to(new_circle_blog_path(current_admin_user.first_user)) do
       .post_link サークル活動をつぶやく！
 
+- show_lancul_ad = lancul_english_event?(@event)
 .blog-results-grid
-  - cache [blogs, 'stored-image-extension-v2-desktop-grid'] do
+  - cache [blogs, show_lancul_ad, 'stored-image-extension-v3-lancul'] do
     - blogs.each.with_index(1) do |blog, i|
       .form.users-form
         .blog-body
@@ -54,7 +55,10 @@
               = blog.user.prefecture.name
 
 
-      - if i == 5
+      - if show_lancul_ad && i == [5, blogs.size].min
+        .lancul-ad-slot
+          = render 'layouts/ads/lancul', placement: 'blog_search'
+      - elsif i == 5
         .list_ad
           = render "/layouts/ad_square"
 
@@ -65,5 +69,8 @@
       .no_hit_top トップページに戻る
     = link_to(new_admin_user_registration_path) do
       .no_hit_new 新しくサークルを登録する
-= render "/layouts/ad_square"
+- if show_lancul_ad && blogs.empty?
+  = render 'layouts/ads/lancul', placement: 'blog_search_empty'
+- else
+  = render "/layouts/ad_square"
 = paginate blogs

@@ -109,7 +109,10 @@
 
 
 
-    = render "/layouts/ad_square"
+    - if lancul_english_event?(@user.event)
+      = render 'layouts/ads/lancul', placement: 'circle_blog'
+    - else
+      = render "/layouts/ad_square"
     .ad_space
 
     - if @blogs.size >= 1

@@ -21,6 +21,9 @@
   </section>
   <section class="participant-section"><div class="participant-section__heading"><h2>興味のある種目</h2><%= link_to '変更する', edit_member_path(@member, anchor: 'interests') %></div><div class="participant-card"><% if @member.events.any? %><div class="participant-tags"><% @member.events.order(:order).each do |event| %><span><%= event.name %></span><% end %></div><% else %><p>好きなスポーツや趣味を登録して、サークル探しに役立てましょう。</p><% end %></div></section>
   <% if @recommended_circles.any? %><section class="participant-section"><div class="participant-section__heading"><h2>あなたにおすすめ</h2></div><div class="participant-circle-grid"><%= render partial: 'members/circle_card', collection: @recommended_circles, as: :circle %></div></section><% end %>
+  <% if lancul_member_interested?(@member) %>
+    <%= render 'layouts/ads/lancul', placement: 'participant_mypage' %>
+  <% end %>
   <% if @answers.any? %><section class="participant-section"><h2>回答した質問</h2><div class="participant-card participant-link-list"><% @answers.each do |answer| %><%= link_to answer.event_question.question, "/#{answer.event_question.event.ruby}/qa/#{answer.event_question.id}" %><% end %></div></section><% end %>
   <section class="participant-section"><h2>アカウント設定</h2><div class="participant-card participant-link-list"><%= link_to 'プロフィールを編集', edit_member_path(@member) %><%= link_to 'メールアドレス・パスワードを変更', edit_member_registration_path %><%= link_to 'ログアウト', destroy_member_session_path, method: :delete %></div></section>
 </main>

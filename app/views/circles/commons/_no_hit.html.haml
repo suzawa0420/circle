@@ -13,5 +13,8 @@
     .no_hit_new 新しくサークルを登録する
 - if picte_camera_event?(@event)
   = render 'layouts/ads/picte', placement: 'search'
-= render "/layouts/ad_square"
+- if lancul_english_event?(@event)
+  = render 'layouts/ads/lancul', placement: 'search_empty'
+- else
+  = render "/layouts/ad_square"
 .ad_space

@@ -1,0 +1,28 @@
+@import "brand_palette";
+
+.lancul-ad {
+  position: relative; width: 100%; min-width: 0; margin: 20px 0; padding: 24px;
+  border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface;
+  color: $cb-text; text-align: left; letter-spacing: normal;
+}
+.lancul-ad__label { display: flex; align-items: center; gap: 8px; color: $cb-muted; font-size: 12px; }
+.lancul-ad__pr { padding: 0 5px; border: 1px solid $cb-input-border; border-radius: 3px; }
+.lancul-ad .lancul-ad__title { margin: 16px 0 12px; font-size: 22px; font-weight: 700; line-height: 1.6; color: $cb-text; }
+.lancul-ad .lancul-ad__description { margin: 0 0 18px; font-size: 14px; line-height: 1.85; color: $cb-text; }
+.lancul-ad__action { position: relative; display: flex; align-items: center; justify-content: center; min-height: 48px; background: $cb-action; border-radius: 6px; }
+.lancul-ad .lancul-ad__action a { display: block; width: 100%; padding: 14px 40px; color: $cb-surface; font-size: 14px; font-weight: 600; text-align: center; text-decoration: none; }
+.lancul-ad__action .cb-icon { position: absolute; right: 16px; color: $cb-surface; pointer-events: none; }
+.lancul-ad__action:hover { background: $cb-action-hover; }
+.lancul-ad__action a:focus-visible { outline: 3px solid $cb-text; outline-offset: 3px; border-radius: 6px; }
+.lancul-ad .lancul-ad__disclosure { margin: 12px 0 0; color: $cb-muted; font-size: 11px; line-height: 1.7; }
+.lancul-ad .lancul-ad__pixel { position: absolute; width: 1px; height: 1px; margin: 0; border: 0; }
+.circle-results-grid > .lancul-ad-slot { width: 96%; margin: 0 auto; }
+.blog-results-grid > .lancul-ad-slot { min-width: 0; }
+@media (min-width: 900px) {
+  .circle-results-grid > .lancul-ad-slot { grid-column: 1 / -1; width: 100%; }
+  .blog-results-grid > .lancul-ad-slot { grid-column: 1 / -1; }
+}
+@media (max-width: 359px) {
+  .lancul-ad { padding: 20px 16px; }
+  .lancul-ad .lancul-ad__title { font-size: 20px; }
+}

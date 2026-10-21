@@ -120,6 +120,23 @@ Rollback the application through the normal revert workflow while retaining
 the additive schema and article data. Do not run the migration's destructive
 `down` against production as a routine application rollback.
 
+## LanCul affiliate placements (2026-10-21)
+
+The approved LanCul A8 text creative for the registered Circlebook site appears
+only on English (`english`) discovery pages: after the fifth circle result (or
+last result on a shorter page), matching empty searches, English blog discovery
+lists, and English circle blog archives/details. Participant home pages show it
+below recommended circles only when English is a saved interest. Generic lists,
+other genres, public participant profiles and conversations do not show it.
+The first existing in-list ad is replaced, and fragment cache keys include the
+English placement flag. PR/disclosure, the supplied A8 link and its tracking
+pixel are shared by all placements. No price or time-limited offer is copied.
+
+No new migration is required. Deploy master through the normal runtime checks,
+asset compilation and rolling Puma hot restart on server4/server5. Existing
+migration tasks remain idempotent. Revert this change and deploy normally to
+remove placements; no database rollback or affiliate-account change is needed.
+
 ## Circle detail read-more controls (2026-10-20)
 
 Long circle introductions, reviews, questions, blogs and organizer profiles share

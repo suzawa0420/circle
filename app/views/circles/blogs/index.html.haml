@@ -49,7 +49,10 @@
                         - else
                           = simple_format blog.content.truncate(140)
         .ad_space
-        = render "/layouts/ad_square"
+        - if lancul_english_event?(@user.event)
+          = render 'layouts/ads/lancul', placement: 'circle_blogs'
+        - else
+          = render "/layouts/ad_square"
         .ad_space
         = paginate @blogs
 
