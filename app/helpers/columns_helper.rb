@@ -62,7 +62,9 @@ module ColumnsHelper
   end
 
   def column_related_guides(event:, audience:)
-    Column.for_readers(event&.id, audience).limit(3).to_a
+    guides = Column.for_readers(event&.id, audience).includes(:event, :column_products)
+    specific = event ? guides.where(event_id: event.id).limit(1).to_a : []
+    specific.presence || guides.where(event_id: nil).limit(1).to_a
   end
 
   def column_product_link(product, shop)

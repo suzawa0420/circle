@@ -10,6 +10,7 @@
 
 <% if just_created %>
   <%= render 'schedules/share', schedule: @schedule, owner: true, created: true %>
+  <%= render 'columns/related_guides', event: @user.event, audience: 'organizer', heading: '開催までに、道具も確認しておきませんか？' %>
 <% end %>
 
 <article class="schedule-detail__card">
@@ -73,7 +74,7 @@
   <% end %>
 </section>
 
-<%= render 'columns/related_guides', event: @user.event, audience: 'participant' %>
+<% unless just_created %><%= render 'columns/related_guides', event: @user.event, audience: 'participant' %><% end %>
 
 <section class="schedule-detail__card schedule-detail__section">
   <h2>主催サークル</h2>

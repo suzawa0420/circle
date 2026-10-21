@@ -1,7 +1,18 @@
-<% guides = column_related_guides(event: event, audience: audience) %>
+<% guides = local_assigns.fetch(:guides) { column_related_guides(event: event, audience: audience) } || [] %>
 <% if guides.any? %>
   <section class="column-guide-links" aria-label="サークルの準備ガイド">
-    <h2><%= audience == 'organizer' ? '活動の準備・備品選び' : '初参加の準備・持ち物' %></h2>
-    <% guides.each do |guide| %><%= link_to guide.title, column_path(guide), class: 'column-guide-links__link' %><% end %>
+    <h2><%= local_assigns[:heading] || (audience == 'organizer' ? '次の活動に向けて、道具の準備' : 'はじめて参加する方へ') %></h2>
+    <% guides.each do |guide| %>
+      <%= link_to column_path(guide), class: 'column-guide-links__link' do %>
+        <% if guide.image.identifier.present? %><%= image_tag guide.image.url, alt: '', class: 'column-guide-links__image', loading: 'lazy', decoding: 'async', width: 96, height: 80 %><% end %>
+        <span class="column-guide-links__body">
+          <% if guide.event %><span class="column-guide-links__genre"><%= guide.event.name %>の準備</span><% end %>
+          <strong class="column-guide-links__title"><%= guide.title %></strong>
+          <% if guide.description.present? %><span class="column-guide-links__description"><%= truncate(strip_tags(guide.description).squish, length: 72) %></span><% end %>
+          <span class="column-guide-links__meta">編集部ガイド<% if guide.affiliate? %>・広告を含む記事<% end %></span>
+        </span>
+        <%= lucide_icon 'chevron-right', **{ 'aria-hidden' => 'true', class: 'column-guide-links__arrow' } %>
+      <% end %>
+    <% end %>
   </section>
 <% end %>

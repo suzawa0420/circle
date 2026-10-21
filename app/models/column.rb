@@ -18,6 +18,9 @@ class Column < ApplicationRecord
     reject_if: ->(attributes) { attributes.slice('name', 'description', 'amazon_url', 'mercari_url').values.all?(&:blank?) }
 
   scope :published, -> { where(publication_status: 'published') }
+  scope :for_participant_interests, ->(event_ids) {
+    published.where(event_id: event_ids).where(audience: %w[all participant]).order(updated_at: :desc, id: :desc)
+  }
   scope :for_readers, ->(event_id, audience) {
     published.where(event_id: [nil, event_id]).where(audience: ['all', audience]).order(updated_at: :desc, id: :desc)
   }

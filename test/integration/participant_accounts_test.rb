@@ -119,6 +119,46 @@ class ParticipantAccountsTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert_nil @other_member.reload.date_of_birth
   end
+
+  test 'preparation cards follow saved interests without requiring a prefecture' do
+    basketball = Column.create!(title: 'バスケの持ち物', description: '靴と服装を確認しましょう。', text: '参加の準備', publication_status: 'published', audience: 'participant', event: @circle.event, affiliate: true)
+    tennis = Event.create!(name: 'テニス', ruby: 'guide-tennis', category: @circle.category, order: '2')
+    shared = Column.create!(title: 'テニスの準備', text: '参加の準備', publication_status: 'published', audience: 'all', event: tennis)
+    Column.create!(title: '主催者用', text: '備品', publication_status: 'published', audience: 'organizer', event: @circle.event)
+    Column.create!(title: '下書き', audience: 'participant', event: @circle.event)
+    Column.create!(title: '全ジャンルの案内', text: '案内', publication_status: 'published', audience: 'participant')
+    @member.events = [@circle.event]
+    get member_path(@member)
+    assert_response :success
+    assert_nil @member.prefecture_id
+    assert_select '.column-guide-links__link', count: 1
+    assert_select ".column-guide-links__link[href='#{column_path(basketball)}']", text: /バスケの持ち物.*広告を含む記事/
+    assert_select '.column-guide-links__description', text: '靴と服装を確認しましょう。'
+    assert_select '.column-guide-links__link img', count: 0
+    @member.events = [@circle.event, tennis]
+    get member_path(@member)
+    assert_select '.column-guide-links__link', count: 2
+    assert_select ".column-guide-links__link[href='#{column_path(shared)}']"
+    @member.events = [tennis]
+    get member_path(@member)
+    assert_select ".column-guide-links__link[href='#{column_path(basketball)}']", count: 0
+    @member.events = []
+    get member_path(@member)
+    assert_select '.column-guide-links', count: 0
+    get member_profile_path(@member)
+    assert_select '.column-guide-links', count: 0
+  end
+
+  test 'preparation cards are bounded and keep article covers decorative inside the link' do
+    @member.events = [@circle.event]
+    4.times { |i| Column.create!(title: "準備#{i}", text: '参加前の確認', publication_status: 'published', audience: 'participant', event: @circle.event) }
+    article = Column.order(:id).last
+    article.update_column(:image, 'guide-cover.png')
+    get member_path(@member)
+    assert_select '.column-guide-links__link', count: 3
+    assert_select ".column-guide-links__link[href='#{column_path(article)}'] img[alt=''][loading='lazy'][width='96'][height='80']"
+    assert_select '.column-guide-links__link a', count: 0
+  end
   test 'public member rating uses shared stars and sentiment classes instead of a five point fraction' do
     accept_conversation
     @conversation.submit_review!('owner', owner_evaluation.merge(score: 1))

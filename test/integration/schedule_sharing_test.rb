@@ -94,6 +94,23 @@ class ScheduleSharingTest < ActionDispatch::IntegrationTest
     assert_select 'input[name="schedule[title]"][value="入力中のイベント"]'
   end
 
+  test 'preparation follows successful sharing once and prefers the matching organizer guide' do
+    organizer = Column.create!(title: 'バスケの備品', text: '備品を確認', publication_status: 'published', audience: 'organizer', event: @circle.event)
+    participant = Column.create!(title: '参加の持ち物', text: '持ち物を確認', publication_status: 'published', audience: 'participant', event: @circle.event)
+    Column.create!(title: '全種目の主催ガイド', text: '運営', publication_status: 'published', audience: 'organizer')
+    sign_in_owner
+    post user_schedules_path(@circle), params: { schedule: { day: '2026-10-25', title: '準備の確認', venue: '公開エリア' } }
+    created = @circle.schedules.order(:id).last
+    follow_redirect!
+    assert_select '#schedule-share + .column-guide-links', count: 1
+    assert_select '.column-guide-links__link', count: 1
+    assert_select ".column-guide-links__link[href='#{column_path(organizer)}']"
+    get user_schedule_path(@circle, created)
+    assert_select '#schedule-share + .column-guide-links', count: 0
+    assert_select ".column-guide-links__link[href='#{column_path(participant)}']"
+    assert_select ".column-guide-links__link[href='#{column_path(organizer)}']", count: 0
+  end
+
   test 'hidden circles and the member-only detail do not offer public sharing' do
     @circle.update!(unique_id: 'sharing-private-test', recruitment: '初心者歓迎')
     get "/schedules/#{@circle.unique_id}/#{@schedule.id}"

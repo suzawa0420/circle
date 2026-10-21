@@ -20,6 +20,7 @@
     <% else %><div class="participant-card participant-empty"><h3>気になるサークルを保存しましょう</h3><p>サークル詳細でお気に入りに追加すると、ここからいつでも確認できます。</p><%= link_to 'サークルを探す', circles_path, class: 'participant-button' %></div><% end %>
   </section>
   <section class="participant-section"><div class="participant-section__heading"><h2>興味のある種目</h2><%= link_to '変更する', edit_member_path(@member, anchor: 'interests') %></div><div class="participant-card"><% if @member.events.any? %><div class="participant-tags"><% @member.events.order(:order).each do |event| %><span><%= event.name %></span><% end %></div><% else %><p>好きなスポーツや趣味を登録して、サークル探しに役立てましょう。</p><% end %></div></section>
+  <%= render 'columns/related_guides', guides: @preparation_guides, audience: 'participant', heading: '興味のある種目から、参加の準備' %>
   <% if @recommended_circles.any? %><section class="participant-section"><div class="participant-section__heading"><h2>あなたにおすすめ</h2></div><div class="participant-circle-grid"><%= render partial: 'members/circle_card', collection: @recommended_circles, as: :circle %></div></section><% end %>
   <% if (affiliate_ad = affiliate_ad_for_member(@member)) %>
     <%= render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'participant_mypage' %>
