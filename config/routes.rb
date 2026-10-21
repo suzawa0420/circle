@@ -251,6 +251,7 @@ Rails.application.routes.draw do
   get 'support/thanks', to: 'support_requests#thanks', as: :support_thanks
 	get 'rules' , to: 'pages#rules'
 	get 'privacypolicy' , to: 'pages#privacypolicy'
+  get 'advertising', to: 'pages#advertising', as: :advertising
 	get 'about' , to: 'pages#about'
 
 	get 'line' , to: 'users#line'

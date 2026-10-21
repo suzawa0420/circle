@@ -6,6 +6,9 @@ class PagesController < ApplicationController
   def privacypolicy
   end
 
+  def advertising
+  end
+
   def faq
   end
 

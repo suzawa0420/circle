@@ -28,6 +28,7 @@ class Column < ApplicationRecord
   validates :audience, inclusion: { in: AUDIENCES.keys }
   validate :product_count_within_limit
   validate :readable_published_body
+  validate :inline_products_exist
   before_save :set_publication_date
 
   mount_uploader :image, ColumnImageUploader
@@ -58,5 +59,13 @@ class Column < ApplicationRecord
   def readable_published_body
     return unless published? && text.present?
     errors.add(:text, 'を入力してください。') if ActionView::Base.full_sanitizer.sanitize(text).squish.blank?
+  end
+
+  def inline_products_exist
+    return unless published?
+    count = column_products.reject(&:marked_for_destruction?).size
+    if text.to_s.scan(/\[商品:([1-9]\d*)\]/).flatten.any? { |number| number.to_i > count }
+      errors.add(:text, 'の商品カード番号に対応する商品がありません。表示順と本文の番号を確認してください。')
+    end
   end
 end

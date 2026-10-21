@@ -11,6 +11,7 @@
   <% end %>
   <div class="wm-field"><%= f.label :mercari_url, 'メルカリの紹介リンク（商品・検索結果）' %><%= f.url_field :mercari_url, placeholder: 'https://jp.mercari.com/…' %></div>
   <div class="wm-field"><%= f.label :position, '表示順（小さい順）' %><%= f.number_field :position, min: 0, max: 999 %></div>
+  <button type="button" class="wm-button wm-button--secondary" data-column-insert-product>この商品カードを本文に挿入</button>
   <% if f.object.persisted? %><p class="wm-meta">クリック数：Amazon <%= f.object.amazon_clicks %> ／ メルカリ <%= f.object.mercari_clicks %>（購入数ではありません）</p><% end %>
   <label class="column-check"><%= f.check_box :_destroy %> この商品を削除する</label>
 </fieldset>

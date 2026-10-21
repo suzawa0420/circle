@@ -7,6 +7,23 @@
     if (event.target.closest('[data-column-editor]')) event.preventDefault();
   });
   document.addEventListener('click', function (event) {
+    var insert = event.target.closest('[data-column-insert-product]');
+    if (insert) {
+      var insertForm = insert.closest('form');
+      var insertEditor = insertForm.querySelector('trix-editor');
+      if (!insertEditor.editor) return;
+      var rows = Array.prototype.slice.call(insertForm.querySelectorAll('[data-column-products] .column-product-fields'));
+      rows = rows.filter(function (row) { return !row.querySelector('input[type="checkbox"][name$="[_destroy]"]').checked; });
+      rows.sort(function (a, b) { return Number(a.querySelector('input[type="number"]').value) - Number(b.querySelector('input[type="number"]').value); });
+      var number = rows.indexOf(insert.closest('.column-product-fields')) + 1;
+      if (!number) {
+        insertForm.querySelector('[data-column-editor-status]').textContent = '削除予定の商品は挿入できません。';
+        return;
+      }
+      insertEditor.editor.insertDocument(window.Trix.Document.fromString('[商品:' + number + ']'));
+      insertEditor.focus();
+      insertForm.querySelector('[data-column-editor-status]').textContent = '商品カードを挿入しました。保存してプレビューを確認してください。';
+    }
     var add = event.target.closest('[data-column-add-product]');
     if (add) {
       var form = add.closest('form');

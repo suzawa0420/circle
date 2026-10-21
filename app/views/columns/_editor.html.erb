@@ -25,7 +25,7 @@
   </section>
   <section aria-labelledby="column-products-title">
     <h2 id="column-products-title">紹介する商品・道具</h2>
-    <p class="wm-meta">商品名と選び方を入力し、各サービスで発行した紹介リンクを貼ります。片方だけでも使えます。最大12件。記事の本文の後に表示します。</p>
+    <p class="wm-meta">商品名と選び方を入力し、各サービスで発行した紹介リンクを貼ります。最大12件。本文に独立した段落で [商品:1] と書くと、表示順で1番目の商品カードをその場所に表示します。[商品:2] は2番目です。表示順を変える際は本文の番号も確認してください。本文に挿入していない商品は記事末尾に表示します。</p>
     <div data-column-products>
       <% @column.column_products.build if @column.column_products.empty? %>
       <%= f.fields_for :column_products do |product_form| %><%= render 'product_fields', f: product_form %><% end %>
@@ -34,7 +34,7 @@
     <template data-column-product-template><%= f.fields_for :column_products, ColumnProduct.new, child_index: 'NEW_PRODUCT' do |product_form| %><%= render 'product_fields', f: product_form %><% end %></template>
   </section>
   <label class="column-check"><%= f.check_box :affiliate %> アフィリエイトを含む記事として広告表記を表示する</label>
-  <p class="wm-meta">商品リンクがある場合は自動で広告表記を表示します。Amazonリンクがあれば、Amazonアソシエイトの参加表記も表示します。</p>
+  <p class="wm-meta">商品リンクがある場合は冒頭に短い広告表記を表示します。Amazonリンクがある記事は、末尾にもAmazonアソシエイトの参加表記を表示します。</p>
   <p class="column-editor__status" role="status" data-column-editor-status>現在：<%= @column.new_record? ? '未保存' : (@column.published? ? '公開中' : '下書き') %>。プレビューには保存済みの内容が表示されます。</p>
   <div class="wm-actions column-editor__actions">
     <%= f.button '下書き保存', name: 'intent', value: 'draft', type: 'submit', class: 'wm-button wm-button--secondary', data: { disable_with: '保存中…', confirm: (@column.persisted? && @column.published? ? 'この記事を非公開の下書きに戻しますか？' : nil) } %>

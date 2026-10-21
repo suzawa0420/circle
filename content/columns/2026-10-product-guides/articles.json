@@ -1,0 +1,166 @@
+[
+  {
+    "key": "basket-first",
+    "title": "久しぶりのバスケ、何を持っていく？初参加のバッグはこれでOK",
+    "audience": "participant",
+    "event": "バスケ",
+    "description": "社会人バスケに初参加するときの持ち物と服装を解説。室内用シューズ、白黒のウェア、飲み物などの準備と、ボールを買う前に主催者へ確認したいことをまとめました。",
+    "products": [
+      {
+        "key": "shoes",
+        "name": "バスケットボールシューズ（アシックスの候補を比較）",
+        "description": "継続参加の一足を選びたい人に。足幅・サイズ・かかとの収まりを比べましょう。検索結果へのリンクです。画像は候補の一例で、リンク先ではモデル・大人用サイズ・返品条件をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%A2%E3%82%B7%E3%83%83%E3%82%AF%E3%82%B9+%E3%83%90%E3%82%B9%E3%82%B1%E3%83%83%E3%83%88%E3%83%9C%E3%83%BC%E3%83%AB+%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA+%E5%A4%A7%E4%BA%BA&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=2c9f6557e221f4d99c6b42cb7d8d1613&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/61EOuc6nrWL._AC_UL320_.jpg"
+      },
+      {
+        "key": "shirt",
+        "name": "ドライTシャツ（glimmer 00300-ACTなどを比較）",
+        "description": "白黒の色分けや、練習後の着替えに使う一枚を探す人に。検索結果へのリンクです。画像は候補の一例です。大人用・子ども用、色、サイズの選択をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=22aebd0d2e33add7940d45fbab4e49f5&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/71nbBYD1xlL._AC_UL320_.jpg"
+      }
+    ],
+    "id": 1,
+    "body_file": "1-basket-first.html"
+  },
+  {
+    "key": "basket-organizer",
+    "title": "「バスケサークルを作ろう」と思ったら。最初にそろえたい道具たち",
+    "audience": "organizer",
+    "event": "バスケ",
+    "description": "バスケサークル立ち上げ時の備品を、体育館で借りる物・先に買う物・後から増やす物に整理。ボール、ビブス、空気入れ、タイマーの選び方と管理方法を紹介します。",
+    "products": [
+      {
+        "key": "ball",
+        "name": "モルテン BG5000・7号球 B7G5000",
+        "description": "屋内で使う共用球の品番をそろえたいサークルに。天然皮革の7号球です。使用する号数と場所を確認してから選んでください。",
+        "amazon_url": "https://www.amazon.co.jp/molten-%E3%83%A2%E3%83%AB%E3%83%86%E3%83%B3-%E3%83%90%E3%82%B9%E3%82%B1%E3%83%83%E3%83%88%E3%83%9C%E3%83%BC%E3%83%AB-BG5000-B7G5000/dp/B07PWNBKFJ?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.b6Ry359BHYjCZEkCYehIUZ35nxE4FjmuBPVuTM8T3VBVRkz7kl8hI2UYiacdSHVn1vnByQ2zPLo1rf99ZyoTrfQP6FaM4JJche3XPiOjBHbHwQfxcXRobByj0_IkqZ7OPaH_MVu1x53DD0EVgbo6fTzjNJst3o9MFjnaTc_2eQRn62v3pqDdMlAvALSGOImHBybI5RtVhLnCi3a9zYw7FzCutWIgRaWieKdy2_28OSOu1ce80kbpiiqbjrr8g1ff5hP6VTb59EJFOmeuMJiImyaukGXjqfEKXgAl2WjF_TE.nuaGsGD05DiamQlSeetos1GGynP_6eRvRzNtRtEX6qc&dib_tag=se&keywords=%E3%83%A2%E3%83%AB%E3%83%86%E3%83%B3+%E3%83%90%E3%82%B9%E3%82%B1%E3%83%83%E3%83%88%E3%83%9C%E3%83%BC%E3%83%AB+BG5000&qid=1792545230&sr=8-1&ufe=app_do%3Aamzn1.fos.f851e75d-a860-4774-84a1-525c65264f29&linkCode=ll2&tag=fieldnote482-22&linkId=ea9b422aec968125ae1356268cbedc54&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/81vBRjkY0rL._AC_SX679_.jpg"
+      },
+      {
+        "key": "bibs",
+        "name": "大人用・番号付きビブス（セット内容を比較）",
+        "description": "初対面の参加者への声かけや、その場でのチーム分けに。検索結果へのリンクです。画像は候補の一例です。色ごとの枚数、番号、身幅、洗濯表示をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%93%E3%83%96%E3%82%B9+%E5%A4%A7%E4%BA%BA+10%E6%9E%9A+%E7%95%AA%E5%8F%B7&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=0ac2dac5945cb8a1d87eb9236d360e95&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/71V14O89IbL._AC_UL320_.jpg"
+      },
+      {
+        "key": "pump",
+        "name": "ボール用の空気入れ・圧力計を比較",
+        "description": "共用ボールの準備と空気圧の確認に。検索結果へのリンクです。画像は候補の一例です。ボール用の針への対応、圧力計の有無、付属品をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A2%E3%83%AB%E3%83%86%E3%83%B3+%E7%A9%BA%E6%B0%97%E5%85%A5%E3%82%8C+%E5%9C%A7%E5%8A%9B%E8%A8%88&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=MPBG7EMMZM1Q&sprefix=%E3%83%A2%E3%83%AB%E3%83%86%E3%83%B3+%E7%A9%BA%E6%B0%97%E5%85%A5%E3%82%8C+%E5%9C%A7%E5%8A%9B%E8%A8%88%2Caps%2C307&linkCode=ll2&tag=fieldnote482-22&linkId=8b821e7407d721ea423549aed61d39d0&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/51Rcv-A7c9L._AC_UL320_.jpg"
+      },
+      {
+        "key": "timer",
+        "name": "大画面デジタルタイマー（タニタなどを比較）",
+        "description": "短い練習や交代の時間を管理したい主催者に。検索結果へのリンクです。画像は候補の一例です。数字の見やすさ・終了音・電源を比べてください。公式試合用時計ではありません。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%BF%E3%83%8B%E3%82%BF+%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC+%E5%A4%A7%E7%94%BB%E9%9D%A2&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=bd5f3656730b7b54d4d9b9fa674b78bd&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/71d8X2hxBUL._AC_UL320_.jpg"
+      }
+    ],
+    "id": 2,
+    "body_file": "2-basket-organizer.html"
+  },
+  {
+    "key": "teamwear",
+    "title": "おそろいの一枚で、もっとチームに。サークルTシャツ作りのはじめ方",
+    "audience": "organizer",
+    "event": "",
+    "description": "サークルTシャツやユニフォームを作る手順を解説。素材・サイズ・印刷方法・見積もり・追加注文の確認点と、無地のウェアから小さく始める方法をまとめました。",
+    "products": [
+      {
+        "key": "shirt",
+        "name": "素材・サイズ確認用の無地ドライTシャツ（glimmerなど）",
+        "description": "全員分を注文する前の、素材とサイズ確認用に。検索結果へのリンクです。画像は候補の一例です。加工予定の品番と一致するか確認してください。印刷サービスは付属しません。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=22aebd0d2e33add7940d45fbab4e49f5&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/71nbBYD1xlL._AC_UL320_.jpg"
+      },
+      {
+        "key": "bibs",
+        "name": "活動中のチーム分け用ビブス（大人用を比較）",
+        "description": "おそろいのシャツとは別に、練習中のチームを分けたい会に。検索結果へのリンクです。画像は候補の一例です。色ごとの枚数とサイズをご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%93%E3%83%96%E3%82%B9+%E5%A4%A7%E4%BA%BA+10%E6%9E%9A+%E7%95%AA%E5%8F%B7&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=0ac2dac5945cb8a1d87eb9236d360e95&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/71V14O89IbL._AC_UL320_.jpg"
+      }
+    ],
+    "id": 3,
+    "body_file": "3-teamwear.html"
+  },
+  {
+    "key": "camp",
+    "title": "次の週末は、みんなで合宿へ。20人の宿と体育館を押さえるコツ",
+    "audience": "organizer",
+    "event": "",
+    "description": "20人規模のサークル合宿に向けて、宿と体育館を探す順番、見積もりの確認点、1泊2日の予算例、参加者への案内と共用備品をまとめました。",
+    "products": [
+      {
+        "key": "pouches",
+        "name": "衣類収納ポーチ・洗濯ネット（旅行用を比較）",
+        "description": "一泊分の着替えを、使う場面ごとに分けたい人に。検索結果へのリンクです。画像は候補の一例です。寸法・セット内容・洗濯ネット兼用かどうかをご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E6%97%85%E8%A1%8C+%E8%A1%A3%E9%A1%9E+%E5%8F%8E%E7%B4%8D%E3%83%9D%E3%83%BC%E3%83%81+%E6%B4%97%E6%BF%AF%E3%83%8D%E3%83%83%E3%83%88&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=2a6c917f04703fde72a56033f61f2735&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/51yq2d4mFJL._AC_UL320_.jpg"
+      },
+      {
+        "key": "timer",
+        "name": "練習の交代用タイマー（大画面タイプを比較）",
+        "description": "合宿の練習と交代を区切りたい進行担当に。検索結果へのリンクです。画像は候補の一例です。施設で借りられる時計で足りる場合は、買い足さなくて構いません。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%BF%E3%83%8B%E3%82%BF+%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC+%E5%A4%A7%E7%94%BB%E9%9D%A2&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=bd5f3656730b7b54d4d9b9fa674b78bd&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/71d8X2hxBUL._AC_UL320_.jpg"
+      }
+    ],
+    "id": 4,
+    "body_file": "4-camp.html"
+  },
+  {
+    "key": "boardgames",
+    "title": "ゲームを持っていなくても大丈夫。初めてのボードゲーム会へ行こう",
+    "audience": "all",
+    "event": "ボードゲーム",
+    "description": "ボードゲーム会の初参加に必要な準備と、主催者が少人数からそろえるゲームの選び方を解説。itoレインボーとナンジャモンジャを、人数や遊び方から紹介します。",
+    "products": [
+      {
+        "key": "ito",
+        "name": "アークライト ito（イト）レインボー",
+        "description": "言葉でたとえ、相談しながら遊ぶのが好きな人に。商品名が似た別版と取り違えないよう、購入画面で「itoレインボー」と内容物を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/%E3%82%A2%E3%83%BC%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%88-%E3%83%AC%E3%82%A4%E3%83%B3%E3%83%9C%E3%83%BC-2-14%E4%BA%BA%E7%94%A8-8%E6%89%8D%E4%BB%A5%E4%B8%8A%E5%90%91%E3%81%91-%E3%83%9C%E3%83%BC%E3%83%89%E3%82%B2%E3%83%BC%E3%83%A0/dp/B0BLMR3PSZ?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.c6Jh-1MGu8gETbRluzIHG2NANvJCLTa7prGYFl69OPD8VPKmRJc3qoS_sfQA2Bx38Phzh732tV7ZRcdXPuqOWg.ZPiIkmY5cdbMNG6BxW9xrZrQJCRJ0_nCfF31oiIV4oE&dib_tag=se&keywords=%E3%82%A2%E3%83%BC%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%88+ito+%E3%83%AC%E3%82%A4%E3%83%B3%E3%83%9C%E3%83%BC&qid=1792545349&sr=8-1&linkCode=ll2&tag=fieldnote482-22&linkId=aad7f2c8028b4082e76f19f126c093f9&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/61OJDbESyLL._AC_SX679_.jpg"
+      },
+      {
+        "key": "nanja",
+        "name": "ナンジャモンジャ・ミドリ（販売条件を比較）",
+        "description": "短いルールで、名前を付けて素早く呼ぶ遊びを楽しみたい人に。検索結果へのリンクです。画像は候補の一例です。「ミドリ」の本体か、販売条件と内容物をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%81%99%E3%81%94%E3%82%8D%E3%81%8F%E3%82%84+%E3%83%8A%E3%83%B3%E3%82%B8%E3%83%A3%E3%83%A2%E3%83%B3%E3%82%B8%E3%83%A3+%E3%83%9F%E3%83%89%E3%83%AA&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=d4103120719d117d828ed7bd8ff0be56&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/81eJMZYZ9hL._AC_UL320_.jpg"
+      }
+    ],
+    "id": 5,
+    "body_file": "5-boardgames.html"
+  },
+  {
+    "key": "hiking",
+    "title": "初めての山、リュックに何を入れる？日帰り登山の準備帖",
+    "audience": "participant",
+    "event": "登山",
+    "description": "初心者が無雪期の日帰り登山サークルに参加するための持ち物を紹介。靴・雨具・ヘッドランプ・水や食料の準備、主催者への確認とレンタル・中古の考え方を整理しました。",
+    "products": [
+      {
+        "key": "headlamp",
+        "name": "登山用ヘッドランプ（ジェントスなどの候補を比較）",
+        "description": "日帰り登山でも携行する照明の候補に。検索結果へのリンクです。画像は候補の一例です。用途、防水仕様、点灯時間、電池・充電方式をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%88%E3%82%B9+%E3%83%98%E3%83%83%E3%83%89%E3%83%A9%E3%82%A4%E3%83%88+%E7%99%BB%E5%B1%B1+%E9%98%B2%E6%B0%B4&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=5ac2634e4cb235300cbe3b4f8c8dfa6a&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/61hkufucgzS._AC_UL320_.jpg"
+      },
+      {
+        "key": "rainwear",
+        "name": "登山用の上下レインウェア（仕様・サイズを比較）",
+        "description": "雨の中で歩くための、上下レインウェアを探す人に。検索結果へのリンクです。画像は候補の一例です。登山向けの用途、防水・透湿仕様、上下の内容をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E7%99%BB%E5%B1%B1+%E3%83%AC%E3%82%A4%E3%83%B3%E3%82%A6%E3%82%A7%E3%82%A2+%E4%B8%8A%E4%B8%8B+%E9%98%B2%E6%B0%B4%E9%80%8F%E6%B9%BF&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&linkCode=ll2&tag=fieldnote482-22&linkId=46ea702a1bd675c66b951f4f0143c4f6&ref_=as_li_ss_tl",
+        "image_url": "https://m.media-amazon.com/images/I/61D2-KBw-eS._AC_UL320_.jpg"
+      }
+    ],
+    "id": 6,
+    "body_file": "6-hiking.html"
+  }
+]

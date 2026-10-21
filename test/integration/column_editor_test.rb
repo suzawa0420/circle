@@ -81,7 +81,10 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     delete destroy_webmaster_session_path
     get column_path(article)
     assert_response :success
-    assert_select '.column-article__disclosure', text: /Amazonのアソシエイト/
+    assert_select '.column-article__disclosure p', text: '広告：この記事にはアフィリエイト広告が含まれます。'
+    assert_select '.column-article__disclosure', text: /Amazonのアソシエイト/, count: 0
+    assert_select '.column-article__amazon-disclosure', text: /Amazonのアソシエイト/
+    assert_select '.column-article__disclosure a[href="/advertising"]'
     assert_select 'a[href="https://amzn.to/example"][rel="sponsored nofollow noopener"][data-column-shop="amazon"]'
     assert_select 'a[href="https://jp.mercari.com/search?keyword=shoes&afid=sample"][data-column-shop="mercari"]'
   end
@@ -143,6 +146,50 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     patch column_path(article), params: { intent: 'draft', column: { column_products_attributes: { '0' => { id: product.id, _destroy: '1' } } } }
     assert_redirected_to edit_column_path(article)
     assert_not ColumnProduct.exists?(product.id)
+  end
+
+  test 'product cards appear between body paragraphs once with remaining products at the end' do
+    article = Column.create!(title: '本文の商品紹介', text: '<h1>服を選ぶ</h1><p>シャツの説明</p><p><strong>[商品:2]</strong></p><p>着た状態で確認</p><div>[商品:2]</div><h1>靴を選ぶ</h1><div>[商品:1]</div>', publication_status: 'draft')
+    shoes = article.column_products.create!(name: 'シューズ', amazon_url: 'https://amzn.to/shoes', position: 0)
+    shirt = article.column_products.create!(name: 'シャツ', amazon_url: 'https://www.amazon.co.jp/s?k=shirt&tag=sample-22', image_url: 'https://m.media-amazon.com/images/I/shirt.jpg', position: 1)
+    article.column_products.create!(name: 'タオル', amazon_url: 'https://amzn.to/towel', position: 2)
+    article.update!(publication_status: 'published')
+    get column_path(article)
+    assert_response :success
+    assert_select '.column-article__body .column-product', count: 2
+    assert_select '.column-article__body .column-product h3', text: 'シャツ', count: 1
+    assert_select '.column-products .column-product', count: 1
+    assert_select '.column-products .column-product h3', text: 'タオル'
+    assert_select '.column-article__body .column-product__image-link img', count: 1
+    assert_select '.column-article__body a[data-column-click-url="' + column_product_click_path(article, shirt) + '"]', text: 'Amazonで候補を比較'
+    assert_select '.column-article__body a[data-column-click-url="' + column_product_click_path(article, shoes) + '"]', text: 'Amazonで商品を見る'
+    assert_not_includes css_select('.column-article__body').first.text, '[商品:'
+    body = css_select('.column-article__body').first.inner_html
+    assert_operator body.index('シャツの説明'), :<, body.index('shirt.jpg')
+    assert_operator body.index('shirt.jpg'), :<, body.index('着た状態で確認')
+    login_master
+    get edit_column_path(article)
+    assert_includes css_select('#column-article-text').first['value'], '[商品:2]'
+    assert_select '[data-column-insert-product]', count: 4 # Includes the new-row template.
+  end
+
+  test 'missing product slots cannot be published and drafts do not show unresolved markers' do
+    article = Column.create!(title: '商品準備中', text: '<p>[商品:12]</p>')
+    assert_not article.update(publication_status: 'published')
+    assert_includes article.errors[:text].join, '商品カード番号'
+    login_master
+    get column_path(article)
+    assert_response :success
+    assert_not_includes css_select('.column-article__body').first.text, '[商品:'
+  end
+
+  test 'advertising page is public linked from the footer and contains the Amazon statement' do
+    get advertising_path
+    assert_response :success
+    assert_select 'h1', text: '広告・アフィリエイトについて'
+    assert_select 'p', text: 'Amazonのアソシエイトとして、サークルブックは適格販売により収入を得ています。'
+    assert_select '.footer_links a[href="/advertising"]'
+    assert_select 'a[href="/privacypolicy"]'
   end
 
   test 'product links reject unsafe urls and another articles product cannot be edited' do
