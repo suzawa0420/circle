@@ -84,7 +84,7 @@ class MemberSuspensionNoticesTest < ActionDispatch::IntegrationTest
 
   def assert_notice
     assert response.body.include?(ChatMessage::MEMBER_SUSPENSION_NOTICE), '利用停止案内が表示されていません'
-    assert_select '.message-role', text: '運営からのお知らせ', count: 1
+    assert_select '.cb-platform-notice .message-role--system', text: '運営からのお知らせ', count: 1
     assert_not_includes response.body, '非公開の停止理由'
   end
 

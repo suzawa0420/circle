@@ -1,4 +1,9 @@
 module ChatMessagesHelper
+  def chat_message_role(message)
+    return message.sender_role unless message.automatic?
+    message.body == ChatMessage::MEMBER_SUSPENSION_NOTICE ? 'system' : 'owner'
+  end
+
   def conversation_person_label(conversation, role)
     return "主催者（#{conversation.participant_name(role)}）" if conversation.practice_match?
     role == 'member' ? '参加者' : '主催者'

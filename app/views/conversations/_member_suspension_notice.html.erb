@@ -1,8 +1,8 @@
 <% member = conversation.member unless conversation.practice_match? %>
 <% if member&.suspended? && messages.none? { |message| message.automatic? && message.body == ChatMessage::MEMBER_SUSPENSION_NOTICE && message.created_at >= member.suspended_at } %>
   <% webmaster = local_assigns.fetch(:webmaster, false) %>
-  <article class="<%= webmaster ? 'webmaster-card wm-message wm-message--system' : 'chat-card inquiry-guidance__message' %>" data-member-suspension-notice>
-    <strong class="message-role message-role--owner">運営からのお知らせ</strong>
+  <article class="<%= webmaster ? 'webmaster-card wm-message wm-message--system' : 'chat-card inquiry-guidance__message' %> cb-platform-notice" data-member-suspension-notice>
+    <strong class="message-role message-role--system">運営からのお知らせ</strong>
     <div class="<%= webmaster ? 'wm-body' : 'chat-body' %>"><%= ChatMessage::MEMBER_SUSPENSION_NOTICE %></div>
     <time class="<%= webmaster ? 'wm-meta' : 'chat-message__meta' %>" datetime="<%= member.suspended_at.iso8601 %>"><%= member.suspended_at.strftime('%Y/%m/%d %H:%M') %></time>
   </article>

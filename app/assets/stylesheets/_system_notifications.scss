@@ -58,3 +58,9 @@
 .webmaster-page .wm-message--member { background: $cb-participant-soft; border-color: $cb-border; }
 .webmaster-page .wm-card-heading .message-role { margin-bottom: 0; }
 .cb-site .inquiry-guidance__message > strong.message-role { display: inline-flex; padding: 0; font-size: 12px; }
+
+.cb-site .inquiry-guidance__message.cb-platform-notice,
+.webmaster-page .wm-message.cb-platform-notice {
+  background: $cb-system-soft;
+  border-color: $cb-system-border;
+}

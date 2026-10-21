@@ -139,7 +139,7 @@ class WebmasterAccountsTest < ActionDispatch::IntegrationTest
     end
     get super_admin_conversation_path(@conversation)
     follow_redirect! if response.redirect?
-    assert_select '.wm-message--system .message-role--owner', text: '運営からのお知らせ', count: 1
+    assert_select '.wm-message--system.cb-platform-notice .message-role--system', text: '運営からのお知らせ', count: 1
     delete destroy_webmaster_session_path
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     get conversation_path(@conversation)
