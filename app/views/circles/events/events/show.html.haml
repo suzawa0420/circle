@@ -17,4 +17,5 @@
     - else
       = render "/circles/commons/no_hit"
 
+    = render 'columns/related_guides', event: @event, audience: 'participant', heading: "#{@event.name}が気になったら、参加の持ち物もチェック"
     = render "circles/commons/discovery"

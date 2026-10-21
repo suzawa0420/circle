@@ -92,7 +92,7 @@ reverse later human moderation decisions.
 The webmaster dashboard's **紹介記事・コラム** opens `/columns`. The editor at
 `/columns/new` supports draft/publish, a Trix body, a cover image, participant or
 organizer targeting, an optional sport and up to twelve product cards. Each card
-accepts an official Amazon and/or Mercari affiliate URL. The editor includes
+accepts an official Amazon affiliate URL. The editor includes
 starter outlines for a first-visit checklist and an organizer equipment guide.
 Use **下書き保存**, then **保存済みの記事をプレビュー** to review saved content;
 **公開する** makes it public. Saving a published article as a draft unpublishes
@@ -108,7 +108,17 @@ generated. Paste the actual links from the respective affiliate accounts.
 
 Published guides appear on matching event pages for participants and in the
 organizer dashboard for organizers, including all-sports/all-audience guides.
+The left-thumbnail cards also appear below circle details and genre listings.
+The organizer dashboard and post-creation prompt prioritize sport-specific
+guides, then fill the remaining slots with shared guides (up to three total),
+so equipment, teamwear and camp articles can be discovered together. Participant
+My Pages show up to three published participant guides matching registered
+interests. Unrelated sports and organizer-only guides are excluded there.
 Drafts are excluded from these placements, public articles and the sitemap.
+`config/sitemap.rb` automatically includes every published column with its last
+update time. The master deployment regenerates the sitemap on server4 after
+both application servers are ready; article-only publication is also picked
+up by the daily timer or the `refresh_sitemap.yml` workflow.
 Product-link clicks are atomically counted per shop and shown in the editor
 and management list. Webmaster previews do not count. These are click counts,
 not purchases or revenue; affiliate reports remain the source for those.

@@ -438,6 +438,7 @@
                 %span.circle-readmore__chevron{ "aria-hidden" => "true" }
           .reset
 
+    = render 'columns/related_guides', event: @user.event, audience: 'participant', heading: "#{@user.event.name}に参加する前に、道具の準備"
     = render "/layouts/ad_square"
     .ad_space
 

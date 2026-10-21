@@ -345,6 +345,31 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{column_path(organizer)}']", count: 0
   end
 
+  test 'contextual cards prioritize the sport and also show shared organizer guides' do
+    equipment = Column.create!(title: 'バスケの備品8選', text: '備品', publication_status: 'published', audience: 'organizer', event: @circle.event)
+    shared = 2.times.map { |i| Column.create!(title: "共通の準備#{i}", text: '準備', publication_status: 'published', audience: 'organizer') }
+    other = Event.create!(name: '別の種目', ruby: 'guide-other', category: @circle.category, order: '2')
+    Column.create!(title: '別種目の備品', text: '備品', publication_status: 'published', audience: 'organizer', event: other)
+    Column.create!(title: '下書き', text: '備品', audience: 'organizer')
+    guides = ApplicationController.helpers.column_related_guides(event: @circle.event, audience: 'organizer')
+    assert_equal equipment, guides.first
+    assert_equal [equipment.id, *shared.map(&:id)].sort, guides.map(&:id).sort
+    assert_empty ApplicationController.helpers.column_related_guides(event: other, audience: 'participant')
+  end
+
+  test 'circle and genre discovery cards link only to matching participant articles' do
+    guide = Column.create!(title: 'バスケの持ち物10選', description: 'シューズと服を準備', text: '持ち物', publication_status: 'published', audience: 'participant', event: @circle.event)
+    Column.create!(title: '主催者の備品', text: '備品', publication_status: 'published', audience: 'organizer', event: @circle.event)
+    [circle_path(@circle), event_path(@circle.event.ruby)].each do |path|
+      get path
+      assert_response :success
+      assert_select '.column-guide-links__link', count: 1
+      assert_select ".column-guide-links__link[href='#{column_path(guide)}']"
+      assert_select '.column-guide-links__genre', text: 'バスケの準備・参加者向け'
+      assert_select '.column-guide-links__cta', text: 'おすすめの道具と選び方を見る'
+    end
+  end
+
   private
 
   def login_master

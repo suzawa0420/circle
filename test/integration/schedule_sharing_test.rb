@@ -103,7 +103,7 @@ class ScheduleSharingTest < ActionDispatch::IntegrationTest
     created = @circle.schedules.order(:id).last
     follow_redirect!
     assert_select '#schedule-share + .column-guide-links', count: 1
-    assert_select '.column-guide-links__link', count: 1
+    assert_select '.column-guide-links__link', count: 2
     assert_select ".column-guide-links__link[href='#{column_path(organizer)}']"
     get user_schedule_path(@circle, created)
     assert_select '#schedule-share + .column-guide-links', count: 0
