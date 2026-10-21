@@ -8,11 +8,11 @@
     <% if @column.affiliate? %>
       <aside class="column-article__disclosure" aria-label="広告について">
         <p>広告：この記事にはアフィリエイト広告が含まれます。</p>
-        <%= link_to '広告・アフィリエイトについて', advertising_path %>
+        <% if respond_to?(:advertising_path) %><%= link_to '広告・アフィリエイトについて', advertising_path %><% end %>
       </aside>
     <% end %>
   </header>
-  <% article_content = column_article_content(@column) %>
+  <% article_content = respond_to?(:column_article_content) ? column_article_content(@column) : { html: column_body_html(@column), remaining_products: @column.column_products.to_a } %>
   <div class="column-article__body"><%= article_content[:html] %></div>
   <% if article_content[:remaining_products].any? %>
     <section class="column-products" aria-labelledby="column-products-heading">
@@ -24,7 +24,7 @@
   <% if @column.amazon_links? %>
     <aside class="column-article__amazon-disclosure" aria-label="Amazonアソシエイトについて">
       <p>Amazonのアソシエイトとして、サークルブックは適格販売により収入を得ています。</p>
-      <%= link_to '広告・アフィリエイトについて', advertising_path %>
+      <% if respond_to?(:advertising_path) %><%= link_to '広告・アフィリエイトについて', advertising_path %><% end %>
     </aside>
   <% end %>
   <% if @column.event&.ruby.present? %><%= link_to "#{@column.event.name}のサークルを探す", event_path(@column.event.ruby), class: 'column-article__back' %><% end %>
