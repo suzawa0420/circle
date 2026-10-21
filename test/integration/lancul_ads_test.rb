@@ -126,7 +126,7 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.affiliate-ad', count: 1
     assert_select ".affiliate-ad[data-affiliate-placement='#{placement}']", count: 1 do
-      assert_select 'a[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+5YJRM"]', text: '英会話カフェLanCul' do |links|
+      assert_select 'a[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+5YJRM"]', text: 'カフェ英会話を無料体験' do |links|
         assert_includes links.first['rel'].split, 'sponsored'
         assert_includes links.first['rel'].split, 'nofollow'
       end

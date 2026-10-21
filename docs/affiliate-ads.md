@@ -79,3 +79,16 @@ Amazonの参加者表示は同ページに維持し、GoogleのCookie説明と�
 - [A8.net・PR等の表記方針](https://www.a8.net/compliance/prNotation-urlSubmission.php)
 - [Amazon・参加者であることの公表](https://affiliate.amazon.co.jp/help/node/topic/GPXFHVYZMTGPUMPE)
 - [Google AdSense・必須コンテンツ](https://support.google.com/adsense/answer/1348695?hl=ja)
+
+## LanCulの訴求文（2026年10月21日確認）
+
+「通い放題プラン」「外国人メイトとカフェで直接会話」「初心者への会話サポート」
+「無料体験」を訴求する。全プランが無制限だと誤認されないよう、
+「通い放題」はプランの特徴として表現する。
+現在のFAQはアプリでの予約・参加を案内しているため、本文で「予約不要」とは断定しない。
+公式バナーはASP提供の原本を使用し、本文とは別に広告主の最新素材・条件を確認する。
+
+根拠：
+- [公式の体験案内・外国人メイトによる会話サポート](https://trial.lancul.com/211220a/top)
+- [公式料金プラン・プラン別の利用上限](https://lancul.com/plan)
+- [公式FAQ・予約と参加](https://faq.lancul.com/knowledge/service3)
