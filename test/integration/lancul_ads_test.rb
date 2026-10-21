@@ -130,7 +130,8 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
         assert_includes links.first['rel'].split, 'sponsored'
         assert_includes links.first['rel'].split, 'nofollow'
       end
-      assert_select '.affiliate-ad__pr', text: 'PR'
+      assert_select '.affiliate-ad__pr', text: '広告'
+      assert_select '.affiliate-ad__disclosure', count: 0
       assert_select '.affiliate-ad__banner-link[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+614CX"] img[width="300"][height="250"][src^="https://www29.a8.net/svt/bgt?"]', count: 1
       assert_select 'img[width="1"][height="1"][src^="https://www19.a8.net/0.gif"]', count: 1
       assert_select 'img[width="1"][height="1"][src^="https://www14.a8.net/0.gif"]', count: 1

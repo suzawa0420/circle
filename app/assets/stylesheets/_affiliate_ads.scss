@@ -16,7 +16,6 @@
 .affiliate-ad__action .cb-icon { position: absolute; right: 12px; color: $cb-surface; pointer-events: none; }
 .affiliate-ad__action:hover { background: $cb-action-hover; }
 .affiliate-ad__action a:focus-visible, .affiliate-ad__banner-link:focus-visible { outline: 3px solid $cb-action; outline-offset: 3px; border-radius: 6px; }
-.affiliate-ad .affiliate-ad__disclosure { margin: 8px 0 0; color: $cb-muted; font-size: 10px; line-height: 1.6; }
 .affiliate-ad .affiliate-ad__pixel { position: absolute; width: 1px; height: 1px; margin: 0; border: 0; }
 .circle-results-grid > .affiliate-ad-slot { width: 96%; margin: 0 auto; }
 .blog-results-grid > .affiliate-ad-slot { min-width: 0; }

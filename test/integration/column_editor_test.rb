@@ -188,8 +188,16 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'h1', text: '広告・アフィリエイトについて'
     assert_select 'p', text: 'Amazonのアソシエイトとして、サークルブックは適格販売により収入を得ています。'
+    assert_select 'h2', text: 'A8.netのアフィリエイト広告について'
+    assert_select 'h2', text: 'Google AdSenseについて'
+    assert_select 'a[href="/privacypolicy#advertising-cookies"]'
     assert_select '.footer_links a[href="/advertising"]'
     assert_select 'a[href="/privacypolicy"]'
+    get privacypolicy_path
+    assert_response :success
+    assert_select '#advertising-cookies', text: '6. Cookie・広告・外部サービス'
+    assert_select 'a[href="https://myadcenter.google.com/"]'
+    assert_select 'a[href="https://optout.aboutads.info/"]'
   end
 
   test 'six editorial guides have distinct search metadata canonical social tags and unchanged headings' do

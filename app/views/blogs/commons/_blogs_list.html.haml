@@ -9,7 +9,7 @@
 - affiliate_placement = blogs.empty? ? 'blog_search_empty' : 'blog_search'
 - affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement)
 .blog-results-grid
-  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'stored-image-extension-v5-affiliate-compact'] do
+  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'stored-image-extension-v6-affiliate-label'] do
     - blogs.each.with_index(1) do |blog, i|
       .form.users-form
         .blog-body
