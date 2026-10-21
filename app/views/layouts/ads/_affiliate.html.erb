@@ -1,0 +1,18 @@
+<aside class="affiliate-ad" aria-label="PR：<%= ad.fetch('name') %>" data-affiliate-program="<%= ad.fetch('id') %>" data-affiliate-placement="<%= placement %>">
+  <div class="affiliate-ad__label"><span class="affiliate-ad__pr">PR</span><span><%= ad.fetch('name') %></span></div>
+  <% if ad['image_url'].present? %>
+    <%= link_to ad.fetch('image_link_url'), class: 'affiliate-ad__banner-link', rel: 'sponsored nofollow noopener', target: '_blank', data: { turbolinks: false }, aria: { label: "#{ad.fetch('name')}の公式サイトを見る" } do %>
+      <%= image_tag ad.fetch('image_url'), width: ad.fetch('image_width'), height: ad.fetch('image_height'), alt: ad.fetch('image_alt'), class: 'affiliate-ad__banner', loading: 'lazy', decoding: 'async' %>
+    <% end %>
+  <% end %>
+  <h2 class="affiliate-ad__title"><%= ad.fetch('title') %></h2>
+  <p class="affiliate-ad__description"><%= ad.fetch('description') %></p>
+  <div class="affiliate-ad__action">
+    <%= link_to ad.fetch('link_label'), ad.fetch('link_url'), class: 'affiliate-ad__link', rel: 'sponsored nofollow noopener', target: '_blank', data: { turbolinks: false } %>
+    <%= lucide_icon 'external-link', **{ 'aria-hidden' => 'true' } %>
+  </div>
+  <p class="affiliate-ad__disclosure">広告リンク経由のお申し込みにより、サークルブックに報酬が入る場合があります。</p>
+  <% ad.fetch('tracking_pixels', []).each do |pixel| %>
+    <%= image_tag pixel, width: 1, height: 1, alt: '', class: 'affiliate-ad__pixel', loading: 'lazy' %>
+  <% end %>
+</aside>

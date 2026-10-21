@@ -6,9 +6,10 @@
     = link_to(new_circle_blog_path(current_admin_user.first_user)) do
       .post_link サークル活動をつぶやく！
 
-- show_lancul_ad = lancul_english_event?(@event)
+- affiliate_placement = blogs.empty? ? 'blog_search_empty' : 'blog_search'
+- affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement)
 .blog-results-grid
-  - cache [blogs, show_lancul_ad, 'stored-image-extension-v4-lancul-third-card'] do
+  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'stored-image-extension-v5-affiliate-compact'] do
     - blogs.each.with_index(1) do |blog, i|
       .form.users-form
         .blog-body
@@ -55,10 +56,10 @@
               = blog.user.prefecture.name
 
 
-      - if show_lancul_ad && i == [2, blogs.size].min
-        .lancul-ad-slot
-          = render 'layouts/ads/lancul', placement: 'blog_search'
-      - elsif i == 5 && !show_lancul_ad
+      - if affiliate_ad && i == [2, blogs.size].min
+        .affiliate-ad-slot
+          = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'blog_search'
+      - elsif i == 5 && !affiliate_ad
         .list_ad
           = render "/layouts/ad_square"
 
@@ -69,8 +70,8 @@
       .no_hit_top トップページに戻る
     = link_to(new_admin_user_registration_path) do
       .no_hit_new 新しくサークルを登録する
-- if show_lancul_ad && blogs.empty?
-  = render 'layouts/ads/lancul', placement: 'blog_search_empty'
+- if affiliate_ad && blogs.empty?
+  = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'blog_search_empty'
 - else
   = render "/layouts/ad_square"
 = paginate blogs

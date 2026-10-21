@@ -12,11 +12,11 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
 
   test 'English circle search shows one ad after two results or the last short result' do
     get event_path(@circle.event.ruby)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     @circle.update!(event: @english)
     get event_path('english')
     assert_ad 'search'
-    assert_select '.circle-results-grid > li:nth-child(2).lancul-ad-slot', count: 1
+    assert_select '.circle-results-grid > li:nth-child(2).affiliate-ad-slot', count: 1
     9.times do |i|
       copy = @circle.dup
       copy.assign_attributes(name: "英会話サークル#{i}", unique_id: nil)
@@ -24,11 +24,11 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     end
     get event_prefecture_path('english', @circle.prefecture.kana)
     assert_ad 'search'
-    assert_select '.circle-results-grid > li:nth-child(3).lancul-ad-slot', count: 1
+    assert_select '.circle-results-grid > li:nth-child(3).affiliate-ad-slot', count: 1
     assert_select '.circle-results-grid > .user_item_wrap', count: 10
     assert_select '.circle-results-grid > .list_ad', count: 0
     get circles_path
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
   end
 
   test 'empty searches require an explicit English event and never infer it from keywords' do
@@ -36,9 +36,9 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_ad 'search_empty'
     get circles_search_index_path, params: { detailed: '1', event_id: @circle.event_id, q: '該当なしのサークル' }
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     get circles_search_index_path, params: { detailed: '1', q: '英会話該当なし' }
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
   end
 
   test 'English blog listings show one ad including empty results and short lists' do
@@ -54,52 +54,64 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     end
     get blogs_event_path('english')
     assert_select '.blog-results-grid > .users-form', count: 10
-    assert_select '.blog-results-grid > div:nth-child(3).lancul-ad-slot', count: 1
+    assert_select '.blog-results-grid > div:nth-child(3).affiliate-ad-slot', count: 1
     assert_select '.blog-results-grid > .list_ad', count: 0
     get blogs_event_prefecture_path('english', @circle.prefecture.kana)
     assert_ad 'blog_search'
     get blogs_path
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     @circle.update!(event: Event.find_by!(ruby: 'chat-basketball'))
     get blogs_event_path(@circle.event.ruby)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
   end
 
   test 'circle blog archive and detail follow the circle genre' do
     blog = create_blog
     get circle_blogs_path(@circle)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     get circle_blog_path(@circle, blog)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     @circle.update!(event: @english)
     get circle_blogs_path(@circle)
     assert_ad 'circle_blogs'
     get circle_blog_path(@circle, blog)
     assert_ad 'circle_blog'
     get circle_path(@circle)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
   end
 
   test 'participant ad follows current interests and does not appear in messages or public profiles' do
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     get member_path(@member)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     @member.events << @english
     get member_path(@member)
     assert_ad 'participant_mypage'
     assert_includes response.headers['Cache-Control'], 'no-store'
     get conversations_path
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     get member_profile_path(@member)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
     @member.events.delete(@english)
     get member_path(@member)
-    assert_select '.lancul-ad', count: 0
+    assert_select '.affiliate-ad', count: 0
+  end
+
+  test 'webmaster search cards omit edit and delete controls' do
+    master = Webmaster.create!(id: 1, email: 'affiliate-webmaster@example.test', password: 'test-password-123')
+    post webmaster_session_path, params: { webmaster: { email: master.email, password: 'test-password-123' } }
+    @circle.update!(event: @english)
+    get event_path('english')
+    assert_ad 'search'
+    assert_select '.circle-results-grid .moderator-edit-btn, .circle-results-grid .moderator-delete-btn', count: 0
+    assert_select '.circle-results-grid a[data-method="delete"]', count: 0
+    get edit_user_path(@circle)
+    assert_response :success
   end
 
   test 'optimized public listing CSS retains the shared ad styles' do
     css = Rails.application.assets.find_asset('public_listing.css').to_s
-    %w[.lancul-ad .lancul-ad__action .lancul-ad__pixel .lancul-ad-slot .lancul-ad__banner].each do |selector|
+    %w[.affiliate-ad .affiliate-ad__action .affiliate-ad__pixel .affiliate-ad-slot .affiliate-ad__banner].each do |selector|
       assert_includes css, selector
     end
   end
@@ -112,14 +124,14 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
 
   def assert_ad(placement)
     assert_response :success
-    assert_select '.lancul-ad', count: 1
-    assert_select ".lancul-ad[data-lancul-placement='#{placement}']", count: 1 do
+    assert_select '.affiliate-ad', count: 1
+    assert_select ".affiliate-ad[data-affiliate-placement='#{placement}']", count: 1 do
       assert_select 'a[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+5YJRM"]', text: '英会話カフェLanCul' do |links|
         assert_includes links.first['rel'].split, 'sponsored'
         assert_includes links.first['rel'].split, 'nofollow'
       end
-      assert_select '.lancul-ad__pr', text: 'PR'
-      assert_select '.lancul-ad__banner-link[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+614CX"] img[width="300"][height="250"][src^="https://www29.a8.net/svt/bgt?"]', count: 1
+      assert_select '.affiliate-ad__pr', text: 'PR'
+      assert_select '.affiliate-ad__banner-link[href="https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+614CX"] img[width="300"][height="250"][src^="https://www29.a8.net/svt/bgt?"]', count: 1
       assert_select 'img[width="1"][height="1"][src^="https://www19.a8.net/0.gif"]', count: 1
       assert_select 'img[width="1"][height="1"][src^="https://www14.a8.net/0.gif"]', count: 1
     end

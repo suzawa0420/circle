@@ -1,0 +1,20 @@
+# Add approved programs here; see docs/affiliate-ads.md.
+# Keep unpublished/unapproved programs disabled. Order determines selection priority.
+lancul:
+  enabled: true
+  approved: true
+  name: 英会話カフェ LanCul
+  events: [english]
+  placements: [search, search_empty, blog_search, blog_search_empty, circle_blogs, circle_blog, participant_mypage]
+  title: 英語で話せる、もう一つの居場所。
+  description: 英会話をカフェで楽しむ選択肢。店舗・利用条件は公式サイトでご確認ください。
+  link_label: 英会話カフェLanCul
+  link_url: https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+5YJRM
+  image_url: https://www29.a8.net/svt/bgt?aid=261021945044&wid=004&eno=01&mid=s00000020682001013000&mc=1
+  image_link_url: https://px.a8.net/svt/ejp?a8mat=4BELTL+Q75PM+4FL0+614CX
+  image_alt: 英語でつながるコミュニティ、英会話カフェLanCulの無料体験
+  image_width: 300
+  image_height: 250
+  tracking_pixels:
+    - https://www19.a8.net/0.gif?a8mat=4BELTL+Q75PM+4FL0+614CX
+    - https://www14.a8.net/0.gif?a8mat=4BELTL+Q75PM+4FL0+5YJRM

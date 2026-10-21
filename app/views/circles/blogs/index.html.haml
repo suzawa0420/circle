@@ -49,8 +49,8 @@
                         - else
                           = simple_format blog.content.truncate(140)
         .ad_space
-        - if lancul_english_event?(@user.event)
-          = render 'layouts/ads/lancul', placement: 'circle_blogs'
+        - if (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blogs'))
+          = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blogs'
         - else
           = render "/layouts/ad_square"
         .ad_space

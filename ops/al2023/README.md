@@ -122,6 +122,13 @@ the additive schema and article data. Do not run the migration's destructive
 
 ## LanCul affiliate placements (2026-10-21)
 
+Campaigns are configured in `config/affiliate_ads.yml` and rendered by the shared
+`layouts/ads/affiliate` partial. Follow [affiliate card operations](../../docs/affiliate-ads.md)
+for approval, copy/image changes, targeting, compact design and verification.
+Cards use natural height on desktop; ads never stretch neighboring circle cards.
+Public search cards omit webmaster edit/delete buttons; management pages remain
+available for those operations.
+
 The approved LanCul A8 creatives for the registered Circlebook site appear
 only on English (`english`) discovery pages: as the third card after two circle
 results (or last result on a shorter page), matching empty searches, English blog discovery

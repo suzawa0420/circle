@@ -5,18 +5,14 @@
     = link_to(new_circle_blog_path(current_admin_user.first_user)) do
       .post_link サークル活動をつぶやく！
 
-- is_master_account = webmaster?
 - listing_data = local_assigns[:listing_data] || @listing_data || CircleListingData.new(users)
 - users = listing_data.users
 - show_picte_ad = picte_camera_event?(@event)
-- show_lancul_ad = lancul_english_event?(@event)
-- cache [users, is_master_account, show_picte_ad, show_lancul_ad, 'seo-list-v11-lancul-third-card', 'stored-image-extension-v1'] do
+- affiliate_ad = affiliate_ad_for_event(@event, placement: 'search')
+- cache [users, show_picte_ad, affiliate_ad_cache_key(affiliate_ad), 'seo-list-v12-affiliate-compact', 'stored-image-extension-v1'] do
   %ul.circle-results-grid
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap
-        - if is_master_account
-          = link_to "編集", edit_user_path(user), data: { "turbolinks" => false }, class: "moderator-edit-btn"
-          = link_to "削除", user_path(user), method: :delete, data: { confirm: circle_deletion_confirmation(user) }, class: "moderator-delete-btn"
         = link_to(circle_path(user.id), data: { sport_listing_click: user.event.ruby }) do
           .header_user_list.ribbon-wrapper
             .header_img_wrap
@@ -106,11 +102,11 @@
         %li.picte-ad-slot
           = render 'layouts/ads/picte', placement: 'search'
 
-      - if show_lancul_ad && i == [2, users.size].min
-        %li.lancul-ad-slot
-          = render 'layouts/ads/lancul', placement: 'search'
+      - if affiliate_ad && i == [2, users.size].min
+        %li.affiliate-ad-slot
+          = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'search'
 
-      - if !show_lancul_ad && [5, 10, 15].include?(i)
+      - if !affiliate_ad && [5, 10, 15].include?(i)
         %li.list_ad
           = render "/layouts/ad_square"
 

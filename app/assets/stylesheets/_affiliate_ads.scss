@@ -1,0 +1,29 @@
+@import "brand_palette";
+
+.affiliate-ad {
+  position: relative; width: 100%; min-width: 0; margin: 20px 0; padding: 16px;
+  border: 1px solid $cb-border; border-radius: 12px; background: $cb-surface;
+  color: $cb-text; text-align: left; letter-spacing: normal;
+}
+.affiliate-ad__label { display: flex; align-items: center; gap: 8px; color: $cb-muted; font-size: 11px; line-height: 1.6; }
+.affiliate-ad__pr { flex-shrink: 0; padding: 0 5px; border: 1px solid $cb-input-border; border-radius: 3px; }
+.affiliate-ad__banner-link { display: block; width: 180px; max-width: 100%; margin: 12px auto; }
+.affiliate-ad .affiliate-ad__banner { display: block; width: 100%; height: 150px; object-fit: contain; margin: 0; border: 0; border-radius: 0; }
+.affiliate-ad .affiliate-ad__title { margin: 12px 0 8px; font-size: 17px; font-weight: 700; line-height: 1.5; color: $cb-text; }
+.affiliate-ad .affiliate-ad__description { margin: 0 0 12px; font-size: 13px; line-height: 1.7; color: $cb-text; }
+.affiliate-ad__action { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; background: $cb-action; border-radius: 6px; }
+.affiliate-ad .affiliate-ad__action a { display: block; width: 100%; padding: 12px 36px; color: $cb-surface; font-size: 13px; font-weight: 600; line-height: 1.6; text-align: center; text-decoration: none; }
+.affiliate-ad__action .cb-icon { position: absolute; right: 12px; color: $cb-surface; pointer-events: none; }
+.affiliate-ad__action:hover { background: $cb-action-hover; }
+.affiliate-ad__action a:focus-visible, .affiliate-ad__banner-link:focus-visible { outline: 3px solid $cb-action; outline-offset: 3px; border-radius: 6px; }
+.affiliate-ad .affiliate-ad__disclosure { margin: 8px 0 0; color: $cb-muted; font-size: 10px; line-height: 1.6; }
+.affiliate-ad .affiliate-ad__pixel { position: absolute; width: 1px; height: 1px; margin: 0; border: 0; }
+.circle-results-grid > .affiliate-ad-slot { width: 96%; margin: 0 auto; }
+.blog-results-grid > .affiliate-ad-slot { min-width: 0; }
+@media (min-width: 900px) {
+  // A tall advertisement must never stretch the neighboring organic card.
+  .cb-site .circle-results-grid, .cb-site .blog-results-grid { align-items: start; }
+  .cb-site .circle-results-grid > .affiliate-ad-slot,
+  .cb-site .blog-results-grid > .affiliate-ad-slot { grid-column: auto; grid-row: auto; min-width: 0; width: 100%; margin: 0; }
+  .affiliate-ad-slot .affiliate-ad { margin: 0; }
+}

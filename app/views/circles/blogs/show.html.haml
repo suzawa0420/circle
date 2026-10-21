@@ -109,8 +109,8 @@
 
 
 
-    - if lancul_english_event?(@user.event)
-      = render 'layouts/ads/lancul', placement: 'circle_blog'
+    - if (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blog'))
+      = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blog'
     - else
       = render "/layouts/ad_square"
     .ad_space
