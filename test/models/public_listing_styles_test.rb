@@ -19,6 +19,19 @@ class PublicListingStylesTest < ActiveSupport::TestCase
     assert_match(/\.cb-sort__item\.is-selected\{[^}]*background:/, css)
   end
 
+  test 'public assets retain contextual thumbnail cards including mobile and focus styles' do
+    %w[public_listing public_detail public_directory].each do |asset|
+      css = Rails.application.assets.find_asset("#{asset}.css").to_s
+      assert_match(/\.column-guide-links__link\{[^}]*display:\s*flex/, css)
+      assert_includes css, '.column-guide-links__link:focus-visible'
+      assert_includes css, '.column-guide-links__image'
+      assert_includes css, '.column-guide-links__body'
+      assert_includes css, '.column-guide-links__cta'
+      assert_match(/\.column-guide-links__description\{[^}]*display:\s*none/, css)
+      refute_includes css, '.trix-button-group'
+    end
+  end
+
   test 'compiled listing asset retains shared event date controls' do
     css = Rails.application.assets.find_asset('public_listing.css').to_s
     assert_match(/\.event-results__days\{[^}]*display:\s*flex/, css)
