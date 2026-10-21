@@ -39,3 +39,18 @@ of applicable articles and also appears on that explanation page, linked from
 the shared footer. No database migration is added. Deploy the application before
 updating the six articles using the normal webmaster editor. Reviewed sources
 and content rollback instructions are in `content/columns/2026-10-product-guides`.
+
+## Search and social metadata
+
+`config/column_seo.yml` supplies reviewed search titles and descriptions for the
+six published guides. Profiles match both article ID and current heading; after
+a heading change, the current article title and summary are used until the
+profile is reviewed. Other articles always use their current title and summary,
+falling back to body text without product markers. Visible headings remain
+unchanged. OGP/Twitter use the visible heading, reviewed description and current
+cover, with the site image as fallback. Canonical and `og:url` always point to
+the HTTPS article URL without tracking/query parameters; OGP type is `article`.
+Webmaster/draft preview noindex behavior is retained. No database migration or
+production content write is needed. Revert normally to roll back metadata.
+The view retains the previous implementation for older helper instances during
+rolling activation.

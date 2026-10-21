@@ -1,4 +1,18 @@
 module ColumnsHelper
+  def column_meta_tags(column)
+    metadata = ColumnSearchMetadata.for(column)
+    canonical = column_url(column, host: 'circle-book.com', protocol: 'https')
+    cover = column.image.identifier.present? ? column.image.url : URI.parse(default_ogp_image_url).request_uri
+    cover = URI.join('https://circle-book.com', cover).to_s
+    {
+      title: metadata[:title], description: metadata[:description], canonical: canonical,
+      og: { title: column.title, description: metadata[:description], type: 'article', url: canonical,
+            site_name: 'サークルブック', locale: 'ja_JP', image: { _: cover, secure_url: cover, alt: column.title } },
+      twitter: { card: 'summary_large_image', title: column.title, description: metadata[:description], image: cover, 'image:alt' => column.title },
+      article: { published_time: (column.published_at&.iso8601 if column.published?), modified_time: column.updated_at&.iso8601 }
+    }
+  end
+
   def column_body_html(column)
     source = column.text.to_s
     source = simple_format(source) unless source.match?(/<(?:div|p|h[1-6]|ul|ol|table|blockquote)\b/i)

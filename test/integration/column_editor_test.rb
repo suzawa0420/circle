@@ -192,6 +192,53 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_select 'a[href="/privacypolicy"]'
   end
 
+  test 'six editorial guides have distinct search metadata canonical social tags and unchanged headings' do
+    ColumnSearchMetadata::PROFILES.each do |id, profile|
+      article = Column.create!(id: id, title: profile.fetch('heading'), text: '<p>活動の準備と道具の選び方。</p>', publication_status: 'published')
+      get column_path(article), params: { utm_source: 'share', preview: '1' }
+      assert_response :success
+      canonical = "https://circle-book.com/columns/#{id}"
+      assert_select 'title', text: "#{profile.fetch('title')} | サークルブック"
+      assert_select 'h1', text: profile.fetch('heading')
+      assert_select 'meta[name="description"]', count: 1 do |tags|
+        assert_equal profile.fetch('description'), tags.first['content']
+      end
+      assert_select 'link[rel="canonical"]', count: 1 do |links|
+        assert_equal canonical, links.first['href']
+      end
+      { 'og:title' => article.title, 'og:description' => profile.fetch('description'), 'og:type' => 'article', 'og:url' => canonical,
+        'og:image:alt' => article.title }.each do |property, value|
+        assert_select "meta[property='#{property}']", count: 1 do |tags|
+          assert_equal value, tags.first['content']
+        end
+      end
+      assert_select 'meta[property="og:image"]', count: 1 do |tags|
+        assert_match %r{\Ahttps://}, tags.first['content']
+      end
+      assert_select 'meta[name="twitter:card"][content="summary_large_image"]'
+      assert_select 'meta[name="twitter:title"]' do |tags|
+        assert_equal article.title, tags.first['content']
+      end
+      assert_select 'meta[name="twitter:description"]' do |tags|
+        assert_equal profile.fetch('description'), tags.first['content']
+      end
+      assert_select 'meta[name="robots"][content*="noindex"]', count: 0
+    end
+  end
+
+  test 'changed article headings and ordinary articles use their current metadata rather than a stale profile' do
+    article = Column.create!(id: 1, title: '新しく書き直した準備ガイド', description: 'この内容に合う説明文。', text: '<p>本文</p>', publication_status: 'published')
+    get column_path(article)
+    assert_select 'title', text: '新しく書き直した準備ガイド | サークルブック'
+    assert_select 'meta[name="description"][content="この内容に合う説明文。"]'
+    article.update!(description: '', text: '<p>本文の要約を使用します。</p>')
+    get column_path(article)
+    assert_select 'meta[name="description"][content="本文の要約を使用します。"]'
+    login_master
+    get column_path(article)
+    assert_select 'meta[name="robots"][content*="noindex"]'
+  end
+
   test 'product links reject unsafe urls and another articles product cannot be edited' do
     login_master
     post columns_path, params: article_params('publish').deep_merge(column: { column_products_attributes: {
