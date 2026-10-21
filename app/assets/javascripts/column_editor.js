@@ -81,7 +81,7 @@
     var url = link.dataset.columnClickUrl;
     var shop = link.dataset.columnShop;
     var token = document.querySelector('meta[name="csrf-token"]');
-    if (!token || !/^\/columns\/\d+\/products\/\d+\/click$/.test(url) || !/^(amazon|mercari)$/.test(shop)) return;
+    if (!token || !/^\/columns\/\d+\/products\/\d+\/click$/.test(url) || shop !== 'amazon') return;
     var payload = new FormData();
     payload.append('shop', shop);
     payload.append('authenticity_token', token.content);

@@ -10,7 +10,6 @@
     <% if product.description.present? %><div class="column-product__description"><%= simple_format(h(product.description)) %></div><% end %>
     <div class="column-product__links">
       <% if product.amazon_url.present? %><%= column_product_link(product, 'amazon') %><% end %>
-      <% if product.mercari_url.present? %><%= column_product_link(product, 'mercari') %><% end %>
     </div>
   </div>
 </article>

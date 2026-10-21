@@ -4,7 +4,7 @@ class ColumnProductClicksController < ApplicationController
   def create
     response.headers['Cache-Control'] = 'no-store'
     return head :no_content if webmaster?
-    return head :unprocessable_entity unless %w[amazon mercari].include?(params[:shop])
+    return head :unprocessable_entity unless params[:shop] == 'amazon'
 
     product = ColumnProduct.joins(:column).merge(Column.published).find_by!(id: params[:id], column_id: params[:column_id])
     return head :unprocessable_entity if product.public_send("#{params[:shop]}_url").blank?

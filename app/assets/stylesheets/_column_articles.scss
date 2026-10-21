@@ -41,13 +41,10 @@
 .column-shop-link { display: inline-flex; justify-content: center; align-items: center; min-height: 48px; padding: 12px 18px; background: #246449; border: 1px solid #246449; border-radius: 8px; color: #fff; font-size: 15px; font-weight: 700; }
 .column-shop-link:hover, .column-shop-link:focus { color: #fff; background: #174b35; }
 .column-article__body a.column-shop-link { color: #fff; text-decoration: none; font-size: 15px; }
-.column-article__body a.column-shop-link--mercari { color: #246449; }
 .column-article__body .column-product { margin: 24px 0 30px; line-height: 1.7; }
 .column-article__body .column-product h3 { margin: 0; }
 .column-article__body .column-product__label { margin: 0 0 8px; }
 .column-article__body .column-product__content, .column-article__body .column-product__links { margin-bottom: 0; }
-.column-shop-link--mercari { color: #246449; background: #fff; }
-.column-shop-link--mercari:hover, .column-shop-link--mercari:focus { background: #edf6f1; color: #174b35; }
 .column-article__back { display: block; padding: 12px 0; text-decoration: underline; font-size: 15px; }
 .column-preview-notice { padding: 18px; margin-bottom: 18px; border: 1px solid #d6c194; border-radius: 10px; background: #fff8e7; color: #664b17; }
 .column-preview-notice a { display: inline-block; margin-top: 8px; text-decoration: underline; }
@@ -69,6 +66,26 @@
   & + & { margin-top: 12px; }
   &:hover { background: #f5f8f6; border-color: #16835d; color: #202124; text-decoration: none; }
   &:focus-visible { outline: 3px solid #16835d; outline-offset: 3px; }
+}
+.webmaster-page .column-editor {
+  .wm-button { background: #16835d; color: #fff; border-color: #16835d; }
+  .wm-button:hover { background: #0f6849; border-color: #0f6849; }
+  .wm-button--secondary { background: #fff !important; color: #0f6849 !important; border-color: #b6bcc1 !important; }
+  .wm-button--secondary:hover { background: #edf7f2 !important; border-color: #16835d !important; }
+  button:focus-visible, a:focus-visible, input:focus-visible, trix-editor:focus-visible { outline: 3px solid #16835d; outline-offset: 3px; }
+  trix-toolbar .trix-button-group { border: 1px solid #b6bcc1; border-radius: 8px; overflow: hidden; margin: 0 8px 8px 0; }
+  trix-toolbar .trix-button {
+    display: inline-block; min-width: 44px; min-height: 44px; margin: 0; padding: 0 10px;
+    border: 0; border-radius: 0; background: #fff; color: #202124; line-height: 1.4;
+    &:not(:first-child) { border-left: 1px solid #e3e6e8; }
+    &:not(:disabled):hover { background: #f0f3f5; }
+    &.trix-active { background: #d9eee3; color: #0f6849; box-shadow: inset 0 -3px #16835d; }
+    &:disabled { background: #f5f6f7; color: #656b73; cursor: default; }
+    &::before { opacity: .8; }
+    &:disabled::before { opacity: .3; }
+    &:focus-visible { outline-offset: -3px; }
+  }
+  trix-toolbar .trix-button--icon { width: 44px; text-indent: -9999px; }
 }
 .column-guide-links__image { flex: 0 0 96px; width: 96px; height: 80px; object-fit: cover; border-radius: 8px; }
 .column-guide-links__body { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1; }

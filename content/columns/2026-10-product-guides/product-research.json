@@ -1,0 +1,302 @@
+{
+  "checked_on": "2026-10-21",
+  "criteria": "用途とメーカー公開仕様による選定。使用レビュー、販売順位、最安値の断定はしない。外部参考リンクは記事本文へ表示しない。",
+  "products": [
+    {
+      "key": "shoes",
+      "name": "ASICS GELHOOP V17",
+      "description": "継続してバスケを楽しみたい人へ。足幅のタイプとサイズを確認して選びましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+GELHOOP+V17+1063A096&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61xGLPaW1YL._AC_UL320_.jpg",
+      "research_source": "https://www.asics.com/jp/ja-jp/gelhoop-v17-standard/p/1063A096-100.html"
+    },
+    {
+      "key": "shirt",
+      "name": "glimmer 00300-ACT ドライTシャツ",
+      "description": "練習用と着替え用をそろえたい人に。色指定のある会は白・黒から選べます。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+      "research_source": "https://tomsj.com/products/glimmer/"
+    },
+    {
+      "key": "shorts",
+      "name": "glimmer 00325-ACP ドライハーフパンツ",
+      "description": "無地のパンツで練習着をそろえたい人へ。ウエストと総丈を確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00325+ACP&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71eYqDHv-TS._AC_UL320_.jpg",
+      "research_source": "https://tomsj.com/ebook/26ss/"
+    },
+    {
+      "key": "socks",
+      "name": "ASICS SOCKS18 3063A063",
+      "description": "バスケ用ソックスを探す人に。靴の試着時も、実際に使う厚さのソックスを合わせましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=asics+SOCKS18+3063A063&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/516-BSEu1yL._AC_UL320_.jpg",
+      "research_source": "https://cms-static.asics.com/media-libraries/110891/file.pdf"
+    },
+    {
+      "key": "towel",
+      "name": "Speedo マイクロセームタオル M SE62003",
+      "description": "荷物をかさばらせず、汗や水分を拭きたい人に。サイズ・素材・洗い方を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+      "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+    },
+    {
+      "key": "bag",
+      "name": "SPALDING ケイジャー 32L",
+      "description": "ボールとシューズをまとめて運びたい人に。通常のケイジャーとライトなど別モデルを区別してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=SPALDING+%E3%82%B1%E3%82%A4%E3%82%B8%E3%83%A3%E3%83%BC+32L+%E3%83%99%E3%83%BC%E3%82%B7%E3%83%83%E3%82%AF&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51tn7xSEtBL._AC_UL320_.jpg",
+      "research_source": "https://www.spalding.co.jp/view/item/000000002403?category_page_id=bag_cager"
+    },
+    {
+      "key": "shoe_case",
+      "name": "ASICS シューズケースL 3033C228",
+      "description": "手持ちのバッグを使いながら靴を分けたい人へ。靴の大きさとケースの寸法を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA%E3%82%B1%E3%83%BC%E3%82%B9L+3033C228&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/611mgoP5OsL._AC_UL320_.jpg",
+      "research_source": "https://www.asics.com/jp/ja-jp/シューズケースl/p/3033C228-001.html"
+    },
+    {
+      "key": "bottle",
+      "name": "ナルゲン 広口1.0L Tritan Renew",
+      "description": "飲み物を用意して活動へ向かう人に。保冷ボトルではありません。必要な量は活動時間に合わせて。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%8A%E3%83%AB%E3%82%B2%E3%83%B3+%E5%BA%83%E5%8F%A3+1.0L+Tritan+Renew&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71oPAKdKlvL._AC_UL320_.jpg",
+      "research_source": "https://highmount-store.jp/view/item/000000002777?category_page_id=all_items"
+    },
+    {
+      "key": "ball",
+      "name": "molten BG5000 バスケットボール",
+      "description": "体育館での練習用ボールを選びたい人へ。参加先に合わせて号数を選んでください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+BG5000+%E3%83%90%E3%82%B9%E3%82%B1%E3%83%83%E3%83%88%E3%83%9C%E3%83%BC%E3%83%AB&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/81vBRjkY0rL._AC_UL320_.jpg",
+      "research_source": "https://sports.molten.co.jp/en/basketball/bg5000/"
+    },
+    {
+      "key": "handpump",
+      "name": "molten エアシーホース HPAS",
+      "description": "自分のボールと一緒に持ち歩く小型ポンプを探す人へ。対応する針と付属品を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%A8%E3%82%A2%E3%82%B7%E3%83%BC%E3%83%9B%E3%83%BC%E3%82%B9+HPAS&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61JjGTyXorL._AC_UL320_.jpg",
+      "research_source": "https://shop.moltensports.jp/pages/air-pomp"
+    },
+    {
+      "key": "bibs",
+      "name": "molten ゲームベスト10枚セット GB0113",
+      "description": "一般向けの番号付きビブスをそろえたい主催者に。色・番号・枚数を確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%99%E3%82%B9%E3%83%88+GB0113+10%E6%9E%9A&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51pZWmyfzCL._AC_UL320_.jpg",
+      "research_source": "https://productinfo.moltensports.jp/products/gb0113"
+    },
+    {
+      "key": "pump",
+      "name": "molten エアポンプ AP50",
+      "description": "複数のボールを準備する主催者に。空気圧の計測には別途圧力計を使います。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%A8%E3%82%A2%E3%83%9D%E3%83%B3%E3%83%97+AP50&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61GFT67xjsL._AC_UL320_.jpg",
+      "research_source": "https://shop.moltensports.jp/pages/air-pomp"
+    },
+    {
+      "key": "gauge",
+      "name": "molten ボール専用圧力計 PGA10",
+      "description": "共用ボールの空気圧を確認したい人に。簡易計測用の製品です。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%83%9C%E3%83%BC%E3%83%AB%E5%B0%82%E7%94%A8%E5%9C%A7%E5%8A%9B%E8%A8%88+PGA10&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71h7O+8gjuL._AC_UL320_.jpg",
+      "research_source": "https://shop.moltensports.jp/products/pga10"
+    },
+    {
+      "key": "timer",
+      "name": "タニタ でか見えタイマー TD-384",
+      "description": "練習の区切りや交代時間を管理する人に。公式試合用の競技タイマーではありません。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%BF%E3%83%8B%E3%82%BF+%E3%81%A7%E3%81%8B%E8%A6%8B%E3%81%88%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC+TD-384&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61soGK3BVvL._AC_UL320_.jpg",
+      "research_source": "https://www.tanita.co.jp/product/timer/3653/"
+    },
+    {
+      "key": "whistle",
+      "name": "molten ドルフィンB ホイッスル",
+      "description": "ゲームの開始・中断を知らせる担当者に。会場で使用できるか確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%83%89%E3%83%AB%E3%83%95%E3%82%A3%E3%83%B3B+%E3%83%9B%E3%82%A4%E3%83%83%E3%82%B9%E3%83%AB&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61+drCG-bNL._AC_UL320_.jpg",
+      "research_source": "https://shop.moltensports.jp/pages/whistle-lineup"
+    },
+    {
+      "key": "ball_bag",
+      "name": "molten バスケットボール3個入れ EB0053",
+      "description": "共用ボールをまとめて持ち運ぶ主催者に。収納できる個数とボールサイズをご確認ください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+EB0053+%E3%83%90%E3%82%B9%E3%82%B1%E3%83%83%E3%83%88%E3%83%9C%E3%83%BC%E3%83%AB+3%E5%80%8B%E5%85%A5%E3%82%8C&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61vC9xQmI4L._AC_UL320_.jpg",
+      "research_source": "https://shop.moltensports.jp/products/eb0053"
+    },
+    {
+      "key": "board",
+      "name": "molten バスケットボール作戦盤 SB0050",
+      "description": "練習内容や立ち位置を図で伝えたい人へ。マグネットやペンなどの付属品を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E4%BD%9C%E6%88%A6%E7%9B%A4+%E3%83%90%E3%82%B9%E3%82%B1%E3%83%83%E3%83%88%E3%83%9C%E3%83%BC%E3%83%AB+SB0050&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71n2GCiAgRL._AC_UL320_.jpg",
+      "research_source": "https://shop.moltensports.jp/blogs/faq/q0108"
+    },
+    {
+      "key": "cotton",
+      "name": "Printstar 00085-CVT ヘビーウェイトTシャツ",
+      "description": "交流会やイベント用のおそろいTシャツに。無地の商品で、プリント加工は含まれません。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=Printstar+00085+CVT&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61rjo6WnnJL._AC_UL320_.jpg",
+      "research_source": "https://tomsj.com/products/printstar/"
+    },
+    {
+      "key": "united",
+      "name": "United Athle 5001-01 ハイクオリティーTシャツ",
+      "description": "普段も着たくなる綿Tシャツをそろえたい人に。色によって混紡率が異なります。加工は別途手配です。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=United+Athle+5001-01&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51JX9J3xZJL._AC_UL320_.jpg",
+      "research_source": "https://united-athle.jp/ua/item/500101/"
+    },
+    {
+      "key": "polo",
+      "name": "glimmer 00302-ADP ドライポロシャツ",
+      "description": "受付や運営担当のウェアをそろえたい人に。胸ポケットの有無など品番の違いを確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00302+ADP&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71Qz8RhpwRL._AC_UL320_.jpg",
+      "research_source": "https://tomsj.com/ebook/26ss/"
+    },
+    {
+      "key": "travel_bag",
+      "name": "Coleman ウォーカー33",
+      "description": "一泊分の着替えを背負って運びたい人に。荷物とバッグの容量を照らし合わせましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=Coleman+%E3%82%A6%E3%82%A9%E3%83%BC%E3%82%AB%E3%83%BC33&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61kt6qe2wrL._AC_UL320_.jpg",
+      "research_source": "https://ec.coleman.co.jp/category/407/2000038970.html"
+    },
+    {
+      "key": "pouches",
+      "name": "Eagle Creek パックイット アイソレート COMPキューブ S",
+      "description": "着替えを用途ごとに分けたい人に。圧縮タイプの収納ポーチです。防水袋とは用途が異なります。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=Eagle+Creek+%E3%83%91%E3%83%83%E3%82%AF%E3%82%A4%E3%83%83%E3%83%88+%E3%82%A2%E3%82%A4%E3%82%BD%E3%83%AC%E3%83%BC%E3%83%88+COMP+%E3%82%AD%E3%83%A5%E3%83%BC%E3%83%96+S&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71nuSLXtcWL._AC_UL320_.jpg",
+      "research_source": "https://eaglecreek.jp/product/packing_organizer/detail/11862374/"
+    },
+    {
+      "key": "sandals",
+      "name": "crocs クラシック クロッグ",
+      "description": "宿での履き替え用を探す人に。施設のルールを確認してください。競技用の室内履きではありません。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=crocs+%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF+%E3%82%AF%E3%83%AD%E3%83%83%E3%82%B0+10001&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61SuPkDGYfL._AC_UL320_.jpg",
+      "research_source": "https://www.crocs.co.jp/p/crocs-classic/10001.html"
+    },
+    {
+      "key": "laundry",
+      "name": "ダイヤ AL角型ガードネット大",
+      "description": "洗濯する衣類をまとめて持ち帰りたい人に。洗濯表示とネットへ入れる量を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%80%E3%82%A4%E3%83%A4+AL%E8%A7%92%E5%9E%8B%E3%82%AC%E3%83%BC%E3%83%89%E3%83%8D%E3%83%83%E3%83%88%E5%A4%A7&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71UVFtNW5LL._AC_UL320_.jpg",
+      "research_source": "https://www.daiya-idea.co.jp/housekeeping/lnet/4901948570074-2/"
+    },
+    {
+      "key": "ito",
+      "name": "ito レインボー",
+      "description": "会話を楽しみながら協力したい会に。2〜14人、目安5〜15分、対象8歳以上。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=ito+%E3%83%AC%E3%82%A4%E3%83%B3%E3%83%9C%E3%83%BC+%E3%82%A2%E3%83%BC%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%88&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61OJDbESyLL._AC_UL320_.jpg",
+      "research_source": "https://arclightgames.jp/product/705rainbow/"
+    },
+    {
+      "key": "nanja",
+      "name": "ナンジャモンジャ・シロ",
+      "description": "短いルールで盛り上がりたい会に。2〜6人、目安15分、対象4歳以上。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%8A%E3%83%B3%E3%82%B8%E3%83%A3%E3%83%A2%E3%83%B3%E3%82%B8%E3%83%A3+%E3%82%B7%E3%83%AD+%E3%81%99%E3%81%94%E3%82%8D%E3%81%8F%E3%82%84&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71VS2qvhxTL._AC_UL320_.jpg",
+      "research_source": "https://suppe.sugorokuya.jp/items/160021"
+    },
+    {
+      "key": "nimmt",
+      "name": "ニムト 日本語版",
+      "description": "数字を使う駆け引きを楽しみたい会に。2〜10人、目安30分、対象8歳以上。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%8B%E3%83%A0%E3%83%88+%E6%97%A5%E6%9C%AC%E8%AA%9E%E7%89%88+%E3%83%A1%E3%83%93%E3%82%A6%E3%82%B9&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61QDft6LG6L._AC_UL320_.jpg",
+      "research_source": "https://mobiusgames.shop-pro.jp/?pid=145075206"
+    },
+    {
+      "key": "vulture",
+      "name": "ハゲタカのえじき",
+      "description": "同時にカードを出す読み合いを楽しみたい会に。2〜6人、目安20分、対象8歳以上。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%8F%E3%82%B2%E3%82%BF%E3%82%AB%E3%81%AE%E3%81%88%E3%81%98%E3%81%8D+%E3%83%A1%E3%83%93%E3%82%A6%E3%82%B9&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61+TeYkFHgL._AC_UL320_.jpg",
+      "research_source": "https://www.mobius-games.co.jp/mobiusgames/Hagetaka.html"
+    },
+    {
+      "key": "culprit",
+      "name": "犯人は踊る",
+      "description": "短時間の推理を楽しみたい会に。3〜8人、目安10分、対象8歳以上。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E7%8A%AF%E4%BA%BA%E3%81%AF%E8%B8%8A%E3%82%8B+%E3%81%99%E3%81%94%E3%82%8D%E3%81%8F%E3%82%84&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71qzrK0IivL._AC_SR160,134_CB1169409_QL70_.jpg",
+      "research_source": "https://sugorokuya.jp/b/pdf/sugorokuya_product_lineup.pdf"
+    },
+    {
+      "key": "boots",
+      "name": "キャラバン C1_02S トレッキングシューズ",
+      "description": "最初の登山靴を試したい人に。靴下を合わせて試着し、コースに合うか確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%AD%E3%83%A3%E3%83%A9%E3%83%90%E3%83%B3+C1_02S&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/91GK+rOC6UL._AC_UL320_.jpg",
+      "research_source": "https://www.caravan-web.com/c/brand/caravan/0010106"
+    },
+    {
+      "key": "pack",
+      "name": "GREGORY ナノ20",
+      "description": "日帰り装備をまとめる登山用ザックの候補に。荷物を入れた状態で背負い心地を確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=GREGORY+%E3%83%8A%E3%83%8E20&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/81xj5kedi4L._AC_UL320_.jpg",
+      "research_source": "https://www.gregory.jp/essential-hiking/nano-20/gr-153058-9304.html"
+    },
+    {
+      "key": "rainwear",
+      "name": "ミズノ ベルグテックEX ストームセイバーVI レインスーツ",
+      "description": "上下セットの登山用雨具を探す人に。男女別の品番とサイズ、セット内容を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E+%E3%83%99%E3%83%AB%E3%82%B0%E3%83%86%E3%83%83%E3%82%AFEX+%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A0%E3%82%BB%E3%82%A4%E3%83%90%E3%83%BCVI+%E3%83%AC%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%BC%E3%83%84&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71QY2g7-UnL._AC_UL320_.jpg",
+      "research_source": "https://jpn.mizuno.com/outdoor/bergtechex"
+    },
+    {
+      "key": "headlamp",
+      "name": "GENTOS CP-131D ヘッドライト",
+      "description": "両手を使えるライトを準備したい人に。単3電池1本を使用。出発前に点灯を確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=GENTOS+CP-131D&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51ybOFKhagL._AC_UL320_.jpg",
+      "research_source": "https://www.gentos.jp/products/series/compact_headlight/cp-131d/"
+    },
+    {
+      "key": "food",
+      "name": "井村屋 スポーツようかん あずき",
+      "description": "歩く途中につまめる個包装の行動食を探す人に。内容量・原材料・賞味期限をご確認ください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E4%BA%95%E6%9D%91%E5%B1%8B+%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84%E3%82%88%E3%81%86%E3%81%8B%E3%82%93+%E3%81%82%E3%81%9A%E3%81%8D&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61029TMzvbL._AC_UL320_.jpg",
+      "research_source": "https://www.imuraya.co.jp/goods/yokan/c-sports/40gsportsazuki/"
+    },
+    {
+      "key": "blanket",
+      "name": "SOL エマージェンシーブランケット 1人用",
+      "description": "休止時や万一に備える携行品に。防寒着や雨具の代わりにはなりません。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=SOL+%E3%82%A8%E3%83%9E%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%B3%E3%82%B7%E3%83%BC%E3%83%96%E3%83%A9%E3%83%B3%E3%82%B1%E3%83%83%E3%83%88+1%E4%BA%BA%E7%94%A8&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/81kkykllykL._AC_UL320_.jpg",
+      "research_source": "https://www.star-corp.co.jp/shop/products/detail/10124"
+    },
+    {
+      "key": "hike_socks",
+      "name": "キャラバン RLメリノ・レトロトレッキング",
+      "description": "登山靴に合わせる靴下を探す人に。丈・厚さ・サイズを確認して試着に持参しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%AD%E3%83%A3%E3%83%A9%E3%83%90%E3%83%B3+RL%E3%83%A1%E3%83%AA%E3%83%8E+%E3%83%AC%E3%83%88%E3%83%AD%E3%83%88%E3%83%AC%E3%83%83%E3%82%AD%E3%83%B3%E3%82%B0&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61biP1+UGAL._AC_UL320_.jpg",
+      "research_source": "https://www.caravan-web.com/c/brand/caravan/0131008"
+    },
+    {
+      "key": "thermos_bottle",
+      "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+      "description": "冷たい飲み物を練習へ持参したい人に。外して洗える飲み口とキャリーループ付き。保冷専用です。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+      "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+    }
+  ]
+}

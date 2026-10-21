@@ -27,6 +27,7 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_select 'button[name="intent"][value="publish"]'
     assert_select '[data-column-template]', count: 2
     assert_select 'input[name="column[column_products_attributes][0][amazon_url]"]'
+    assert_select 'input[name$="[mercari_url]"]', count: 0
     assert_select 'template[data-column-product-template]'
   end
 
@@ -77,7 +78,9 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_equal 1, article.column_products.count
     get edit_column_path(article)
     assert_response :success
-    assert_select '.column-product-fields .wm-meta', text: /Amazon 0 ／ メルカリ 0/
+    assert_select '.column-product-fields .wm-meta', text: /Amazon 0（購入数ではありません）/
+    assert_nil article.column_products.first.mercari_url
+    article.column_products.first.update_column(:mercari_url, 'https://jp.mercari.com/search?keyword=shoes&afid=sample')
     delete destroy_webmaster_session_path
     get column_path(article)
     assert_response :success
@@ -86,7 +89,7 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_select '.column-article__amazon-disclosure', text: /Amazonのアソシエイト/
     assert_select '.column-article__disclosure a[href="/advertising"]'
     assert_select 'a[href="https://amzn.to/example"][rel="sponsored nofollow noopener"][data-column-shop="amazon"]'
-    assert_select 'a[href="https://jp.mercari.com/search?keyword=shoes&afid=sample"][data-column-shop="mercari"]'
+    assert_select 'a[href*="mercari"]', count: 0
   end
 
   test 'large article covers are shown above the lead and used for social previews and directory cards' do
@@ -181,6 +184,35 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     get column_path(article)
     assert_response :success
     assert_not_includes css_select('.column-article__body').first.text, '[商品:'
+  end
+
+  test 'six shopping guides render every numbered recommendation inline with Amazon images only' do
+    root = Rails.root.join('content/columns/2026-10-product-guides')
+    articles = JSON.parse(root.join('articles.json').read)
+    expected_counts = [10, 8, 5, 7, 5, 8]
+    articles.each_with_index do |data, index|
+      count = expected_counts.fetch(index)
+      assert_includes data.fetch('title'), "#{count}選"
+      assert_equal count, data.fetch('products').size
+      body = root.join(data.fetch('body_file')).read
+      assert_equal (1..count).map(&:to_s), body.scan(/\[商品:(\d+)\]/).flatten
+      assert_no_match(/メルカリ|楽天|<a\b/, body)
+      article = Column.new(title: data.fetch('title'), description: data.fetch('description'), text: body, publication_status: 'published')
+      data.fetch('products').each_with_index do |product, position|
+        uri = URI.parse(product.fetch('amazon_url'))
+        assert_equal 'fieldnote482-22', URI.decode_www_form(uri.query).to_h.fetch('tag')
+        article.column_products.build(product.slice('name', 'description', 'amazon_url', 'image_url').merge(position: position))
+      end
+      article.save!
+      get column_path(article)
+      assert_response :success
+      assert_select '.column-article__body .column-product', count: count
+      assert_select '.column-article__body .column-product__image', count: count
+      assert_select '.column-article__body a[data-column-shop="amazon"].column-shop-link', count: count
+      assert_select '.column-products', count: 0
+      assert_select 'a[href*="mercari"], a[href*="rakuten"]', count: 0
+      assert_not_includes css_select('.column-article__body').first.text, '[商品:'
+    end
   end
 
   test 'advertising page is public linked from the footer and contains the Amazon statement' do

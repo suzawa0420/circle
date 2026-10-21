@@ -22,12 +22,12 @@ class ColumnProduct < ApplicationRecord
   end
 
   def valid_shop_links
-    errors.add(:base, '商品にはAmazonかメルカリの紹介リンクを入力してください。') if amazon_url.blank? && mercari_url.blank?
-    %i[amazon_url mercari_url].each do |attribute|
+    errors.add(:base, '商品にはAmazonの紹介リンクを入力してください。') if amazon_url.blank?
+    %i[amazon_url].each do |attribute|
       next if self[attribute].blank?
       self[attribute] = self[attribute].strip
       uri = URI.parse(self[attribute]) rescue nil
-      hosts = attribute == :amazon_url ? %w[amazon.co.jp www.amazon.co.jp amzn.to] : %w[jp.mercari.com mercari.com www.mercari.com mercari-shops.com www.mercari-shops.com merc.li]
+      hosts = %w[amazon.co.jp www.amazon.co.jp amzn.to]
       unless uri.is_a?(URI::HTTPS) && hosts.include?(uri.host&.downcase) && uri.userinfo.nil? && uri.port == 443
         errors.add(attribute, 'にはショップで発行したhttpsの紹介リンクを入力してください。')
       end

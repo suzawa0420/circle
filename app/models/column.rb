@@ -41,7 +41,7 @@ class Column < ApplicationRecord
   end
 
   def affiliate?
-    self[:affiliate] || amazon_links? || column_products.reject(&:marked_for_destruction?).any? { |product| product.mercari_url.present? }
+    self[:affiliate] || amazon_links?
   end
 
   def amazon_links?

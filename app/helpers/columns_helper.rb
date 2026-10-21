@@ -68,11 +68,8 @@ module ColumnsHelper
   end
 
   def column_product_link(product, shop)
-    label = if shop == 'amazon'
-      URI.parse(product.amazon_url).path == '/s' ? 'Amazonで候補を比較' : 'Amazonで商品を見る'
-    else
-      'メルカリで中古を探す'
-    end
+    return unless shop == 'amazon'
+    label = URI.parse(product.amazon_url).path == '/s' ? 'Amazonで候補を比較' : 'Amazonで商品を見る'
     link_to label, product.public_send("#{shop}_url"), class: "column-shop-link column-shop-link--#{shop}",
       target: '_blank', rel: 'sponsored nofollow noopener',
       data: (webmaster? ? {} : { column_shop: shop, column_click_url: column_product_click_path(product.column_id, product) })

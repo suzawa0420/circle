@@ -22,7 +22,8 @@ class ColumnProductTest < ActiveSupport::TestCase
     assert_equal 'https://amzn.to/example?tag=example-22', product.amazon_url
     product.amazon_url = nil
     product.mercari_url = 'https://jp.mercari.com/search?keyword=ball&afid=sample'
-    assert product.valid?
+    assert_not product.valid?
+    assert_includes product.errors[:base], '商品にはAmazonの紹介リンクを入力してください。'
   end
 
   test 'product images only accept Amazon image hosts and require an Amazon destination' do
