@@ -1,4 +1,6 @@
 - set_meta_tags title: @column.title, description: (@column.description.presence || strip_tags(@column.text.to_s).truncate(150))
+- if @column.image.identifier.present?
+  - set_meta_tags og: { image: @column.image.url }, twitter: { image: @column.image.url, card: 'summary_large_image' }
 .main.column-page
   .container
     - if @preview

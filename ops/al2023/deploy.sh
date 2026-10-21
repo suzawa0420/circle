@@ -116,6 +116,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261021000000
     # Editorial drafts and affiliate product cards must exist before activation.
     bundle exec rails db:migrate:up VERSION=20261021010000
+    # Optional remote product images; retain existing article and product data.
+    bundle exec rails db:migrate:up VERSION=20261021020000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

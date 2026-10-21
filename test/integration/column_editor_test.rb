@@ -86,6 +86,51 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_select 'a[href="https://jp.mercari.com/search?keyword=shoes&afid=sample"][data-column-shop="mercari"]'
   end
 
+  test 'large article covers are shown above the lead and used for social previews and directory cards' do
+    login_master
+    Tempfile.create(['column-cover', '.png']) do |file|
+      MiniMagick::Tool::Convert.new do |image|
+        image.size '1800x1200'
+        image << 'xc:#e8f0e9'
+        image << file.path
+      end
+      upload = Rack::Test::UploadedFile.new(file.path, 'image/png')
+      post columns_path, params: article_params('publish').deep_merge(column: { image: upload })
+      article = Column.last
+      assert_redirected_to edit_column_path(article)
+      stored = MiniMagick::Image.open(article.image.path)
+      assert_equal 1600, stored.width
+      assert_operator stored.height, :>, 400
+      delete destroy_webmaster_session_path
+      get column_path(article)
+      assert_select '.column-article__header img.column-article__image[fetchpriority="high"]'
+      assert_select 'meta[property="og:image"]' do |images|
+        assert_includes images.first['content'], article.image.identifier
+      end
+      get columns_path
+      assert_select '.column-directory__card img', count: 1
+    ensure
+      article&.image&.remove!
+    end
+  end
+
+  test 'numeric dynamically added rows persist image cards and retain affiliate destinations' do
+    login_master
+    post columns_path, params: article_params('publish').deep_merge(column: { column_products_attributes: {
+      '0' => { name: 'ボール', amazon_url: 'https://www.amazon.co.jp/dp/B07PWNBKFJ?tag=sample-22', image_url: 'https://m.media-amazon.com/images/I/ball.jpg' },
+      '17925458327440' => { name: 'ビブス', amazon_url: 'https://www.amazon.co.jp/s?k=bibs&tag=sample-22', image_url: 'https://m.media-amazon.com/images/I/bibs.jpg', position: 1 }
+    } })
+    article = Column.last
+    assert_equal 2, article.column_products.count
+    delete destroy_webmaster_session_path
+    get column_path(article)
+    assert_response :success
+    assert_select '.column-product__image-link img', count: 2
+    assert_select '.column-product__image-link[rel="sponsored nofollow noopener"][data-column-shop="amazon"]', count: 2
+    assert_select '.column-product__image-link[href="https://www.amazon.co.jp/s?k=bibs&tag=sample-22"]'
+    assert_select '.column-product__image[referrerpolicy="no-referrer"]', count: 2
+  end
+
   test 'blank product rows are ignored and a saved product can be removed' do
     login_master
     post columns_path, params: article_params('draft').deep_merge(column: { column_products_attributes: {

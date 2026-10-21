@@ -30,7 +30,7 @@ class Column < ApplicationRecord
   validate :readable_published_body
   before_save :set_publication_date
 
-  mount_uploader :image, ImageUploader
+  mount_uploader :image, ColumnImageUploader
 
   def published?
     publication_status == 'published'

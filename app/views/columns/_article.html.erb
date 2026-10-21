@@ -2,6 +2,7 @@
   <header class="column-article__header">
     <p class="column-article__eyebrow">サークルブック編集部</p>
     <h1><%= @column.title %></h1>
+    <% if @column.image.identifier.present? %><%= image_tag @column.image.url, class: 'column-article__image', alt: "#{@column.title}のイメージ", fetchpriority: 'high', decoding: 'async', width: 1200, height: 800 %><% end %>
     <p class="column-article__meta"><%= Column::AUDIENCES.fetch(@column.audience) %><% if @column.event %> · <%= @column.event.name %><% end %> · 更新日：<%= @column.updated_at.strftime('%Y年%-m月%-d日') %></p>
     <% if @column.description.present? %><p class="column-article__lead"><%= @column.description %></p><% end %>
     <% if @column.affiliate? %>
@@ -11,7 +12,6 @@
       </aside>
     <% end %>
   </header>
-  <% if @column.image.identifier.present? %><%= image_tag @column.image.url, class: 'column-article__image', alt: '', loading: 'lazy' %><% end %>
   <div class="column-article__body"><%= column_body_html(@column) %></div>
   <% if @column.column_products.any? %>
     <section class="column-products" aria-labelledby="column-products-heading">
@@ -19,11 +19,19 @@
       <p>必要なものだけ選び、価格・状態・サイズ・送料・到着予定は購入先でご確認ください。</p>
       <% @column.column_products.each do |product| %>
         <article class="column-product">
+          <% if product.image_url.present? && product.valid_amazon_image_url? %>
+            <%= link_to product.amazon_url, class: 'column-product__image-link', target: '_blank', rel: 'sponsored nofollow noopener', data: (webmaster? ? {} : { column_shop: 'amazon', column_click_url: column_product_click_path(product.column_id, product) }) do %>
+              <%= image_tag product.image_url, alt: product.name, class: 'column-product__image', loading: 'lazy', decoding: 'async', width: 240, height: 240, referrerpolicy: 'no-referrer' %>
+            <% end %>
+          <% end %>
+          <div class="column-product__content">
+          <p class="column-product__label">紹介する道具</p>
           <h3><%= product.name %></h3>
           <% if product.description.present? %><div class="column-product__description"><%= simple_format(h(product.description)) %></div><% end %>
           <div class="column-product__links">
             <% if product.amazon_url.present? %><%= column_product_link(product, 'amazon') %><% end %>
             <% if product.mercari_url.present? %><%= column_product_link(product, 'mercari') %><% end %>
+          </div>
           </div>
         </article>
       <% end %>

@@ -16,7 +16,8 @@
         form.querySelector('[data-column-editor-status]').textContent = '紹介商品は最大12件です。不要な商品を削除して保存してください。';
         return;
       }
-      var key = 'added_' + Date.now() + '_' + productSequence++;
+      // Rails strong parameters recognizes numeric keys as nested collections.
+      var key = String(Date.now()) + String(productSequence++);
       list.insertAdjacentHTML('beforeend', form.querySelector('[data-column-product-template]').innerHTML.replace(/NEW_PRODUCT/g, key));
       var inserted = list.lastElementChild;
       inserted.querySelector('input[type="number"]').value = fields.length;
@@ -40,6 +41,20 @@
     var link = event.target.closest('a[data-column-shop]');
     if (!link || event.defaultPrevented || event.button > 0) return;
     recordClick(link);
+  });
+  document.addEventListener('change', function (event) {
+    if (!event.target.matches('[data-column-cover-input]')) return;
+    var preview = event.target.closest('form').querySelector('[data-column-cover-preview]');
+    if (!preview) return;
+    if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+    var file = event.target.files[0];
+    if (!file || !/^image\/(jpeg|png)$/.test(file.type)) {
+      preview.hidden = true;
+      return;
+    }
+    preview.src = URL.createObjectURL(file);
+    preview.dataset.objectUrl = preview.src;
+    preview.hidden = false;
   });
   document.addEventListener('auxclick', function (event) {
     var link = event.target.closest('a[data-column-shop]');

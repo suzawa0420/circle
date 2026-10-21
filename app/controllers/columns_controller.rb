@@ -58,6 +58,6 @@ class ColumnsController < ApplicationController
   def column_params
     params.require(:column).permit(:title, :text, :description, :image, :image_cache, :remove_image,
       :audience, :event_id, :affiliate,
-      column_products_attributes: [:id, :name, :description, :amazon_url, :mercari_url, :position, :_destroy])
+      column_products_attributes: [:id, :name, :description, :amazon_url, :mercari_url, :image_url, :position, :_destroy])
   end
 end

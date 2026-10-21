@@ -7,9 +7,10 @@
   </div>
   <div class="wm-field"><%= f.label :description, '記事の要約' %><%= f.text_area :description, rows: 3, placeholder: '誰の、どんな迷いを解決する記事かを短くまとめます。' %></div>
   <div class="wm-field">
-    <%= f.label :image, '見出し画像（JPEG・PNG、20MB以下）' %><%= f.file_field :image, accept: 'image/jpeg,image/png' %><%= f.hidden_field :image_cache %>
+    <%= f.label :image, 'アイキャッチ画像（JPEG・PNG、20MB以下）' %><%= f.file_field :image, accept: 'image/jpeg,image/png', data: { column_cover_input: true } %><%= f.hidden_field :image_cache %>
+    <img class="column-editor__cover-preview" data-column-cover-preview hidden alt="選択したアイキャッチ画像のプレビュー">
     <% if @column.image.identifier.present? %><%= image_tag @column.image.url, class: 'column-editor__image', alt: '現在の見出し画像' %><label class="column-check"><%= f.check_box :remove_image %> 画像を削除する</label><% end %>
-    <p class="wm-meta">ご自身で用意した掲載可能な画像を選んでください。商品画像の自動取得は行いません。</p>
+    <p class="wm-meta">記事の冒頭・一覧・SNS共有に使います。横長画像を推奨。ご自身で掲載できる画像を選んでください。</p>
   </div>
   <section class="column-editor__writing" aria-labelledby="column-writing-title">
     <h2 id="column-writing-title">本文</h2>

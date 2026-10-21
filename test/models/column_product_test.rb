@@ -24,4 +24,21 @@ class ColumnProductTest < ActiveSupport::TestCase
     product.mercari_url = 'https://jp.mercari.com/search?keyword=ball&afid=sample'
     assert product.valid?
   end
+
+  test 'product images only accept Amazon image hosts and require an Amazon destination' do
+    product = Column.new(title: '画像テスト').column_products.build(name: 'ボール', amazon_url: 'https://www.amazon.co.jp/dp/B07PWNBKFJ')
+    product.image_url = 'https://m.media-amazon.com/images/I/example._AC_SX400_.jpg'
+    assert product.valid?
+    ['http://m.media-amazon.com/images/I/a.jpg', 'https://m.media-amazon.com.evil.test/images/I/a.jpg',
+     'https://user:password@m.media-amazon.com/images/I/a.jpg', 'https://127.0.0.1/images/I/a.jpg',
+     'https://m.media-amazon.com/images/I/a.svg', 'https://m.media-amazon.com/images/I/a.jpg?redirect=elsewhere',
+     'https://m.media-amazon.com:8443/images/I/a.jpg'].each do |url|
+      product.image_url = url
+      assert_not product.valid?, url
+    end
+    product.image_url = 'https://m.media-amazon.com/images/I/a.jpg'
+    product.amazon_url = nil
+    product.mercari_url = 'https://jp.mercari.com/search?keyword=ball'
+    assert_not product.valid?
+  end
 end

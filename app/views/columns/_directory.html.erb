@@ -9,6 +9,7 @@
   <div class="column-directory__list">
     <% @columns.each do |column| %>
       <article class="column-directory__card">
+        <% if column.image.identifier.present? %><%= link_to column_path(column), class: 'column-directory__image-link', tabindex: '-1', 'aria-hidden': 'true' do %><%= image_tag column.image.url, alt: '', loading: 'lazy', decoding: 'async', width: 600, height: 400 %><% end %><% end %>
         <p class="column-article__meta"><%= Column::AUDIENCES.fetch(column.audience) %><% if column.event %> · <%= column.event.name %><% end %></p>
         <h2><%= link_to column.title, column_path(column) %></h2>
         <% if column.description.present? %><p><%= truncate(column.description, length: 140) %></p><% end %>

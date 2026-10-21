@@ -3,6 +3,10 @@
   <div class="wm-field"><%= f.label :name, '商品名・道具の種類' %><%= f.text_field :name, maxlength: 200, placeholder: '例：初心者向けの室内用シューズ' %></div>
   <div class="wm-field"><%= f.label :description, 'こんな人向け・選び方' %><%= f.text_area :description, rows: 3, maxlength: 2000, placeholder: '必要な理由、サイズや素材の選び方、購入前に確認してほしいこと' %></div>
   <div class="wm-field"><%= f.label :amazon_url, 'Amazonの紹介リンク' %><%= f.url_field :amazon_url, placeholder: 'https://amzn.to/…' %></div>
+  <div class="wm-field"><%= f.label :image_url, 'Amazonの商品画像URL（任意）' %><%= f.url_field :image_url, maxlength: 2048, placeholder: 'https://m.media-amazon.com/images/I/…jpg' %>
+    <p class="wm-meta">Amazonが提供する商品画像URLを指定すると画像付きカードになります。画像は再アップロードせずAmazonから表示します。検索リンクには、紹介する候補と対応する画像を選んでください。</p>
+    <% if f.object.image_url.present? && f.object.valid_amazon_image_url? %><%= image_tag f.object.image_url, alt: f.object.name, class: 'column-editor__product-preview', loading: 'lazy', referrerpolicy: 'no-referrer' %><% end %>
+  </div>
   <div class="wm-field"><%= f.label :mercari_url, 'メルカリの紹介リンク（商品・検索結果）' %><%= f.url_field :mercari_url, placeholder: 'https://jp.mercari.com/…' %></div>
   <div class="wm-field"><%= f.label :position, '表示順（小さい順）' %><%= f.number_field :position, min: 0, max: 999 %></div>
   <% if f.object.persisted? %><p class="wm-meta">クリック数：Amazon <%= f.object.amazon_clicks %> ／ メルカリ <%= f.object.mercari_clicks %>（購入数ではありません）</p><% end %>
