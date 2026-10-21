@@ -264,12 +264,12 @@
         "research_source": "https://www.daiya-idea.co.jp/housekeeping/lnet/4901948570074-2/"
       },
       {
-        "key": "bottle",
-        "name": "ナルゲン 広口1.0L Tritan Renew",
-        "description": "飲み物を用意して活動へ向かう人に。保冷ボトルではありません。必要な量は活動時間に合わせて。",
-        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%8A%E3%83%AB%E3%82%B2%E3%83%B3+%E5%BA%83%E5%8F%A3+1.0L+Tritan+Renew&tag=fieldnote482-22",
-        "image_url": "https://m.media-amazon.com/images/I/71oPAKdKlvL._AC_UL320_.jpg",
-        "research_source": "https://highmount-store.jp/view/item/000000002777?category_page_id=all_items"
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "冷たい飲み物を練習へ持参したい人に。外して洗える飲み口とキャリーループ付き。保冷専用です。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
       },
       {
         "key": "timer",
@@ -382,12 +382,12 @@
         "research_source": "https://www.caravan-web.com/c/brand/caravan/0131008"
       },
       {
-        "key": "bottle",
-        "name": "ナルゲン 広口1.0L Tritan Renew",
-        "description": "飲み物を用意して活動へ向かう人に。保冷ボトルではありません。必要な量は活動時間に合わせて。",
-        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%8A%E3%83%AB%E3%82%B2%E3%83%B3+%E5%BA%83%E5%8F%A3+1.0L+Tritan+Renew&tag=fieldnote482-22",
-        "image_url": "https://m.media-amazon.com/images/I/71oPAKdKlvL._AC_UL320_.jpg",
-        "research_source": "https://highmount-store.jp/view/item/000000002777?category_page_id=all_items"
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "冷たい飲み物を練習へ持参したい人に。外して洗える飲み口とキャリーループ付き。保冷専用です。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
       },
       {
         "key": "food",
