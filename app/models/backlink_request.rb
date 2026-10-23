@@ -28,9 +28,10 @@ class BacklinkRequest < ApplicationRecord
     # Serialize decisions with submissions and score refreshes for this circle.
     user.with_lock do
       reload
-      allowed = { 'approve' => ['pending', 'approved'], 'reject' => ['pending', 'rejected'], 'revoke' => ['approved', 'revoked'] }[decision]
-      return false unless allowed && status == allowed.first
-      attrs = { status: allowed.last, reviewed_by: reviewer, review_note: note.to_s.strip }
+      allowed = { 'approve' => %w[pending rejected], 'reject' => ['pending'], 'revoke' => ['approved'] }[decision]
+      return false unless allowed&.include?(status)
+      next_status = { 'approve' => 'approved', 'reject' => 'rejected', 'revoke' => 'revoked' }.fetch(decision)
+      attrs = { status: next_status, reviewed_by: reviewer, review_note: note.to_s.strip }
       attrs[:approved_at] = Time.current if decision == 'approve'
       attrs[:revoked_at] = Time.current if decision == 'revoke'
       update!(attrs)

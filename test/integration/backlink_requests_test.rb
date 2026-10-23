@@ -104,6 +104,43 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
     assert_equal 'https://example.test/fixed', request.placement_url
   end
 
+  test 'master can approve a rejected request without resubmission and award its bonus only once' do
+    request = BacklinkRequest.submit!(@circle, 'https://example.test/circle')
+    submitted_at = request.submitted_at
+    login_master
+    patch super_admin_backlink_request_path(request), params: { decision: 'reject', review_note: 'リンクを確認できません。' }
+    assert_equal 'rejected', request.reload.status
+    assert_equal 0, @circle.reload.cb_point
+
+    get super_admin_backlink_request_path(request)
+    assert_response :success
+    assert_select '.wm-backlink-checklist li', count: 2
+    assert_select 'button[value="approve"]', text: '承認して10レベル付与'
+    assert_select 'button[value="reject"]', count: 0
+    assert_select 'button[value="revoke"]', count: 0
+
+    assert_no_difference 'BacklinkRequest.count' do
+      patch super_admin_backlink_request_path(request), params: { decision: 'approve', review_note: 'バナーのリンクを確認しました。' }
+    end
+    assert_redirected_to super_admin_backlink_request_path(request)
+    assert_equal 'approved', request.reload.status
+    assert_equal submitted_at, request.submitted_at
+    assert_equal @master.id, request.reviewed_by_id
+    assert_equal 'バナーのリンクを確認しました。', request.review_note
+    assert request.approved_at
+    assert_equal 10, @circle.reload.cb_point
+    follow_redirect!
+    assert_select 'button[value="approve"]', count: 0
+    assert_select 'button[value="revoke"]', count: 1
+
+    patch super_admin_backlink_request_path(request), params: { decision: 'approve' }
+    CircleScoreUpdater.new.refresh(@circle.reload)
+    assert_equal 10, @circle.cb_point
+    patch super_admin_backlink_request_path(request), params: { decision: 'revoke', review_note: 'リンクが削除されています。' }
+    assert_equal 'revoked', request.reload.status
+    assert_equal 0, @circle.reload.cb_point
+  end
+
   test 'empty status lists keep the selected filter and use the shared empty state' do
     login_master
     get super_admin_backlink_requests_path(status: 'approved')

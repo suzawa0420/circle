@@ -24,7 +24,7 @@
     </details>
   <% end %>
 </article>
-<% if @backlink_request.status.in?(%w[pending approved]) %>
+<% if @backlink_request.status.in?(%w[pending rejected approved]) %>
   <section class="wm-section webmaster-card" aria-labelledby="backlink-check-heading">
     <h2 id="backlink-check-heading">掲載内容の確認</h2>
     <ul class="wm-backlink-checklist">
@@ -42,9 +42,11 @@
         <p id="backlink-review-hint" class="wm-meta">主催者にも表示されます。差し戻し・取り消し時は必須です。</p>
       </div>
       <div class="wm-actions">
-        <% if @backlink_request.status == 'pending' %>
+        <% if @backlink_request.status.in?(%w[pending rejected]) %>
           <%= button_tag '承認して10レベル付与', name: 'decision', value: 'approve', class: 'wm-button', data: { confirm: '掲載内容を確認し、10レベルを付与しますか？' } %>
-          <%= button_tag '差し戻す', name: 'decision', value: 'reject', class: 'wm-button wm-button--secondary' %>
+          <% if @backlink_request.status == 'pending' %>
+            <%= button_tag '差し戻す', name: 'decision', value: 'reject', class: 'wm-button wm-button--secondary' %>
+          <% end %>
         <% else %>
           <%= button_tag '10レベルの付与を取り消す', name: 'decision', value: 'revoke', class: 'wm-button wm-button--danger', data: { confirm: 'この特典の10レベルを取り消しますか？' } %>
         <% end %>
