@@ -11,6 +11,7 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
   end
 
   test 'dashboard shows level progress and prioritizes activity registration' do
+    guide = Column.create!(title: '主催者の準備ガイド', text: '準備', publication_status: 'published', audience: 'organizer', event: @circle.event)
     @circle.update!(user_time: Time.current.to_s)
     @circle.schedules.create!(title: '週末の練習', venue: '体育館', day: (Date.current + 7).to_s)
     get "/users/#{@circle.id}/mypage"
@@ -21,6 +22,10 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '.dashboard-level__rivals > summary', text: /ライバルサークルを見る/
     assert_select '.dashboard-level__reward a', text: 'リンク設置で＋10レベル'
     assert_operator response.body.index('活動を管理'), :<, response.body.index('id="circle-level-title"')
+    assert_operator response.body.index('id="circle-level-title"'), :<, response.body.index('column-guide-links--carousel')
+    assert_select '.column-guide-links--carousel .column-guide-links__track[tabindex="0"][role="region"]' do
+      assert_select "a[href='#{column_path(guide)}']", count: 1
+    end
     assert_select '.dashboard-level__value strong', text: '0'
     assert_select 'progress[value="10"]'
     assert_select '.dashboard-level__message', text: /あと0.9/

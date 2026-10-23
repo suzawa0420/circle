@@ -1,7 +1,10 @@
 <% guides = local_assigns.fetch(:guides) { column_related_guides(event: event, audience: audience) } || [] %>
+<% carousel = local_assigns.fetch(:carousel, false) %>
 <% if guides.any? %>
-  <section class="column-guide-links" aria-label="サークルの準備ガイド">
+  <section class="column-guide-links<%= ' column-guide-links--carousel' if carousel %>" aria-label="サークルの準備ガイド">
     <h2><%= local_assigns[:heading] || (audience == 'organizer' ? '開催の準備に。備品・チームウェア・合宿のヒント' : '参加前に、持ち物をそろえよう') %></h2>
+    <% if carousel && guides.size > 1 %><p class="column-guide-links__hint">横にスワイプして記事を見る</p><% end %>
+    <div class="column-guide-links__track"<% if carousel %> tabindex="0" role="region" aria-label="準備ガイドの記事一覧"<% end %>>
     <% guides.each do |guide| %>
       <%= link_to column_path(guide), class: 'column-guide-links__link' do %>
         <% if guide.image.identifier.present? %><%= image_tag guide.image.url, alt: '', class: 'column-guide-links__image', loading: 'lazy', decoding: 'async', width: 96, height: 80 %><% end %>
@@ -15,5 +18,6 @@
         <%= lucide_icon 'chevron-right', **{ 'aria-hidden' => 'true', class: 'column-guide-links__arrow' } %>
       <% end %>
     <% end %>
+    </div>
   </section>
 <% end %>
