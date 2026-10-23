@@ -11,7 +11,7 @@ class ChatMessageRevisionsTest < ActionDispatch::IntegrationTest
     @message.update_column(:created_at, @message.created_at.change(usec: 0))
   end
 
-  test 'sender edits in the bubble and both sides see the edited marker and polling change' do
+  test 'sender edits using the composer and both sides see the edited marker and polling change' do
     sign_in @member
     get conversation_path(@conversation)
     assert_select "#chat-message-#{@message.id} .chat-body .chat-message__actions", count: 1
@@ -32,6 +32,41 @@ class ChatMessageRevisionsTest < ActionDispatch::IntegrationTest
     get conversation_path(@conversation)
     assert_select "#chat-message-#{@message.id} .chat-revision", text: '編集済み'
     assert_select "#chat-message-#{@message.id} .chat-message__actions", count: 0
+  end
+
+  test 'editing loads the reply composer with a patch form and cancellation link' do
+    sign_in @member
+    get conversation_path(@conversation, edit_message_id: @message.id)
+    assert_response :success
+    assert_select '#chat-reply-title', text: 'メッセージを編集'
+    assert_select '#chat-reply form[action=?]', update_message_conversation_path(@conversation, message_id: @message.id) do
+      assert_select 'input[name="_method"][value="patch"]'
+      assert_select 'textarea[name="message[body]"]', text: @message.body
+      assert_select '.chat-image-input[disabled]'
+      assert_select 'input[type="submit"][value="変更を保存"]'
+      assert_select '.chat-edit-cancel[href=?]', conversation_path(@conversation, anchor: 'chat-reply')
+    end
+    assert_select '.chat-message__actions textarea', count: 0
+    patch update_message_conversation_path(@conversation, message_id: @message.id), params: { message: { body: 'a' * 2001 } }
+    assert_response :unprocessable_entity
+    assert_select '#chat-reply textarea', text: 'a' * 2001
+    assert_select '#chat-reply-title', text: 'メッセージを編集'
+    assert_nil @message.reload.edited_at
+  end
+
+  test 'editing entry rejects peer expired and deleted messages' do
+    sign_in @owner
+    get conversation_path(@conversation, edit_message_id: @message.id)
+    assert_response :redirect
+    sign_out @owner
+    sign_in @member
+    travel_to @message.created_at + 12.hours do
+      get conversation_path(@conversation, edit_message_id: @message.id)
+      assert_response :redirect
+    end
+    @message.revise!('member', delete: true)
+    get conversation_path(@conversation, edit_message_id: @message.id)
+    assert_response :redirect
   end
 
   test 'deletion leaves a notice for both sides and webmaster and hides body and photo URL' do

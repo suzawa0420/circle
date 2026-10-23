@@ -90,6 +90,13 @@ class ConversationsController < ApplicationController
   end
 
   def show
+    if params[:edit_message_id].present? && !@editing_message
+      @editing_message = @conversation.chat_messages.find(params[:edit_message_id])
+      unless @editing_message.changeable_by?(@role)
+        raise Conversation::NotAllowed, '自分が送信した12時間以内のメッセージのみ編集・削除できます。'
+      end
+      @draft_body = @editing_message.body
+    end
     @conversation.publish_reviews!
     @review_prompt_due = @conversation.review_prompt_due?(@role)
     @initial_jump = ConversationJump.new(@conversation, role: @role).call if params[:page].blank?
@@ -135,6 +142,12 @@ class ConversationsController < ApplicationController
     message = @conversation.chat_messages.find(params[:message_id])
     message.revise!(@role, body: params.require(:message).permit(:body).fetch(:body))
     redirect_to conversation_path(@conversation, anchor: "chat-message-#{message.id}"), notice: 'メッセージを編集しました。'
+  rescue ActiveRecord::RecordInvalid => error
+    @editing_message = message
+    @draft_body = params[:message][:body].to_s
+    @message_error = error.record.errors.full_messages.join('、')
+    show
+    render :show, status: :unprocessable_entity
   end
 
   def delete_message

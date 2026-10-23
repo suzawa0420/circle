@@ -32,7 +32,7 @@
       <span class="chat-composer-heading__icon"><%= lucide_icon 'square-pen' %></span>
       <div>
         <p class="chat-composer-recipient"><%= @conversation.participant_name(@role == 'owner' ? 'member' : 'owner') %><%= 'さん' if @role == 'owner' && !@conversation.practice_match? %>へ</p>
-        <h2 id="chat-reply-title">メッセージを返信</h2>
+        <h2 id="chat-reply-title"><%= @editing_message ? 'メッセージを編集' : 'メッセージを返信' %></h2>
       </div>
     </div>
     <% if @conversation.actor(@role).suspended? %>
@@ -40,24 +40,28 @@
     <% elsif (@role == 'owner' || @conversation.practice_match?) && !current_admin_user.email_verified? %>
       <p>メッセージを送信するにはメールアドレスの確認が必要です。</p>
       <%= link_to 'メールアドレスを確認する', admin_user_email_verification_path %>
-    <% elsif !@conversation.practice_match? && @role == 'member' && !current_member.japanese_profile? %>
+    <% elsif !@editing_message && !@conversation.practice_match? && @role == 'member' && !current_member.japanese_profile? %>
       <p>自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。</p>
       <%= link_to '自己紹介を修正する', edit_member_path(current_member) %>
-    <% elsif @conversation.blocked? %>
+    <% elsif !@editing_message && @conversation.blocked? %>
       <p>ブロック中のため、双方とも送信できません。履歴の閲覧・通報は引き続き利用できます。</p>
     <% else %>
-      <%= form_with url: message_conversation_path(@conversation), scope: :message, local: true, html: { class: "chat-compose-form", multipart: true } do |f| %>
-        <% if @message_error %><p class="chat-upload-error" role="alert"><%= @message_error %> 写真は選び直してください。</p><% end %>
+      <%= form_with url: (@editing_message ? update_message_conversation_path(@conversation, message_id: @editing_message.id) : message_conversation_path(@conversation)), method: (@editing_message ? :patch : :post), scope: :message, local: true, html: { class: "chat-compose-form", multipart: true, data: { editing: @editing_message.present?, edit_image: @editing_message&.image? } } do |f| %>
+        <% if @message_error %><p class="chat-upload-error" role="alert"><%= @message_error %><%= ' 写真は選び直してください。' unless @editing_message %></p><% end %>
+        <div class="chat-edit-status" <%= 'hidden' unless @editing_message %>>
+          <p>送信済みの本文を編集中です。更新すると「編集済み」と表示されます。写真は変更されません。</p>
+          <%= link_to 'キャンセル', conversation_path(@conversation, anchor: 'chat-reply'), class: 'chat-edit-cancel' %>
+        </div>
         <div class="chat-upload-preview" hidden><img alt="送信する写真"><span class="chat-upload-name"></span><button type="button" class="chat-upload-remove">取り消す</button></div>
         <p class="chat-upload-error" data-upload-error role="alert" hidden></p>
         <div class="chat-compose-row">
-        <%= f.label :image, class: 'chat-image-picker', title: '写真を1枚選ぶ（10MBまで）' do %>
+        <%= f.label :image, class: 'chat-image-picker', hidden: @editing_message.present?, title: '写真を1枚選ぶ（10MBまで）' do %>
           <%= lucide_icon 'camera' %><span>写真を追加</span>
-          <%= f.file_field :image, accept: 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif', class: 'chat-image-input', aria: { label: '写真を1枚選ぶ（10MBまで）' } %>
+          <%= f.file_field :image, accept: 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif', class: 'chat-image-input', disabled: @editing_message.present?, aria: { label: '写真を1枚選ぶ（10MBまで）' } %>
         <% end %>
         <%= f.label :body, 'メッセージ', class: 'chat-visually-hidden' %>
         <%= f.text_area :body, value: @draft_body, maxlength: 2000, rows: 4, placeholder: "メッセージを入力", class: "chat-compose-input" %>
-        <%= f.submit '送信', class: 'chat-button', data: { disable_with: '送信中…' } %>
+        <%= f.submit (@editing_message ? '変更を保存' : '送信'), class: 'chat-button', data: { disable_with: (@editing_message ? '更新中…' : '送信中…') } %>
         </div>
       <% end %>
     <% end %>

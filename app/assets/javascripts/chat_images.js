@@ -40,7 +40,9 @@
     }
     function discard() { picker.value = ''; clearPreview(); error.hidden = true; resize(); }
     function submit(event) {
-      if (!text.value.trim() && !picker.files.length) {
+      var editing = form.dataset && form.dataset.editing === 'true';
+      var hasImage = editing ? form.dataset.editImage === 'true' : picker.files.length > 0;
+      if (!text.value.trim() && !hasImage) {
         event.preventDefault();
         error.textContent = 'メッセージを入力するか、写真を1枚選択してください。';
         error.hidden = false;
