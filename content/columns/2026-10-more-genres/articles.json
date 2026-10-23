@@ -91,7 +91,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -206,7 +206,9 @@
     "product_count": 8,
     "edit_url": "https://circle-book.com/columns/14/edit",
     "id": 14,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/14/00a885f7-a0be-473b-9d40-685cde594d24.jpg?v=1792768036",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "dance-first",
@@ -286,7 +288,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -389,7 +391,9 @@
     "product_count": 7,
     "edit_url": "https://circle-book.com/columns/15/edit",
     "id": 15,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/15/d966584a-d1b4-45a5-ab44-e4539a48f4e3.jpg?v=1792768075",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "swimming-first",
@@ -475,7 +479,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -578,7 +582,9 @@
     "product_count": 7,
     "edit_url": "https://circle-book.com/columns/16/edit",
     "id": 16,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/16/45165437-66a6-480f-8b27-df89e0640712.jpg?v=1792768110",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "molkky-organizer",
@@ -648,7 +654,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -727,7 +733,9 @@
     "product_count": 5,
     "edit_url": "https://circle-book.com/columns/17/edit",
     "id": 17,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/17/7f69b9cc-8882-4185-9c18-734939854acb.jpg?v=1792768117",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "walking-first",
@@ -809,7 +817,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -912,7 +920,9 @@
     "product_count": 7,
     "edit_url": "https://circle-book.com/columns/18/edit",
     "id": 18,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/18/ea955b81-84c6-4118-b479-d2bb8bddf35a.jpg?v=1792768124",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "cooking-first",
@@ -982,7 +992,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -1061,7 +1071,9 @@
     "product_count": 5,
     "edit_url": "https://circle-book.com/columns/19/edit",
     "id": 19,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/19/b860e012-48b2-4434-8255-3ea04270ae8d.jpg?v=1792768137",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "bouldering-first",
@@ -1125,7 +1137,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -1204,7 +1216,9 @@
     "product_count": 5,
     "edit_url": "https://circle-book.com/columns/20/edit",
     "id": 20,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/20/54494289-531a-41ae-a48d-327c9bf13418.jpg?v=1792768145",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "cycling-first",
@@ -1307,7 +1321,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -1422,7 +1436,9 @@
     "product_count": 8,
     "edit_url": "https://circle-book.com/columns/21/edit",
     "id": 21,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/21/c7c4462b-7289-4269-a9dd-f0bd18d0d630.jpg?v=1792768180",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "snow-first",
@@ -1514,7 +1530,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -1617,7 +1633,9 @@
     "product_count": 7,
     "edit_url": "https://circle-book.com/columns/22/edit",
     "id": 22,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/22/40cea212-79ed-48b0-8eb8-5b1a62ab6647.jpg?v=1792768185",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "camping-first",
@@ -1706,7 +1724,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -1809,7 +1827,9 @@
     "product_count": 7,
     "edit_url": "https://circle-book.com/columns/23/edit",
     "id": 23,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/23/f7c980f4-3123-4a15-bb7f-1f5be1320350.jpg?v=1792768189",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "badminton-organizer",
@@ -1881,7 +1901,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -1972,7 +1992,9 @@
     "product_count": 6,
     "edit_url": "https://circle-book.com/columns/24/edit",
     "id": 24,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/24/8b44323e-7bdd-47ea-bf71-442ba37eb8a3.jpg?v=1792768194",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "volleyball-organizer",
@@ -2044,7 +2066,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -2135,7 +2157,9 @@
     "product_count": 6,
     "edit_url": "https://circle-book.com/columns/25/edit",
     "id": 25,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/25/8ab46cdd-5de9-4eb4-8b55-54708851a9fa.jpg?v=1792768209",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "futsal-organizer",
@@ -2205,7 +2229,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -2296,7 +2320,9 @@
     "product_count": 6,
     "edit_url": "https://circle-book.com/columns/26/edit",
     "id": 26,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/26/4d70c77c-1c35-4d20-80bc-9599e119498e.jpg?v=1792768214",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "table-tennis-organizer",
@@ -2365,7 +2391,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -2444,7 +2470,9 @@
     "product_count": 5,
     "edit_url": "https://circle-book.com/columns/27/edit",
     "id": 27,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/27/fb222db3-47aa-464e-9366-a1588c42568d.jpg?v=1792768219",
+    "cover_set_on": "2026-10-24"
   },
   {
     "key": "reception-organizer",
@@ -2511,7 +2539,7 @@
       }
     ],
     "status": "published",
-    "cover_status": "generated_upload_pending_permission",
+    "cover_status": "uploaded",
     "created_on": "2026-10-23",
     "blocks": [
       {
@@ -2590,6 +2618,8 @@
     "product_count": 5,
     "edit_url": "https://circle-book.com/columns/28/edit",
     "id": 28,
-    "published_on": "2026-10-23"
+    "published_on": "2026-10-23",
+    "cover_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/28/07e5c15b-adf8-4fb1-b75d-31865c7c194d.jpg?v=1792768223",
+    "cover_set_on": "2026-10-24"
   }
 ]
