@@ -1,6 +1,6 @@
 <div class="chat-message__actions">
   <details class="chat-message__edit">
-    <summary>編集</summary>
+    <summary class="chat-message__action"><%= lucide_icon 'square-pen' %><span>編集</span></summary>
     <%= form_with url: update_message_conversation_path(@conversation, message_id: message.id), scope: :message, method: :patch, local: true do |f| %>
       <%= f.label :body, 'メッセージを編集', for: "message-edit-#{message.id}" %>
       <%= f.text_area :body, value: message.body, id: "message-edit-#{message.id}", rows: 4, maxlength: 2000, required: !message.image? %>
@@ -8,5 +8,7 @@
       <%= f.submit '変更を保存', class: 'cb-button cb-button--secondary' %>
     <% end %>
   </details>
-  <%= button_to '削除', delete_message_conversation_path(@conversation, message_id: message.id), method: :delete, class: 'chat-message__delete', form_class: 'chat-message__delete-form', data: { confirm: 'このメッセージを削除しますか？相手にも削除したことが表示されます。' } %>
+  <%= button_to delete_message_conversation_path(@conversation, message_id: message.id), method: :delete, class: 'chat-message__action chat-message__delete', form_class: 'chat-message__delete-form', data: { confirm: 'このメッセージを削除しますか？相手にも削除したことが表示されます。' } do %>
+    <%= lucide_icon 'trash-2' %><span>削除</span>
+  <% end %>
 </div>
