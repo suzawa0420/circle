@@ -1,0 +1,420 @@
+[
+  {
+    "key": "futsal-first",
+    "title": "初めてのフットサル、何を持っていく？おすすめの持ち物8選",
+    "audience": "participant",
+    "event": "フットサル",
+    "event_id": 8,
+    "event_slug": "futsal",
+    "description": "社会人フットサルの初参加におすすめの持ち物8選。屋内シューズ、すね当て、ソックス、練習着、タオル、水筒、シューズケースの特徴と選び方を紹介します。",
+    "body_file": "futsal-first.html",
+    "products": [
+      {
+        "key": "futsal_shoes",
+        "name": "ASICS CALCETTO WD 9（屋内用）",
+        "description": "屋内コート用のワイドモデルを探す人に。人工芝用のTFとは靴底が異なります。会場指定と足幅を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+CALCETTO+WD+9+1113A037&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71gJC+CPWrL._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/calcetto-wd-9/p/1113A037-400.html",
+        "verified_asin": "B0D5GTK452"
+      },
+      {
+        "key": "shin",
+        "name": "molten スワンセシンガード M GG0023",
+        "description": "すねを覆う用具をそろえたい人に。体格に合う寸法とソックスの中での収まりを確認。Sサイズやフレックスとは別の商品です。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%B9%E3%83%AF%E3%83%B3%E3%82%BB+%E3%82%B7%E3%83%B3%E3%82%AC%E3%83%BC%E3%83%89+GG0023&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Lm4FBuzZL._AC_UL320_.jpg",
+        "research_source": "https://shop.moltensports.jp/products/gg0023",
+        "verified_asin": "B01MTD04WO"
+      },
+      {
+        "key": "football_socks",
+        "name": "adidas adi 23 ソックス",
+        "description": "シンガードをソックスで覆いたい人へ。足のサイズだけでなく丈、色指定、左右の入数も確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=adidas+adi+23+%E3%82%BD%E3%83%83%E3%82%AF%E3%82%B9+HT5027&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71+UPBXaWaL._AC_UL320_.jpg",
+        "research_source": "https://www.adidas.jp/adi-23-ソックス/HT5027.html",
+        "verified_asin": "B0B1JC3FYJ"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "色指定のある会にも合わせやすい無地の練習着。肩の動かしやすさ、身幅・着丈を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "shorts",
+        "name": "glimmer 00325-ACP ドライハーフパンツ",
+        "description": "切り返しやしゃがむ動作に合わせたい練習用パンツ。ウエスト・丈・裾幅を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00325+ACP&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71eYqDHv-TS._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/ebook/26ss/"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "練習後の汗拭き用をコンパクトに持ちたい人へ。寸法と触感、洗い方を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "会場へ冷たい飲み物を持参したい人に。1L・保冷専用。練習時間に合わせて必要量を考えましょう。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      },
+      {
+        "key": "shoe_case",
+        "name": "ASICS シューズケースL 3033C228",
+        "description": "手持ちのバッグを使いながら靴を分けたい人へ。靴の大きさとケースの寸法を確認しましょう。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA%E3%82%B1%E3%83%BC%E3%82%B9L+3033C228&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/611mgoP5OsL._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/シューズケースl/p/3033C228-001.html"
+      }
+    ],
+    "status": "published",
+    "cover_status": "published",
+    "product_count": 8,
+    "id": 9,
+    "edit_url": "https://circle-book.com/columns/9/edit",
+    "published_on": "2026-10-22",
+    "cover_file": "../2026-10-generated-covers/futsal-cover.jpg",
+    "cover_image_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/9/e45bccca-46cd-4da6-aa03-de0d268143ec.jpg?v=1792760498"
+  },
+  {
+    "key": "tennis-first",
+    "title": "テニスを始めるなら。初参加におすすめの道具8選",
+    "audience": "participant",
+    "event": "テニス",
+    "event_id": 9,
+    "event_slug": "tennis",
+    "description": "硬式テニスの初参加におすすめの道具8選。ラケット、コートに合うシューズ、グリップ、帽子、ウェア、タオル、水筒の特徴と購入前の確認点を紹介します。",
+    "body_file": "tennis-first.html",
+    "products": [
+      {
+        "key": "tennis_racket",
+        "name": "YONEX Eゾーン アルファ 08EZAP（フレームのみ）",
+        "description": "硬式テニスを続けるための1本を選びたい人に。ストリングの購入・張り加工が別途必要です。グリップサイズと張り上げ条件を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+E%E3%82%BE%E3%83%BC%E3%83%B3+%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1+08EZAP&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51VV7z+fihL._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_08EZAP_1",
+        "verified_asin": "B0HC6SWBGL"
+      },
+      {
+        "key": "tennis_shoes",
+        "name": "ASICS COURT SLIDE 4（オールコート）",
+        "description": "ハードコート中心の練習用シューズを探す人へ。オムニ・クレー用とは別モデル。参加先のコートとサイズに合わせて選んでください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+COURT+SLIDE+4+1041A483&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61z0kHPGpJL._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/COURT-SLIDE/c/ja40210109/",
+        "verified_asin": "B0G2XTNR9J",
+        "research_note": "1041A483をAmazonで照合。公式のCOURT SLIDE分類と1042A283商品説明で用途を確認。"
+      },
+      {
+        "key": "bad_grip",
+        "name": "ヨネックス ウェットスーパーグリップ AC102（3本入）",
+        "description": "持ち手の感触を整えたい人、上巻きテープを交換したい人に。厚さ0.6mmのウェットタイプ。元グリップとは区別し、品番と入数を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+AC102+3%E6%9C%AC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61RepBTwl5L._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_AC102_1/510"
+      },
+      {
+        "key": "cap",
+        "name": "YONEX メッシュキャップ 40107",
+        "description": "屋外でつば付きの帽子を使いたい人に。背面ホック式。頭囲、かぶった深さ、動いたときのずれにくさを確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%AD%E3%83%A3%E3%83%83%E3%83%97+40107&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71utiYYNgML._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_40107_1/011",
+        "verified_asin": "B0CBRBQ6M6"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "腕を振り上げやすい無地の練習着を選びたい人に。肩回りとサイズ、会場の服装指定を確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "shorts",
+        "name": "glimmer 00325-ACP ドライハーフパンツ",
+        "description": "構えや横移動で動きやすい無地のパンツを探す人に。丈・裾幅・ポケットを確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00325+ACP&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71eYqDHv-TS._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/ebook/26ss/"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "休憩中の汗拭きをコンパクトに持ちたい人へ。寸法と素材、触感を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "コートへ冷たい飲み物を持参したい人に。1L・保冷専用。天候や練習時間に合わせて追加の飲み物も検討。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      }
+    ],
+    "status": "published",
+    "cover_status": "published",
+    "product_count": 8,
+    "id": 10,
+    "edit_url": "https://circle-book.com/columns/10/edit",
+    "published_on": "2026-10-22",
+    "cover_file": "../2026-10-generated-covers/tennis-cover.jpg",
+    "cover_image_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/10/190bc788-156e-45ee-8f95-a1b4f2fe113c.jpg?v=1792760507"
+  },
+  {
+    "key": "table-tennis-first",
+    "title": "久しぶりの卓球にも。最初にそろえたい道具7選",
+    "audience": "participant",
+    "event": "卓球",
+    "event_id": 10,
+    "event_slug": "table-tennis",
+    "description": "卓球の初参加・再開におすすめの道具7選。ラバー貼りラケット、ケース、室内シューズ、クリーナー、練習着、タオルの用途と選び方を紹介します。",
+    "body_file": "table-tennis-first.html",
+    "products": [
+      {
+        "key": "table_racket",
+        "name": "Butterfly 張本智和2000 16950",
+        "description": "ラバーを選んで貼る手間をかけず、気軽に卓球を始めたい人へ。レジャー用・硬式40mm向け。ラバーの貼り替えはできません。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%90%E3%82%BF%E3%83%95%E3%83%A9%E3%82%A4+%E5%BC%B5%E6%9C%AC%E6%99%BA%E5%92%8C2000+16950&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71BJRTVHqbL._AC_UL320_.jpg",
+        "research_source": "https://www.butterfly.co.jp/products/detail/16950.html",
+        "verified_asin": "B07HN11LN1",
+        "research_note": "Amazon検索結果の商品URLに16950を確認。選手本人の使用モデルではない。"
+      },
+      {
+        "key": "table_case",
+        "name": "Butterfly YT・ケース 63400",
+        "description": "ラケットとボールをまとめて持ち運びたい人に。ラケット2本・40mmボール4個を収納できるケースです。道具は付属しません。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%90%E3%82%BF%E3%83%95%E3%83%A9%E3%82%A4+YT+%E3%82%B1%E3%83%BC%E3%82%B9+63400&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81HEHzVuQtL._AC_UL320_.jpg",
+        "research_source": "https://www.butterfly.co.jp/products/detail/63400.html",
+        "verified_asin": "B0DK2QH4M6"
+      },
+      {
+        "key": "volley_shoes",
+        "name": "ASICS GEL-ROCKET 12",
+        "description": "初めての室内シューズを用途から選びたい人に。サイズと足幅、会場の靴底の指定を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+GEL-ROCKET+12+1073A080&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/615pCdWGDsL._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/gel-rocket-12/p/1073A080-103.html"
+      },
+      {
+        "key": "cleaner",
+        "name": "Butterfly デイリークリーナー 75820",
+        "description": "裏ラバーの練習後の手入れに使う泡タイプ。ラバーの取扱説明を確認し、対応する専用スポンジ等と合わせて使ってください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%90%E3%82%BF%E3%83%95%E3%83%A9%E3%82%A4+%E3%83%87%E3%82%A4%E3%83%AA%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%8A%E3%83%BC+75820&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/21iPjqJNV+L._AC_UL320_.jpg",
+        "research_source": "https://www.butterfly.co.jp/products/detail/75820.html",
+        "verified_asin": "B00VYL10F8"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "卓球の練習用と着替え用を分けたい人に。肩の動きやすさと、会のシャツの色指定を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "shorts",
+        "name": "glimmer 00325-ACP ドライハーフパンツ",
+        "description": "低い姿勢で構えやすい無地のパンツを探す人に。丈・裾幅と、しゃがんだときの収まりを確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00325+ACP&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71eYqDHv-TS._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/ebook/26ss/"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "練習の汗拭き用を小さく持ちたい人へ。ラバーの手入れ用とは分けて使ってください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      }
+    ],
+    "status": "published",
+    "cover_status": "published",
+    "product_count": 7,
+    "id": 11,
+    "edit_url": "https://circle-book.com/columns/11/edit",
+    "published_on": "2026-10-22",
+    "cover_file": "../2026-10-generated-covers/table-tennis-cover.jpg",
+    "cover_image_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/11/5664e941-7701-4005-bd9c-3c836844dbd8.jpg?v=1792760515"
+  },
+  {
+    "key": "running-first",
+    "title": "みんなで走る日、何を持っていく？ランニングの持ち物8選",
+    "audience": "participant",
+    "event": "ランニング",
+    "event_id": 3,
+    "event_slug": "running",
+    "description": "ランニングサークルの初参加におすすめの持ち物8選。シューズ、五本指ソックス、ポーチ、帽子、ウェア、タオル、水筒の特徴と選ぶポイントを紹介します。",
+    "body_file": "running-first.html",
+    "products": [
+      {
+        "key": "run_shoes",
+        "name": "ASICS JOLT 5",
+        "description": "短い距離のジョギングから始めたい人に。掲載画像はメンズの候補例。足幅、サイズ、実際の履き心地から選んでください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+JOLT+5+1011B963&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/619v8HfAZML._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/jolt-5/p/1011B963-100.html",
+        "verified_asin": "B0DNSHJS28"
+      },
+      {
+        "key": "run_socks",
+        "name": "Tabio レーシングラン五本指ソックス",
+        "description": "足指を分けるタイプのランニング用ソックスを試したい人へ。サイズ展開と指の収まりを確認し、普段の靴と合わせて試してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Tabio+%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%B3%E3%82%B0%E3%83%A9%E3%83%B3+%E4%BA%94%E6%9C%AC%E6%8C%87+072120037&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81UIrMkVesL._AC_UL320_.jpg",
+        "research_source": "https://tabio.com/jp/racingrun_newcr/",
+        "verified_asin": "B07R4S8337",
+        "research_note": "公式商品ページはメンテナンス中。公式シリーズ案内とAmazon掲載を照合。価格と販売店の営業状況は記事に固定記載しない。"
+      },
+      {
+        "key": "run_pouch",
+        "name": "FlipBelt クラシック",
+        "description": "スマートフォンや鍵をポケット以外にまとめたい人に。バックルのない筒型です。装着位置の周囲寸法とスマートフォンの大きさを確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=FlipBelt+%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61HmFfEX5vL._AC_UL320_.jpg",
+        "research_source": "https://flipbelt.com/products/flipbelt-classic-running-belt",
+        "verified_asin": "B00JF9DWWU"
+      },
+      {
+        "key": "cap",
+        "name": "YONEX メッシュキャップ 40107",
+        "description": "日中の屋外でつば付き帽子を使いたい人に。テニス向けの製品です。走ったときのかぶり心地とずれを確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%AD%E3%83%A3%E3%83%83%E3%83%97+40107&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71utiYYNgML._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_40107_1/011",
+        "verified_asin": "B0CBRBQ6M6"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "短い距離から始める練習着の候補。腕振りでの当たりと、こすれが気にならないサイズか確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "shorts",
+        "name": "glimmer 00325-ACP ドライハーフパンツ",
+        "description": "まずは軽いジョギング用の運動着をそろえたい人へ。ランニング専用設計ではありません。脚の動かしやすさを確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00325+ACP&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71eYqDHv-TS._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/ebook/26ss/"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "集合前後の荷物をコンパクトにしたい人に。走行中に持つ場合はポーチ等へ収まる寸法も確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "荷物を置ける会で、走る前後の飲み物を用意したい人に。1L・保冷専用。走行中の携帯用には重さも比較。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      }
+    ],
+    "status": "published",
+    "cover_status": "published",
+    "product_count": 8,
+    "id": 12,
+    "edit_url": "https://circle-book.com/columns/12/edit",
+    "published_on": "2026-10-22",
+    "cover_file": "../2026-10-generated-covers/running-cover.jpg",
+    "cover_image_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/12/02e4e39d-d91d-454f-b059-28a3f8e0e257.jpg?v=1792760530"
+  },
+  {
+    "key": "yoga-first",
+    "title": "初めてのヨガに持っていきたい道具6選。マットと小物の選び方",
+    "audience": "participant",
+    "event": "ヨガ",
+    "event_id": 27,
+    "event_slug": "yoga",
+    "description": "ヨガサークルの初参加におすすめの道具6選。マット、マットバッグ、ブロック、ベルト、ウェア、タオルを使う場面と購入前の確認点で紹介します。",
+    "body_file": "yoga-first.html",
+    "products": [
+      {
+        "key": "yoga_mat",
+        "name": "ヨガワークス ヨガマット6mm YW-A202",
+        "description": "座ったり膝をついたりするクラスのマットを探す人に。約173×61cm、厚さ6mm、重さ約1.3kg。持ち運びの負担も比べましょう。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A8%E3%82%AC%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9+%E3%83%A8%E3%82%AC%E3%83%9E%E3%83%83%E3%83%88+6mm&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/31GKQmrdEhL._AC_UL320_.jpg",
+        "research_source": "https://www.yogaworks.jp/products/yogamat6mm",
+        "verified_asin": "B095X6X46B"
+      },
+      {
+        "key": "yoga_bag",
+        "name": "ヨガワークス ポケット付メッシュバッグ",
+        "description": "丸めたマットを肩に掛けて運びたい人へ。画像は従来のポケット付きタイプ。新しいS・M・Lサイズの商品とは仕様が異なるため、収納寸法を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A8%E3%82%AC%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9+%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%83%90%E3%83%83%E3%82%B0&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41o00KyPh5L._AC_UL320_.jpg",
+        "research_source": "https://www.yogaworks.co.jp/products/meshbag/",
+        "verified_asin": "B000AW2MIQ",
+        "research_note": "https://www.yogaworks.jp/blogs/news/meshbag-renewal-2026-09 にサイズ展開の変更あり。旧モデルとして紹介し、寸法・仕様を確認する。"
+      },
+      {
+        "key": "yoga_block",
+        "name": "ヨガワークス ヨガブロックA",
+        "description": "ポーズを微調整する補助具を探す人に。約23×15×7.6cm。画像は2個セットの例です。単品かセットか、必要な数量を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A8%E3%82%AC%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9+%E3%83%A8%E3%82%AC%E3%83%96%E3%83%AD%E3%83%83%E3%82%AF+A&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71zj9ZNR52L._AC_UL320_.jpg",
+        "research_source": "https://www.yogaworks.jp/products/yogablock_a",
+        "verified_asin": "B095YZPJ8S",
+        "research_note": "2026年3月の公式告知では単品販売への移行。Amazonには2個セットの掲載が残るため数量を明示。"
+      },
+      {
+        "key": "yoga_belt",
+        "name": "ヨガワークス ヨガベルト240cm",
+        "description": "手足の届く距離を補助するベルトを使いたい人に。幅約4cm・長さ240cm。使う場面と調整方法を講師に確認して選びましょう。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A8%E3%82%AC%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9+%E3%83%A8%E3%82%AC%E3%83%99%E3%83%AB%E3%83%88+240cm&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51f-rZFyIoL._AC_UL320_.jpg",
+        "research_source": "https://www.yogaworks.jp/products/yogabelt",
+        "verified_asin": "B01D40MNQG"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "常温ヨガに、シンプルなトップスで参加したい人に。腕上げや前屈での裾・首回りの収まりを確認。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "クラス前後の汗拭き用を小さく持ちたい人へ。マットを覆うヨガラグではありません。指定のタオルサイズがあれば優先。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      }
+    ],
+    "status": "published",
+    "cover_status": "published",
+    "product_count": 6,
+    "id": 13,
+    "edit_url": "https://circle-book.com/columns/13/edit",
+    "published_on": "2026-10-22",
+    "cover_file": "../2026-10-generated-covers/yoga-cover.jpg",
+    "cover_image_url": "https://circlebook.s3.ap-northeast-1.amazonaws.com/uploads/column/image/13/57946765-be02-4844-afd0-ef22f0901db8.jpg?v=1792760537"
+  }
+]

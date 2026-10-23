@@ -1,0 +1,52 @@
+[
+  {
+    "id": 9,
+    "cards": 8,
+    "draft": false,
+    "events": [
+      "/events/futsal"
+    ],
+    "images": 8,
+    "title": "初めてのフットサル、何を持っていく？おすすめの持ち物8選"
+  },
+  {
+    "id": 10,
+    "cards": 8,
+    "draft": false,
+    "events": [
+      "/events/tennis"
+    ],
+    "images": 8,
+    "title": "テニスを始めるなら。初参加におすすめの道具8選"
+  },
+  {
+    "id": 11,
+    "cards": 7,
+    "draft": false,
+    "events": [
+      "/events/table-tennis"
+    ],
+    "images": 7,
+    "title": "久しぶりの卓球にも。最初にそろえたい道具7選"
+  },
+  {
+    "id": 12,
+    "cards": 8,
+    "draft": false,
+    "events": [
+      "/events/running"
+    ],
+    "images": 8,
+    "title": "みんなで走る日、何を持っていく？ランニングの持ち物8選"
+  },
+  {
+    "id": 13,
+    "cards": 6,
+    "draft": false,
+    "events": [
+      "/events/yoga"
+    ],
+    "images": 6,
+    "title": "初めてのヨガに持っていきたい道具6選。マットと小物の選び方"
+  }
+]

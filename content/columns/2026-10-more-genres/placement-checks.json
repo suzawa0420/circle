@@ -1,0 +1,74 @@
+[
+  {
+    "id": 14,
+    "genre": "/events/baseball",
+    "links": [
+      "/columns/14"
+    ],
+    "valid": true
+  },
+  {
+    "id": 15,
+    "genre": "/events/dance",
+    "links": [
+      "/columns/15"
+    ],
+    "valid": true
+  },
+  {
+    "id": 16,
+    "genre": "/events/swimming",
+    "links": [
+      "/columns/16"
+    ],
+    "valid": true
+  },
+  {
+    "id": 18,
+    "genre": "/events/go-out",
+    "links": [
+      "/columns/18"
+    ],
+    "valid": true
+  },
+  {
+    "id": 19,
+    "genre": "/events/cooking",
+    "links": [
+      "/columns/19"
+    ],
+    "valid": true
+  },
+  {
+    "id": 20,
+    "genre": "/events/bouldering",
+    "links": [
+      "/columns/20"
+    ],
+    "valid": true
+  },
+  {
+    "id": 21,
+    "genre": "/events/road-bike",
+    "links": [
+      "/columns/21"
+    ],
+    "valid": true
+  },
+  {
+    "id": 22,
+    "genre": "/events/snow-board",
+    "links": [
+      "/columns/22"
+    ],
+    "valid": true
+  },
+  {
+    "id": 23,
+    "genre": "/events/camping",
+    "links": [
+      "/columns/23"
+    ],
+    "valid": true
+  }
+]

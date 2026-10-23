@@ -1,0 +1,137 @@
+[
+  {
+    "id": 14,
+    "key": "baseball-first",
+    "cards": 8,
+    "images": 8,
+    "headings": 9,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 15,
+    "key": "dance-first",
+    "cards": 7,
+    "images": 7,
+    "headings": 8,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 16,
+    "key": "swimming-first",
+    "cards": 7,
+    "images": 7,
+    "headings": 8,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 17,
+    "key": "molkky-organizer",
+    "cards": 5,
+    "images": 5,
+    "headings": 6,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 18,
+    "key": "walking-first",
+    "cards": 7,
+    "images": 7,
+    "headings": 8,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 19,
+    "key": "cooking-first",
+    "cards": 5,
+    "images": 5,
+    "headings": 6,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 20,
+    "key": "bouldering-first",
+    "cards": 5,
+    "images": 5,
+    "headings": 6,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 21,
+    "key": "cycling-first",
+    "cards": 8,
+    "images": 8,
+    "headings": 9,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 22,
+    "key": "snow-first",
+    "cards": 7,
+    "images": 7,
+    "headings": 8,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 23,
+    "key": "camping-first",
+    "cards": 7,
+    "images": 7,
+    "headings": 8,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 24,
+    "key": "badminton-organizer",
+    "cards": 6,
+    "images": 6,
+    "headings": 7,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 25,
+    "key": "volleyball-organizer",
+    "cards": 6,
+    "images": 6,
+    "headings": 7,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 26,
+    "key": "futsal-organizer",
+    "cards": 6,
+    "images": 6,
+    "headings": 7,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 27,
+    "key": "table-tennis-organizer",
+    "cards": 5,
+    "images": 5,
+    "headings": 6,
+    "missing": 0,
+    "valid": true
+  },
+  {
+    "id": 28,
+    "key": "reception-organizer",
+    "cards": 5,
+    "images": 5,
+    "headings": 6,
+    "missing": 0,
+    "valid": true
+  }
+]

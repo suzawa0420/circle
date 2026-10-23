@@ -1,0 +1,27 @@
+[
+  {
+    "genre": "フットサル",
+    "article": 9,
+    "linked": true
+  },
+  {
+    "genre": "テニス",
+    "article": 10,
+    "linked": true
+  },
+  {
+    "genre": "卓球",
+    "article": 11,
+    "linked": true
+  },
+  {
+    "genre": "ランニング",
+    "article": 12,
+    "linked": true
+  },
+  {
+    "genre": "ヨガ",
+    "article": 13,
+    "linked": true
+  }
+]

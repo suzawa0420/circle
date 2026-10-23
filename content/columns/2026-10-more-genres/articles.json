@@ -1,0 +1,2595 @@
+[
+  {
+    "key": "baseball-first",
+    "title": "草野球に初参加するなら。まず確認したい持ち物8選",
+    "audience": "participant",
+    "event": "草野球",
+    "event_id": 7,
+    "event_slug": "baseball",
+    "description": "久しぶりにグラウンドへ行く日。グラブから服装まで、草野球の初参加で確認したい持ち物8選を紹介します。試合と体験練習では指定が違うので、参加先の案内と照らし合わせて選びましょう。",
+    "body_file": "baseball-first.html",
+    "cover_file": "images/baseball-first.png",
+    "products": [
+      {
+        "key": "base_glove",
+        "name": "ミズノ 一般軟式オールラウンドグラブ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E4%B8%80%E8%88%AC%20%E8%BB%9F%E5%BC%8F%20%E3%82%B0%E3%83%A9%E3%83%96%20%E3%82%AA%E3%83%BC%E3%83%AB%E3%83%A9%E3%82%A6%E3%83%B3%E3%83%89&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Rd2YE7N-L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DZCW16KR",
+        "query": "ミズノ 一般 軟式 グラブ オールラウンド",
+        "description": "ミズノの一般軟式オールラウンド用は、まだ守備位置が決まっていない人の比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DZCW16KR",
+        "image_example_title": "野球 ミズノ 軟式 グローブ グラブ 軟式グローブ 大人 一般 本革 ボールパーク オールラウンド用 右投用 左投用 サイズ11 軟式野球 軟式用 草野球 1AJGR33920 MIZUNO"
+      },
+      {
+        "key": "base_pants",
+        "name": "ミズノ 野球用練習パンツ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E9%87%8E%E7%90%83%20%E7%B7%B4%E7%BF%92%20%E3%83%A6%E3%83%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%20%E3%83%91%E3%83%B3%E3%83%84%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51DO8JMCbdL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0FKB6XJKZ",
+        "query": "ミズノ 野球 練習 ユニフォーム パンツ 大人",
+        "description": "土のグラウンドでは、長い野球用パンツを使う場面があります。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0FKB6XJKZ",
+        "image_example_title": "野球ズボン ミズノユニフォームパンツ 練習着 野球ユニフォームズボン 大人用 ガチシリーズ 選べる6タイプ ショートフィット ストレート レギュラー バギー ロング ショート 12jd2f6 SOLVシール付き"
+      },
+      {
+        "key": "base_belt",
+        "name": "ミズノ 野球用ベルト",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E9%87%8E%E7%90%83%20%E3%83%99%E3%83%AB%E3%83%88%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/513vqlfVw6L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0C4HFDHTJ",
+        "query": "ミズノ 野球 ベルト 大人",
+        "description": "ベルト通しのある野球パンツには、野球用ベルトが候補になります。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0C4HFDHTJ",
+        "image_example_title": "[ミズノ] 野球 ソフトボール ストレートベルト 12JYAV04/12JYAV05 メンズ 部活"
+      },
+      {
+        "key": "base_socks",
+        "name": "ミズノ 野球用カラーソックス",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E9%87%8E%E7%90%83%20%E3%82%AB%E3%83%A9%E3%83%BC%E3%82%BD%E3%83%83%E3%82%AF%E3%82%B9%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41rMstbXJ5L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0CYSXS4NW",
+        "query": "ミズノ 野球 カラーソックス 大人",
+        "description": "野球用の長いソックスは、パンツの形やストッキングとの組み合わせで選びます。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0CYSXS4NW",
+        "image_example_title": "スポンサー広告 - MIZUNO(ミズノ) 野球 ソフトボール カラーソックス 12JXBU13 大人 25-29 cm"
+      },
+      {
+        "key": "base_shoes",
+        "name": "ミズノ 野球用トレーニングシューズ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E9%87%8E%E7%90%83%20%E3%83%88%E3%83%AC%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41OFXQnjetL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0FHDH382C",
+        "query": "ミズノ 野球 トレーニングシューズ 大人",
+        "description": "野球用トレーニングシューズは、アップや移動を含む練習で使いたい人の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0FHDH382C",
+        "image_example_title": "スポンサー広告 - [ミズノ] 野球 トレーニングシューズ クッションレボダイア トレーナー"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "体験練習の服装が自由なら、glimmer 00300-ACTのような無地のドライTシャツが候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "サーモスFJU-1001は、冷たい飲み物を持参したい人向けの1Lボトル。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      },
+      {
+        "key": "shoe_case",
+        "name": "ASICS シューズケースL 3033C228",
+        "description": "ASICSシューズケースLは、練習後の靴を着替えと分けて運びたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA%E3%82%B1%E3%83%BC%E3%82%B9L+3033C228&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/611mgoP5OsL._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/シューズケースl/p/3033C228-001.html"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "久しぶりにグラウンドへ行く日。グラブから服装まで、草野球の初参加で確認したい持ち物8選を紹介します。試合と体験練習では指定が違うので、参加先の案内と照らし合わせて選びましょう。"
+      },
+      {
+        "type": "heading",
+        "text": "1. グラブは一般軟式・利き手・守備位置を合わせる"
+      },
+      {
+        "type": "paragraph",
+        "text": "ミズノの一般軟式オールラウンド用は、まだ守備位置が決まっていない人の比較候補。投げる手と反対の手にはめるため、右投げ用・左投げ用を取り違えないことが大切です。少年用や硬式用と区別し、手口と握りやすさを試して選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 練習パンツは、チーム指定の形を聞いてから"
+      },
+      {
+        "type": "paragraph",
+        "text": "土のグラウンドでは、長い野球用パンツを使う場面があります。ミズノの練習パンツなら、レギュラーやショートなど形を比べられます。丈とウエストに加え、膝の曲げ伸ばしやチームの色指定を確認。初回から試合用ユニフォームを一式注文する必要があるかも先に聞きましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. ベルトはパンツと一緒にサイズを確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "ベルト通しのある野球パンツには、野球用ベルトが候補になります。走る・しゃがむときに腰回りが落ち着くよう、パンツをはいた状態で長さを合わせます。切って調整する仕様か、バックルの扱い方はどうかも確認すると、届いてから迷いません。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. ソックスは丈と色をそろえる"
+      },
+      {
+        "type": "paragraph",
+        "text": "野球用の長いソックスは、パンツの形やストッキングとの組み合わせで選びます。ミズノのカラーソックスを比較するときは足のサイズ、丈、チーム指定色をチェック。複数足入りは洗い替えに便利ですが、片足・一足・セットの表示を確かめましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 靴はグラウンドと練習内容に合わせる"
+      },
+      {
+        "type": "paragraph",
+        "text": "野球用トレーニングシューズは、アップや移動を含む練習で使いたい人の候補です。ただしスパイクの代用としてすべての試合で使えるとは限りません。会場が金具を認めるか、どの靴が必要かを主催者へ確認し、当日使う靴下で試着しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 練習用の無地ドライTシャツ"
+      },
+      {
+        "type": "paragraph",
+        "text": "体験練習の服装が自由なら、glimmer 00300-ACTのような無地のドライTシャツが候補。色がそろっているので指定色に合わせやすく、普段の運動にも回せます。ユニフォーム下に着る指定のアンダーシャツとは用途が違うため、袖・首元の指定がある日はそちらを優先します。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. 飲み物は容量と補給場所から考える"
+      },
+      {
+        "type": "paragraph",
+        "text": "サーモスFJU-1001は、冷たい飲み物を持参したい人向けの1Lボトル。ベンチで自分の物が分かるよう目印を付け、補給できる場所も確認します。1Lで一日分が足りるとは限らないので、活動時間や天候に応じて追加の飲み物を用意しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "8. 土の付いた靴はケースで分ける"
+      },
+      {
+        "type": "paragraph",
+        "text": "ASICSシューズケースLは、練習後の靴を着替えと分けて運びたい人の候補。靴底の土を会場のルールに従って落とし、バッグに入れます。スパイクの金具が当たる場合はケース側の対応も確認し、帰宅後は取り出して乾燥させましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:8]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "グラブ・バット・ヘルメットの貸出、当日の服装、靴の指定を主催者へ確認しましょう。特にバットや試合用ユニフォームは、チームのルールが決まってから選ぶと重複買いを減らせます。紹介リンクは検索結果なので、一般用・軟式用などの条件を商品ページで確認してください。"
+      }
+    ],
+    "product_count": 8,
+    "edit_url": "https://circle-book.com/columns/14/edit",
+    "id": 14,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "dance-first",
+    "title": "初めてのダンス練習に。使いやすい持ち物7選",
+    "audience": "participant",
+    "event": "ダンス",
+    "event_id": 19,
+    "event_slug": "dance",
+    "description": "ダンスの初参加は、踊りやすさと着替えやすさを整えるところから。室内スニーカー、練習着、小物など7つの候補を、ジャンルやスタジオの指定に合わせて紹介します。",
+    "body_file": "dance-first.html",
+    "cover_file": "images/dance-first.png",
+    "products": [
+      {
+        "key": "dance_shoes",
+        "name": "室内ダンス向けスニーカー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Bloch%20%E3%83%80%E3%83%B3%E3%82%B9%20%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71Eiv+zQuTL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0041IXKJK",
+        "query": "ダンス シューズ 室内 スニーカー 大人",
+        "description": "室内スニーカーは、ヒップホップなど靴を履くレッスンでの候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0041IXKJK",
+        "image_example_title": "Bloch Dance レディース キャンバス ブースト スプリット ソール ダンス スニーカー"
+      },
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "glimmer 00300-ACTは、装飾の少ない練習着を探す人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "dance_pants",
+        "name": "動きやすいダンス用ロングパンツ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%80%E3%83%B3%E3%82%B9%20%E7%B7%B4%E7%BF%92%20%E3%83%AD%E3%83%B3%E3%82%B0%E3%83%91%E3%83%B3%E3%83%84%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51puOJ4gzCL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DQZYFNJQ",
+        "query": "ダンス 練習 ロングパンツ 大人",
+        "description": "ダンス用ロングパンツは、膝や足を動かしたときにつっぱりにくいものが候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DQZYFNJQ",
+        "image_example_title": "[Merrytutu] ジャズパンツ ダンスパンツ ストレッチ 綿混 バレエ 新体操 ダンス チア ジュニア 大人"
+      },
+      {
+        "key": "hairband",
+        "name": "スポーツ用ヘアバンド",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84%20%E3%83%98%E3%82%A2%E3%83%90%E3%83%B3%E3%83%89%20%E6%B4%97%E3%81%88%E3%82%8B&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71ipRfIJ3XL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0BX9SZNDD",
+        "query": "スポーツ ヘアバンド 洗える",
+        "description": "振り向いたり下を向いたりすると髪が気になる人には、洗えるスポーツ用ヘアバンドが候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0BX9SZNDD",
+        "image_example_title": "ヘアバンド メンズ レディース ヘッドバンド メンズ ヘアターバン バンダナ 幅広 汗止め 髪留め 洗顔 ３枚セット"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "Speedo SE62003は、タオルのかさを減らしたい人向けの候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "サーモスFJU-1001は、冷たい飲み物を練習へ持っていきたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      },
+      {
+        "key": "shoe_case",
+        "name": "ASICS シューズケースL 3033C228",
+        "description": "ASICSシューズケースLは、室内シューズを通勤バッグへ入れる人にも使いやすい候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA%E3%82%B1%E3%83%BC%E3%82%B9L+3033C228&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/611mgoP5OsL._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/シューズケースl/p/3033C228-001.html"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "ダンスの初参加は、踊りやすさと着替えやすさを整えるところから。室内スニーカー、練習着、小物など7つの候補を、ジャンルやスタジオの指定に合わせて紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. シューズは習うジャンルの指定を最優先"
+      },
+      {
+        "type": "paragraph",
+        "text": "室内スニーカーは、ヒップホップなど靴を履くレッスンでの候補。床での滑り方や曲げやすさは靴ごとに違います。バレエや社交ダンス、裸足で行うクラスには別の指定があるため、購入前に先生へ確認。外履きを清掃すれば使えるのか、室内専用が必要かも聞いておきましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 無地のTシャツなら着替えも用意しやすい"
+      },
+      {
+        "type": "paragraph",
+        "text": "glimmer 00300-ACTは、装飾の少ない練習着を探す人の候補。腕を上げたときの丈、肩回り、鏡で体の動きを見やすい大きさを確認します。極端に大きい服がすべてのクラスに向くわけではないので、服装の指定に合わせて選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. パンツはしゃがむ・開く動作で選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "ダンス用ロングパンツは、膝や足を動かしたときにつっぱりにくいものが候補です。裾を踏まない丈か、床に座る動きでずれないかを確認。ジャンルによって見せたいシルエットも変わるため、初回は手持ちの運動用パンツで参加できるか聞くのも一つです。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 髪が顔にかかるならヘアバンド"
+      },
+      {
+        "type": "paragraph",
+        "text": "振り向いたり下を向いたりすると髪が気になる人には、洗えるスポーツ用ヘアバンドが候補。幅と締め付け、ずれ方を確認します。髪留めの指定や床での動きに支障がないかも考え、飾りの大きい物は避けると準備がシンプルです。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 小さく持てるタオルを一枚"
+      },
+      {
+        "type": "paragraph",
+        "text": "Speedo SE62003は、タオルのかさを減らしたい人向けの候補。吸水後に絞って使うタイプが自分に合うか、サイズと手触りを確認しましょう。汗を拭く用とシャワー後の全身用では必要な大きさが違います。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 休憩中に飲みやすいボトル"
+      },
+      {
+        "type": "paragraph",
+        "text": "サーモスFJU-1001は、冷たい飲み物を練習へ持っていきたい人の候補。床置きしてよい場所や飲食できるエリアはスタジオで確認します。バッグに入るサイズと持ち運ぶ重さを考え、短いレッスンで容量が大きすぎないかも比べましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. シューズを着替えから分けるケース"
+      },
+      {
+        "type": "paragraph",
+        "text": "ASICSシューズケースLは、室内シューズを通勤バッグへ入れる人にも使いやすい候補です。靴の実寸とケースのサイズを合わせ、レッスン後は靴を入れっぱなしにしないようにします。薄い布袋で足りる場合は、初回から買い足さなくても構いません。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "予約時にダンスのジャンル、靴の種類、床に座る動きの有無を確認しましょう。撮影用の三脚やスピーカーは、施設や参加者への確認が必要になるため、初回の個人持ち物としては後回しで大丈夫です。"
+      }
+    ],
+    "product_count": 7,
+    "edit_url": "https://circle-book.com/columns/15/edit",
+    "id": 15,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "swimming-first",
+    "title": "大人の水泳、再開するなら。プールの持ち物7選",
+    "audience": "participant",
+    "event": "水泳",
+    "event_id": 30,
+    "event_slug": "swimming",
+    "description": "久しぶりのプールは、水着だけでなく着替えや濡れた物の持ち帰りまで考えると準備が楽になります。大人の水泳サークルで使いたい持ち物7選と、購入前の確認点をまとめました。",
+    "body_file": "swimming-first.html",
+    "cover_file": "images/swimming-first.png",
+    "products": [
+      {
+        "key": "swimsuit",
+        "name": "大人用フィットネス水着",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E3%83%95%E3%82%A3%E3%83%83%E3%83%88%E3%83%8D%E3%82%B9%20%E6%B0%B4%E7%9D%80%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51zH+ez6WyL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0GL7QYZ5X",
+        "query": "ミズノ フィットネス 水着 大人",
+        "description": "泳ぐ練習や水中運動を始めるなら、大人用フィットネス水着が比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0GL7QYZ5X",
+        "image_example_title": "[ミズノ] 水泳 Basic 水着 競泳 フィットネスレディース オールインワン N2MGDC03 N2MGDC04"
+      },
+      {
+        "key": "goggles",
+        "name": "クッション付きスイミングゴーグル",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E6%B0%B4%E6%B3%B3%20%E3%82%B4%E3%83%BC%E3%82%B0%E3%83%AB%20%E3%82%AF%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61LhzIxzuzL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DQL2ZP3K",
+        "query": "ミズノ 水泳 ゴーグル クッション 大人",
+        "description": "クッション付きゴーグルは、顔に触れる部分の感触を確かめながら選びたい人の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DQL2ZP3K",
+        "image_example_title": "スポンサー広告 - MIZUNO(ミズノ) 水泳 フィットネス ゴーグル（クッションタイプ）大人用 日本製 N3JEC610"
+      },
+      {
+        "key": "swimcap",
+        "name": "メッシュスイムキャップ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%20%E3%82%B9%E3%82%A4%E3%83%A0%E3%82%AD%E3%83%A3%E3%83%83%E3%83%97%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/511vunVEdxL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0CR31F6YT",
+        "query": "ミズノ メッシュ スイムキャップ 大人",
+        "description": "メッシュスイムキャップは、水泳の練習で使うキャップの候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0CR31F6YT",
+        "image_example_title": "スポンサー広告 - MIZUNO(ミズノ) スイム 水泳 スイムキャップ メッシュキャップ 【フィットネス/トレーニング】 ユニセックス N2JWB900"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "SpeedoマイクロセームタオルM SE62003は、荷物を小さくしたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "wetbag",
+        "name": "スイム用防水ポーチ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%82%A4%E3%83%9F%E3%83%B3%E3%82%B0%20%E9%98%B2%E6%B0%B4%20%E3%83%9D%E3%83%BC%E3%83%81%20%E6%BF%A1%E3%82%8C%E3%81%9F%20%E6%B0%B4%E7%9D%80&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71+Si5mkTNL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0FQ925SR4",
+        "query": "スイミング 防水 ポーチ 濡れた 水着",
+        "description": "スイム用防水ポーチがあると、濡れた水着を乾いた着替えと分けられます。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0FQ925SR4",
+        "image_example_title": "スポンサー広告 - ミズカラット 防水ポーチ 巾着 水着入れ 濡れたもの ウェットバッグ 着替え入れ 洗濯袋 おむつポーチ 保育園 旅行 ジム ヨガ プール 海 (ブラック)"
+      },
+      {
+        "key": "swimbag",
+        "name": "水抜けのよいメッシュバッグ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E6%B0%B4%E6%B3%B3%20%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%20%E3%83%90%E3%83%83%E3%82%B0%20%E3%82%B9%E3%82%A4%E3%83%A0&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81QrkgWY-vL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B019VVNIDY",
+        "query": "水泳 メッシュ バッグ スイム",
+        "description": "ゴーグルやキャップを一つにまとめたい人には、水抜けのよいメッシュバッグが候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B019VVNIDY",
+        "image_example_title": "Speedo(スピード) メッシュバッグ | 濡れたまま持ち運べてそのまま干せる、使い勝手のよいメッシュ"
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "サーモスFJU-1001は、冷たい飲み物を持参する際の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "久しぶりのプールは、水着だけでなく着替えや濡れた物の持ち帰りまで考えると準備が楽になります。大人の水泳サークルで使いたい持ち物7選と、購入前の確認点をまとめました。"
+      },
+      {
+        "type": "heading",
+        "text": "1. 水着は競泳用かフィットネス用かを確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "泳ぐ練習や水中運動を始めるなら、大人用フィットネス水着が比較候補。ミズノなどの製品では上下の形や丈が異なります。脱ぎ着のしやすさだけでなく、泳いだときのずれやサイズを確認。ファスナーや露出など施設独自の指定がある場合は先に聞きましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. ゴーグルはクッションと顔への収まりで選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "クッション付きゴーグルは、顔に触れる部分の感触を確かめながら選びたい人の候補です。ミズノの大人用を比較する際も、鼻ベルトやストラップの調整方法を確認。強く締め付けて合わせるのではなく、顔形に合う物を探しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. キャップは頭囲と髪の量に合わせる"
+      },
+      {
+        "type": "paragraph",
+        "text": "メッシュスイムキャップは、水泳の練習で使うキャップの候補です。頭囲だけでなく、髪をまとめた状態で収まるかも確認します。シリコーン製とは素材や着け心地が違うので、施設指定と好みを照らし合わせて選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 吸水タオルで持ち帰りのかさを抑える"
+      },
+      {
+        "type": "paragraph",
+        "text": "SpeedoマイクロセームタオルM SE62003は、荷物を小さくしたい人の候補。絞りながら使える点を選ぶ理由にできますが、一般的な綿タオルとは触感が違います。全身を包みたい人はサイズを確認し、必要なら大判タイプも比較しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 濡れた水着用のポーチを分ける"
+      },
+      {
+        "type": "paragraph",
+        "text": "スイム用防水ポーチがあると、濡れた水着を乾いた着替えと分けられます。容量、口の閉じ方、縫い目の仕様を確認してください。防水の表記があっても水中使用や完全な漏れ防止を意味するとは限らず、水気を切って持ち帰るのが基本です。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. メッシュバッグはプール内へ運ぶ物を整理"
+      },
+      {
+        "type": "paragraph",
+        "text": "ゴーグルやキャップを一つにまとめたい人には、水抜けのよいメッシュバッグが候補。更衣室からプールサイドへ持ち込めるか、施設の案内を確認します。水が外へ出る構造なので、通勤バッグへ直接入れる用途では防水ポーチと使い分けましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. 飲み物は持込み可能な容器で"
+      },
+      {
+        "type": "paragraph",
+        "text": "サーモスFJU-1001は、冷たい飲み物を持参する際の候補です。プールサイドへの持込み可否、容器の材質指定、置き場所を先に確認。ボトル自体が大きいので、ロッカーに入るかも考えて選びます。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "プールによってキャップ、眼鏡、アクセサリー、飲み物の持込みルールが異なります。施設と主催者の案内を確認し、ロッカー用の小銭や会員証、乾いた下着も忘れずに。商品は大人用とジュニア用を区別して選びましょう。"
+      }
+    ],
+    "product_count": 7,
+    "edit_url": "https://circle-book.com/columns/16/edit",
+    "id": 16,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "molkky-organizer",
+    "title": "モルック会を開くなら。主催者におすすめの道具5選",
+    "audience": "organizer",
+    "event": "モルック",
+    "event_id": 50,
+    "event_slug": "molkky",
+    "description": "公園でモルック会を開きたい主催者へ。ゲームに使うセットから得点管理まで、最初に比較したい道具5選を紹介します。一組を試してから必要数を増やすと、運搬と保管の負担を見積もれます。",
+    "body_file": "molkky-organizer.html",
+    "cover_file": "images/molkky-organizer.png",
+    "products": [
+      {
+        "key": "molkky",
+        "name": "Tactic モルック正規品セット",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Tactic%20%E3%83%A2%E3%83%AB%E3%83%83%E3%82%AF%20%E6%AD%A3%E8%A6%8F%E5%93%81%20%E3%82%BB%E3%83%83%E3%83%88&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71JRpcNKKEL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07G11S323",
+        "query": "Tactic モルック 正規品 セット",
+        "description": "Tacticのモルック正規品は、通常サイズで練習や交流を始めたい主催者の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07G11S323",
+        "image_example_title": "モルック 日本正規公式品 NEW モデル TACTIC MOLKKY (正規品 公式 OHSサプライ 外遊び 大会 スポーツ 人気)"
+      },
+      {
+        "key": "molkkybag",
+        "name": "キャプテンスタッグ 大型トートバッグ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%AD%E3%83%A3%E3%83%97%E3%83%86%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%83%E3%82%B0%20%E3%83%88%E3%83%BC%E3%83%88%E3%83%90%E3%83%83%E3%82%B0%20%E5%A4%A7%E5%9E%8B&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/91Y9+z6mHaL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07Z92WF1B",
+        "query": "モルック 収納 バッグ 正規品",
+        "description": "徒歩や電車で移動する会なら、セットの入るキャリーバッグが候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07Z92WF1B",
+        "image_example_title": "スポンサー広告 - [キャプテンスタッグ] 【Amazon.co.jp 限定】 大型収納 トートバッグ ビッグバッグ 収納ケース付き ブラック"
+      },
+      {
+        "key": "molkkaari",
+        "name": "モルッカーリ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A2%E3%83%AB%E3%83%83%E3%82%AF%20%E3%83%A2%E3%83%AB%E3%83%83%E3%82%AB%E3%83%BC%E3%83%AA%20%E6%AD%A3%E8%A6%8F%E5%93%81&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61nOTSKg95L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07SX424YT",
+        "query": "モルック モルッカーリ 正規品",
+        "description": "モルッカーリは、投げる位置を示すための道具です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07SX424YT",
+        "image_example_title": "モルック モルッカーリ日本正規公式品 TACTIC MOLKKY 正規品 公式 OHSサプライ 外遊び 大会 スポーツ 人気"
+      },
+      {
+        "key": "scoreboard",
+        "name": "卓上の手動得点板",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%BE%97%E7%82%B9%E6%9D%BF%20%E5%8D%93%E4%B8%8A%20%E6%89%8B%E5%8B%95%20%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51uJiX0gGPL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0H6HJX64X",
+        "query": "得点板 卓上 手動 スポーツ",
+        "description": "スマートフォンの小さな画面をのぞき込まずに得点を共有したいなら、卓上得点板が候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0H6HJX64X",
+        "image_example_title": "Zakka timez 手動フリップ式得点板 スコアボード 4桁表示 0〜99点対応 電源不要 折りたたみ | 体育祭・部活・大会で即スコア管理, 青赤2色で見間違えない得点表示, 折りたたんでバッグに収まるサイズ, 5競技以上に対応する4桁カ..."
+      },
+      {
+        "key": "measure",
+        "name": "巻き取り式メジャー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%B7%BB%E5%B0%BA%20%E3%83%A1%E3%82%B8%E3%83%A3%E3%83%BC%2010m%20%E5%B7%BB%E3%81%8D%E5%8F%96%E3%82%8A&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81HMl3rPIlL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B001UNF3T4",
+        "query": "巻尺 メジャー 10m 巻き取り",
+        "description": "毎回の開始位置を測るなら巻き取り式メジャーが候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B001UNF3T4",
+        "image_example_title": "タジマ(Tajima) シムロン-S 幅13mm 長さ10m 張力20N YNS-10BL ブルー"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "公園でモルック会を開きたい主催者へ。ゲームに使うセットから得点管理まで、最初に比較したい道具5選を紹介します。一組を試してから必要数を増やすと、運搬と保管の負担を見積もれます。"
+      },
+      {
+        "type": "heading",
+        "text": "1. 最初の一組はTacticの正規品セット"
+      },
+      {
+        "type": "paragraph",
+        "text": "Tacticのモルック正規品は、通常サイズで練習や交流を始めたい主催者の候補。ミニ版や類似の木製ゲームと区別し、投げ棒・ピン・ケースなどの内容を確認します。日本モルック協会はTactic製の正規品を使用しているため、将来の大会参加を考える人とも道具を合わせやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 持ち運びが多いなら大型トートバッグ"
+      },
+      {
+        "type": "paragraph",
+        "text": "徒歩や電車で移動する会なら、キャプテンスタッグなどの大型トートバッグが候補。木箱ごと運べる物か、ピンを直接入れる物かで必要な大きさが変わります。持ち手と収納方法を確認し、購入セットにバッグが含まれている場合は重複を避けましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. 投げる位置をそろえるモルッカーリ"
+      },
+      {
+        "type": "paragraph",
+        "text": "モルッカーリは、投げる位置を示すための道具です。毎回同じ条件で順番を回したい会の候補になります。公式セットでも同梱の有無が異なるため、別売りを買う前に内容を確認。設置場所の安全と周囲の通行も主催者が確かめましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 手動得点板で全員から得点を見やすく"
+      },
+      {
+        "type": "paragraph",
+        "text": "スマートフォンの小さな画面をのぞき込まずに得点を共有したいなら、卓上得点板が候補。必要な点数まで表示できるか、チーム数、離れた位置からの見やすさを確認します。風でめくれやすい場合もあるので、屋外での置き方まで考えて選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 巻き取り式メジャーで設置をそろえる"
+      },
+      {
+        "type": "paragraph",
+        "text": "毎回の開始位置を測るなら巻き取り式メジャーが候補です。必要な長さがあること、目盛りの見やすさ、持ち運びやすさを比べます。計測後は足元にひもを残さず収納し、メジャーそのものを境界線として張り続けないようにしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "まず開催場所の利用条件と投げる方向の安全を確認します。セット数は人数だけでなく同時に遊ぶ組数で決め、説明役・得点係を分担すると進行が楽になります。正規品でも構成が違うので、買う前に同梱品を一つずつ照合してください。"
+      }
+    ],
+    "product_count": 5,
+    "edit_url": "https://circle-book.com/columns/17/edit",
+    "id": 17,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "walking-first",
+    "title": "街歩きがもっと身軽になる。散歩サークルの持ち物7選",
+    "audience": "participant",
+    "event": "散策・散歩",
+    "event_id": 37,
+    "event_slug": "go-out",
+    "description": "集合してから長く歩く散歩サークルは、軽さと取り出しやすさが大切。歩きやすい靴から雨への備えまで、街歩きへ持っていきたい7つの候補を紹介します。",
+    "body_file": "walking-first.html",
+    "cover_file": "images/walking-first.png",
+    "products": [
+      {
+        "key": "run_shoes",
+        "name": "ASICS JOLT 5",
+        "description": "ASICS JOLT 5は、運動用の靴を街歩きにも使いたい人の比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+JOLT+5+1011B963&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/619v8HfAZML._AC_UL320_.jpg",
+        "research_source": "https://www.asics.com/jp/ja-jp/jolt-5/p/1011B963-100.html",
+        "verified_asin": "B0DNSHJS28"
+      },
+      {
+        "key": "smallbag",
+        "name": "街歩き用の軽量ショルダーバッグ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B7%E3%83%A7%E3%83%AB%E3%83%80%E3%83%BC%E3%83%90%E3%83%83%E3%82%B0%20%E8%BB%BD%E9%87%8F%20%E8%A1%97%E6%AD%A9%E3%81%8D&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71gAvPohBSL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DC66XG1P",
+        "query": "ショルダーバッグ 軽量 街歩き",
+        "description": "スマートフォンや財布を取り出す回数が多い街歩きには、軽量ショルダーバッグが候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DC66XG1P",
+        "image_example_title": "[キウ] パデットポケッタフルミニバッグ PADDED POCKETFUL MINI BAG 防水 撥水 ユニセックス メンズ レディース 男女兼用 ショルダーバッグ ハンドバッグ 2way キルティング ポケット"
+      },
+      {
+        "key": "cap",
+        "name": "YONEX メッシュキャップ 40107",
+        "description": "YONEXメッシュキャップ40107は、スポーツ用の帽子を街歩きにも使いたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%AD%E3%83%A3%E3%83%83%E3%83%97+40107&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71utiYYNgML._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_40107_1/011",
+        "verified_asin": "B0CBRBQ6M6"
+      },
+      {
+        "key": "umbrella",
+        "name": "軽量の折りたたみ傘",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E6%8A%98%E3%82%8A%E3%81%9F%E3%81%9F%E3%81%BF%E5%82%98%20%E8%BB%BD%E9%87%8F%20%E6%99%B4%E9%9B%A8%E5%85%BC%E7%94%A8&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51aZRzKjrLL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B09XTSCW2W",
+        "query": "折りたたみ傘 軽量 晴雨兼用",
+        "description": "天候の変化に備えるなら、軽量の折りたたみ傘が候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B09XTSCW2W",
+        "image_example_title": "スポンサー広告 - konciwa 日傘 軽量 189g-199g UVカット率 100% 完全遮光 遮熱 反射冷却素材採用 Ultra AIR ワンタッチ自動開閉 | 折りたたみ傘 コンパクト 紫外線遮断 耐風撥水 晴雨兼用 携帯便利 メンズ..."
+      },
+      {
+        "key": "thermos_bottle",
+        "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+        "description": "サーモスFJU-1001は、冷たい飲み物を多めに持ちたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9+FJU-1001+1L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51Z7M1xwckL._AC_UL320_.jpg",
+        "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "Speedo SE62003は、汗や水分を拭くタオルのかさを抑えたい人の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "portable_battery",
+        "name": "Ankerの小型モバイルバッテリー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Anker%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC%20%E5%B0%8F%E5%9E%8B%20USB%20C&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41mOOR0wlUL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0CCJFY2V4",
+        "query": "Anker モバイルバッテリー 小型 USB C",
+        "description": "Ankerの小型モバイルバッテリーは、地図や集合連絡でスマートフォンを使う日の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0CCJFY2V4",
+        "image_example_title": "Anker Nano Power Bank (22.5W, Built-In USB-C Connector) ブラック | モバイルバッテリー 5000mAh 軽量 小型 コンパクト【PowerIQ搭載/USB-C一体型】 iPhone 18..."
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "集合してから長く歩く散歩サークルは、軽さと取り出しやすさが大切。歩きやすい靴から雨への備えまで、街歩きへ持っていきたい7つの候補を紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. 靴は歩く距離より、足への収まりを優先"
+      },
+      {
+        "type": "paragraph",
+        "text": "ASICS JOLT 5は、運動用の靴を街歩きにも使いたい人の比較候補。ランニング向けの製品ですが、散歩では普段の靴との履き比べが役立ちます。いつもの靴下で試し、つま先・かかとの収まりを確認。初参加の日に初めて履くより、短い距離で慣らしておくと安心です。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 軽量ショルダーで必要な物を近くに"
+      },
+      {
+        "type": "paragraph",
+        "text": "スマートフォンや財布を取り出す回数が多い街歩きには、軽量ショルダーバッグが候補。片側だけに荷重がかかるため、荷物が多い人は小型リュックも比較します。ボトルと傘を入れた状態で重さを確かめ、口が閉じる物を選ぶと持ち物を整理しやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. 帽子は風と蒸れも考える"
+      },
+      {
+        "type": "paragraph",
+        "text": "YONEXメッシュキャップ40107は、スポーツ用の帽子を街歩きにも使いたい人の候補。頭囲とつばの形を確認します。帽子だけで暑さや日差しへの備えが完了するわけではないので、日陰での休憩や服装と組み合わせましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 折りたたみ傘は収納時の長さも比較"
+      },
+      {
+        "type": "paragraph",
+        "text": "天候の変化に備えるなら、軽量の折りたたみ傘が候補です。晴雨兼用でも対応の説明は商品ごとに違うので、用途とサイズを確認。狭い歩道では周囲に配慮し、風が強いときは無理に使わず屋内へ移動できる経路を考えましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. ボトルは歩く時間に合わせて選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "サーモスFJU-1001は、冷たい飲み物を多めに持ちたい人の候補。1Lは安心感がある一方、中身を入れると荷物が重くなります。短い街歩きなら手持ちの小型ボトルで足りるか、途中で補給できるかを考えて容量を決めましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 小さなタオルを取り出しやすい場所へ"
+      },
+      {
+        "type": "paragraph",
+        "text": "Speedo SE62003は、汗や水分を拭くタオルのかさを抑えたい人の候補です。綿のハンドタオルとは使用感が異なるので、寸法と素材を比較。濡れた後はバッグの紙類と分けて持ち帰り、洗濯方法に従って手入れします。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. 地図と連絡を使う日は予備電源"
+      },
+      {
+        "type": "paragraph",
+        "text": "Ankerの小型モバイルバッテリーは、地図や集合連絡でスマートフォンを使う日の候補。端子、必要なケーブル、対応機器、容量と重さを確認します。バッテリーがあっても通信圏外は解消しないので、集合場所と解散先の案内は先に保存しておきましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "歩く距離、坂道、雨天時の開催、途中離脱できる場所を案内で確認しましょう。荷物を詰めたら一度背負い、使わない物を減らすのも準備の一つ。新しい物を全部買うより、履き慣れた靴と手持ちのバッグを活かすと参加しやすくなります。"
+      }
+    ],
+    "product_count": 7,
+    "edit_url": "https://circle-book.com/columns/18/edit",
+    "id": 18,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "cooking-first",
+    "title": "料理サークルに初参加。持っていきたい道具5選",
+    "audience": "participant",
+    "event": "料理",
+    "event_id": 48,
+    "event_slug": "cooking",
+    "description": "初めての料理会で迷うのは、包丁よりもエプロンや持ち帰りの準備かもしれません。共用の調理器具がある会を想定し、自分用に用意しやすい持ち物5選を紹介します。",
+    "body_file": "cooking-first.html",
+    "cover_file": "images/cooking-first.png",
+    "products": [
+      {
+        "key": "apron",
+        "name": "洗濯しやすい調理用エプロン",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%A8%E3%83%97%E3%83%AD%E3%83%B3%20%E8%AA%BF%E7%90%86%20%E6%B4%97%E6%BF%AF%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51FxMS3DvFL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0CHV2XHR6",
+        "query": "エプロン 調理 洗濯 大人",
+        "description": "調理用エプロンは、普段着を覆いながら作業したい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0CHV2XHR6",
+        "image_example_title": "[エドウィン] エプロン 二段階調節可能な後ろ腰ボタン 無地 H型 両サイドポケット ブラック LL"
+      },
+      {
+        "key": "kerchief",
+        "name": "調理用三角巾",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E4%B8%89%E8%A7%92%E5%B7%BE%20%E8%AA%BF%E7%90%86%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71LxHlUKzVL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0H6J3ZPCJ",
+        "query": "三角巾 調理 大人",
+        "description": "調理用三角巾は、髪をまとめる指定がある会で用意したい物。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0H6J3ZPCJ",
+        "image_example_title": "スポンサー広告 - [ARASAWA] 三角巾 大人用 ゴム式 後ろゴム 被るだけ 男女兼用 シンプル 無地 洗濯可能 ポリエステル 調理実習 料理 家事 清掃 カフェ キッチン 調理用 女性 男性"
+      },
+      {
+        "key": "cloth",
+        "name": "調理用ふきん",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%81%B5%E3%81%8D%E3%82%93%20%E8%AA%BF%E7%90%86%20%E3%82%AD%E3%83%83%E3%83%81%E3%83%B3%20%E7%B6%BF&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71ewzoM+CnL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0D9Q7MD9S",
+        "query": "ふきん 調理 キッチン 綿",
+        "description": "手拭き、食器拭き、台拭きでは用途が違います。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0D9Q7MD9S",
+        "image_example_title": "スポンサー広告 - 19inch キッチンキッチンキッチンタオル 24枚 綿100％ 格子ふきん 薄手 吸水速乾 絞りやすい 業務用 おしぼり 手拭き 台拭き 4色 | 【約34×34cm / 綿100% / 薄手・絞りやすい / キッチンクロ..."
+      },
+      {
+        "key": "foodbox",
+        "name": "岩崎工業 スクリュートップキーパー 1000ml",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%B2%A9%E5%B4%8E%E5%B7%A5%E6%A5%AD%204%E7%82%B9%E3%83%AD%E3%83%83%E3%82%AF%20%E4%BF%9D%E5%AD%98%E5%AE%B9%E5%99%A8%201L&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61LB7E2wFfL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0HF7RFKZQ",
+        "query": "食品 保存容器 ロック 密閉",
+        "description": "ロック付き保存容器は、持ち帰り可能な料理会での候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0HF7RFKZQ",
+        "image_example_title": "岩崎工業 ラストロウェア スクリュートップ キーパー 深型 1000ml パック ケース 保存容器 密閉容器 キャニスター プロテイン 麦茶 出汁 コーヒー豆 片栗粉 砂糖 洗剤 小麦粉 プラスチック 食洗機 抗菌 耐熱 目盛り B-2275 ..."
+      },
+      {
+        "key": "coolbag",
+        "name": "サーモス ソフトクーラー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9%20%E3%82%BD%E3%83%95%E3%83%88%E3%82%AF%E3%83%BC%E3%83%A9%E3%83%BC%20%E4%BF%9D%E5%86%B7%E3%83%90%E3%83%83%E3%82%B0&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51xsgW51afL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DTY4T1BL",
+        "query": "サーモス ソフトクーラー 保冷バッグ",
+        "description": "サーモスのソフトクーラーは、許可された食品を保冷剤と一緒に運びたい人の比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DTY4T1BL",
+        "image_example_title": "サーモス ソフトクーラー 5L/15L/20L 保冷バッグ 5層断熱構造 折りたためてコンパクト はっ水加工生地 ボックス型 大容量 RFD-0051/0151/0201 オールブラック/グレー/ライトブルー/サンドベージュ"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "初めての料理会で迷うのは、包丁よりもエプロンや持ち帰りの準備かもしれません。共用の調理器具がある会を想定し、自分用に用意しやすい持ち物5選を紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. エプロンは洗いやすさと動きやすさで"
+      },
+      {
+        "type": "paragraph",
+        "text": "調理用エプロンは、普段着を覆いながら作業したい人の候補。首掛け式か肩ひも式か、丈や結び方を比べ、流しで前かがみになっても作業を妨げない物を選びます。洗濯表示を確認し、清潔な状態で袋に分けて持参しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 三角巾は髪が収まる大きさを"
+      },
+      {
+        "type": "paragraph",
+        "text": "調理用三角巾は、髪をまとめる指定がある会で用意したい物。頭囲だけでなく結びやすさと髪の長さを考えます。帽子型など別の形が使える施設もあるため、指定を先に確認し、着け直しが少なく済むサイズを選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. ふきんは使い道を分けて持つ"
+      },
+      {
+        "type": "paragraph",
+        "text": "手拭き、食器拭き、台拭きでは用途が違います。調理用ふきんを選ぶなら、主催者に必要枚数と用途を確認し、色や収納袋で区別すると管理しやすくなります。手持ちの清潔な物を使えるかも聞き、会場の衛生手順に従いましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 保存容器は持ち帰りが許可された日に"
+      },
+      {
+        "type": "paragraph",
+        "text": "岩崎工業のスクリュートップキーパー1000mlは、持ち帰り可能な料理会での候補。汁物への対応、容量、ふたの閉じ方を確認してください。容器があるだけでどの料理も持ち帰れるわけではありません。メニューや移動時間によって不可の場合もあるため、主催者の案内を優先します。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 保冷バッグは容器が入る形で"
+      },
+      {
+        "type": "paragraph",
+        "text": "サーモスのソフトクーラーは、許可された食品を保冷剤と一緒に運びたい人の比較候補。保存容器の底面と高さを測ってから選びます。バッグは冷蔵庫の代わりではないので、持ち帰りの可否や温度管理、帰宅までの時間は会の案内に合わせてください。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "包丁やまな板、食材を自己判断で持ち込む前に、貸出品と持参品を確認しましょう。食物アレルギーや食事上の希望がある場合も、予約時に対応の可否を確認します。保存容器と保冷バッグは、持ち帰りがない会なら買い足す必要はありません。"
+      }
+    ],
+    "product_count": 5,
+    "edit_url": "https://circle-book.com/columns/19/edit",
+    "id": 19,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "bouldering-first",
+    "title": "初めてのボルダリングに。持ち物と便利グッズ5選",
+    "audience": "participant",
+    "event": "ボルダリング",
+    "event_id": 21,
+    "event_slug": "bouldering",
+    "description": "初回のボルダリングは、レンタルを活かして身軽に試すのがおすすめ。動きやすい服からチョークバッグまで、使う場面と購入のタイミングが分かる5つの候補を紹介します。",
+    "body_file": "bouldering-first.html",
+    "cover_file": "images/bouldering-first.png",
+    "products": [
+      {
+        "key": "shirt",
+        "name": "glimmer 00300-ACT ドライTシャツ",
+        "description": "glimmer 00300-ACTは、汗をかく室内の運動着を探す人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=glimmer+00300+ACT+%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71WJkcgKHBL._AC_UL320_.jpg",
+        "research_source": "https://tomsj.com/products/glimmer/"
+      },
+      {
+        "key": "dance_pants",
+        "name": "動きやすいダンス用ロングパンツ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%80%E3%83%B3%E3%82%B9%20%E7%B7%B4%E7%BF%92%20%E3%83%AD%E3%83%B3%E3%82%B0%E3%83%91%E3%83%B3%E3%83%84%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51puOJ4gzCL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DQZYFNJQ",
+        "query": "ダンス 練習 ロングパンツ 大人",
+        "description": "動きやすいロングパンツは、膝を曲げたり足を開いたりする練習着の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DQZYFNJQ",
+        "image_example_title": "[Merrytutu] ジャズパンツ ダンスパンツ ストレッチ 綿混 バレエ 新体操 ダンス チア ジュニア 大人"
+      },
+      {
+        "key": "towel",
+        "name": "Speedo マイクロセームタオル M SE62003",
+        "description": "Speedo SE62003は、汗拭き用の荷物を小さくしたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Speedo+%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BB%E3%83%BC%E3%83%A0%E3%82%BF%E3%82%AA%E3%83%AB+SE62003&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81diqnDS6dL._AC_UL320_.jpg",
+        "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+      },
+      {
+        "key": "chalkbag",
+        "name": "PETZL サカブ チョークバッグ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=PETZL%20%E3%82%B5%E3%82%AB%E3%83%96%20%E3%83%81%E3%83%A7%E3%83%BC%E3%82%AF%E3%83%90%E3%83%83%E3%82%B0&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/710AKAJCFUL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08HQ2L8NH",
+        "query": "PETZL サカブ チョークバッグ",
+        "description": "PETZLサカブは、両手を入れやすい広い開口部の置き型チョークバッグ。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08HQ2L8NH",
+        "image_example_title": "ペツル (PETZL) サカブ S037AA00 [並行輸入品]"
+      },
+      {
+        "key": "brush",
+        "name": "クライミング用ブラシ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9C%E3%83%AB%E3%83%80%E3%83%AA%E3%83%B3%E3%82%B0%20%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%9F%E3%83%B3%E3%82%B0%20%E3%83%96%E3%83%A9%E3%82%B7&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/717xNOokZpS._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08Y76ZGXC",
+        "query": "ボルダリング クライミング ブラシ",
+        "description": "クライミング用ブラシは、ホールドの清掃用具を持ちたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08Y76ZGXC",
+        "image_example_title": "スポンサー広告 - TWO STONES 猪毛 ロッククライミングブラシ 人間工学に基づいたハンドル付き ボルダリングボルダーブラシ 丈夫なクリーニングツール クライミングチョーク クライミングウォールを屋内または屋外で保持 (6色混合) Bo..."
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "初回のボルダリングは、レンタルを活かして身軽に試すのがおすすめ。動きやすい服からチョークバッグまで、使う場面と購入のタイミングが分かる5つの候補を紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. Tシャツは腕を上げて確かめる"
+      },
+      {
+        "type": "paragraph",
+        "text": "glimmer 00300-ACTは、汗をかく室内の運動着を探す人の候補。腕を上げる動きが多いため、肩回りと裾の上がり方を確認します。装飾が少ない服を選び、ファスナーや硬いパーツについてはジムの案内に従いましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. パンツは足を高く上げられる形を"
+      },
+      {
+        "type": "paragraph",
+        "text": "動きやすいロングパンツは、膝を曲げたり足を開いたりする練習着の候補です。裾が長すぎず、足元が見える形かを確認。薄手の練習用パンツを使う場合も、登る動きでつっぱらないか試し、専用のクライミングパンツとも比較しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. タオルは登るエリアと分けて置く"
+      },
+      {
+        "type": "paragraph",
+        "text": "Speedo SE62003は、汗拭き用の荷物を小さくしたい人の候補。使ったら指定の荷物置き場へ戻し、着地マットの上に放置しないようにします。サイズと手触りが合わなければ、普段のスポーツタオルでも十分です。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 続けたくなったら置き型チョークバッグ"
+      },
+      {
+        "type": "paragraph",
+        "text": "PETZLサカブは、両手を入れやすい広い開口部の置き型チョークバッグ。チョークを自分で管理したくなった人の候補です。初回はレンタルやジムの備品を確認し、粉末・液体など使えるチョークの指定を聞いてから組み合わせを決めましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. ブラシは使用許可と毛の種類を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "クライミング用ブラシは、ホールドの清掃用具を持ちたい人の候補。使えるブラシの種類や清掃方法はジムに確認します。登っている人の下へ入ったり、勝手にホールドへ手を加えたりせず、スタッフから使い方を教わってから用意しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "クライミングシューズとチョークは、まずジムのレンタルで試せるか確認しましょう。靴下の要否、爪やアクセサリーの案内も事前に読み、登り方と降り方の説明を受けてから始めます。シューズの購入はサイズ感が分かってからでも遅くありません。"
+      }
+    ],
+    "product_count": 5,
+    "edit_url": "https://circle-book.com/columns/20/edit",
+    "id": 20,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "cycling-first",
+    "title": "初めてのグループライドに。準備しておきたい用品8選",
+    "audience": "participant",
+    "event": "ロードバイク",
+    "event_id": 17,
+    "event_slug": "road-bike",
+    "description": "ロードバイクの仲間と走る日は、距離や立ち寄り先に加えて装備の互換性も大切。ヘルメット、ライト、携帯工具など、グループライド前に確認したい8つの用品を紹介します。",
+    "body_file": "cycling-first.html",
+    "cover_file": "images/cycling-first.png",
+    "products": [
+      {
+        "key": "helmet",
+        "name": "OGK KABUTO RECT",
+        "amazon_url": "https://www.amazon.co.jp/s?k=OGK%20KABUTO%20RECT%20%E3%83%98%E3%83%AB%E3%83%A1%E3%83%83%E3%83%88&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81DSGyXLJnL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07GBXGQ8P",
+        "query": "OGK KABUTO RECT ヘルメット",
+        "description": "OGK KABUTO RECTは、スポーツ自転車用ヘルメットの比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07GBXGQ8P",
+        "image_example_title": "スポンサー広告 - オージーケーカブト(OGK KABUTO) 自転車 ヘルメット RECT(レクト) サイズ:M/L(57-60cm) JCF公認"
+      },
+      {
+        "key": "frontlight",
+        "name": "CATEYE AMPP500",
+        "amazon_url": "https://www.amazon.co.jp/s?k=CATEYE%20AMPP500%20HL%20EL085RC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/91sl2theJ6L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07ZD8ZR51",
+        "query": "CATEYE AMPP500 HL EL085RC",
+        "description": "CATEYE AMPP500は、充電式の前照灯を探す人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07ZD8ZR51",
+        "image_example_title": "キャットアイ(CAT EYE) ヘッドライト AMPP500 アンプ 500ルーメン 自転車"
+      },
+      {
+        "key": "rearlight",
+        "name": "CATEYE 自転車用リアライト",
+        "amazon_url": "https://www.amazon.co.jp/s?k=CATEYE%20%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%83%88%20%E8%87%AA%E8%BB%A2%E8%BB%8A&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/819-ax8+IuL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0092XHIJC",
+        "query": "CATEYE リアライト 自転車",
+        "description": "CATEYEのリアライトは、後方から自分の存在を見つけてもらいやすくしたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0092XHIJC",
+        "image_example_title": "キャットアイ(CAT EYE) 自転車用リアライト テールライト OMNI5 TL-LD155-R 電池式 シートポスト取付可能 セーフティライト"
+      },
+      {
+        "key": "bikepump",
+        "name": "Panaracer 携帯ミニワンタッチポンプ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E8%87%AA%E8%BB%A2%E8%BB%8A%20%E6%90%BA%E5%B8%AF%E3%83%9D%E3%83%B3%E3%83%97%20%E4%BB%8F%E5%BC%8F&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71iM9w6qOIL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07572LPJS",
+        "query": "自転車 携帯ポンプ 仏式",
+        "description": "仏式バルブ対応の携帯ポンプは、対応するロードバイクでの候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07572LPJS",
+        "image_example_title": "スポンサー広告 - パナレーサー(Panaracer) 自転車 空気入れ 携帯ポンプ【仏/米式バルブ対応】アルミ製 ミニワンタッチポンプ 軽量"
+      },
+      {
+        "key": "tube",
+        "name": "Panaracer 仏式チューブ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%91%E3%83%8A%E3%83%AC%E3%83%BC%E3%82%B5%E3%83%BC%20%E3%83%81%E3%83%A5%E3%83%BC%E3%83%96%20700%20%E4%BB%8F%E5%BC%8F&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71AaQ2uuBVL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B000AQYT56",
+        "query": "ロードバイク チューブ 仏式 700c",
+        "description": "交換用チューブは、タイヤ径・幅・バルブ長が合う物を選びます。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B000AQYT56",
+        "image_example_title": "スポンサー広告 - パナレーサー(Panaracer) チューブ【W/O 700C×18~23/23~26/27~31/31~34/35~40/40~45】(27インチ×1-1/8・1-1/4・1-3/8~1-1/2) 仏式33mm/48mm/..."
+      },
+      {
+        "key": "biketool",
+        "name": "TOPEAK Mini 9",
+        "amazon_url": "https://www.amazon.co.jp/s?k=TOPEAK%20%E3%83%9F%E3%83%8B%209&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61YroKA+2jL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B000FIE49A",
+        "query": "自転車 携帯 工具 マルチツール",
+        "description": "自転車用マルチツールは、必要な六角レンチなどをまとめたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B000FIE49A",
+        "image_example_title": "TOPEAK(トピーク) Mini 9"
+      },
+      {
+        "key": "bikegloves",
+        "name": "サイクリング用グローブ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%82%A4%E3%82%AF%E3%83%AA%E3%83%B3%E3%82%B0%20%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/716RuLxp5gL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07BGWW577",
+        "query": "サイクリング グローブ",
+        "description": "サイクリング用グローブは、ハンドルを握る手に合わせた用品の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07BGWW577",
+        "image_example_title": "スポンサー広告 - [自転車選手監修]RIVBOS サイクルグローブ サイクリング 自転車 ロードバイク 手袋 指切り gel入り 耐磨耗性 伸縮性 通気性 男女兼用 夏 | 減震 マメ防止 3D 立体 着脱便利 人間工学 保護性 トレーニング..."
+      },
+      {
+        "key": "bikebottle",
+        "name": "ELITE FLY TEX ボトル",
+        "amazon_url": "https://www.amazon.co.jp/s?k=ELITE%20FLY%20%E3%83%9C%E3%83%88%E3%83%AB&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/615i7kefvSL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0BLZHR195",
+        "query": "自転車 サイクルボトル ケージ",
+        "description": "サイクルボトルは、車体のボトルケージへ収めて運びたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0BLZHR195",
+        "image_example_title": "ELITE(エリート) FLY TEX ボトル 550ml グレー"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "ロードバイクの仲間と走る日は、距離や立ち寄り先に加えて装備の互換性も大切。ヘルメット、ライト、携帯工具など、グループライド前に確認したい8つの用品を紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. ヘルメットは頭囲と形を試着で確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "OGK KABUTO RECTは、スポーツ自転車用ヘルメットの比較候補。調整できるからといって、どんな頭の形にも合うわけではありません。サイズ表を確認して試着し、あごひもと後頭部の調整方法を覚えましょう。自転車用であり、雪山用とは使い分けます。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 前照灯は明るさだけでなく点灯時間も"
+      },
+      {
+        "type": "paragraph",
+        "text": "CATEYE AMPP500は、充電式の前照灯を探す人の候補。明るさの最大値だけで選ばず、使うモードでの点灯時間、取付径、充電端子を確認します。夜間の路面を照らす場面では点灯で使用し、対向者へ光が向きすぎない角度に調整しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. リアライトは後方へ知らせるために"
+      },
+      {
+        "type": "paragraph",
+        "text": "CATEYEのリアライトは、後方から自分の存在を見つけてもらいやすくしたい人の候補。サドルバッグで隠れない取付位置と固定方法、電源、点灯時間を確認します。前照灯とは役割が違うので、片方だけで準備を済ませないようにしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 携帯ポンプはバルブと必要圧に対応する物を"
+      },
+      {
+        "type": "paragraph",
+        "text": "仏式バルブ対応の携帯ポンプは、対応するロードバイクでの候補。バルブの形、長さ、タイヤに必要な空気圧への対応を確認します。小さいほど楽とは限らず、出先で使えるかが大切。初めて使う物は出発前に自宅で操作を練習しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 予備チューブは車輪の表示を写して選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "交換用チューブは、タイヤ径・幅・バルブ長が合う物を選びます。700Cという表示だけでは足りません。チューブレスなど構造が違う場合もあるので、自分の車体の仕様と必要な応急用品をショップへ確認し、交換手順も教わりましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 工具は自分の車体に使える物を"
+      },
+      {
+        "type": "paragraph",
+        "text": "自転車用マルチツールは、必要な六角レンチなどをまとめたい人の候補。使わない工具の数より、車体のねじ規格に合うかを優先します。タイヤレバーが別途必要な場合もあります。締付け指定のある部品は感覚で締めず、分からない作業はショップへ相談しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. グローブは握った状態で合わせる"
+      },
+      {
+        "type": "paragraph",
+        "text": "サイクリング用グローブは、ハンドルを握る手に合わせた用品の候補です。手のひらの幅、縫い目、指先やブレーキ操作のしやすさを確認。厚いパッドが必ず合うわけではないため、長時間使う前に短い距離で試しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "8. ボトルはケージとの相性で選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "サイクルボトルは、車体のボトルケージへ収めて運びたい人の候補。直径と高さ、フレームから抜き差しできる余裕を確認します。走行中の出し入れに慣れていない場合は、止まれる場所で飲む計画にし、補給場所も主催者の案内で確認しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:8]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "集合前に走行距離、速度、補給地点、雨天時の扱いを確認し、車体は必要な点検を受けましょう。この8点は装備の候補で、すべてのルートに十分な装備を保証する物ではありません。初参加では無理のないルートを選び、道具の使い方も出発前に確認してください。"
+      }
+    ],
+    "product_count": 8,
+    "edit_url": "https://circle-book.com/columns/21/edit",
+    "id": 21,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "snow-first",
+    "title": "初めての雪山、レンタル以外に何が必要？小物7選",
+    "audience": "participant",
+    "event": "スノーボード",
+    "event_id": 20,
+    "event_slug": "snow-board",
+    "description": "板やブーツを借りる日も、肌に触れる小物は別途必要なことがあります。スキー・スノーボードの初参加に向け、ゴーグルや手袋など自分用に検討したい7つを紹介します。",
+    "body_file": "snow-first.html",
+    "cover_file": "images/snow-first.png",
+    "products": [
+      {
+        "key": "snowgoggles",
+        "name": "雪山用のダブルレンズゴーグル",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%82%AD%E3%83%BC%20%E3%82%B4%E3%83%BC%E3%82%B0%E3%83%AB%20%E3%83%80%E3%83%96%E3%83%AB%E3%83%AC%E3%83%B3%E3%82%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71rqdWKZNwL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0GF2HFYXF",
+        "query": "スキー スノーボード ゴーグル ダブルレンズ",
+        "description": "雪山用ダブルレンズゴーグルは、雪や風のある場所で目元を覆いたい人の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0GF2HFYXF",
+        "image_example_title": "ASOWTREND ダブルレンズ スキーゴーグル"
+      },
+      {
+        "key": "snowgloves",
+        "name": "防水仕様のスノーグローブ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=Atercel%20%E3%82%B9%E3%82%AD%E3%83%BC%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96%20%E9%98%B2%E6%B0%B4&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71p6APr5ZsL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08QCP1X9X",
+        "query": "スキー スノーボード グローブ 防水",
+        "description": "スノーグローブは、雪に触れる場面を想定した手袋の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08QCP1X9X",
+        "image_example_title": "Atercel スキーグローブ 防水 5本指"
+      },
+      {
+        "key": "snowsocks",
+        "name": "スキー・スノーボード用ロングソックス",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%82%AD%E3%83%BC%20%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%20%E3%82%BD%E3%83%83%E3%82%AF%E3%82%B9%20%E3%83%AD%E3%83%B3%E3%82%B0&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81apcrItKkL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0FB2RPPXD",
+        "query": "スキー スノーボード ソックス ロング",
+        "description": "雪山用ロングソックスは、ブーツ内での丈と厚さをそろえたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0FB2RPPXD",
+        "image_example_title": "スポンサー広告 - [テスラ] スノーボード スキー 靴下 2足組 [抗菌防臭・吸汗速乾・保温] 秋 冬用 スキーソックス コンプレッション アウトドア スポーツ 厚手 ソックス 男女兼用"
+      },
+      {
+        "key": "baselayer",
+        "name": "ミズノ ブレスサーモ アンダーウェア",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%BA%E3%83%8E%20%E3%83%96%E3%83%AC%E3%82%B9%E3%82%B5%E3%83%BC%E3%83%A2%20%E3%82%A2%E3%83%B3%E3%83%80%E3%83%BC%E3%82%A6%E3%82%A7%E3%82%A2%20%E3%82%B9%E3%82%AD%E3%83%BC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51UI-xkzSHL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0BQTQJ6K6",
+        "query": "スキー ベースレイヤー 吸汗速乾",
+        "description": "吸汗速乾をうたうベースレイヤーは、ウェアの下に着る物の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0BQTQJ6K6",
+        "image_example_title": "MIZUNO(ミズノ) 発熱素材インナーブレスサーモアンダーウェア 厚手 for Active クルーネック長袖シャツメンズ"
+      },
+      {
+        "key": "neckwarmer",
+        "name": "フリースのネックウォーマー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=fuinloth%20%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%20%E3%83%8D%E3%83%83%E3%82%AF%E3%82%A6%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%BC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/618c6B3p89L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0FWJWBMFV",
+        "query": "ネックウォーマー スキー スノーボード",
+        "description": "首元を覆いたいなら薄手のネックウォーマーが候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0FWJWBMFV",
+        "image_example_title": "fuinloth フリース ネックウォーマー"
+      },
+      {
+        "key": "beanie",
+        "name": "耳まで覆えるニット帽",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%82%AD%E3%83%BC%20%E3%83%8B%E3%83%83%E3%83%88%E5%B8%BD%20%E5%A4%A7%E4%BA%BA&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61bVDTAWTNL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0HMLF6TTJ",
+        "query": "スキー ニット帽 大人",
+        "description": "耳まで覆えるニット帽は、ロッジ周辺や移動中の防寒小物の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0HMLF6TTJ",
+        "image_example_title": "スポンサー広告 - ニット帽 レディース メンズ 冬 防寒[極厚の毛糸で断熱・伸縮性・抗菌防臭] ニット帽子 大きサイズ 帽子 スノボ スキー ニットキャップ | 高密度アクリルニット編み 断熱保温 肌に優しい 厚手 暖かい 小顔効果 肌に優し..."
+      },
+      {
+        "key": "wetbag",
+        "name": "スイム用防水ポーチ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%82%A4%E3%83%9F%E3%83%B3%E3%82%B0%20%E9%98%B2%E6%B0%B4%20%E3%83%9D%E3%83%BC%E3%83%81%20%E6%BF%A1%E3%82%8C%E3%81%9F%20%E6%B0%B4%E7%9D%80&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71+Si5mkTNL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0FQ925SR4",
+        "query": "スイミング 防水 ポーチ 濡れた 水着",
+        "description": "防水ポーチは、使用後のグローブやインナーを乾いた衣類と分けたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0FQ925SR4",
+        "image_example_title": "スポンサー広告 - ミズカラット 防水ポーチ 巾着 水着入れ 濡れたもの ウェットバッグ 着替え入れ 洗濯袋 おむつポーチ 保育園 旅行 ジム ヨガ プール 海 (ブラック)"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "板やブーツを借りる日も、肌に触れる小物は別途必要なことがあります。スキー・スノーボードの初参加に向け、ゴーグルや手袋など自分用に検討したい7つを紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. ゴーグルはヘルメットと一緒に合わせる"
+      },
+      {
+        "type": "paragraph",
+        "text": "雪山用ダブルレンズゴーグルは、雪や風のある場所で目元を覆いたい人の候補です。曇りにくさは条件でも変わるため、レンズの説明と換気構造を確認。眼鏡使用の可否、ヘルメットとの隙間、天候に合うレンズもチェックしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. グローブは防水の説明とサイズを確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "スノーグローブは、雪に触れる場面を想定した手袋の候補。一般の防寒手袋とは用途が異なります。指を曲げたときの余裕、袖との重なり、インナーの有無を確認。防水仕様でも開口部から雪が入ることがあるので、着け方も合わせて覚えましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. ソックスはブーツの中で重ならない物を"
+      },
+      {
+        "type": "paragraph",
+        "text": "雪山用ロングソックスは、ブーツ内での丈と厚さをそろえたい人の候補。短い靴下や何枚もの重ね履きで調整する前に、レンタルブーツと合わせて確認します。洗い替えを用意する場合も、同じ厚さでそろえるとサイズ感を確かめやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. ベースレイヤーは汗と着替えを考える"
+      },
+      {
+        "type": "paragraph",
+        "text": "ミズノのブレスサーモアンダーウェアは、ウェアの下に着る物の候補です。素材、肌当たり、伸び、乾かし方を確認。厚さだけで暖かさを決めず、活動量と天候に応じて重ね着します。汗をかいた後の着替えも別に用意しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 首元にはフリースのネックウォーマー"
+      },
+      {
+        "type": "paragraph",
+        "text": "首元を覆いたいならフリースのネックウォーマーが候補。口元まで上げたときの呼吸のしやすさや、濡れたときの扱いを確認します。ゴーグルやあごひもに干渉しないかを合わせ、ひもや長い端が垂れない形を選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. ニット帽は休憩と移動で使い分ける"
+      },
+      {
+        "type": "paragraph",
+        "text": "耳まで覆えるニット帽は、ロッジ周辺や移動中の防寒小物の候補。ヘルメットの下へ厚い帽子を入れるとフィットが変わる場合があるため、併用可否を確認します。ニット帽はヘルメットの代わりにはならず、滑走時の装備は施設と主催者の案内に従いましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. 濡れた小物を分けるポーチ"
+      },
+      {
+        "type": "paragraph",
+        "text": "防水ポーチは、使用後のグローブやインナーを乾いた衣類と分けたい人の候補。厚手の小物が入る容量と閉じ方を確認します。濡れたまま密閉して長く保管せず、帰宅後は取り出し、それぞれの洗濯・乾燥表示に従って手入れしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "レンタルに含まれる物は施設やプランで違います。板・ブーツ・ウェアだけでなくヘルメットと小物の有無も確認しましょう。この記事は主にゲレンデでの初参加を想定しており、山域外やバックカントリー用の装備案内ではありません。"
+      }
+    ],
+    "product_count": 7,
+    "edit_url": "https://circle-book.com/columns/22/edit",
+    "id": 22,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "camping-first",
+    "title": "グループキャンプに初参加。自分用に持っていきたい道具7選",
+    "audience": "participant",
+    "event": "キャンプ",
+    "event_id": 39,
+    "event_slug": "camping",
+    "description": "テントや調理器具をみんなで使うキャンプでも、ライトや寝具は自分用があると準備しやすくなります。共用装備と重複しにくい持ち物7選を、購入前の確認点と一緒に紹介します。",
+    "body_file": "camping-first.html",
+    "cover_file": "images/camping-first.png",
+    "products": [
+      {
+        "key": "headlamp",
+        "name": "GENTOS CP-131D ヘッドライト",
+        "description": "GENTOS CP-131Dは、夜の移動や荷物整理に使うヘッドライトの候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=GENTOS+CP-131D&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51ybOFKhagL._AC_UL320_.jpg",
+        "research_source": "https://www.gentos.jp/products/series/compact_headlight/cp-131d/"
+      },
+      {
+        "key": "campplate",
+        "name": "サーモス 真空断熱ステンレス深型プレート ROT-002",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%AD%E3%83%A3%E3%83%B3%E3%83%97%20%E6%B7%B1%E7%9A%BF%20%E9%A3%9F%E5%99%A8%20%E5%89%B2%E3%82%8C%E3%81%AB%E3%81%8F%E3%81%84&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/617zabG4iZL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07NG48WHG",
+        "query": "キャンプ 深皿 食器 割れにくい",
+        "description": "キャンプ用の深皿は、カレーや汁気のある料理を取り分けたい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07NG48WHG",
+        "image_example_title": "サーモス アウトドアシリーズ 皿 真空断熱ステンレス深型プレート 21cm ROT-002 S"
+      },
+      {
+        "key": "campmug",
+        "name": "スノーピーク チタンシングルマグ300",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%94%E3%83%BC%E3%82%AF%20%E3%83%81%E3%82%BF%E3%83%B3%E3%82%B7%E3%83%B3%E3%82%B0%E3%83%AB%E3%83%9E%E3%82%B0%20300%20MG142&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61WQwXDHPyL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B06XWVHZ8V",
+        "query": "スノーピーク チタンシングルマグ 300 MG142",
+        "description": "スノーピークのチタンシングルマグ300は、持ち運びやすい金属マグを探す人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B06XWVHZ8V",
+        "image_example_title": "スノーピーク(snow peak) チタンシングルマグ 300 マグカップ 日本製 超軽量 保温保冷 キャンプ 登山 アウトドア 防災 | 220ml/300ml/450ml 食器 キャンプ 登山 アウトドア 防災 MG-142"
+      },
+      {
+        "key": "campchair",
+        "name": "Coleman リゾートチェア",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B3%E3%83%BC%E3%83%AB%E3%83%9E%E3%83%B3%20%E6%8A%98%E3%82%8A%E3%81%9F%E3%81%9F%E3%81%BF%20%E3%83%81%E3%82%A7%E3%82%A2&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/917yyyyj3wL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0BJKJMVBG",
+        "query": "コールマン 折りたたみ チェア",
+        "description": "折りたたみチェアは、食事や休憩で自分の席を確保したい人の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0BJKJMVBG",
+        "image_example_title": "Coleman(コールマン) チェア リゾートチェア カップホルダー付き アウトドアチェアー キャンプ 釣り コンパクト カップホルダー付き 収納ケース付き 運動会 ガーデン"
+      },
+      {
+        "key": "sleepingbag",
+        "name": "Coleman パフォーマーIII",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B3%E3%83%BC%E3%83%AB%E3%83%9E%E3%83%B3%20%E5%AF%9D%E8%A2%8B%20%E5%B0%81%E7%AD%92%E5%9E%8B&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71UpaNpwWoL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B07HRQMV4M",
+        "query": "コールマン 寝袋 封筒型",
+        "description": "封筒型寝袋は、広さや開閉のしやすさを重視する人の候補です。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B07HRQMV4M",
+        "image_example_title": "コールマン(Coleman) 寝袋 パフォーマーIII C5/10/15 快適温度5度/10度/15度 ウォッシャブル 洗濯可 封筒型 連結可能"
+      },
+      {
+        "key": "sleepmat",
+        "name": "キャンプ用スリーピングマット",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%AD%E3%83%A3%E3%83%B3%E3%83%97%20%E3%82%B9%E3%83%AA%E3%83%BC%E3%83%94%E3%83%B3%E3%82%B0%E3%83%9E%E3%83%83%E3%83%88%20%E3%82%A4%E3%83%B3%E3%83%95%E3%83%AC%E3%83%BC%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41mMDfF1qGL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08WPRC6Y1",
+        "query": "キャンプ スリーピングマット インフレーターマット",
+        "description": "スリーピングマットは、地面と寝袋の間に使う用品。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08WPRC6Y1",
+        "image_example_title": "WAQ キャンプマット 車中泊マット 厚手 8cm コンパクト R値 6.5 特殊ウレタン 軽量 インフレーターマット (ブラック)"
+      },
+      {
+        "key": "coolbag",
+        "name": "サーモス ソフトクーラー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%BC%E3%83%A2%E3%82%B9%20%E3%82%BD%E3%83%95%E3%83%88%E3%82%AF%E3%83%BC%E3%83%A9%E3%83%BC%20%E4%BF%9D%E5%86%B7%E3%83%90%E3%83%83%E3%82%B0&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51xsgW51afL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0DTY4T1BL",
+        "query": "サーモス ソフトクーラー 保冷バッグ",
+        "description": "サーモスのソフトクーラーは、飲み物や指定された食品を保冷剤と一緒に運ぶ候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0DTY4T1BL",
+        "image_example_title": "サーモス ソフトクーラー 5L/15L/20L 保冷バッグ 5層断熱構造 折りたためてコンパクト はっ水加工生地 ボックス型 大容量 RFD-0051/0151/0201 オールブラック/グレー/ライトブルー/サンドベージュ"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "テントや調理器具をみんなで使うキャンプでも、ライトや寝具は自分用があると準備しやすくなります。共用装備と重複しにくい持ち物7選を、購入前の確認点と一緒に紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. 両手を空けたい夜にはヘッドライト"
+      },
+      {
+        "type": "paragraph",
+        "text": "GENTOS CP-131Dは、夜の移動や荷物整理に使うヘッドライトの候補。明るさ、点灯時間、電池、重さを確認します。大きなランタン一台では各自の移動を照らせないため、手元用の明かりを個人で持つ理由があります。予備電池や夜間の通路も確認しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 食器は深さと重ねやすさで選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "キャンプ用の深皿は、カレーや汁気のある料理を取り分けたい人の候補。メニューに合う容量、洗い方、熱い物への対応を確認します。人数分の共用食器がある会なら持参が不要な場合もあるので、献立と一緒に聞いておきましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. 軽いマグで飲み物を自分用に"
+      },
+      {
+        "type": "paragraph",
+        "text": "スノーピークのチタンシングルマグ300は、持ち運びやすい金属マグを探す人の候補。シングルウォールは飲み物の熱が伝わりやすいため、熱い飲料では本体や口元に注意します。保温性を重視する人は別構造のマグも比較しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. チェアは座り心地と車への積み方で"
+      },
+      {
+        "type": "paragraph",
+        "text": "折りたたみチェアは、食事や休憩で自分の席を確保したい人の候補。コールマンなどの製品を比較するときは、座面高、耐荷重、収納寸法を確認。軽量さだけでなく、テーブルの高さや車に積める長さも考えると選びやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 寝袋は最低気温に合う条件で選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "封筒型寝袋は、広さや開閉のしやすさを重視する人の候補です。製品の使用温度表示の意味を確認し、季節だけで判断せず開催地の夜の気温に合わせます。個人差もあるため、冷え込む場所では主催者や販売店へ必要な組み合わせを相談しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 寝袋の下にはマットも確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "スリーピングマットは、地面と寝袋の間に使う用品。厚さだけでなく断熱性の表示、長さ、幅、収納サイズを比較します。インフレーター式なら膨らませ方と収納方法も確認。寝袋を買ったら終わりにせず、寝床を一式で考えるのがポイントです。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "7. 自分の飲み物を運ぶ保冷バッグ"
+      },
+      {
+        "type": "paragraph",
+        "text": "サーモスのソフトクーラーは、飲み物や指定された食品を保冷剤と一緒に運ぶ候補。共用のクーラーボックスに入れるのか、個人で持つのかを確認します。容量が大きいほど運ぶ物も増えるので、必要な分だけ入る大きさを選びましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:7]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "テント、寝具、食器、チェアの貸出品を主催者へ確認し、個人装備を決めます。気温・雨への備えや常備薬などは別に確認してください。初回から全部買わず、寝具やチェアのレンタルで使い勝手を試す方法もあります。"
+      }
+    ],
+    "product_count": 7,
+    "edit_url": "https://circle-book.com/columns/23/edit",
+    "id": 23,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "badminton-organizer",
+    "title": "バドミントン会を開くなら。主催者におすすめの備品6選",
+    "audience": "organizer",
+    "event": "バドミントン",
+    "event_id": 5,
+    "event_slug": "badminton",
+    "description": "シャトルを何本用意するか、得点や交代を誰が管理するか。バドミントン会の主催者が比較したい備品6選を、消耗品・進行用品・貸出用に分けて紹介します。",
+    "body_file": "badminton-organizer.html",
+    "cover_file": "images/badminton-organizer.png",
+    "products": [
+      {
+        "key": "shuttle",
+        "name": "YONEX エアロセンサ500 AS-500",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%A8%E3%83%8D%E3%83%83%E3%82%AF%E3%82%B9%20%E3%82%A8%E3%82%A2%E3%83%AD%E3%82%BB%E3%83%B3%E3%82%B5500%20AS500&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/415umcCXz8L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B085Y147H7",
+        "query": "ヨネックス エアロセンサ500 AS500",
+        "description": "YONEXエアロセンサ500は、水鳥羽根の練習球を検討する会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B085Y147H7",
+        "image_example_title": "YONEX(ヨネックス)バドミントン シャトル エアロセンサ500 1ダース 1(適正範囲温度33℃以上) AS500"
+      },
+      {
+        "key": "bad_grip",
+        "name": "ヨネックス ウェットスーパーグリップ AC102（3本入）",
+        "description": "貸出ラケットのグリップを交換したい主催者に。3本入り。巻き替え方法と厚さ、必要本数を確認してください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+AC102+3%E6%9C%AC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61RepBTwl5L._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_AC102_1/510"
+      },
+      {
+        "key": "scoreboard",
+        "name": "卓上の手動得点板",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%BE%97%E7%82%B9%E6%9D%BF%20%E5%8D%93%E4%B8%8A%20%E6%89%8B%E5%8B%95%20%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51uJiX0gGPL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0H6HJX64X",
+        "query": "得点板 卓上 手動 スポーツ",
+        "description": "手動得点板は、得点を声だけで共有しにくい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0H6HJX64X",
+        "image_example_title": "Zakka timez 手動フリップ式得点板 スコアボード 4桁表示 0〜99点対応 電源不要 折りたたみ | 体育祭・部活・大会で即スコア管理, 青赤2色で見間違えない得点表示, 折りたたんでバッグに収まるサイズ, 5競技以上に対応する4桁カ..."
+      },
+      {
+        "key": "timer",
+        "name": "タニタ でか見えタイマー TD-384",
+        "description": "タニタTD-384は、練習や交代を区切る補助用タイマーの候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%BF%E3%83%8B%E3%82%BF+%E3%81%A7%E3%81%8B%E8%A6%8B%E3%81%88%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC+TD-384&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61soGK3BVvL._AC_UL320_.jpg",
+        "research_source": "https://www.tanita.co.jp/product/timer/3653/"
+      },
+      {
+        "key": "storagebox",
+        "name": "ふた付きの備品収納ボックス",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%A2%E3%82%A4%E3%83%AA%E3%82%B9%E3%82%AA%E3%83%BC%E3%83%A4%E3%83%9E%20%E5%8F%8E%E7%B4%8D%20%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%20%E8%93%8B%E4%BB%98%E3%81%8D&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41QOPHektSL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B00919M5TA",
+        "query": "アイリスオーヤマ 収納 ボックス 蓋付き",
+        "description": "ふた付き収納ボックスは、シャトル筒や小物をまとめたい主催者の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B00919M5TA",
+        "image_example_title": "アイリスオーヤマ 収納ボックス 衣装ケース ふた付き 丈夫 頑丈 大型 キャリー 幅39×奥行74×高さ35cm ネイビー クリア"
+      },
+      {
+        "key": "bad_racket",
+        "name": "ヨネックス マッスルパワー9LT MP9LTG",
+        "description": "YONEXマッスルパワー9LT MP9LTGは、張り上げ済みの貸出候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+MP9LTG+%E5%BC%B5%E3%82%8A%E4%B8%8A%E3%81%92&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51gZxxhaMSL._AC_UL320_.jpg",
+        "research_source": "https://yonexshop.jp/item/detail/1_1_MP9LTG_1/"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "シャトルを何本用意するか、得点や交代を誰が管理するか。バドミントン会の主催者が比較したい備品6選を、消耗品・進行用品・貸出用に分けて紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. シャトルは温度表示番号までそろえる"
+      },
+      {
+        "type": "paragraph",
+        "text": "YONEXエアロセンサ500は、水鳥羽根の練習球を検討する会の候補。屋内の温度に対応した表示番号をメーカー表で確認します。箱数だけで注文せず、初回の使用量を記録して次回の必要数を調整すると、買い過ぎと不足を見直しやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 交換用グリップで貸出ラケットを手入れ"
+      },
+      {
+        "type": "paragraph",
+        "text": "YONEXウェットスーパーグリップAC102は、貸出ラケットの握る部分を交換したい主催者の候補。使い古したグリップをそのまま回さず、状態を確認して交換します。3本入りでも全本数を一度に替える必要はなく、必要な色と厚さ、巻き方を確かめて補充しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. 得点板はコートごとの見やすさで"
+      },
+      {
+        "type": "paragraph",
+        "text": "手動得点板は、得点を声だけで共有しにくい会の候補。表示できる桁数とゲーム数、コートの外から見える大きさを確認します。会場に備品がある場合は借りられる数を確認してから、同時使用コート数に合わせて買い足します。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 交代時間はタイマーを一台分担"
+      },
+      {
+        "type": "paragraph",
+        "text": "タニタTD-384は、練習や交代を区切る補助用タイマーの候補。公式の競技用設備ではなく、進行担当が手元で使う物として考えます。見やすさ、音の扱い、設定時間、電源を確認し、体育館の利用ルールに合う場所へ置きましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 収納箱は使える球と使用済みを分ける"
+      },
+      {
+        "type": "paragraph",
+        "text": "ふた付き収納ボックスは、シャトル筒や小物をまとめたい主催者の候補。筒の長さに合う内寸と、持ち運ぶ重さを確認します。使える球・基礎打ち用・廃棄する物をラベルで分け、湿った物を密閉したままにしないよう手入れしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 貸出ラケットは本数と返却方法を決める"
+      },
+      {
+        "type": "paragraph",
+        "text": "YONEXマッスルパワー9LT MP9LTGは、張り上げ済みの貸出候補。初心者全員が同じ使い心地を好むわけではないので、まず少数で試します。貸出番号を付け、破損やグリップの状態を毎回確認。持参できる人数を受付時に聞くと必要本数を見積もれます。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "ネットや支柱を会場で借りられるか、設営と片付けの時間を最初に確認します。消耗品費は開催ごとに記録し、貸出用具の返却場所を決めましょう。購入候補は検索結果なので、シャトルの表示番号・入数やラケットの張り上げ有無を必ず確認してください。"
+      }
+    ],
+    "product_count": 6,
+    "edit_url": "https://circle-book.com/columns/24/edit",
+    "id": 24,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "volleyball-organizer",
+    "title": "バレーサークルの運営に。そろえておきたい備品6選",
+    "audience": "organizer",
+    "event": "バレーボール",
+    "event_id": 4,
+    "event_slug": "volleyball",
+    "description": "バレーの開催準備は、ボールだけでなく空気圧管理と運搬まで考えるとスムーズです。主催者におすすめの備品6選と、会場の貸出品を活かす選び方を紹介します。",
+    "body_file": "volleyball-organizer.html",
+    "cover_file": "images/volleyball-organizer.png",
+    "products": [
+      {
+        "key": "volley_ball",
+        "name": "ミカサ V300W 5号検定球",
+        "description": "ミカサV300Wは、5号球を使う会での比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=MIKASA+V300W&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61STrTHHI-L._AC_UL320_.jpg",
+        "research_source": "https://mikasasports.co.jp/sports/v300w/"
+      },
+      {
+        "key": "pump",
+        "name": "molten エアポンプ AP50",
+        "description": "molten AP50は、ボールに空気を入れるポンプの候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%A8%E3%82%A2%E3%83%9D%E3%83%B3%E3%83%97+AP50&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61GFT67xjsL._AC_UL320_.jpg",
+        "research_source": "https://shop.moltensports.jp/pages/air-pomp"
+      },
+      {
+        "key": "gauge",
+        "name": "molten ボール専用圧力計 PGA10",
+        "description": "molten PGA10は、ボールの内圧を測りたい主催者の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%83%9C%E3%83%BC%E3%83%AB%E5%B0%82%E7%94%A8%E5%9C%A7%E5%8A%9B%E8%A8%88+PGA10&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71h7O+8gjuL._AC_UL320_.jpg",
+        "research_source": "https://shop.moltensports.jp/products/pga10"
+      },
+      {
+        "key": "volleybag",
+        "name": "バレーボール用ボールバッグ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%9F%E3%82%AB%E3%82%B5%20%E3%83%90%E3%83%AC%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%AB%20%E3%83%90%E3%83%83%E3%82%B0%203%E5%80%8B&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81wC6qvERwL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B084S53M1D",
+        "query": "ミカサ バレーボール バッグ 3個",
+        "description": "ミカサなどのバレーボール用バッグは、複数球をまとめたい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B084S53M1D",
+        "image_example_title": "ミカサ(MIKASA) ボールバッグ バレーボール/サッカーボール 1・2・4・6個用 ブラック ホワイト AC-BGM"
+      },
+      {
+        "key": "scoreboard",
+        "name": "卓上の手動得点板",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%BE%97%E7%82%B9%E6%9D%BF%20%E5%8D%93%E4%B8%8A%20%E6%89%8B%E5%8B%95%20%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51uJiX0gGPL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0H6HJX64X",
+        "query": "得点板 卓上 手動 スポーツ",
+        "description": "手動得点板は、離れた参加者へ得点を共有するための候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0H6HJX64X",
+        "image_example_title": "Zakka timez 手動フリップ式得点板 スコアボード 4桁表示 0〜99点対応 電源不要 折りたたみ | 体育祭・部活・大会で即スコア管理, 青赤2色で見間違えない得点表示, 折りたたんでバッグに収まるサイズ, 5競技以上に対応する4桁カ..."
+      },
+      {
+        "key": "volleywhistle",
+        "name": "バレーボール用ホイッスル",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten%20%E3%83%90%E3%83%AC%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%AB%20%E3%83%9B%E3%82%A4%E3%83%83%E3%82%B9%E3%83%AB&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61TLkgtPvXL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0B322WNJ5",
+        "query": "molten バレーボール ホイッスル",
+        "description": "バレーボール用ホイッスルは、開始や区切りを知らせる担当が使う候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0B322WNJ5",
+        "image_example_title": "スポンサー広告 - モルテン(molten) ホイッスル バレーボール高音用 トリノネH 赤 RA1060-TB"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "バレーの開催準備は、ボールだけでなく空気圧管理と運搬まで考えるとスムーズです。主催者におすすめの備品6選と、会場の貸出品を活かす選び方を紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. ボールは参加対象に合う規格で"
+      },
+      {
+        "type": "paragraph",
+        "text": "ミカサV300Wは、5号球を使う会での比較候補。小学生向けやソフトバレー用とは異なるので、開催内容を先に決めます。チームごとの練習とゲームを同時にするかで必要数も変わるため、人数だけで一律に買わないようにしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 空気入れはボール用の針も確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "molten AP50は、ボールに空気を入れるポンプの候補。針の対応と保管方法を確認し、ボール側の説明に従って使います。ポンプだけで適正な内圧が分かるとは限らないため、圧力計との組み合わせも考えましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. 圧力計でボールの指定値を確かめる"
+      },
+      {
+        "type": "paragraph",
+        "text": "molten PGA10は、ボールの内圧を測りたい主催者の候補。表示単位と測定範囲を確認し、ボールに記載された指定と同じ単位で比較します。感触だけで空気を足し続けず、開始前に状態をそろえる担当を決めると管理しやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. ボールバッグは個数と運び方で"
+      },
+      {
+        "type": "paragraph",
+        "text": "ミカサなどのバレーボール用バッグは、複数球をまとめたい会の候補。何球入るかだけでなく、肩掛けか手持ちか、空のときの収納も比較します。ボールが付属するセットとバッグ単体を区別し、活動後は数を確認してから収納しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 得点板で声を張る回数を減らす"
+      },
+      {
+        "type": "paragraph",
+        "text": "手動得点板は、離れた参加者へ得点を共有するための候補。表示できる点数とセット数、めくりやすさを確認します。会場の物が使えるなら持参不要なので、予約時に貸出品を聞いておくと荷物を減らせます。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. 笛は担当者が管理できる一本を"
+      },
+      {
+        "type": "paragraph",
+        "text": "バレーボール用ホイッスルは、開始や区切りを知らせる担当が使う候補。競技向けの種類、体育館での音量の扱いを確認します。口に触れる道具なので担当ごとに管理し、全員で使い回す前提にしない方が準備も整理できます。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "ネット、支柱、アンテナ、審判台は施設備品と設営ルールを確認し、持込みが必要な物を絞ります。個人の膝サポーターや室内シューズは参加者への持ち物案内へ分けると、主催者が全員分を買う必要がなくなります。"
+      }
+    ],
+    "product_count": 6,
+    "edit_url": "https://circle-book.com/columns/25/edit",
+    "id": 25,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "futsal-organizer",
+    "title": "フットサルの主催者におすすめの備品6選。初開催を身軽に",
+    "audience": "organizer",
+    "event": "フットサル",
+    "event_id": 8,
+    "event_slug": "futsal",
+    "description": "フットサル会を開くなら、コートのレンタル品を確認してから備品をそろえると身軽です。ボール、ビブス、マーカーなど、主催者が比較したい6つを紹介します。",
+    "body_file": "futsal-organizer.html",
+    "cover_file": "images/futsal-organizer.png",
+    "products": [
+      {
+        "key": "futsalball",
+        "name": "一般用フットサル4号球",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten%20%E3%83%95%E3%83%83%E3%83%88%E3%82%B5%E3%83%AB%20%E3%83%9C%E3%83%BC%E3%83%AB%204%E5%8F%B7&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/712iLhzpx+L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B09ZV2Y7GH",
+        "query": "molten フットサル ボール 4号",
+        "description": "一般用フットサル4号球は、大人のフットサル会での比較候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B09ZV2Y7GH",
+        "image_example_title": "モルテン（molten） フットサルボール 4号球 検定球 N-F9Y2521-WR（ホワイト×レッド/ＦＦ/Men's）"
+      },
+      {
+        "key": "bibs",
+        "name": "molten ゲームベスト10枚セット GB0113",
+        "description": "moltenゲームベストGB0113のセットは、色と番号でチームを分けたい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%99%E3%82%B9%E3%83%88+GB0113+10%E6%9E%9A&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51pZWmyfzCL._AC_UL320_.jpg",
+        "research_source": "https://productinfo.moltensports.jp/products/gb0113"
+      },
+      {
+        "key": "marker",
+        "name": "低いディスク型マーカー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B5%E3%83%83%E3%82%AB%E3%83%BC%20%E3%83%95%E3%83%83%E3%83%88%E3%82%B5%E3%83%AB%20%E3%83%87%E3%82%A3%E3%82%B9%E3%82%AF%20%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61ebPKaqMuL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0GZK5XLWM",
+        "query": "サッカー フットサル ディスク マーカー",
+        "description": "ディスク型マーカーは、ウォーミングアップの位置や練習区画を示す候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0GZK5XLWM",
+        "image_example_title": "スポンサー広告 - Jessfar フラットマーカー 10枚 / 25枚 / 50枚 セット 5色セット マーカー 直径15.5cm 陸上 ディスクコーン サッカー フットサル 練習用 TPE素材 厚手 カラーコーン 防風 滑り止め 収納袋 ス..."
+      },
+      {
+        "key": "pump",
+        "name": "molten エアポンプ AP50",
+        "description": "molten AP50は、持参ボールの空気を調整したい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten+%E3%82%A8%E3%82%A2%E3%83%9D%E3%83%B3%E3%83%97+AP50&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61GFT67xjsL._AC_UL320_.jpg",
+        "research_source": "https://shop.moltensports.jp/pages/air-pomp"
+      },
+      {
+        "key": "timer",
+        "name": "タニタ でか見えタイマー TD-384",
+        "description": "タニタTD-384は、主催者の手元でゲームの交代時間を管理する補助用品の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%BF%E3%83%8B%E3%82%BF+%E3%81%A7%E3%81%8B%E8%A6%8B%E3%81%88%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC+TD-384&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61soGK3BVvL._AC_UL320_.jpg",
+        "research_source": "https://www.tanita.co.jp/product/timer/3653/"
+      },
+      {
+        "key": "football_whistle",
+        "name": "molten ドルフィンF RA0070-K",
+        "description": "進行の開始・停止を知らせる担当に。サッカー向けホイッスルの候補です。施設の音のルールと大会の指定を確認してください。画像は検索候補の一例です。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=molten%20%E3%83%89%E3%83%AB%E3%83%95%E3%82%A3%E3%83%B3F%20RA0070&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61hwI0enqQL._AC_UL320_.jpg",
+        "verified_asin": "B00I0RHQYI",
+        "research_source": "https://www.amazon.co.jp/dp/B00I0RHQYI"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "フットサル会を開くなら、コートのレンタル品を確認してから備品をそろえると身軽です。ボール、ビブス、マーカーなど、主催者が比較したい6つを紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. ボールはフットサル用を区別する"
+      },
+      {
+        "type": "paragraph",
+        "text": "一般用フットサル4号球は、大人のフットサル会での比較候補。サッカーボールの4号と同じつもりで選ばず、競技用の表示を確認します。会場から借りられる個数と状態を聞き、アップ用・ゲーム用として必要な数を考えましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. ビブスはチーム分けとサイズで選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "moltenゲームベストGB0113のセットは、色と番号でチームを分けたい会の候補。入数、大人向けサイズ、番号の組み合わせを確認します。二色用意するなら収納袋も分け、使用後の洗濯と回収担当まで決めると毎回の準備が楽になります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. 低いマーカーで練習場所を共有"
+      },
+      {
+        "type": "paragraph",
+        "text": "ディスク型マーカーは、ウォーミングアップの位置や練習区画を示す候補。色、枚数、踏んだときの形や素材を確認します。試合中の導線に置きっぱなしにせず、施設の持込み許可を確認してから使いましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 空気入れは予備の針と一緒に管理"
+      },
+      {
+        "type": "paragraph",
+        "text": "molten AP50は、持参ボールの空気を調整したい会の候補。ボールの指定内圧と針の対応を確認し、必要なら圧力計を別途用意します。針を差したまま運ばず、説明書に沿って収納。施設で借りられる場合は重複購入を避けられます。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. タイマーで交代の区切りを共有"
+      },
+      {
+        "type": "paragraph",
+        "text": "タニタTD-384は、主催者の手元でゲームの交代時間を管理する補助用品の候補。競技専用の時計ではありません。音が聞こえるかだけに頼らず、声掛け担当と終了の合図を決め、予約枠の最後に片付け時間を確保しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "6. ホイッスルは用途と音を比べる"
+      },
+      {
+        "type": "paragraph",
+        "text": "moltenドルフィンF RA0070-Kは、サッカー向けのホイッスルを進行用に比較したい担当者の候補。開始や停止の合図を声と合わせて共有できます。音の特徴と体育館の利用ルールを確認し、大会で指定の審判備品が必要な場合はそちらを優先します。口に触れる道具なので担当者ごとに管理しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:6]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "ボール・ビブス・タイマーは施設の貸出に含まれることがあります。レンタル条件と洗濯の要否、返却場所を確認し、運ぶ量を減らしましょう。参加者にはコートに合う靴とすね当ての要否を具体的に案内すると、当日の確認も減らせます。"
+      }
+    ],
+    "product_count": 6,
+    "edit_url": "https://circle-book.com/columns/26/edit",
+    "id": 26,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "table-tennis-organizer",
+    "title": "卓球の練習会におすすめの備品5選。球拾いから得点管理まで",
+    "audience": "organizer",
+    "event": "卓球",
+    "event_id": 10,
+    "event_slug": "table-tennis",
+    "description": "卓球の練習会は、ラケットを増やすだけでなく球拾いと片付けの流れを整えると運営しやすくなります。主催者が検討したいボール・回収用品・貸出用品など5選を紹介します。",
+    "body_file": "table-tennis-organizer.html",
+    "cover_file": "images/table-tennis-organizer.png",
+    "products": [
+      {
+        "key": "tableball",
+        "name": "卓球用プラスチック練習球",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%90%E3%82%BF%E3%83%95%E3%83%A9%E3%82%A4%20%E5%8D%93%E7%90%83%20%E3%83%88%E3%83%AC%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%20%E3%83%9C%E3%83%BC%E3%83%AB%2040%20%E3%83%97%E3%83%A9%E3%82%B9%E3%83%81%E3%83%83%E3%82%AF&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/41HgIU2XjVL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08MQ51ZTF",
+        "query": "バタフライ 卓球 トレーニング ボール 40 プラスチック",
+        "description": "バタフライなどのプラスチック練習球は、同じ条件で反復練習したい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08MQ51ZTF",
+        "image_example_title": "バタフライ(Butterfly) 卓球ボール トレーニングボール40+ ホワイト 10ダース[120個]入 95840"
+      },
+      {
+        "key": "ballnet",
+        "name": "ニッタク ボールスクープ",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%90%E3%82%BF%E3%83%95%E3%83%A9%E3%82%A4%20%E5%8D%93%E7%90%83%20%E3%83%9C%E3%83%BC%E3%83%AB%20%E6%8B%BE%E3%81%84%20%E3%83%8D%E3%83%83%E3%83%88&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/81oJzAWIklL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B00FBVNBS6",
+        "query": "バタフライ 卓球 ボール 拾い ネット",
+        "description": "卓球用ボール拾いネットは、床に散った球を回収する候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B00FBVNBS6",
+        "image_example_title": "ニッタク(Nittaku) 卓球 ボールスクープ 練習 ボール拾い ボール集め 網 ネット"
+      },
+      {
+        "key": "ballbasket",
+        "name": "卓球用ボールかご",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%8D%93%E7%90%83%20%E3%83%9C%E3%83%BC%E3%83%AB%20%E3%81%8B%E3%81%94&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71IQtArdLuL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0GVYR5VJX",
+        "query": "卓球 ボール かご",
+        "description": "ボールかごは、多球練習で使う球をまとめたい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0GVYR5VJX",
+        "image_example_title": "スポンサー広告 - Ennbom 卓球ボールカート 卓球用 ボールかご 高さ調節可能 移動式 練習用"
+      },
+      {
+        "key": "scoreboard",
+        "name": "卓上の手動得点板",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%BE%97%E7%82%B9%E6%9D%BF%20%E5%8D%93%E4%B8%8A%20%E6%89%8B%E5%8B%95%20%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51uJiX0gGPL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0H6HJX64X",
+        "query": "得点板 卓上 手動 スポーツ",
+        "description": "手動得点板は、試合形式で順番を回す会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0H6HJX64X",
+        "image_example_title": "Zakka timez 手動フリップ式得点板 スコアボード 4桁表示 0〜99点対応 電源不要 折りたたみ | 体育祭・部活・大会で即スコア管理, 青赤2色で見間違えない得点表示, 折りたたんでバッグに収まるサイズ, 5競技以上に対応する4桁カ..."
+      },
+      {
+        "key": "table_racket",
+        "name": "Butterfly 張本智和2000 16950",
+        "description": "Butterfly張本智和2000は、ラバー貼りラケットを貸出用に検討する場合の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%83%90%E3%82%BF%E3%83%95%E3%83%A9%E3%82%A4+%E5%BC%B5%E6%9C%AC%E6%99%BA%E5%92%8C2000+16950&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/71BJRTVHqbL._AC_UL320_.jpg",
+        "research_source": "https://www.butterfly.co.jp/products/detail/16950.html",
+        "verified_asin": "B07HN11LN1",
+        "research_note": "Amazon検索結果の商品URLに16950を確認。選手本人の使用モデルではない。"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "卓球の練習会は、ラケットを増やすだけでなく球拾いと片付けの流れを整えると運営しやすくなります。主催者が検討したいボール・回収用品・貸出用品など5選を紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. 練習球は素材と規格をそろえる"
+      },
+      {
+        "type": "paragraph",
+        "text": "バタフライなどのプラスチック練習球は、同じ条件で反復練習したい会の候補。40mmなどの表示、入数、練習用か試合用かを確認します。違う種類を混ぜすぎず、割れや変形を点検して使える球だけを分けておきましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 球拾いネットで回収を分担"
+      },
+      {
+        "type": "paragraph",
+        "text": "卓球用ボール拾いネットは、床に散った球を回収する候補。柄の長さ、ネットの容量、収納時の寸法を確認します。隣の台のラリー中に入り込まず、回収時間を区切って分担すると使いやすくなります。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. ボールかごは台まわりの置き方で選ぶ"
+      },
+      {
+        "type": "paragraph",
+        "text": "ボールかごは、多球練習で使う球をまとめたい会の候補。収納できる数、置いたときの安定、台やスタンドとの組み合わせを確認。かごだけの商品と台付きセットを区別し、人が動く範囲をふさがない場所へ置きましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 得点板は試合形式の練習に"
+      },
+      {
+        "type": "paragraph",
+        "text": "手動得点板は、試合形式で順番を回す会の候補。表示範囲、ゲーム数、めくりやすさを確認します。すべての台に一度に買う前に、施設で借りられる数と同時開催する試合数を調べましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 予備ラケットで初参加者を迎える"
+      },
+      {
+        "type": "paragraph",
+        "text": "Butterfly張本智和2000は、ラバー貼りラケットを貸出用に検討する場合の候補。借りたい人数を予約時に確認し、まず少数で用意します。使用後はラバーの状態を確認し、対応するクリーナーとケースで管理。全参加者に同じ持ち方を強いる道具ではない点も案内しましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "卓球台、ネット、支柱、防球フェンスの備品と設営・撤収方法を会場へ確認します。球拾い用品を増やす前に、参加人数と台数に合う練習形式を決めておくと、必要数と収納場所を考えやすくなります。"
+      }
+    ],
+    "product_count": 5,
+    "edit_url": "https://circle-book.com/columns/27/edit",
+    "id": 27,
+    "published_on": "2026-10-23"
+  },
+  {
+    "key": "reception-organizer",
+    "title": "交流会の受付がスムーズになる便利グッズ5選",
+    "audience": "organizer",
+    "event": "交流会・カフェ会",
+    "event_id": 36,
+    "event_slug": "gathering",
+    "description": "初参加の人が受付で迷わず、主催者も落ち着いて迎えられるように。名札から卓上案内まで、交流会の受付に役立つ便利グッズ5選を、少人数での使い方と一緒に紹介します。",
+    "body_file": "reception-organizer.html",
+    "cover_file": "images/reception-organizer.png",
+    "products": [
+      {
+        "key": "nametag",
+        "name": "クリップ式の名札ケース",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B3%E3%82%AF%E3%83%A8%20%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97%20%E5%90%8D%E6%9C%AD%20%E3%82%B1%E3%83%BC%E3%82%B9&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61YtLTQeBeL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B000NNNT66",
+        "query": "コクヨ クリップ 名札 ケース",
+        "description": "クリップ式名札ケースは、会話のきっかけになる名前を共有したい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B000NNNT66",
+        "image_example_title": "コクヨ タッグ名札 安全ピン・クリップ両用型 チャック付 名刺サイズ用 横型 ナフ-160"
+      },
+      {
+        "key": "signstand",
+        "name": "A4卓上案内スタンド",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E5%8D%93%E4%B8%8A%20%E3%82%B5%E3%82%A4%E3%83%B3%20%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89%20A4&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61o4nSSTy7L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08L3GBW8Y",
+        "query": "卓上 サイン スタンド A4",
+        "description": "A4の卓上案内スタンドは、会議室入口や受付机で場所を示す候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08L3GBW8Y",
+        "image_example_title": "スポンサー広告 - WeColor アクリルフォトフレーム 写真立て サインスタンド スタンドタイプ 飲食店のPOP広告メニュー、透明オフィスもの紙、卓上用写真たて、家族のポスター展示(6本セット A4判)"
+      },
+      {
+        "key": "clipboard",
+        "name": "A4クリップボード",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B3%E3%82%AF%E3%83%A8%20A4%20%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97%E3%83%9C%E3%83%BC%E3%83%89&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51B9qLvGH-L._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B0012QUB0K",
+        "query": "コクヨ A4 クリップボード",
+        "description": "A4クリップボードは、受付のチェック項目と進行表をまとめたい主催者の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B0012QUB0K",
+        "image_example_title": "コクヨ クリップボード 用箋挟 クロス貼 A4 短辺とじ ヨハ-28"
+      },
+      {
+        "key": "cashtray",
+        "name": "受付用コイントレー",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%B3%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AC%E3%83%BC%20%E5%8F%97%E4%BB%98&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/51DwpGORiFL._AC_UL320_.jpg",
+        "research_source": "https://www.amazon.co.jp/dp/B08GKCFYCW",
+        "query": "コイントレー 受付",
+        "description": "コイントレーは、現金の受け渡しを机上で確認したい会の候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。 画像は検索候補の一例です。",
+        "verified_asin": "B08GKCFYCW",
+        "image_example_title": "ColorfylCoco ステンレス キャッシュトレイ コイントレイ 会計皿 おしぼり置き 釣り銭 トレー 楕円形 (18cm幅) ゴールド 金"
+      },
+      {
+        "key": "timer",
+        "name": "タニタ でか見えタイマー TD-384",
+        "description": "タニタTD-384は、自己紹介や休憩の区切りを手元で確認する候補。検索結果から、サイズ・入数・仕様と販売元をご確認ください。",
+        "amazon_url": "https://www.amazon.co.jp/s?k=%E3%82%BF%E3%83%8B%E3%82%BF+%E3%81%A7%E3%81%8B%E8%A6%8B%E3%81%88%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC+TD-384&tag=fieldnote482-22",
+        "image_url": "https://m.media-amazon.com/images/I/61soGK3BVvL._AC_UL320_.jpg",
+        "research_source": "https://www.tanita.co.jp/product/timer/3653/"
+      }
+    ],
+    "status": "published",
+    "cover_status": "generated_upload_pending_permission",
+    "created_on": "2026-10-23",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "初参加の人が受付で迷わず、主催者も落ち着いて迎えられるように。名札から卓上案内まで、交流会の受付に役立つ便利グッズ5選を、少人数での使い方と一緒に紹介します。"
+      },
+      {
+        "type": "heading",
+        "text": "1. 名札で呼んでほしい名前を共有"
+      },
+      {
+        "type": "paragraph",
+        "text": "クリップ式名札ケースは、会話のきっかけになる名前を共有したい会の候補。コクヨなどの製品を比較するときは、用紙サイズ、留め方、枚数を確認します。本名の記入を当然にせず、ニックネームで参加できるかを案内し、使い終わった紙は回収の扱いを決めましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:1]"
+      },
+      {
+        "type": "heading",
+        "text": "2. 卓上案内は会の名前と受付を簡潔に"
+      },
+      {
+        "type": "paragraph",
+        "text": "A4の卓上案内スタンドは、会議室入口や受付机で場所を示す候補。縦横の向き、用紙の交換方法、置いたときの安定を確認します。カフェの共用席などでは掲示が許可されるかを先に確認し、通路をふさがない位置へ置きましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:2]"
+      },
+      {
+        "type": "heading",
+        "text": "3. クリップボードで当日の手順を一枚に"
+      },
+      {
+        "type": "paragraph",
+        "text": "A4クリップボードは、受付のチェック項目と進行表をまとめたい主催者の候補。筆記しやすさ、クリップの強さ、収納性を比較します。参加者一覧を使う場合は他の人から見えないよう管理し、必要以上の個人情報を印刷しないようにしましょう。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:3]"
+      },
+      {
+        "type": "heading",
+        "text": "4. 現金受付があるならトレーを一つ"
+      },
+      {
+        "type": "paragraph",
+        "text": "コイントレーは、現金の受け渡しを机上で確認したい会の候補。小銭が取りやすい形と大きさを選びます。釣銭の準備と受付担当を決め、参加費の受領を記録しましょう。キャッシュレスのみの会や無料の会なら購入は不要です。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:4]"
+      },
+      {
+        "type": "heading",
+        "text": "5. 進行用タイマーで受付と開始を分ける"
+      },
+      {
+        "type": "paragraph",
+        "text": "タニタTD-384は、自己紹介や休憩の区切りを手元で確認する候補。会話を急かさないよう、音を鳴らすか画面を見るだけにするかを決めます。会場の音のルールと電源を確認し、スマートフォンで十分なら買い足さなくても構いません。"
+      },
+      {
+        "type": "paragraph",
+        "text": "[商品:5]"
+      },
+      {
+        "type": "heading",
+        "text": "買う前に、参加先と手持ちの道具を確認"
+      },
+      {
+        "type": "paragraph",
+        "text": "受付用の机や案内表示を置けるかは会場に確認しましょう。最初は名札と一枚の進行表で運営し、困った所に道具を足す方法でも十分です。担当者が交代しても分かるよう、置き場所と片付け方を一緒に決めておくと次回も使いやすくなります。"
+      }
+    ],
+    "product_count": 5,
+    "edit_url": "https://circle-book.com/columns/28/edit",
+    "id": 28,
+    "published_on": "2026-10-23"
+  }
+]

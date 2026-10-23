@@ -1,0 +1,158 @@
+{
+  "checked_on": "2026-10-22",
+  "affiliate": "Amazon only / fieldnote482-22",
+  "method": "メーカー公式の仕様・用途とAmazonの画面上の掲載商品・画像を照合。価格や評価、架空の使用体験は本文に固定記載しない。検索リンクの画像は候補例。既存の共通用品は確認済み原稿から再利用。",
+  "sources": [
+    {
+      "key": "volley_shoes",
+      "name": "ASICS GEL-ROCKET 12",
+      "research_source": "https://www.asics.com/jp/ja-jp/gel-rocket-12/p/1073A080-103.html"
+    },
+    {
+      "key": "shirt",
+      "name": "glimmer 00300-ACT ドライTシャツ",
+      "research_source": "https://tomsj.com/products/glimmer/"
+    },
+    {
+      "key": "shorts",
+      "name": "glimmer 00325-ACP ドライハーフパンツ",
+      "research_source": "https://tomsj.com/ebook/26ss/"
+    },
+    {
+      "key": "towel",
+      "name": "Speedo マイクロセームタオル M SE62003",
+      "research_source": "https://www.goldwin.co.jp/ap/item/i/m/SE62003"
+    },
+    {
+      "key": "thermos_bottle",
+      "name": "サーモス 真空断熱スポーツボトル FJU-1001 1L",
+      "research_source": "https://www.shopthermos.jp/shop/g/g250070241AG0/"
+    },
+    {
+      "key": "bad_grip",
+      "name": "ヨネックス ウェットスーパーグリップ AC102（3本入）",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_AC102_1/510"
+    },
+    {
+      "key": "shoe_case",
+      "name": "ASICS シューズケースL 3033C228",
+      "research_source": "https://www.asics.com/jp/ja-jp/シューズケースl/p/3033C228-001.html"
+    },
+    {
+      "key": "volley_shoes",
+      "name": "ASICS GEL-ROCKET 12",
+      "research_source": "https://www.asics.com/jp/ja-jp/gel-rocket-12/p/1073A080-103.html"
+    },
+    {
+      "key": "bad_grip",
+      "name": "ヨネックス ウェットスーパーグリップ AC102（3本入）",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_AC102_1/510"
+    },
+    {
+      "key": "futsal_shoes",
+      "name": "ASICS CALCETTO WD 9（屋内用）",
+      "research_source": "https://www.asics.com/jp/ja-jp/calcetto-wd-9/p/1113A037-400.html",
+      "verified_asin": "B0D5GTK452"
+    },
+    {
+      "key": "shin",
+      "name": "molten スワンセシンガード M GG0023",
+      "research_source": "https://shop.moltensports.jp/products/gg0023",
+      "verified_asin": "B01MTD04WO"
+    },
+    {
+      "key": "football_socks",
+      "name": "adidas adi 23 ソックス",
+      "research_source": "https://www.adidas.jp/adi-23-ソックス/HT5027.html",
+      "verified_asin": "B0B1JC3FYJ"
+    },
+    {
+      "key": "tennis_racket",
+      "name": "YONEX Eゾーン アルファ 08EZAP（フレームのみ）",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_08EZAP_1",
+      "verified_asin": "B0HC6SWBGL"
+    },
+    {
+      "key": "tennis_shoes",
+      "name": "ASICS COURT SLIDE 4（オールコート）",
+      "research_source": "https://www.asics.com/jp/ja-jp/COURT-SLIDE/c/ja40210109/",
+      "verified_asin": "B0G2XTNR9J",
+      "research_note": "1041A483をAmazonで照合。公式のCOURT SLIDE分類と1042A283商品説明で用途を確認。"
+    },
+    {
+      "key": "cap",
+      "name": "YONEX メッシュキャップ 40107",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_40107_1/011",
+      "verified_asin": "B0CBRBQ6M6"
+    },
+    {
+      "key": "table_racket",
+      "name": "Butterfly 張本智和2000 16950",
+      "research_source": "https://www.butterfly.co.jp/products/detail/16950.html",
+      "verified_asin": "B07HN11LN1",
+      "research_note": "Amazon検索結果の商品URLに16950を確認。選手本人の使用モデルではない。"
+    },
+    {
+      "key": "table_case",
+      "name": "Butterfly YT・ケース 63400",
+      "research_source": "https://www.butterfly.co.jp/products/detail/63400.html",
+      "verified_asin": "B0DK2QH4M6"
+    },
+    {
+      "key": "cleaner",
+      "name": "Butterfly デイリークリーナー 75820",
+      "research_source": "https://www.butterfly.co.jp/products/detail/75820.html",
+      "verified_asin": "B00VYL10F8"
+    },
+    {
+      "key": "run_shoes",
+      "name": "ASICS JOLT 5",
+      "research_source": "https://www.asics.com/jp/ja-jp/jolt-5/p/1011B963-100.html",
+      "verified_asin": "B0DNSHJS28"
+    },
+    {
+      "key": "run_socks",
+      "name": "Tabio レーシングラン五本指ソックス",
+      "research_source": "https://tabio.com/jp/racingrun_newcr/",
+      "verified_asin": "B07R4S8337",
+      "research_note": "公式商品ページはメンテナンス中。公式シリーズ案内とAmazon掲載を照合。価格と販売店の営業状況は記事に固定記載しない。"
+    },
+    {
+      "key": "run_pouch",
+      "name": "FlipBelt クラシック",
+      "research_source": "https://flipbelt.com/products/flipbelt-classic-running-belt",
+      "verified_asin": "B00JF9DWWU"
+    },
+    {
+      "key": "yoga_mat",
+      "name": "ヨガワークス ヨガマット6mm YW-A202",
+      "research_source": "https://www.yogaworks.jp/products/yogamat6mm",
+      "verified_asin": "B095X6X46B"
+    },
+    {
+      "key": "yoga_block",
+      "name": "ヨガワークス ヨガブロックA",
+      "research_source": "https://www.yogaworks.jp/products/yogablock_a",
+      "verified_asin": "B095YZPJ8S",
+      "research_note": "2026年3月の公式告知では単品販売への移行。Amazonには2個セットの掲載が残るため数量を明示。"
+    },
+    {
+      "key": "yoga_belt",
+      "name": "ヨガワークス ヨガベルト240cm",
+      "research_source": "https://www.yogaworks.jp/products/yogabelt",
+      "verified_asin": "B01D40MNQG"
+    },
+    {
+      "key": "yoga_bag",
+      "name": "ヨガワークス ポケット付メッシュバッグ",
+      "research_source": "https://www.yogaworks.co.jp/products/meshbag/",
+      "verified_asin": "B000AW2MIQ",
+      "research_note": "https://www.yogaworks.jp/blogs/news/meshbag-renewal-2026-09 にサイズ展開の変更あり。旧モデルとして紹介し、寸法・仕様を確認する。"
+    }
+  ],
+  "additional_sources": [
+    "https://www.yogaworks.jp/blogs/news/20260217",
+    "https://www.yogaworks.jp/blogs/news/meshbag-renewal-2026-09",
+    "https://www.asics.com/jp/ja-jp/court-slide-4%EF%BC%88%E3%82%AA%E3%83%BC%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%88%EF%BC%89/p/1042A283-402.html"
+  ]
+}

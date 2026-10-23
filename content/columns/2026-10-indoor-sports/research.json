@@ -1,0 +1,70 @@
+{
+  "checked_on": "2026-10-22",
+  "image_origin": "Amazon.co.jpの商品検索結果で商品名・型番を照合。画像の保存・再アップロードはしていない。",
+  "new_products": {
+    "shoe": {
+      "key": "volley_shoes",
+      "name": "ASICS GEL-ROCKET 12",
+      "description": "初めての室内シューズを用途から選びたい人に。サイズと足幅、会場の靴底の指定を確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=ASICS+GEL-ROCKET+12+1073A080&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/615pCdWGDsL._AC_UL320_.jpg",
+      "research_source": "https://www.asics.com/jp/ja-jp/gel-rocket-12/p/1073A080-103.html"
+    },
+    "pad": {
+      "key": "knee_pad",
+      "name": "ミズノ 膝サポーター V2MYA002",
+      "description": "床に膝をつく練習に、パッド付きタイプを選びたい人へ。1個入りです。両膝に使う場合の数量とM・Lのサイズを確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=MIZUNO+V2MYA002&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71IXZM57myL._AC_UL320_.jpg",
+      "research_source": "https://jpn.mizuno.com/ec/disp/attgrp/V2MYA002/"
+    },
+    "vsock": {
+      "key": "volley_socks",
+      "name": "ミズノ ロングソックス V2MX8009",
+      "description": "ハーフパンツに長めのソックスを合わせたい人に。足のサイズと丈を確認し、室内シューズと一緒に履き心地を確かめましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=MIZUNO+V2MX8009&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/71pSWdqETmL._AC_UL320_.jpg",
+      "research_source": "https://jpn.mizuno.com/ec/disp/attgrp/V2MX8009/"
+    },
+    "ball": {
+      "key": "volley_ball",
+      "name": "ミカサ V300W 5号検定球",
+      "description": "自分のボールでも屋内練習を続けたい人へ。5号の人工皮革球です。4号球やソフトバレー用とは異なるため、参加先で使う種類を確認して選びましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=MIKASA+V300W&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61STrTHHI-L._AC_UL320_.jpg",
+      "research_source": "https://mikasasports.co.jp/sports/v300w/"
+    },
+    "racket": {
+      "key": "bad_racket",
+      "name": "ヨネックス マッスルパワー9LT MP9LTG",
+      "description": "初めてのマイラケットを張り上げ済みで用意したい人に。品番とガットの有無、ケース、1本売りかセットかを確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+MP9LTG+%E5%BC%B5%E3%82%8A%E4%B8%8A%E3%81%92&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51gZxxhaMSL._AC_UL320_.jpg",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_MP9LTG_1/"
+    },
+    "bshoe": {
+      "key": "bad_shoes",
+      "name": "ヨネックス パワークッションストライダービート SHBSB1",
+      "description": "バドミントン用の靴を足幅も見ながら選びたい人へ。ローカット・3Eモデル。ソックスを合わせて、足に合うサイズか試着で確認しましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+SHBSB1&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/51Ks0d7GI2L._AC_UL320_.jpg",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_SHBSB1_1/3862024"
+    },
+    "grip": {
+      "key": "bad_grip",
+      "name": "ヨネックス ウェットスーパーグリップ AC102（3本入）",
+      "description": "持ち手の感触を整えたい人、上巻きテープを交換したい人に。厚さ0.6mmのウェットタイプ。元グリップとは区別し、品番と入数を確認してください。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+AC102+3%E6%9C%AC&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61RepBTwl5L._AC_UL320_.jpg",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_AC102_1/510"
+    },
+    "bsock": {
+      "key": "bad_socks",
+      "name": "ヨネックス ハーフソックス 19122（2足セットも比較）",
+      "description": "練習用と洗い替えをそろえたい人へ。19122は25〜28cm対応。画像は2足セットの例です。19122Lなど別サイズ・別セットと区別して選びましょう。",
+      "amazon_url": "https://www.amazon.co.jp/s?k=YONEX+19122+2%E8%B6%B3%E3%82%BB%E3%83%83%E3%83%88&tag=fieldnote482-22",
+      "image_url": "https://m.media-amazon.com/images/I/61g2G0eWOyL._AC_UL320_.jpg",
+      "research_source": "https://yonexshop.jp/item/detail/1_1_19122_1"
+    }
+  }
+}
