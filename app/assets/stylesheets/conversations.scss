@@ -298,15 +298,8 @@ body.cb-site .chat-shell .chat-review-prompt-badge { display: inline-block; marg
 .chat-message__actions .chat-message__delete-form { grid-column: 2; grid-row: 1; justify-self: end; margin: 0; }
 body.cb-site .chat-shell .chat-message__actions .chat-message__action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: auto; min-width: 0; min-height: 32px; margin: 0; padding: 4px 7px; border: 0; border-radius: 6px; background: transparent; box-shadow: none; color: $cb-muted; font-size: 12px; font-weight: 400; line-height: 1.4; text-decoration: none; list-style: none; cursor: pointer; appearance: none; -webkit-appearance: none; }
 body.cb-site .chat-shell .chat-message__actions .chat-message__action:hover { background: $cb-mint-soft; color: $cb-text; }
-.chat-message__action::-webkit-details-marker { display: none; }
-.chat-message__action::marker { content: ''; }
 body.cb-site .chat-message__action .cb-icon { width: 14px; height: 14px; }
-.chat-message__edit[open] { grid-column: 1 / -1; min-width: 0 !important; }
-.chat-message__edit[open] > summary { margin-right: 72px !important; }
-.chat-message__edit form { width: min(260px, 55vw); max-width: 100%; margin-top: 8px; }
 @media (pointer: coarse) { body.cb-site .chat-shell .chat-message__actions .chat-message__action { min-height: 44px; } }
-.chat-message__edit textarea { display: block; width: 100%; max-width: 100%; margin: 6px 0; color: $cb-text; font-size: 16px; }
-.chat-message__edit .chat-message__edit-help { font-size: 11px; line-height: 1.6; color: $cb-muted; margin-bottom: 8px; }
 .chat-body.chat-body--deleted { background: #f1f3f5; border-radius: 12px; color: $cb-muted; }
 .chat-body .chat-deletion-notice { font-size: 12px; }
 .chat-revision { font-size: 11px; color: $cb-muted; }
@@ -326,3 +319,8 @@ body.cb-site .chat-inbox .chat-talk__preview { display: block; white-space: nowr
 .chat-shell .chat-private-note .chat-private-note__input { width: 100%; min-width: 0; min-height: 38px; margin: 0; padding: 7px 10px; border: 1px solid $cb-border; border-radius: 6px; background: #f5f6f8; color: $cb-text; font-size: 16px; box-sizing: border-box; }
 .chat-shell .chat-private-note .chat-private-note__retry { margin: 0; padding: 0 4px; min-height: 28px; border: 0; background: transparent; font-size: 12px; color: $cb-action; text-decoration: underline; }
 .chat-private-note__retry[hidden] { display: none; }
+
+.chat-composer .chat-edit-status { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid $cb-border; }
+.chat-composer .chat-edit-status p { margin: 0 0 6px; color: $cb-muted; font-size: 12px; line-height: 1.7; }
+.chat-edit-cancel { display: inline-flex; align-items: center; min-height: 32px; font-size: 13px; }
+.chat-compose-form [hidden] { display: none !important; }
