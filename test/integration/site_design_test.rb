@@ -7,6 +7,20 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
 
   setup { create_chat_records }
 
+  test 'schedule header links both the circle name and icon to details in a new tab' do
+    schedule = @circle.schedules.create!(title: '週末の練習', venue: '体育館', day: (Date.current + 7).to_s)
+    [user_schedule_path(@circle, schedule), user_schedules_path(@circle), circle_path(@circle)].each do |path|
+      get path
+      assert_response :success
+      assert_select '.mobile-circle-summary__identity a.mobile-circle-summary__profile[href=?][target="_blank"][rel="noopener"]', circle_path(@circle), count: 1 do
+        assert_select 'h2', text: @circle.name
+        assert_select '.mobile-circle-summary__image', count: 1
+        assert_select '.mobile-circle-summary__bookmark', count: 0
+      end
+      assert_select '.mobile-circle-summary__bookmark', count: 1
+    end
+  end
+
   test 'blog list retains the complete long circle name for accessible single line display' do
     name = '【参加費0円】散策で友達作り！カフェ・ランチや都内イベントに一緒に行こう'
     @circle.update_column(:name, name)

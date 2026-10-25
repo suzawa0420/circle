@@ -6,18 +6,19 @@
     %span サークル詳細
 .mobile-circle-summary
   .mobile-circle-summary__identity
-    - if @user.pic_profile.present?
-      = image_tag(fast_public_page? ? circle_listing_image_url(@user, 'profile') : @user.pic_profile.url, alt: "", width: 48, height: 48, decoding: "async", class: "mobile-circle-summary__image")
-    - else
-      .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
-    .mobile-circle-summary__heading
-      %h2= @user.name
-      %p
-        = @user.switch
-        %span ・
-        = @user.prefecture.name
-        %span ・
-        = @user.event.name
+    = link_to circle_path(@user), class: "mobile-circle-summary__profile", target: "_blank", rel: "noopener", "aria-label" => "#{@user.name}の詳細を別タブで開く" do
+      - if @user.pic_profile.present?
+        = image_tag(fast_public_page? ? circle_listing_image_url(@user, 'profile') : @user.pic_profile.url, alt: "", width: 48, height: 48, decoding: "async", class: "mobile-circle-summary__image")
+      - else
+        .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
+      .mobile-circle-summary__heading
+        %h2= @user.name
+        %p
+          = @user.switch
+          %span ・
+          = @user.prefecture.name
+          %span ・
+          = @user.event.name
     .mobile-circle-summary__bookmark{ id: "mobile-circle-bookmark-#{@user.id}" }
       = render "bookmarks/mobile_button", user: @user
   %nav.mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
