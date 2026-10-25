@@ -32,7 +32,13 @@ module PlaceImports
             candidate.update!(status: 'duplicate', reason: "既存施設の確認が必要です（ID: #{matches.first(10).join(', ')}）")
             return 'duplicate'
           end
-          city = prefecture.cities.find_by(name: data['city'])
+          city = if data['city'].present?
+            prefecture.cities.find_by(name: data['city'])
+          else
+            prefecture.cities.to_a.reject { |item| item.name.blank? }.sort_by { |item| -item.name.to_s.length }.find do |item|
+              self.class.normalize(data['address']).start_with?(self.class.normalize("#{prefecture.name}#{item.name}"))
+            end
+          end
           events = Array(data['sports']).map do |name|
             Event.where(place: 1, name: SPORT_ALIASES.fetch(name, [name])).to_a
           end

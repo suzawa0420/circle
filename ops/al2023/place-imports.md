@@ -70,3 +70,55 @@ sudo systemctl enable --now circle-place-import.timer
 プロセス強制終了時は履歴が実行中のまま残り得るため、タイマー状態と突き合わせる。
 ロールバックはまずタイマー停止、その後アプリの旧版への復帰。追加テーブルは保持する。
 自動登録済みの施設は旧版でも通常の施設として表示できる。施設の一括削除は行わない。
+
+## 全国の対象を順番に処理・再開する
+
+全国用の情報源は、許可済みの `shisetsu.mizuno.jp` の施設個別ページと
+`sports-service.mizuno.jp/search/` の公式施設一覧。
+2026-10-25時点では全国一覧が臨時メンテナンス中で503応答のため、一覧の全件取得は完了扱いにしない。
+`config/place_import_mizuno_seeds.json` に公式案内・イベントページで確認した既知37施設のURLと発見元を保存している。
+一覧が利用できない間も既知の対象を処理でき、復旧後の発見分は同じキューへ追加する。
+許可していないドメインへのリダイレクト、画像やPDFにしかない料金、種類が曖昧な複合施設は自動登録しない。
+一覧が未取得の場合、全体の `complete` は未処理がゼロでもfalseのままにする。
+
+```sh
+# 保存済み対象の追加＋最大10施設の収集・判定（施設は公開登録しない）
+bundle exec rake places:nationwide
+# 登録可能な対象を最大10施設ずつ処理。次回は残りから再開
+APPLY=1 BATCH_SIZE=10 bundle exec rake places:nationwide
+# 一覧の再取得を省略して保存済みキューを続行
+APPLY=1 DISCOVER=0 BATCH_SIZE=10 bundle exec rake places:nationwide
+# HTTP要求なしで件数・残り・全国一覧の取得状態を確認
+bundle exec rake places:nationwide_status
+# 運営が明示した確認待ち施設だけ再収集。登録済みは対象外
+IDS=101,102 bundle exec rake places:nationwide_retry
+```
+
+BATCH_SIZEは1〜20。施設単位の状態は `queued`（未処理）、`collected`（収集済み・判定待ち）、
+`ready`（プレビューで登録可能）、`registered`（登録済み）、`duplicate`（重複候補）、
+`pending`（情報不足・取得失敗）、`dismissed`（見送り）。
+重複候補・情報不足は確認待ちとして保持し、自動で再試行・上書きしない。
+明示指定の再収集以外は、完了した施設を再取得・再登録しない。
+処理を中断しても未処理・判定待ち・登録可能の対象をID順に再開する。
+施設の公開登録と最終状態の保存は同一トランザクションで行い、片方だけ完了しないようにする。
+予期しない実装例外では実行を失敗にして止め、対象の判定待ち状態を残す。
+
+30分間隔の継続処理には `circle-place-nationwide.service` / `.timer` をserver4だけで使用する。
+新しい本番反映とタイマー有効化は事前承認を得てから行う。既存の世田谷用タイマーとは共通ファイルロックで排他する。
+1回最大10施設、HTTPは1秒間隔で順番に取得し、既存サーバーと公開情報だけを使う。
+新しい有料API・外部契約・サーバープラン変更は使わない。
+
+承認後の設置・有効化:
+
+```sh
+sudo install -m 644 ops/al2023/circle-place-nationwide.service /etc/systemd/system/
+sudo install -m 644 ops/al2023/circle-place-nationwide.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now circle-place-nationwide.timer
+```
+
+全国一覧の取得が成功し、未処理・判定待ち・登録可能がすべてゼロになったら処理対象全体の完了。
+運営が件数を確認して `sudo systemctl disable --now circle-place-nationwide.timer` で継続処理を終了し、
+登録件数・重複候補・情報不足・見送り・未処理件数を報告する。
+一覧がメンテナンス中の場合は既知対象の処理完了と全体完了を区別して報告する。
+停止・ロールバック時も、候補と既存施設は保持する。DBの直接修正や登録済み施設の一括削除は行わない。

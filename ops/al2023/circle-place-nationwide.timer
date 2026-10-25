@@ -1,0 +1,11 @@
+[Unit]
+Description=Continue nationwide facility registration until reviewed completion (server4 only)
+
+[Timer]
+OnBootSec=5min
+OnUnitInactiveSec=30min
+AccuracySec=1min
+Unit=circle-place-nationwide.service
+
+[Install]
+WantedBy=timers.target

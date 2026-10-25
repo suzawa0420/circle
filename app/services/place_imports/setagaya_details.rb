@@ -101,7 +101,8 @@ module PlaceImports
           x += width
         end
       end
-      grid.map { |row| row.map(&:to_s).join(' | ') }.join("\n")
+      [text(table.at_xpath('./caption')).presence,
+        grid.map { |row| row.map(&:to_s).join(' | ') }.join("\n")].compact.join("\n")
     end
   end
 end

@@ -3,12 +3,13 @@
   <%= link_to label, super_admin_place_import_candidates_path(status: key), class: 'wm-button wm-button--secondary', aria: { current: (@status == key ? 'page' : nil) } %>
 <% end %></nav>
 <section class="wm-section wm-list"><% @candidates.each do |candidate| %>
-  <article class="webmaster-card"><h2><%= link_to candidate.payload['name'], super_admin_place_import_candidate_path(candidate) %></h2>
+  <article class="webmaster-card"><h2><%= link_to candidate.payload['name'].presence || candidate.source_url, super_admin_place_import_candidate_path(candidate) %></h2>
     <p><%= candidate.payload['address'] %></p><p><%= candidate.reason %></p>
   </article>
 <% end %></section>
 <% if @candidates.empty? %><%= render 'webmasters/shared/empty', message: '該当する施設候補はありません。' %><% end %>
 <%= paginate @candidates %>
 <section class="wm-section"><h2>最近の収集結果</h2>
-<% @runs.each do |run| %><p><%= l run.created_at, format: :short %>：<%= run.mode == 'apply' ? '自動登録' : 'プレビュー' %>／<%= run.status == 'completed' ? '完了' : (run.status == 'failed' ? '失敗' : '実行中') %>：<%= (run.summary || {}).except('error').map { |key, count| "#{ { 'pending' => '確認待ち', 'ready' => '登録可能', 'registered' => '登録', 'duplicate' => '重複候補', 'already_registered' => '過去に登録済み', 'already_dismissed' => '見送り済み' }.fetch(key, key) } #{count}件" }.join('／') %></p><% end %>
+<% @runs.each do |run| %><p><%= l run.created_at, format: :short %>：<%= run.source == 'mizuno_nationwide' ? '全国（ミズノ）' : '世田谷区' %>／<%= run.mode == 'apply' ? '自動登録' : 'プレビュー' %>／<%= run.status == 'completed' ? '今回分完了' : (run.status == 'failed' ? '失敗' : '実行中') %>：<%= (run.summary || {}).select { |_, value| value.is_a?(Numeric) }.map { |key, count| "#{ { 'pending' => '確認待ち', 'ready' => '登録可能', 'registered' => '登録', 'duplicate' => '重複候補', 'already_registered' => '過去に登録済み', 'already_dismissed' => '見送り済み', 'discovered' => '発見', 'remaining' => '残り未処理' }.fetch(key, key) } #{count}件" }.join('／') %><% if run.summary&.key?('directory_complete') %>／全国一覧：<%= run.summary['directory_complete'] ? '取得済み' : '未取得・保存済み対象を継続' %><% end %></p><% end %>
+<p>全国一覧が取得できない場合も保存済みの対象を処理し、未処理・判定待ちから再開します。確認待ちや重複候補は自動で再登録しません。</p>
 </section>

@@ -15,8 +15,7 @@ module PlaceImports
 
     def get(url)
       uri = URI.parse(url)
-      unless uri.scheme == 'https' && uri.host == HOST && uri.port == 443 && uri.userinfo.nil? && uri.query.nil? &&
-          (uri.path == '/robots.txt' || uri.path.match?(%r{\A/(facility|facilityinfo)/[a-z0-9/-]*\z}))
+      unless approved_uri?(uri)
         raise FetchError, 'unapproved_url'
       end
       if @last_request
@@ -42,6 +41,13 @@ module PlaceImports
       body
     rescue URI::InvalidURIError, IOError, SocketError, SystemCallError, Timeout::Error, OpenSSL::SSL::SSLError, Net::HTTPBadResponse
       raise FetchError, 'network_error'
+    end
+
+    private
+
+    def approved_uri?(uri)
+      uri.scheme == 'https' && uri.host == HOST && uri.port == 443 && uri.userinfo.nil? && uri.query.nil? &&
+        (uri.path == '/robots.txt' || uri.path.match?(%r{\A/(facility|facilityinfo)/[a-z0-9/-]*\z}))
     end
   end
 end
