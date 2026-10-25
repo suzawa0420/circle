@@ -62,20 +62,14 @@ module PlaceImports
         [p, a.text.strip] if p && a.text.match?(/体育館|テニス|球技場|運動場/)
       end.uniq.first(8)
       return if links.empty?
+      facilities = []
       evidence = links.map do |p, label|
         detail = document(p)
+        facilities << { document: detail, label: label.gsub(/\s+/, ' '), url: "#{ROOT}#{p}" }
         content = detail.at_css('main')&.dup
         raise SourceError, 'missing_detail_content' unless content
         content.css('script, style, nav, .p-search, .c-search, .l-footer, form').remove
-        # Facility pages have a distinct basic-information heading section.
-        heading = content.css('h2,h3').find { |h| h.text.strip == '基本情報' }
-        blocks = []
-        node = heading&.next_element
-        while node && !node.name.match?(/\Ah[1-3]\z/)
-          blocks << node.text
-          node = node.next_element
-        end
-        text = blocks.join(' ').gsub(/\s+/, ' ').strip
+        text = SetagayaDetails.new.basic_information(content)
         { 'url' => "#{ROOT}#{p}", 'label' => label, 'text' => text.first(4000) }
       end
       sports = SPORT_WORDS.select do |sport|
@@ -98,7 +92,7 @@ module PlaceImports
         'tag' => indoor && !outdoor ? '1' : (outdoor && !indoor ? '2' : nil),
         'sports' => sports, 'tel' => details['電話番号'].to_s[/0\d{1,4}-\d{1,4}-\d{3,4}/],
         'url' => "#{ROOT}#{path}", 'evidence' => evidence, 'alerts' => alerts
-      }
+      }.merge(SetagayaDetails.new.call(doc, facilities))
     end
   end
 end

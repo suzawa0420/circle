@@ -9,6 +9,8 @@ class PlaceImportsTest < ActiveSupport::TestCase
     @prefecture = Prefecture.create!(name: '東京都', kana: 'import-tokyo', order: '1')
     @city = City.create!(name: '世田谷区', city_kana: 'setagaya', prefecture_id: @prefecture.id)
     @data = { 'name' => '新しい体育館', 'address' => '東京都世田谷区尾山台3-19-3', 'prefecture' => '東京都', 'city' => '世田谷区',
+      'access' => '駅から徒歩10分', 'parking' => 'なし', 'time' => '9:00～21:00',
+      'regular_holiday' => '年末年始', 'scale' => 'バスケットボール1面', 'price' => '2時間3,000円',
       'tag' => '1', 'sports' => ['バスケットボール'], 'tel' => '03-1111-2222',
       'url' => 'https://www.se-sports.or.jp/facility/example/', 'alerts' => [],
       'evidence' => [{ 'url' => 'https://www.se-sports.or.jp/facilityinfo/example-gym/', 'label' => '体育館', 'text' => 'バスケットボール 1面' }] }
@@ -23,9 +25,13 @@ class PlaceImportsTest < ActiveSupport::TestCase
     assert_difference('Place.count', 1) { PlaceImports::Runner.new(source: @source).call(apply: true) }
     assert_equal 'registered', candidate.reload.status
     assert_equal [@event.id], candidate.place.event_ids
+    PlaceImports::Registrar::DETAIL_LABELS.each_key { |key| assert_equal @data[key], candidate.place.public_send(key) }
     assert_equal 1, @city.reload.places_count
     assert_equal 1, @prefecture.reload.places_count
+    candidate.place.update!(price: '管理者が確認した料金')
+    @data['price'] = '別の公式料金'
     assert_no_difference('Place.count') { PlaceImports::Runner.new(source: @source).call(apply: true) }
+    assert_equal '管理者が確認した料金', candidate.place.reload.price
     candidate.place.destroy!
     assert_nil candidate.reload.place_id
     assert_no_difference('Place.count') { PlaceImports::Runner.new(source: @source).call(apply: true) }
@@ -44,7 +50,7 @@ class PlaceImportsTest < ActiveSupport::TestCase
   end
 
   test 'missing ambiguous stale closed and unsupported facilities remain pending' do
-    [{ 'sports' => [] }, { 'tag' => nil }, { 'address' => '不明' }, { 'city' => '不明区' },
+    [{ 'price' => nil }, { 'access' => '' }, { 'sports' => [] }, { 'tag' => nil }, { 'address' => '不明' }, { 'city' => '不明区' },
       { 'alerts' => ['改修工事に伴う休館'] }, { 'sports' => ['未対応種目'] }, { 'evidence' => [] }].each_with_index do |changes, index|
       candidate = build_candidate("invalid-#{index}", @data.merge(changes))
       assert_no_difference('Place.count') { assert_equal 'pending', PlaceImports::Registrar.new.call(candidate, apply: true) }

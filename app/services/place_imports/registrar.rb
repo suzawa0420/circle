@@ -1,5 +1,7 @@
 module PlaceImports
   class Registrar
+    DETAIL_LABELS = { 'access' => 'アクセス', 'parking' => '駐車場', 'time' => '利用時間',
+      'regular_holiday' => '休館日', 'scale' => '施設規模', 'price' => '料金' }.freeze
     SPORT_ALIASES = { 'バスケットボール' => %w[バスケ バスケットボール], 'バレーボール' => %w[バレー バレーボール] }.freeze
 
     def self.normalize(value)
@@ -42,6 +44,8 @@ module PlaceImports
           reasons << '対応種目を確認してください' if events.empty? || events.any? { |group| group.size != 1 }
           reasons << '休館・閉鎖等のお知らせを確認してください' if Array(data['alerts']).any?
           reasons << '公式の施設情報に根拠がありません' unless Array(data['evidence']).any? { |item| item['text'].present? }
+          missing_details = DETAIL_LABELS.filter_map { |key, label| label if data[key].blank? }
+          reasons << "詳細情報が未確認です：#{missing_details.join('・')}" if missing_details.any?
           if reasons.any?
             candidate.update!(status: 'pending', reason: reasons.join('／'))
             return 'pending'
@@ -51,7 +55,8 @@ module PlaceImports
             return 'ready'
           end
           place = Place.create!(name: data['name'], address: data['address'], prefecture: prefecture, city: city,
-            events: events.flatten, tag: data['tag'], tel: data['tel'], url: data['url'])
+            events: events.flatten, tag: data['tag'], tel: data['tel'], url: data['url'],
+            **data.slice(*DETAIL_LABELS.keys).symbolize_keys)
           candidate.update!(place: place, status: 'registered', reason: '公式情報を確認して登録しました')
           'registered'
         end
