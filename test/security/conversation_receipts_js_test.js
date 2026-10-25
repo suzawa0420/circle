@@ -58,6 +58,50 @@ function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = 
   frames.forEach(callback => callback());
   return calls;
 }
+function checkReplyShortcuts() {
+  const events = {}, clicks = new Map();
+  const links = [{}, {}]; // Header link and fixed reply shortcut.
+  const photo = { name: 'draft.jpg' };
+  const input = { value: '消えてはいけない返信の下書き', selectionStart: 5, selectionEnd: 5,
+    style: {}, scrollHeight: 120, addEventListener() {}, removeEventListener() {},
+    focus() { this.focused = true; }
+  };
+  let scrolls = 0;
+  const composer = { querySelector: () => input,
+    scrollIntoView() { scrolls++; }, photo, editing: true
+  };
+  links.forEach(link => {
+    link.addEventListener = (name, callback) => clicks.set(link, callback);
+    link.removeEventListener = () => clicks.delete(link);
+  });
+  const document = {
+    readyState: 'loading', querySelector: selector => selector === '.chat-composer' ? composer : null,
+    querySelectorAll: selector => selector === 'a[href="#chat-reply"]' ? links : [],
+    getElementById: () => null, addEventListener: (name, callback) => { events[name] = callback; }
+  };
+  const location = Object.freeze({hash: '#chat-reply'});
+  const window = { location, clearTimeout() {}, addEventListener() {}, removeEventListener() {} };
+  vm.runInNewContext(source, {window, document});
+  events.DOMContentLoaded();
+  // Click both shortcuts repeatedly after reaching the same anchor, including editing.
+  links.forEach(link => {
+    for (let i = 0; i < 3; i++) {
+      let prevented = false;
+      clicks.get(link)({preventDefault() { prevented = true; }});
+      assert(prevented, 'anchor navigation is stopped before Turbolinks can reload');
+      assert.equal(input.value, '消えてはいけない返信の下書き');
+      assert.equal(input.selectionStart, 5, 'cursor position is preserved');
+      assert.equal(composer.photo, photo, 'selected photo is preserved');
+      assert.equal(composer.editing, true, 'editing mode is preserved');
+    }
+  });
+  assert.equal(scrolls, 6);
+  assert.equal(input.focused, true);
+  events['turbolinks:before-cache']();
+  assert.equal(clicks.size, 0, 'navigation cleans up shortcut listeners');
+  events['turbolinks:load']();
+  assert.equal(clicks.size, 2, 'returning to the conversation rebinds shortcuts');
+}
 (async () => {
   const peerNotice = await checkPolling({ noticeHtml: '<aside>口コミが届いています</aside>' });
   assert.equal(peerNotice.reviewPrompt.innerHTML, '<aside>口コミが届いています</aside>', 'peer notice appears without a new chat message');
@@ -83,5 +127,6 @@ function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = 
   assert.equal(checkInitialJump({ readyState: 'loading', event: 'DOMContentLoaded', alignment: 'end' })[0].block, 'end', 'all-read conversations align the latest message');
   assert.equal(checkInitialJump({ hash: '#evaluation' }).length, 0, 'explicit anchor links take priority');
   assert.equal(checkInitialJump({ cancel: true }).length, 0, 'user scrolling cancels pending automatic movement');
-  console.log('Conversation receipt polling and initial jump: 16 assertions passed');
+  checkReplyShortcuts();
+  console.log('Conversation receipt polling, initial jump and draft-safe reply shortcuts: passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

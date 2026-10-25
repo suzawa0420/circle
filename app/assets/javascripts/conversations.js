@@ -17,6 +17,14 @@
         if (evaluation) evaluation.open = true;
       }
     }
+    var replyLinks = document.querySelectorAll('a[href="#chat-reply"]');
+    function revealComposer(event) {
+      // Repeated anchor visits can trigger a Turbolinks reload and discard drafts.
+      event.preventDefault();
+      composer.scrollIntoView({ block: 'start' });
+      (input || composer).focus({ preventScroll: true });
+    }
+    replyLinks.forEach(function (link) { link.addEventListener('click', revealComposer); });
     var evaluationLinks = document.querySelectorAll('[data-open-evaluation]');
     function revealEvaluation() {
       var evaluation = document.getElementById('evaluation');
@@ -34,6 +42,7 @@
     resize();
     openEvaluation();
     cleanup = function () {
+      replyLinks.forEach(function (link) { link.removeEventListener('click', revealComposer); });
       evaluationLinks.forEach(function (link) { link.removeEventListener('click', revealEvaluation); });
       if (reviewPrompt) reviewPrompt.removeEventListener('click', revealPromptEvaluation);
       if (input) input.removeEventListener('input', resize);

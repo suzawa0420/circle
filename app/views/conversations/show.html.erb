@@ -2,7 +2,7 @@
   <header class="chat-thread-heading">
     <%= link_to '‹ 一覧', conversations_path, class: 'chat-back', aria: { label: 'メッセージ一覧へ戻る' } %>
     <h1><%= @conversation.practice_match? ? '対戦・練習試合の相談' : 'メッセージ' %></h1>
-    <a href="#chat-reply" class="chat-reply-link"><%= lucide_icon 'undo-2' %>返信欄へ</a>
+    <a href="#chat-reply" data-turbolinks="false" class="chat-reply-link"><%= lucide_icon 'undo-2' %>返信欄へ</a>
   </header>
   <div id="chat-review-prompt"><%= render "review_prompt" if @review_prompt_due %></div>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
@@ -171,5 +171,5 @@
 <% end %>
 </main>
 
-<a href="#chat-reply" class="chat-reply-shortcut <%= 'chat-reply-shortcut--participant' if @role == 'member' && !@conversation.practice_match? %>"><%= lucide_icon 'undo-2' %><span>返信</span></a>
+<a href="#chat-reply" data-turbolinks="false" class="chat-reply-shortcut <%= 'chat-reply-shortcut--participant' if @role == 'member' && !@conversation.practice_match? %>"><%= lucide_icon 'undo-2' %><span>返信</span></a>
 <%= render 'conversations/image_viewer' %>

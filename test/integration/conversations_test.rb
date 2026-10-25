@@ -15,8 +15,8 @@ class ConversationsTest < ActionDispatch::IntegrationTest
       [1, 2].each do |page|
         get conversation_path(@conversation), params: { page: page }
         assert_response :success
-        assert_select '.chat-thread-heading a[href="#chat-reply"]', text: '返信欄へ'
-        assert_select 'a.chat-reply-shortcut[href="#chat-reply"]', text: '返信'
+        assert_select '.chat-thread-heading a[href="#chat-reply"][data-turbolinks="false"]', text: '返信欄へ'
+        assert_select 'a.chat-reply-shortcut[href="#chat-reply"][data-turbolinks="false"]', text: '返信'
         assert_select 'section#chat-reply[tabindex="-1"]' do
           assert_select 'h2#chat-reply-title', text: 'メッセージを返信'
           assert_select 'form[action=?]', message_conversation_path(@conversation) do
@@ -35,7 +35,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
     get conversation_path(@conversation)
     assert_select '#chat-reply', text: /ブロック中のため/
     assert_select '#chat-reply form', count: 0
-    assert_select 'a.chat-reply-shortcut[href="#chat-reply"]'
+    assert_select 'a.chat-reply-shortcut[href="#chat-reply"][data-turbolinks="false"]'
     assert_select 'input[value="自分のブロックを解除"]'
   end
 
