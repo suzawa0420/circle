@@ -1,0 +1,5 @@
+Codex組み込みの image_gen ツールを直接使って画像を生成してください。APIキー、Images API、scripts/image_gen.py、外部画像検索、Python/Nodeによる描画は禁止。画像生成には組み込み image_gen だけを使い、保存された生成画像を指定先へコピーしてください。他のファイルや認証情報を読まないでください。サブエージェントは使わないでください。
+画像を1枚生成してください。
+プロンプト: Use case: photorealistic-natural. Asset: editorial cover for Circlebook, a Japanese hobby community website. One coherent natural editorial photograph, horizontal 1536x1024 PNG, soft daylight, authentic materials, inviting and uncluttered. Genre equipment grouped centrally, enough breathing room for thumbnail cropping. No people, no text, no numbers, no logos, no watermark, no readable labels. Generic unbranded items, not a replica of a commercial product image. No collage or contact sheet. Scene: Outdoor soccer field at a Japanese public sports ground. On a bench, soccer training shoes with small rubber studs, long socks, shin guards, a plain dark training shirt, soccer ball, water bottle and small sports bag. Green pitch and goal softly blurred behind.
+保存先: /Users/suzawa/rails/circle/content/columns/2026-10-next-guides/images/soccer-first.png
+最後は生成成否と保存先だけ報告してください。
