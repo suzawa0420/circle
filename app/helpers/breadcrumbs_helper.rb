@@ -22,6 +22,7 @@ module BreadcrumbsHelper
     'links' => 'サークルリンク', 'user_contacts' => 'お問い合わせ', 'member_profiles' => '参加者プロフィール',
     'organizer_profiles' => '主催者プロフィール',
     'picte_ad_clicks' => 'PICTE広告クリック数',
+    'place_import_candidates' => '施設の収集・登録',
     'member_email_verifications' => 'メールアドレス確認', 'admin_user_email_verifications' => 'メールアドレス確認',
     'backlink_requests' => '公式サイト連携', 'exhibitor_profiles' => '出展者プロフィール',
     'exhibitor_mypages' => '出展者マイページ', 'accounts' => 'アカウント管理',
