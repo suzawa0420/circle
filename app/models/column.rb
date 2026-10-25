@@ -15,7 +15,7 @@ class Column < ApplicationRecord
   belongs_to :event, optional: true
   has_many :column_products, -> { order(:position, :id) }, dependent: :destroy, inverse_of: :column
   accepts_nested_attributes_for :column_products, allow_destroy: true, limit: 12,
-    reject_if: ->(attributes) { attributes.slice('name', 'description', 'amazon_url', 'mercari_url').values.all?(&:blank?) }
+    reject_if: ->(attributes) { attributes.slice('name', 'description', 'amazon_url').values.all?(&:blank?) }
 
   scope :published, -> { where(publication_status: 'published') }
   scope :for_participant_interests, ->(event_ids) {

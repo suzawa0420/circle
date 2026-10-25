@@ -81,6 +81,11 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
     assert_select '.column-product-fields .wm-meta', text: /Amazon 0（購入数ではありません）/
     assert_nil article.column_products.first.mercari_url
     article.column_products.first.update_column(:mercari_url, 'https://jp.mercari.com/search?keyword=shoes&afid=sample')
+    get columns_path
+    assert_response :success
+    assert_select '.column-management__missing', text: /画像未設定/
+    assert_select '.column-management .wm-meta', text: /商品クリック：Amazon 0/
+    assert_not_includes response.body, 'メルカリ'
     delete destroy_webmaster_session_path
     get column_path(article)
     assert_response :success
@@ -107,6 +112,9 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
       stored = MiniMagick::Image.open(article.image.path)
       assert_equal 1600, stored.width
       assert_operator stored.height, :>, 400
+      get columns_path
+      assert_select '.column-management__cover[href=?] img.column-management__image', edit_column_path(article), count: 1
+      assert_select '.column-management__missing', count: 0
       delete destroy_webmaster_session_path
       get column_path(article)
       assert_select '.column-article__header img.column-article__image[fetchpriority="high"]'

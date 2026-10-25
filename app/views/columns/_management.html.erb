@@ -1,12 +1,23 @@
 <%= render 'webmasters/shared/page_header', title: '紹介記事・コラム管理', description: '参加者の持ち物ガイドや、主催者の備品紹介を作成できます。' %>
 <%= link_to '紹介記事を作成', new_column_path, class: 'wm-button' %>
-<p class="wm-meta">クリック数は商品リンクが押された回数です。購入数や報酬はAmazon・メルカリの管理画面で確認してください。</p>
-<section class="wm-section wm-list">
+<p class="wm-meta">クリック数は商品リンクが押された回数です。購入数や報酬はAmazonアソシエイトの管理画面で確認してください。</p>
+<section class="wm-section wm-list column-management">
   <% @columns.includes(:event, :column_products).each do |column| %>
     <article class="webmaster-card">
-      <div class="wm-card-heading"><h2><%= link_to column.title, edit_column_path(column) %></h2><span class="wm-badge <%= 'wm-badge--pending' unless column.published? %>"><%= column.published? ? '公開中' : '下書き' %></span></div>
-      <p class="wm-meta"><%= Column::AUDIENCES.fetch(column.audience) %> ／ <%= column.event&.name || 'すべての種目' %> ／ 更新：<%= column.updated_at.strftime('%Y/%m/%d %H:%M') %></p>
-      <p class="wm-meta">商品クリック：Amazon <%= column.column_products.sum(&:amazon_clicks) %> ／ メルカリ <%= column.column_products.sum(&:mercari_clicks) %></p>
+      <div class="column-management__summary">
+        <%= link_to edit_column_path(column), class: 'column-management__cover', aria: { label: "アイキャッチを確認：#{column.title}" } do %>
+          <% if column.image.identifier.present? %>
+            <%= image_tag column.image.url, alt: '', width: 120, height: 80, loading: 'lazy', decoding: 'async', class: 'column-management__image' %>
+          <% else %>
+            <span class="column-management__missing"><%= lucide_icon 'image', **{ 'aria-hidden' => 'true' } %><span>画像未設定</span></span>
+          <% end %>
+        <% end %>
+        <div class="column-management__details">
+          <div class="wm-card-heading"><h2><%= link_to column.title, edit_column_path(column) %></h2><span class="wm-badge <%= 'wm-badge--pending' unless column.published? %>"><%= column.published? ? '公開中' : '下書き' %></span></div>
+          <p class="wm-meta"><%= Column::AUDIENCES.fetch(column.audience) %> ／ <%= column.event&.name || 'すべての種目' %> ／ 更新：<%= column.updated_at.strftime('%Y/%m/%d %H:%M') %></p>
+          <p class="wm-meta">商品クリック：Amazon <%= column.column_products.sum(&:amazon_clicks) %></p>
+        </div>
+      </div>
       <div class="wm-actions">
         <%= link_to '編集', edit_column_path(column), class: 'wm-button' %>
         <%= link_to 'プレビュー', column_path(column), target: '_blank', rel: 'noopener', class: 'wm-button wm-button--secondary' %>
