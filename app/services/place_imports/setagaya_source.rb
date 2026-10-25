@@ -53,6 +53,9 @@ module PlaceImports
         [row.at_css('dt')&.text&.strip, row.at_css('dd')&.text&.gsub(/\s+/, ' ')&.strip]
       end
       return if name.blank?
+      # A pool page can introduce an adjacent school court. Do not publish that
+      # court under the pool's name or contact details.
+      return if name.match?(/プール|トレーニングルーム/)
       # Restrict evidence to facility introduction pages, never shared navigation.
       links = doc.css('.p-facility-singleTab__facilityinfoLink[href]').filter_map do |a|
         p = safe_path(a['href'], 'facilityinfo')

@@ -40,6 +40,13 @@ class PlaceImportsSourceTest < ActiveSupport::TestCase
     assert_equal ['https://www.se-sports.or.jp/robots.txt'], client.requests
   end
 
+  test 'pool pages with adjacent court links are excluded from registration candidates' do
+    @pages['/facility/test/'] = @pages['/facility/test/'].sub('テスト体育館', '烏山中学校温水プール').sub('>体育館</a>', '>テニスコート</a>')
+    client = Client.new(@pages)
+    assert_empty PlaceImports::SetagayaSource.new(client: client).collect
+    assert_equal 3, client.requests.size
+  end
+
   test 'closed facility alerts are retained without extracting footer sport labels' do
     @pages['/facility/test/'] += '<h4 class="c-news__itemTitle">改修工事に伴う休館のお知らせ</h4><footer>バドミントン</footer>'
     data = PlaceImports::SetagayaSource.new(client: Client.new(@pages)).collect.sole
