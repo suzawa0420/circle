@@ -1,0 +1,14 @@
+<%= render 'webmasters/shared/page_header', title: '施設の収集・登録', description: '公式サイトから収集した候補と登録結果を確認します。' %>
+<nav class="wm-actions" aria-label="候補の状態"><% PlaceImportCandidate::STATUSES.each do |key, label| %>
+  <%= link_to label, super_admin_place_import_candidates_path(status: key), class: 'wm-button wm-button--secondary', aria: { current: (@status == key ? 'page' : nil) } %>
+<% end %></nav>
+<section class="wm-section wm-list"><% @candidates.each do |candidate| %>
+  <article class="webmaster-card"><h2><%= link_to candidate.payload['name'], super_admin_place_import_candidate_path(candidate) %></h2>
+    <p><%= candidate.payload['address'] %></p><p><%= candidate.reason %></p>
+  </article>
+<% end %></section>
+<% if @candidates.empty? %><%= render 'webmasters/shared/empty', message: '該当する施設候補はありません。' %><% end %>
+<%= paginate @candidates %>
+<section class="wm-section"><h2>最近の収集結果</h2>
+<% @runs.each do |run| %><p><%= l run.created_at, format: :short %>：<%= run.mode == 'apply' ? '自動登録' : 'プレビュー' %>／<%= run.status == 'completed' ? '完了' : (run.status == 'failed' ? '失敗' : '実行中') %>：<%= (run.summary || {}).except('error').map { |key, count| "#{ { 'pending' => '確認待ち', 'ready' => '登録可能', 'registered' => '登録', 'duplicate' => '重複候補', 'already_registered' => '過去に登録済み', 'already_dismissed' => '見送り済み' }.fetch(key, key) } #{count}件" }.join('／') %></p><% end %>
+</section>

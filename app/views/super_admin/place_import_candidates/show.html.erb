@@ -1,0 +1,22 @@
+<%= render 'webmasters/shared/page_header', title: @candidate.payload['name'], description: '公式情報と重複の可能性を確認してください。' %>
+<%= link_to '候補一覧', super_admin_place_import_candidates_path %>
+<section class="wm-section webmaster-card"><dl class="wm-details">
+  <dt>状態</dt><dd><%= PlaceImportCandidate::STATUSES.fetch(@candidate.status) %></dd>
+  <dt>判定</dt><dd><%= @candidate.reason %></dd>
+  <dt>住所</dt><dd><%= @candidate.payload['address'] %></dd>
+  <dt>種目</dt><dd><%= Array(@candidate.payload['sports']).join('・') %></dd>
+  <dt>電話番号</dt><dd><%= @candidate.payload['tel'] %></dd>
+  <dt>情報源</dt><dd><%= link_to @candidate.source_url, @candidate.source_url, target: '_blank', rel: 'noopener noreferrer' %></dd>
+  <dt>確認日</dt><dd><%= l @candidate.checked_at, format: :short %></dd>
+</dl>
+<% Array(@candidate.payload['alerts']).each do |alert| %><p><%= alert %></p><% end %>
+<% Array(@candidate.payload['evidence']).each do |item| %>
+  <h2><%= link_to item['label'], item['url'], target: '_blank', rel: 'noopener noreferrer' %></h2><p><%= item['text'] %></p>
+<% end %>
+<% if @candidate.place %><%= link_to '登録した施設を編集', edit_place_path(@candidate.place), class: 'wm-button' %><% end %>
+<% if @candidate.status.in?(%w[pending duplicate]) %><div class="wm-actions">
+  <%= button_to '条件を再確認して登録', super_admin_place_import_candidate_path(@candidate), method: :patch, params: { decision: 'register' }, class: 'wm-button' %>
+  <%= button_to '見送る', super_admin_place_import_candidate_path(@candidate), method: :patch, params: { decision: 'dismiss' }, class: 'wm-button wm-button--secondary' %>
+  <%= link_to '施設を手動登録', new_place_path, class: 'wm-button wm-button--secondary' %>
+</div><% end %>
+</section>

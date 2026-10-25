@@ -37,6 +37,7 @@ class Place < ApplicationRecord
   counter_culture :city, column_name: 'places_count'
 	belongs_to :user, optional: true
 
+  has_many :place_import_candidates, dependent: :nullify
   has_many :place_information_reports, dependent: :nullify
   has_many :place_reviews, dependent: :destroy
   has_many :public_place_reviews, -> { where(moderation_status: "clear") }, class_name: "PlaceReview"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_21_020000) do
+ActiveRecord::Schema.define(version: 2026_10_25_010000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -685,6 +685,33 @@ ActiveRecord::Schema.define(version: 2026_10_21_020000) do
     t.check_constraint "placement::text = ANY (ARRAY['search'::character varying, 'mypage'::character varying]::text[])", name: "picte_ad_placement"
   end
 
+  create_table "place_import_runs", force: :cascade do |t|
+    t.string "source", null: false
+    t.string "mode", null: false
+    t.string "status", default: "running", null: false
+    t.text "summary"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "place_import_candidates", force: :cascade do |t|
+    t.string "source", null: false
+    t.string "source_url", null: false
+    t.string "fingerprint", null: false
+    t.string "status", default: "pending", null: false
+    t.text "payload", null: false
+    t.text "reason"
+    t.bigint "place_id"
+    t.bigint "place_import_run_id"
+    t.datetime "checked_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["place_id"], name: "index_place_import_candidates_on_place_id"
+    t.index ["place_import_run_id"], name: "index_place_import_candidates_on_place_import_run_id"
+    t.index ["source", "fingerprint"], name: "index_place_import_candidates_on_source_and_fingerprint", unique: true
+    t.index ["status", "updated_at"], name: "index_place_import_candidates_on_status_and_updated_at"
+  end
+
   create_table "place_information_reports", force: :cascade do |t|
     t.bigint "place_id"
     t.string "place_name", null: false
@@ -1028,4 +1055,6 @@ ActiveRecord::Schema.define(version: 2026_10_21_020000) do
   add_foreign_key "conversations", "users", column: "source_user_id"
   add_foreign_key "conversations", "users"
   add_foreign_key "reviews", "conversation_reviews"
+  add_foreign_key "place_import_candidates", "places"
+  add_foreign_key "place_import_candidates", "place_import_runs"
 end

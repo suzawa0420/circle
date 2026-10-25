@@ -118,6 +118,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261021010000
     # Optional remote product images; retain existing article and product data.
     bundle exec rails db:migrate:up VERSION=20261021020000
+    # Official facility discovery: additive candidates and execution history.
+    bundle exec rails db:migrate:up VERSION=20261025010000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;
@@ -143,6 +145,9 @@ case "$mode" in
       sudo -n install -m 0644 ops/al2023/circle-sitemap.service /etc/systemd/system/circle-sitemap.service
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.service /etc/systemd/system/circle-chat-maintenance.service
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.timer /etc/systemd/system/circle-chat-maintenance.timer
+      sudo -n install -m 0644 ops/al2023/circle-place-import.service /etc/systemd/system/circle-place-import.service
+      sudo -n install -m 0644 ops/al2023/circle-place-import.timer /etc/systemd/system/circle-place-import.timer
+      # The facility timer is enabled separately after reviewing the initial preview.
       sudo -n systemctl daemon-reload
       sudo -n systemctl enable --now circle-chat-maintenance.timer
       systemctl is-active circle-chat-maintenance.timer

@@ -211,6 +211,7 @@ Rails.application.routes.draw do
   # 管理画面（SuperAdmin）
   namespace :super_admin do
     resources :picte_ad_clicks, only: :index
+    resources :place_import_candidates, only: [:index, :show, :update]
     resources :place_information_reports, only: [:index, :show, :update]
     resources :backlink_requests, only: [:index, :show, :update]
     resource :bulk_owner_deletion, only: [:create, :destroy]

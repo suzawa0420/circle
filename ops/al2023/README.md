@@ -72,6 +72,21 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Official facility discovery (2026-10-25)
+
+Facility discovery starts with the Setagaya Sports Promotion Foundation's official
+facility directory. Verified, unambiguous facilities may be registered automatically,
+up to five per run. Missing facts, possible duplicates and closure notices stay in
+the webmaster review inbox. See [facility import operations](place-imports.md).
+
+Deployment applies additive migration `20261025010000` before either Puma restarts.
+It adds candidate and execution-history tables, without changing existing facility
+content. Server4 receives the import service/timer units; the timer is enabled
+separately after the initial production preview and registration check. Server5
+must not run this timer. Daily execution is scheduled at 05:20 JST plus up to
+15 minutes of jitter. To roll back, disable the timer, then deploy a normal revert
+while keeping the additive schema and registered facilities.
+
 ## Delivery-service promotion moderation (2026-10-21)
 
 Profiles containing euphemistic phrases such as `高品質なデリバリーサービス`,

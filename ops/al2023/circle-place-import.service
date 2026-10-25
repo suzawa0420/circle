@@ -1,0 +1,20 @@
+[Unit]
+Description=Discover and register verified official sports facilities (server4 only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ec2-user
+Group=nginx
+WorkingDirectory=/var/www/circle
+Environment=RAILS_ENV=production
+Environment=BUNDLE_PATH=/var/www/circle/vendor/bundle
+Environment=PATH=/opt/circle/ruby-3.4.11/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin
+Environment=AWS_EC2_METADATA_DISABLED=true
+Environment=APPLY=1
+Environment=LIMIT=5
+UMask=0007
+ExecStart=/opt/circle/ruby-3.4.11/bin/bundle exec rake places:discover
+Nice=10
+TimeoutStartSec=10min
