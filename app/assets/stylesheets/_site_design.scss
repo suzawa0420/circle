@@ -102,6 +102,10 @@
   .user_item_wrap, .schedule_item_wrap, .places-index-item, .form.users-form { margin-bottom: cb-space(6); }
   .user_item_wrap .users-index-item { box-shadow: none; border: 0; border-radius: 0; }
   .user_item_wrap .user_name, .blog-body .blog_title, .places-index-item .place_name { @include cb-type(section-title); color: $cb-text; }
+  .user_item_wrap .user_name {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+    line-height: 1.4; max-height: 2.8em; overflow: hidden;
+  }
   .user_item_wrap .list_cnts { @include cb-type(compact); }
   .user_item_wrap .tag_list_wrap { height: auto; min-height: $cb-touch-height; background: $cb-canvas; }
   .tag_list_wrap .tag_list_content a { font-size: 12px; }
