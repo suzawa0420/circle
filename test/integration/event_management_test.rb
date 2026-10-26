@@ -60,6 +60,38 @@ class EventManagementTest < ActionDispatch::IntegrationTest
     assert_select ".dashboard-action-grid a[href='#{user_schedules_path(@circle, anchor: 'event-list')}']", text: /出欠管理/
   end
 
+  test 'primary attendance shortcut opens the member response page when upcoming events exist' do
+    sign_in
+    get user_schedules_path(@circle)
+    assert_response :success
+    assert_select '.em-primary-actions a', count: 2
+    assert_select '.em-primary-actions a:first-child[href=?]', new_user_schedule_path(@circle)
+    assert_select '.em-primary-actions a:last-child[href=?]', attendances_path(@circle.unique_id), text: 'メンバーに出欠確認をする'
+
+    @circle.schedules.where('day >= ?', Date.current.iso8601).destroy_all
+    get user_schedules_path(@circle)
+    assert_select '.em-primary-actions a', count: 1
+
+    @circle.schedules.destroy_all
+    get user_schedules_path(@circle)
+    assert_select '.em-primary-actions a', count: 1
+  end
+
+  test 'event titles and explicit preview buttons open public pages while management links remain separate' do
+    sign_in
+    get user_schedules_path(@circle)
+    [@event, @next].each do |schedule|
+      assert_select "#event-#{schedule.id}-title a[href=?]", user_schedule_path(@circle, schedule)
+      assert_select '.em-event a.em-button[href=?]', user_schedule_path(@circle, schedule), text: /一般公開ページを見る/
+      assert_select '.em-event a.em-text-link[href=?]', manage_user_schedule_path(@circle, schedule), text: '詳細・共有'
+    end
+
+    @circle.update_columns(moderation_status: 'held')
+    get user_schedules_path(@circle)
+    assert_select '.em-event a', text: /一般公開ページを見る/, count: 0
+    assert_select "#event-#{@event.id}-title a[href=?]", manage_user_schedule_path(@circle, @event)
+  end
+
   test 'event attendance filters names and comments within this circle' do
     sign_in
     get manage_attendance_user_schedule_path(@circle, @event)
