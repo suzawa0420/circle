@@ -42,6 +42,41 @@ class PlaceImportsMizunoTest < ActiveSupport::TestCase
     assert_equal ['体育館閉館のお知らせ'], data['alerts']
   end
 
+  test 'bare route text after bullet spans and unwrapped parking conditions survive extraction' do
+    @pages["#{@url}/access"].sub!(/<div class="show_body_access">.*<\/div><\/main>/, <<~HTML)
+      <div class="show_body_access"><h3>車でご来場の場合</h3>
+      <span>●</span>近隣の駐車場：<a href="https://example.test/parking">公園駐車場</a><br>
+      <span>●</span>収容可能台数：32台（専用ではありません）<br>
+      ・最初の30分無料、以降30分100円<br>・最大料金なし<br>
+      ※サービス券の発行はありません。<br>
+      <h3>電車でご来場の場合</h3>
+      <span>●</span>阪急千里線：吹田駅・豊津駅（徒歩8分）<br>
+      <span>●</span>JR東海道本線：吹田駅（徒歩15分）<br>
+      <h3>その他</h3>別項目</div></main>
+    HTML
+    data = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)
+    assert_equal "電車でご来場の場合\n●阪急千里線：吹田駅・豊津駅（徒歩8分）\n●JR東海道本線：吹田駅（徒歩15分）", data['access']
+    assert_includes data['parking'], '収容可能台数：32台（専用ではありません）'
+    assert_includes data['parking'], '・最大料金なし'
+    assert_includes data['parking'], '※サービス券の発行はありません。'
+    assert_not_includes data['access'], '別項目'
+  end
+
+  test 'heading and empty bullet markers alone leave access unconfirmed' do
+    @pages["#{@url}/access"].sub!(/<div class="show_body_access">.*<\/div><\/main>/,
+      '<div class="show_body_access"><h3>電車でご来場の場合</h3><span>●</span><br><span>●</span></div></main>')
+    assert_nil PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['access']
+  end
+
+  test 'unwrapped rate notes after inline elements are retained' do
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h3>体育館利用料金</h3><span>●</span>利用資格：登録団体<br><table><tr><td>1時間</td><td>1000円</td></tr></table><span>※</span>市外利用者は2倍です。<br>夜間は別途500円が必要です。<h3>その他</h3>別施設の情報</div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_includes price, '利用資格：登録団体'
+    assert_includes price, '市外利用者は2倍です。'
+    assert_includes price, '夜間は別途500円が必要です。'
+    assert_not_includes price, '別施設の情報'
+  end
+
   test 'court descriptions without numeric counts remain valid while prohibitions do not create sports' do
     @pages["#{@url}/gallery"] = '<main><div class="inline-wrap"><div class="txt_wrap"><p class="top_header">第1体育室</p><p>施設面積400㎡。団体利用：バスケットボール・バレーボール等の練習が可能です。バドミントンは利用できません。</p></div></div></main>'
     data = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)

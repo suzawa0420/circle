@@ -48,11 +48,11 @@
     %p
       = lucide_icon "bus"
       アクセス
-    = f.text_field :access, class: 'form-control change_font', placeholder: "大手町駅／東京駅"
+    = f.text_area :access, class: 'form-control change_font', rows: 3, placeholder: "大手町駅から徒歩5分\n東京駅から徒歩10分"
     %p
       = lucide_icon "car"
       駐車場情報
-    = f.text_field :parking, class: 'form-control change_font', id: 'change_parking', placeholder: "200台"
+    = f.text_area :parking, class: 'form-control change_font', id: 'change_parking', rows: 4, placeholder: "200台\n最初の30分無料、以降30分100円"
     %p
       = lucide_icon "clock"
       利用可能時間
@@ -60,7 +60,7 @@
     %p
       = lucide_icon "calendar-days"
       定休日
-    = f.text_field :regular_holiday, class: 'form-control change_font', id: 'change_regular_holiday', placeholder: "毎週火曜日"
+    = f.text_area :regular_holiday, class: 'form-control change_font', id: 'change_regular_holiday', rows: 2, placeholder: "毎週火曜日\n年末年始"
     %p
       = lucide_icon "landmark"
       施設規模

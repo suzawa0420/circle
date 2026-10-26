@@ -96,14 +96,20 @@ module PlaceImports
         end
       end
       access_body = access.at_css('.show_body_access')
-      parking_sections = access_body ? access_body.css('h3,h4').select { |h| text(h).match?(/駐車/) } : []
+      parking_sections = access_body ? access_body.css('h3,h4').select do |heading|
+        text(heading).match?(/駐車/) || (text(heading).match?(/車で/) && section(heading).include?('駐車'))
+      end : []
       parking = parking_sections.map { |h| section(h) }.reject(&:blank?).join("\n\n")
       if parking.blank? && access_body
         parking = text(access_body)[/[^\n]*駐車[^\n]*(?:\n[^\n]+){0,3}/].to_s
       end
       transport_sections = access_body ? access_body.css('h3,h4').select { |h| text(h).match?(/電車|バス|徒歩|自転車/) } : []
-      transport = transport_sections.map { |h| "#{text(h)}\n#{section(h)}" }.reject(&:blank?).join("\n\n")
-      transport = text(access_body) if transport.blank? && access_body
+      transport = transport_sections.filter_map do |heading|
+        route = section(heading)
+        # A heading and decorative bullets are not a confirmed access route.
+        "#{text(heading)}\n#{route}" if route.match?(/[[:alnum:]]/)
+      end.join("\n\n")
+      transport = text(access_body) if transport_sections.empty? && access_body
       alerts = home.css('a[href]').select do |a|
         a['href'].include?("#{URI(url).path}/news/") && text(a).match?(/閉館|閉鎖|長期休館|臨時休館|営業休止|利用停止/)
       end.map { |a| text(a).first(250) }.uniq

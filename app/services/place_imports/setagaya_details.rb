@@ -64,23 +64,22 @@ module PlaceImports
     def section_text(heading, basic: false)
       return '' unless heading
       level = heading.name.delete_prefix('h').to_i
-      node = heading.next_element
-      parts = []
-      while node && !(node.name.match?(/\Ah[1-6]\z/) && node.name.delete_prefix('h').to_i <= level)
-        break if basic && (node['class'].to_s.split.include?('useTab') || node.css('h1,h2,h3').any?)
-        copy = node.dup
-        # Each table becomes a rectangular text grid. Spanning headers repeat,
-        # so a number cannot silently lose its weekday or half/full-court label.
-        tables = copy.name == 'table' ? [copy] : copy.css('table').to_a
-        if copy.name == 'table'
-          parts << table_text(copy)
-        else
-          tables.each { |table| table.replace(Nokogiri::XML::Text.new("\n#{table_text(table)}\n", copy.document)) }
-          parts << text(copy)
-        end
-        node = node.next_element
+      node = heading.next_sibling
+      copy = Nokogiri::XML::Node.new('div', heading.document)
+      while node && !(node.element? && node.name.match?(/\Ah[1-6]\z/) && node.name.delete_prefix('h').to_i <= level)
+        break if basic && node.element? && (node['class'].to_s.split.include?('useTab') || node.css('h1,h2,h3').any?)
+        # Route names and tariff notes can be bare text between inline spans.
+        # Preserve every sibling in order, including text nodes and <br>.
+        copy.add_child(node.dup)
+        node = node.next_sibling
       end
-      parts.reject(&:blank?).join("\n")
+      copy.css('table').each do |table|
+        table.replace(Nokogiri::XML::Text.new("\n#{table_text(table)}\n", copy.document))
+      end
+      copy.css('div,ul,ol,h1,h2,h3,h4,h5,h6').each do |block|
+        block.add_next_sibling(Nokogiri::XML::Text.new("\n", copy.document))
+      end
+      text(copy)
     end
 
     def table_text(table)
