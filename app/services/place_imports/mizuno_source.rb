@@ -121,7 +121,13 @@ module PlaceImports
       price = prices(guide)
       if price.present?
         conditions = summary.select { |label, _| label.match?(/対象|資格|利用条件/) }.map { |label, value| "#{label}：#{value}" }.join("\n")
-        price = [price, conditions.presence, "公式料金：#{url}/guide\n確認日：#{Date.current.iso8601}"].compact.join("\n\n")
+        rate_conditions = guide.css('.show_body_guide h2,.show_body_guide h3,.show_body_guide h4').filter_map do |heading|
+          next unless text(heading).match?(/減免|割増/)
+          value = section(heading)
+          next if value.blank? || price.include?(value)
+          [text(heading), value].join("\n")
+        end
+        price = [price, *rate_conditions, conditions.presence, "公式料金：#{url}/guide\n確認日：#{Date.current.iso8601}"].compact.join("\n\n")
       end
       {
         'name' => name, 'address' => address, 'prefecture' => prefecture, 'city' => nil,
@@ -170,27 +176,48 @@ module PlaceImports
       return '' unless body
       sections = body.css('h2,h3,h4').filter_map do |heading|
         title = text(heading)
-        next unless title.match?(/利用料金|使用料金|使用料|専用利用|個人利用|専用使用|個人使用|冷暖房利用|空調利用|空調料金|照明利用|照明料金/)
+        next unless title.match?(/利用料|使用料金|使用料|専用利用|個人利用|専用使用|個人使用|冷暖房利用|空調利用|空調料金|照明利用|照明料金/)
         next if title.match?(/プール|トレーニング|研修|講習|教室/)
         value = section(heading)
-        next unless value.match?(/[0-9][0-9,，]*\s*円/)
+        next unless numeric_rate?(value)
         [title, value].join("\n")
       end
-      return sections.uniq.join("\n\n") if sections.any?
+      if sections.any?
+        unique_sections = sections.uniq
+        # Some official editors nest the next heading inside the preceding
+        # section's wrapper. Do not repeat a tariff already present in full.
+        return unique_sections.reject { |value| unique_sections.any? { |other| other != value && other.include?(value) } }.join("\n\n")
+      end
       # Fall back only to explicitly labelled court tariffs, never a training
       # course table whose fine print happens to mention a gymnasium.
-      body.css('table').filter_map do |table|
+      entries = body.css('table').filter_map do |table|
         matrix = @formatter.send(:table_text, table)
-        next unless matrix.match?(/[0-9][0-9,，]*\s*円/)
-        heading = text(table.xpath('preceding::*[self::h3 or self::h4][1]').first)
+        next unless numeric_rate?(matrix)
+        heading_node = table.xpath('preceding::*[self::h2 or self::h3 or self::h4][1]').first
+        heading = text(heading_node)
         next if heading.match?(/プール|トレーニング|研修|講習|教室/)
         labels = table.css('tr').map { |row| text(row.element_children.first) }.join(' ')
         caption_node = table.previous_sibling
         caption_node = caption_node.previous_sibling while caption_node && text(caption_node).blank?
         caption = text(caption_node)
-        next unless (heading + caption + labels).match?(/アリーナ|体育館|体育室|フロア|コート|テニス|フットサル|卓球/)
-        [heading, caption, matrix].reject(&:blank?).uniq.join("\n")
-      end.join("\n\n")
+        court_tariff = (heading + caption + labels).match?(/アリーナ|体育館|体育室|フロア|コート|テニス|フットサル|卓球/)
+        next unless court_tariff || heading.match?(/その他施設|貸出備品|附属設備|付属設備/)
+        # The tariff may be labelled with the court name rather than "fees".
+        # Keep notes after its tables: a matrix alone loses surcharge rules.
+        if heading_node && heading_node.ancestors.include?(body)
+          context = section(heading_node)
+          next [court_tariff, [heading, context].join("\n")] if context.include?(matrix)
+        end
+        [court_tariff, [heading, caption, matrix].reject(&:blank?).uniq.join("\n")]
+      end
+      return '' unless entries.any?(&:first)
+      entries.map(&:last).uniq.join("\n\n")
+    end
+
+    def numeric_rate?(value)
+      normalized = value.unicode_normalize(:nfkc)
+      normalized.match?(/[0-9][0-9,]*\s*円/) ||
+        (normalized.match?(/単位\s*[:：]?\s*円/) && normalized.match?(/\|\s*(?:各)?[0-9][0-9,]*\s*(?:\||$)/))
     end
   end
 end

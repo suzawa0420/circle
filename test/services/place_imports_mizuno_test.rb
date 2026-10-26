@@ -86,6 +86,50 @@ class PlaceImportsMizunoTest < ActiveSupport::TestCase
     assert_includes price, '健康を害さない程度の空調は利用料に含みます'
   end
 
+  test 'facility tariffs and court named fallback sections retain notes outside tables' do
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h3>体育施設利用料【税込み】</h3><table><tr><td>体育館</td><td>1000円</td></tr></table><p>※付帯設備の半額減免はありません。</p></div>'
+    assert_includes PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price'], '※付帯設備の半額減免はありません。'
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h2>メインアリーナ</h2><table><tr><th>1時間</th><th>市内</th></tr><tr><td>全面</td><td>1000円</td></tr></table><p>※営利目的は基本使用料の20割を加算。</p><p>※1時間未満の端数は1時間として計算します。</p><h2>サブアリーナ</h2><table><tr><td>1時間</td><td>500円</td></tr></table><p>※2分割利用可。使用割合を乗じます。</p></div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_includes price, '営利目的は基本使用料の20割を加算'
+    assert_includes price, '1時間未満の端数は1時間として計算'
+    assert_includes price, '2分割利用可。使用割合を乗じます'
+    assert_equal 1, price.scan('営利目的は').length
+  end
+
+  test 'ancillary tariffs are retained with court rates but cannot substitute for them' do
+    ancillary = '<h2>その他施設</h2><table><tr><td>会議室</td><td>500円</td></tr></table><p>※冷暖房は3割加算。</p>'
+    @pages["#{@url}/guide"] = '<div class="show_body_guide">' + ancillary + '</div>'
+    assert_nil PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h2>メインアリーナ</h2><table><tr><td>1時間</td><td>1000円</td></tr></table>' + ancillary + '</div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_includes price, '会議室 | 500円'
+    assert_includes price, '※冷暖房は3割加算。'
+  end
+
+  test 'separate reduction conditions supplement a confirmed court tariff' do
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h2>減免利用</h2><p>事前申請と通知書の提示により5割減免。</p><h2>メインアリーナ</h2><table><tr><td>1時間</td><td>1000円</td></tr></table></div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_includes price, '事前申請と通知書の提示により5割減免。'
+  end
+
+  test 'individual rates with a yen caption do not need a currency suffix in every cell' do
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h2>利用料金（占用利用）</h2><table><caption>単位：円、1時間</caption><tr><td>体育館</td><td>6,300</td></tr></table><h2>利用料金：個人利用</h2><table><caption>単位：円</caption><tr><th>施設</th><th>区分</th><th>1時間あたり</th></tr><tr><td>サブアリーナ</td><td>中学生以下</td><td>各150</td></tr><tr><td>サブアリーナ</td><td>大人</td><td>各300</td></tr></table><p>中学生以下は保護者同伴。</p></div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_includes price, '体育館 | 6,300'
+    assert_includes price, '利用料金：個人利用'
+    assert_includes price, 'サブアリーナ | 中学生以下 | 各150'
+    assert_includes price, 'サブアリーナ | 大人 | 各300'
+    assert_includes price, '中学生以下は保護者同伴'
+  end
+
+  test 'nested official editor wrappers do not repeat the following tariff' do
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h2>利用料金（占用利用）</h2><div><table><tr><td>全面</td><td>1000円</td></tr></table><h2>利用料金：個人利用</h2><table><caption>単位：円</caption><tr><td>大人</td><td>300</td></tr></table></div></div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_equal 1, price.scan('利用料金：個人利用').length
+    assert_equal 1, price.scan('大人 | 300').length
+  end
+
   test 'court descriptions without numeric counts remain valid while prohibitions do not create sports' do
     @pages["#{@url}/gallery"] = '<main><div class="inline-wrap"><div class="txt_wrap"><p class="top_header">第1体育室</p><p>施設面積400㎡。団体利用：バスケットボール・バレーボール等の練習が可能です。バドミントンは利用できません。</p></div></div></main>'
     data = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)
