@@ -77,6 +77,15 @@ class PlaceImportsMizunoTest < ActiveSupport::TestCase
     assert_not_includes price, '別施設の情報'
   end
 
+  test 'separate air conditioning tariffs retain the following numbered conditions' do
+    @pages["#{@url}/guide"] = '<div class="show_body_guide"><h3>専用利用</h3><table><tr><td>体育館・1時間</td><td>3000円 ※1</td></tr></table><h3>冷暖房利用 ※5</h3><table><tr><td>利用者の要望による場合・1時間</td><td>1800円</td></tr></table><p>※1 税込料金です。照明料金は利用料金に含みます。</p><p>※5 健康を害さない程度の空調は利用料に含みます。</p></div>'
+    price = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)['price']
+    assert_includes price, '冷暖房利用 ※5'
+    assert_includes price, '利用者の要望による場合・1時間 | 1800円'
+    assert_includes price, '照明料金は利用料金に含みます'
+    assert_includes price, '健康を害さない程度の空調は利用料に含みます'
+  end
+
   test 'court descriptions without numeric counts remain valid while prohibitions do not create sports' do
     @pages["#{@url}/gallery"] = '<main><div class="inline-wrap"><div class="txt_wrap"><p class="top_header">第1体育室</p><p>施設面積400㎡。団体利用：バスケットボール・バレーボール等の練習が可能です。バドミントンは利用できません。</p></div></div></main>'
     data = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)

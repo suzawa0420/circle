@@ -170,7 +170,7 @@ module PlaceImports
       return '' unless body
       sections = body.css('h2,h3,h4').filter_map do |heading|
         title = text(heading)
-        next unless title.match?(/利用料金|使用料金|使用料|専用利用|個人利用|専用使用|個人使用/)
+        next unless title.match?(/利用料金|使用料金|使用料|専用利用|個人利用|専用使用|個人使用|冷暖房利用|空調利用|空調料金|照明利用|照明料金/)
         next if title.match?(/プール|トレーニング|研修|講習|教室/)
         value = section(heading)
         next unless value.match?(/[0-9][0-9,，]*\s*円/)
