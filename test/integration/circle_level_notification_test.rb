@@ -26,7 +26,7 @@ class CircleLevelNotificationTest < ActionDispatch::IntegrationTest
     get "/users/#{@circle.id}/mypage"
     assert_select '#circle-level-up', count: 0
     post user_schedules_path(@circle), params: { schedule: { title: '次回の練習', venue: '体育館', day: (Date.current + 8).to_s } }
-    assert_redirected_to user_schedule_path(@circle, @circle.schedules.order(:id).last)
+    assert_redirected_to manage_user_schedule_path(@circle, @circle.schedules.order(:id).last)
     get "/users/#{@circle.id}/mypage"
     assert_response :success
     assert_select '#circle-level-up .circle-level-up__old', text: /Lv\.\s*0/
