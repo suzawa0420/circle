@@ -14,7 +14,19 @@
   </section>
   <section class="em-card"><h2>活動内容</h2><div class="em-field"><%= f.label :note, '説明・持ち物' %><%= f.hidden_field :note, id: 'event-description' %><details class="em-formatting"><summary>文字を装飾する</summary><trix-toolbar id="event-description-toolbar"></trix-toolbar></details><trix-editor toolbar="event-description-toolbar" input="event-description" id="schedule_note" aria-label="活動内容" placeholder="活動の流れや、持ち物を入力してください。"></trix-editor><p class="em-muted">文字の装飾は、文章を入力したあとに行えます。</p></div>
     <% image_schedule = @schedule.top_image.present? ? @schedule : @copy_schedule %>
-    <details class="em-image-disclosure" <%= 'open' if image_schedule&.top_image.present? %>><summary>トップ画像を設定・変更</summary><div class="em-field"><div id="img_field_header" class="em-image-preview"><% if image_schedule&.top_image.present? %><%= image_tag image_schedule.top_image.url, alt: '現在のトップ画像' %><% else %><%= lucide_icon 'image' %><span>画像は任意です</span><% end %></div><%= f.label :top_image, '画像を選ぶ', for: 'file_header' %><%= f.file_field :top_image, accept: 'image/jpeg,image/png', id: 'file_header' %><p class="em-muted">10MB以下のJPG・PNG。複製時は元の画像を引き継ぎます。</p></div></details>
+    <details class="em-image-disclosure" <%= 'open' if image_schedule&.top_image.present? %>>
+      <summary>トップ画像を設定・変更</summary>
+      <div class="em-field">
+        <label for="schedule_top_image" class="em-image-preview em-image-picker" id="event-image-preview">
+          <% if image_schedule&.top_image.present? %><%= image_tag image_schedule.top_image.url, alt: '現在のトップ画像（選択すると変更できます）' %><% else %><%= lucide_icon 'image' %><span>画像を選ぶ</span><% end %>
+        </label>
+        <%= f.label :top_image, '画像を選び直す' %>
+        <%= f.hidden_field :top_image_cache %>
+        <%= f.file_field :top_image, accept: 'image/jpeg,image/png', data: { event_image_input: true }, aria: { describedby: 'event-image-help event-image-status' } %>
+        <p class="em-muted" id="event-image-help">10MB以下のJPG・PNG。画像または「画像を選び直す」から別の画像を選び、最後に下の保存ボタンを押してください。複製元のイベント画像は変更されません。</p>
+        <p class="em-muted" id="event-image-status" data-event-image-status role="status" aria-live="polite"><% if @schedule.top_image_cache.present? %>選択した画像を保持しています。入力内容を修正して保存してください。<% elsif @copy_schedule %>画像を選び直さない場合は、複製元の画像を引き継ぎます。<% end %></p>
+      </div>
+    </details>
   </section>
   <section class="em-card em-card--member"><p class="em-eyebrow"><%= lucide_icon 'lock-keyhole' %>メンバー限定URLで公開</p><h2>詳しい開催場所</h2><p class="em-muted">一般公開ページには表示されません。限定URLを知っている方が閲覧できます。</p>
     <div class="em-field"><%= f.label :member_venue, '開催場所の名称' %><%= f.text_field :member_venue, placeholder: 'サークルブック体育館' %></div>

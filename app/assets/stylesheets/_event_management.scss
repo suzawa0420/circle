@@ -81,6 +81,8 @@
   .em-image-disclosure { border-top: 1px solid $cb-border; }
   .em-image-disclosure summary { padding-left: 0; }
   .em-image-preview { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 110px; width: 100%; margin: 0 0 16px; padding: 12px; border: 1px dashed $cb-input-border; border-radius: 8px; background: $cb-canvas; color: $cb-muted; overflow: hidden; }
+  .em-image-picker { cursor: pointer; }
+  .em-image-picker:hover { border-color: $cb-action; background: $cb-mint-soft; }
   .em-image-preview img { max-width: 100%; max-height: 220px; object-fit: contain; }
   .em-save { display: grid; gap: 10px; margin-top: 26px; padding-top: 22px; border-top: 1px solid $cb-border; }
   .em-answer-list { padding: 0; margin: 0; list-style: none; }

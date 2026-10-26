@@ -158,7 +158,11 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     @source.save!
     get new_user_schedule_path(@circle), params: { copy: @source.id, copy_mode: 'next_week' }
     assert_response :success
-    assert_select '#img_field_header img' do |images|
+    assert_select 'form.em-event-form[enctype="multipart/form-data"]'
+    assert_select 'label.em-image-preview[for="schedule_top_image"]'
+    assert_select 'input[type=file][id=schedule_top_image][data-event-image-input]'
+    assert_select '#img_field_header, #file_header', count: 0
+    assert_select '.em-image-preview img' do |images|
       assert_equal @source.top_image.url, images.first['src']
     end
     post user_schedules_path(@circle), params: { copy: @source.id,
@@ -185,6 +189,72 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
           schedule: { day: '2027-01-08', title: 'コピー', venue: 'エリア' } }
       end
     end
+  end
+
+  test 'a replacement image is saved instead of the copy source image' do
+    File.open(Rails.root.join('public/images/events/basketball.jpg')) do |file|
+      @source.top_image = file
+      @source.save!
+    end
+    original = Digest::SHA256.file(@source.top_image.path).hexdigest
+    replacement = Rack::Test::UploadedFile.new(Rails.root.join('public/images/default.png'), 'image/png')
+    post user_schedules_path(@circle), params: { copy: @source.id,
+      schedule: { day: '2027-01-05', title: @source.title, venue: @source.venue, top_image: replacement } }
+    created = @circle.schedules.order(:id).last
+    assert_redirected_to manage_user_schedule_path(@circle, created)
+    assert created.top_image.present?
+    assert_not_equal original, Digest::SHA256.file(created.top_image.path).hexdigest
+    assert_equal original, Digest::SHA256.file(@source.reload.top_image.path).hexdigest
+  ensure
+    created&.top_image&.remove!
+    @source.top_image.remove!
+  end
+
+  test 'replacement image survives a validation error and corrected copy submission' do
+    File.open(Rails.root.join('public/images/events/basketball.jpg')) do |file|
+      @source.top_image = file
+      @source.save!
+    end
+    original = Digest::SHA256.file(@source.top_image.path).hexdigest
+    replacement = Rack::Test::UploadedFile.new(Rails.root.join('public/images/default.png'), 'image/png')
+    attributes = { day: '2027-01-05', title: '', venue: @source.venue, top_image: replacement }
+    assert_no_difference 'Schedule.count' do
+      post user_schedules_path(@circle), params: { copy: @source.id, schedule: attributes }
+    end
+    assert_response :success
+    cache_input = css_select('input[name="schedule[top_image_cache]"]').first
+    assert cache_input, 'A selected replacement must remain available after correcting another field'
+    cache = cache_input['value']
+    assert cache.present?
+    post user_schedules_path(@circle), params: { copy: @source.id,
+      schedule: { day: '2027-01-05', title: @source.title, venue: @source.venue, top_image_cache: cache } }
+    created = @circle.schedules.order(:id).last
+    assert_redirected_to manage_user_schedule_path(@circle, created)
+    assert_not_equal original, Digest::SHA256.file(created.top_image.path).hexdigest
+    assert_equal original, Digest::SHA256.file(@source.reload.top_image.path).hexdigest
+  ensure
+    created&.top_image&.remove!
+    @source.top_image.remove!
+  end
+
+  test 'an already copied event image can be replaced without changing the source' do
+    File.open(Rails.root.join('public/images/events/basketball.jpg')) do |file|
+      @source.top_image = file
+      @source.save!
+    end
+    original = Digest::SHA256.file(@source.top_image.path).hexdigest
+    post user_schedules_path(@circle), params: { copy: @source.id,
+      schedule: { day: '2027-01-05', title: @source.title, venue: @source.venue } }
+    created = @circle.schedules.order(:id).last
+    assert created.top_image.present?
+    replacement = Rack::Test::UploadedFile.new(Rails.root.join('public/images/default.png'), 'image/png')
+    patch user_schedule_path(@circle, created), params: { schedule: { top_image: replacement } }
+    assert_redirected_to manage_user_schedule_path(@circle, created)
+    assert_not_equal original, Digest::SHA256.file(created.reload.top_image.path).hexdigest
+    assert_equal original, Digest::SHA256.file(@source.reload.top_image.path).hexdigest
+  ensure
+    created&.top_image&.remove!
+    @source.top_image.remove!
   end
 
   private

@@ -35,9 +35,34 @@ async function copyScenario({ secure, clipboardFails, fallbackWorks }) {
   assert.equal(listeners.click, handler);
 }
 
+function imageScenario() {
+  const listeners = {};
+  const status = { textContent: '' };
+  const preview = { replaceChildren(image) { this.image = image; } };
+  const image = {};
+  const revoked = [];
+  const form = { querySelector(selector) { return selector === '.em-image-preview' ? preview : status; } };
+  const context = {
+    window: {},
+    document: { addEventListener(name, fn) { listeners[name] = fn; }, createElement(tag) { assert.equal(tag, 'img'); return image; } },
+    URL: { createObjectURL(file) { assert.equal(file.name, 'replacement.png'); return 'blob:local-preview'; }, revokeObjectURL(url) { revoked.push(url); } }
+  };
+  vm.runInNewContext(code, context);
+  listeners.change({ target: {
+    matches(selector) { assert.equal(selector, '[data-event-image-input]'); return true; },
+    closest() { return form; }, files: [{ name: 'replacement.png', type: 'image/png' }]
+  } });
+  assert.equal(preview.image.src, 'blob:local-preview');
+  assert.match(status.textContent, /replacement.png/);
+  assert.match(status.textContent, /保存ボタン/);
+  image.onload();
+  assert.deepEqual(revoked, ['blob:local-preview']);
+}
+
 (async () => {
   await copyScenario({ secure: true, clipboardFails: false, fallbackWorks: false });
   await copyScenario({ secure: true, clipboardFails: true, fallbackWorks: true });
   await copyScenario({ secure: false, clipboardFails: false, fallbackWorks: false });
-  console.log('Event management clipboard: 3 scenarios passed');
+  imageScenario();
+  console.log('Event management clipboard and replacement image preview: 4 scenarios passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

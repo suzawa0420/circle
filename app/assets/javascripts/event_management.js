@@ -26,7 +26,7 @@
   });
 
   document.addEventListener('change', function (event) {
-    if (event.target.id !== 'file_header' || !event.target.closest('.em-event-form')) return;
+    if (!event.target.matches('[data-event-image-input]') || !event.target.closest('.em-event-form')) return;
     var preview = event.target.closest('form').querySelector('.em-image-preview');
     var file = event.target.files[0];
     if (!file || !['image/jpeg', 'image/png'].includes(file.type)) return;
@@ -37,5 +37,7 @@
     image.onerror = function () { URL.revokeObjectURL(url); };
     image.src = url;
     preview.replaceChildren(image);
+    var status = event.target.closest('form').querySelector('[data-event-image-status]');
+    status.textContent = '新しく選んだ画像：' + file.name + '。下の保存ボタンを押すと、この画像に変更されます。';
   });
 })();
