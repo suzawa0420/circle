@@ -73,9 +73,9 @@
     %h2 活動を管理
     %p 日々の更新はこちらから
   .dashboard-action-grid
-    = render "dashboard_action", title: "スケジュール", description: "活動日を登録・編集", icon: "calendar-days", path: user_schedules_path(@user)
+    = render "dashboard_action", title: "イベント管理", description: "作成・編集・複製", icon: "calendar-days", path: user_schedules_path(@user)
     - if @schedules.present?
-      = render "dashboard_action", title: "出欠管理", description: "メンバーの参加を確認", icon: "users", path: attendances_path(@user.unique_id)
+      = render "dashboard_action", title: "出欠管理", description: "メンバーの参加を確認", icon: "users", path: user_schedules_path(@user, anchor: "event-list")
     = render "dashboard_action", title: "ブログ", description: "活動の様子を投稿", icon: "pencil", path: new_circle_blog_path(@user)
 
 - if picte_camera_event?(@user.event)

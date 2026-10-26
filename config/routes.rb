@@ -171,6 +171,12 @@ Rails.application.routes.draw do
 		resources :links, only: [:new, :create]
     resources :schedules do
       get :ogp, on: :member, to: 'schedule_ogp_images#show'
+      member do
+        get :manage
+        get :duplicate
+        get :manage_attendance
+        get :confirm_delete
+      end
     end
     resources :questions
     resources :reviews

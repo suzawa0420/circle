@@ -1,0 +1,4 @@
+<% set_meta_tags noindex: true, title: "#{title}｜#{@user.name}" %>
+<% if local_assigns[:back_path] %><%= link_to back_path, class: 'em-back' do %><%= lucide_icon 'undo-2' %><%= local_assigns.fetch(:back_label, 'イベント一覧へ') %><% end %><% end %>
+<div class="em-heading"><p class="em-eyebrow">主催者マイページ / イベント管理</p><h1 class="management-heading"><%= title %></h1><% if local_assigns[:description] %><p class="em-muted"><%= description %></p><% end %></div>
+<% if mobile_circle_switcher? %><%= render 'users/parts/user_switching', user: @user, url_path: 'schedules' %><% else %><p class="em-circle"><%= @user.name %></p><% end %>

@@ -1,54 +1,11 @@
-- set_meta_tags title: "活動スケジュール｜#{@user.name}",og: {title: "活動スケジュール｜#{@user.name}",description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}", image: image_url("/images/schedule_ogp.jpg")}
-.user_main.users-index{ class: mobile_circle_switcher? ? "management-schedules" : nil }
-  .container
-    .users-index-item
-      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 活動スケジュール
-      = render "/users/parts/user_switching", user: @user, url_path: "schedules"
-      - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
-        - if admin_user_signed_in?
-          - if @user.admin_user_id == current_admin_user.id
-            .schedule_share_wrap
-              .share_btn_tw.h40
-                = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}の活動スケジュール%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-                  = lucide_icon "share-2"
-                  ツイート
-              .share_btn_line
-                = link_to 'LINEで共有する', "http://line.me/R/msg/text/?#{request.url}", title: 'LINE', target: '_blank'
-            = render "/schedules/schedule_copy"
-            .add_schedule_btn_wrap
-              = link_to new_user_schedule_path(@user) do
-                .add_schedule_btn
-                  = lucide_icon "calendar-plus"
-                  活動日を追加する
-      = render "/schedules/calendar_list", calendar: @calendar
-    = render "users/inquiry_button"
-/ text copy 01
-:javascript
-  function copyText () {
-    var $target = document.querySelector('.copyTarget01');
-    if (!$target) {return false;}
-    var range = document.createRange();
-    range.selectNode($target);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    alert('コピーしました！');
-    return false;
-  }
-    var copyButton01 = document.querySelector('.copyBtn01');
-    if (copyButton01) { copyButton01.addEventListener('click', copyText, false); }
-/ text copy 02
-:javascript
-  function copyText () {
-    var $target = document.querySelector('.copyTarget02');
-    if (!$target) {return false;}
-    var range = document.createRange();
-    range.selectNode($target);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    alert('コピーしました！');
-    return false;
-  }
-    var copyButton02 = document.querySelector('.copyBtn02');
-    if (copyButton02) { copyButton02.addEventListener('click', copyText, false); }
+- if @management
+  = render 'schedules/management_index'
+- else
+  - set_meta_tags title: "活動スケジュール｜#{@user.name}",og: {title: "活動スケジュール｜#{@user.name}",description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}", image: image_url("/images/schedule_ogp.jpg")}
+  .user_main.users-index
+    .container
+      .users-index-item
+        %h1.top_title 活動スケジュール
+        = render '/users/parts/user_switching', user: @user, url_path: 'schedules'
+        = render '/schedules/calendar_list', calendar: @calendar
+      = render 'users/inquiry_button'

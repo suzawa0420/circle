@@ -1,0 +1,8 @@
+<% public_text = @schedules.map { |s| "#{calendar_schedule_date(Date.iso8601(s.day))} #{calendar_schedule_time(s)}\n#{s.venue}" }.join("\n\n") %>
+<% member_text = @schedules.map { |s| "#{calendar_schedule_date(Date.iso8601(s.day))} #{calendar_schedule_time(s)}\n#{s.member_venue.presence || s.venue}" }.join("\n\n") %>
+<% if @user.publicly_visible? %>
+<section class="em-share-group" data-management-copy><h3>一般向けの開催予定</h3><p class="em-muted">活動エリアを案内します。詳しい開催場所は含みません。</p><%= text_area_tag nil, "#{public_text}\n\n▼スケジュール詳細\nhttps://circle-book.com#{user_schedules_path(@user)}", readonly: true, rows: 5, class: 'em-copy-source', aria: { label: '一般向けの予定テキスト' } %><button type="button" class="em-button em-button--full" data-management-copy-button>一般向けの予定をコピー</button><p class="em-muted" data-management-copy-status role="status" aria-live="polite"></p></section>
+<% end %>
+<% if @user.unique_id.present? %><section class="em-share-group" data-management-copy><h3>メンバー向けの開催予定</h3><p class="em-muted">開催場所と、登録なしで回答できる限定URLを案内します。</p><%= text_area_tag nil, "#{member_text}\n\n▼出欠の登録\nhttps://circle-book.com#{attendances_path(@user.unique_id)}", readonly: true, rows: 5, class: 'em-copy-source', aria: { label: 'メンバー向けの予定テキスト' } %><button type="button" class="em-button em-button--full" data-management-copy-button>メンバー向けの予定をコピー</button><p class="em-muted" data-management-copy-status role="status" aria-live="polite"></p></section>
+
+<% else %><p class="em-muted">メンバー用の限定URLは、<%= link_to 'マイページ', "/users/#{@user.id}/mypage" %>で確認できます。</p><% end %>

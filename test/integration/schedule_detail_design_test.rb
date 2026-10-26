@@ -72,8 +72,10 @@ class ScheduleDetailDesignTest < ActionDispatch::IntegrationTest
   test 'owner operations remain available and limited detail keeps private venue information' do
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     get user_schedule_path(@circle, @schedule)
-    assert_select '.schedule-detail__management a[href=?]', edit_user_schedule_path(@circle, @schedule)
-    assert_select '.schedule-detail__management a[href=?]', new_user_schedule_path(@circle, copy: @schedule.id, copy_mode: :next_week)
+    assert_select '.schedule-detail__management-preview a[href=?]', manage_user_schedule_path(@circle, @schedule)
+    get manage_user_schedule_path(@circle, @schedule)
+    assert_select '.event-management a[href=?]', edit_user_schedule_path(@circle, @schedule)
+    assert_select '.event-management a[href=?]', duplicate_user_schedule_path(@circle, @schedule)
     get "/schedules/#{@circle.unique_id}/#{@schedule.id}"
     assert_response :success
     assert_select '.secret_schedule', count: 1

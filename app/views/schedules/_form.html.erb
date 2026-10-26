@@ -1,0 +1,25 @@
+<% editing = @schedule.persisted? %>
+<%= form_for [@user, @schedule], html: { class: 'em-event-form' } do |f| %>
+  <%= hidden_field_tag :schedule_creation_key, @schedule_creation_key unless editing %>
+  <%= hidden_field_tag :copy, @copy_schedule.id if @copy_schedule %>
+  <% if @schedule.errors.any? %><div class="em-note em-note--danger" role="alert"><strong>入力内容を確認してください</strong><ul><% @schedule.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
+  <% if @copy_schedule %><p class="em-note"><strong><%= @copy_schedule.title %></strong>から内容を引き継ぎました。日付を確認してから作成してください。出欠回答は引き継ぎません。</p><% end %>
+  <section class="em-card"><h2>基本情報</h2>
+    <div class="em-field"><%= f.label :title do %>タイトル <span class="em-required">必須</span><% end %><%= f.text_field :title, required: true, placeholder: '初心者歓迎のエンジョイバスケ' %></div>
+    <div class="em-field"><%= f.label :day do %>開催日 <span class="em-required">必須</span><% end %><%= f.date_field :day, required: true %></div>
+    <div class="em-grid"><div class="em-field"><%= f.label :time_s, '開始時間' %><%= f.time_field :time_s %></div><div class="em-field"><%= f.label :time_e, '終了時間' %><%= f.time_field :time_e %></div></div>
+    <div class="em-field"><%= f.label :venue do %>活動エリア <span class="em-required">必須</span><% end %><%= f.text_field :venue, required: true, placeholder: '川崎市中原区周辺' %><p class="em-muted">一般公開するエリアを入力してください。</p></div>
+    <div class="em-grid"><div class="em-field"><%= f.label :recruitment_numbers, '募集人数' %><%= render 'schedules/recruitment_numbers', f: f %></div><div class="em-field"><%= f.label :cost, '参加費' %><%= f.text_field :cost, placeholder: '500円' %></div></div>
+    <% if editing %><div class="em-field"><%= f.label :recruitment, '募集状況' %><%= f.select :recruitment, %w[募集中 募集終了 中止] %></div><% end %>
+  </section>
+  <section class="em-card"><h2>活動内容</h2><div class="em-field"><%= f.label :note, '説明・持ち物' %><%= f.hidden_field :note, id: 'event-description' %><details class="em-formatting"><summary>文字を装飾する</summary><trix-toolbar id="event-description-toolbar"></trix-toolbar></details><trix-editor toolbar="event-description-toolbar" input="event-description" id="schedule_note" aria-label="活動内容" placeholder="活動の流れや、持ち物を入力してください。"></trix-editor><p class="em-muted">文字の装飾は、文章を入力したあとに行えます。</p></div>
+    <% image_schedule = @schedule.top_image.present? ? @schedule : @copy_schedule %>
+    <details class="em-image-disclosure" <%= 'open' if image_schedule&.top_image.present? %>><summary>トップ画像を設定・変更</summary><div class="em-field"><div id="img_field_header" class="em-image-preview"><% if image_schedule&.top_image.present? %><%= image_tag image_schedule.top_image.url, alt: '現在のトップ画像' %><% else %><%= lucide_icon 'image' %><span>画像は任意です</span><% end %></div><%= f.label :top_image, '画像を選ぶ', for: 'file_header' %><%= f.file_field :top_image, accept: 'image/jpeg,image/png', id: 'file_header' %><p class="em-muted">10MB以下のJPG・PNG。複製時は元の画像を引き継ぎます。</p></div></details>
+  </section>
+  <section class="em-card em-card--member"><p class="em-eyebrow"><%= lucide_icon 'lock-keyhole' %>メンバー限定URLで公開</p><h2>詳しい開催場所</h2><p class="em-muted">一般公開ページには表示されません。限定URLを知っている方が閲覧できます。</p>
+    <div class="em-field"><%= f.label :member_venue, '開催場所の名称' %><%= f.text_field :member_venue, placeholder: 'サークルブック体育館' %></div>
+    <div class="em-field"><%= f.label :venue_address, '開催場所の住所' %><%= f.text_field :venue_address, placeholder: '東京都新宿区新宿1-1-1' %><p class="em-muted">郵便番号は不要です。</p></div><%= f.hidden_field :google_map %>
+    <% if @user.unique_id.present? %><%= link_to 'メンバー用ページを確認', attendances_path(@user.unique_id), target: '_blank', rel: 'noopener noreferrer', class: 'em-text-link' %><% else %><p class="em-muted">メンバー用の限定URLは、<%= link_to 'マイページ', "/users/#{@user.id}/mypage" %>で確認できます。</p><% end %>
+  </section>
+  <div class="em-save"><%= f.submit editing ? '変更を保存する' : (@copy_schedule ? 'この内容で複製する' : 'イベントを作成する'), class: 'em-button em-button--primary em-button--full', data: { disable_with: '保存中...' } %><%= link_to 'キャンセル', editing ? manage_user_schedule_path(@user, @schedule) : user_schedules_path(@user), class: 'em-button em-button--full' %></div>
+<% end %>

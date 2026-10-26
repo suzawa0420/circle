@@ -15,22 +15,16 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
   end
 
-  test 'public detail exposes icon buttons only to its organizer and retains destructive confirmation' do
+  test 'public detail separates organizer management from participant actions' do
     get user_schedule_path(@circle, @source)
     assert_response :success
-    assert_select 'section.schedule-detail__management', count: 1
-    assert_select 'details.schedule-detail__management', count: 0
-    assert_select '.schedule-detail__management .schedule-detail__button', count: 4
-    assert_select '.schedule-detail__management a[data-method=delete][data-confirm="投稿を削除しますか？"] svg.cb-icon--trash-2', count: 1
-    assert_select ".schedule-detail__management a[href='#{edit_user_schedule_path(@circle, @source)}'] svg.cb-icon--square-pen"
-    assert_select ".schedule-detail__management a[href='#{new_user_schedule_path(@circle, copy: @source.id)}'] svg.cb-icon--copy"
-    assert_select '.schedule-detail__management a[href*=copy_mode] svg.cb-icon--calendar-plus'
+    assert_select '.schedule-detail__management', count: 0
+    assert_select ".schedule-detail__management-preview a[href='#{manage_user_schedule_path(@circle, @source)}']"
+    assert_select '.schedule-detail a[data-method=delete]', count: 0
     assert_select '.schedule-share a[target=_blank][rel~=noopener] svg.cb-icon--external-link', count: 2
-    assert_select ".schedule-detail__actions a[href='#{circle_path(@circle)}'].schedule-detail__button svg.cb-icon--info"
-    assert_select ".schedule-detail__actions a[href='#{user_schedules_path(@circle)}'].schedule-detail__button svg.cb-icon--calendar-days"
     delete destroy_admin_user_session_path
     get user_schedule_path(@circle, @source)
-    assert_select '.schedule-detail__management', count: 0
+    assert_select '.schedule-detail__management-preview', count: 0
     assert_select '.schedule-share [data-share-destination]', count: 2
     assert_select '.schedule-share [data-share-copy]', count: 2
   end
@@ -41,7 +35,7 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     assert_select "select[name=copy][required] option[value='#{@source.id}']"
     assert_select 'button[name=copy_mode][value=same]', text: '同じ内容でコピー'
     assert_select 'button[name=copy_mode][value=next_week]', text: '1週間後に同じ内容で作成'
-    get user_schedule_path(@circle, @source)
+    get duplicate_user_schedule_path(@circle, @source)
     assert_response :success
     assert_select "a[href='#{new_user_schedule_path(@circle, copy: @source.id)}']"
     assert_select "a[href='#{new_user_schedule_path(@circle, copy: @source.id, copy_mode: :next_week)}']"
@@ -80,7 +74,7 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
           copy: @source.id, schedule_creation_key: key, schedule: attributes
         }
         created_id ||= @circle.schedules.order(:id).last.id
-        assert_redirected_to user_schedule_path(@circle, created_id)
+        assert_redirected_to manage_user_schedule_path(@circle, created_id)
       end
     end
     get user_schedules_path(@circle), params: { month: '2027-01' }
@@ -130,7 +124,7 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
       post user_schedules_path(@circle), params: { copy: @source.id, schedule: attributes }
     end
     created = @circle.schedules.order(:id).last
-    assert_redirected_to user_schedule_path(@circle, created)
+    assert_redirected_to manage_user_schedule_path(@circle, created)
     assert_equal '2027-01-07', created.day
     assert_equal '翌週の練習', created.title
     assert_equal '19:00', created.time_s.strftime('%H:%M')
@@ -170,7 +164,7 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     post user_schedules_path(@circle), params: { copy: @source.id,
       schedule: { day: '2027-01-05', title: @source.title, venue: @source.venue } }
     created = @circle.schedules.order(:id).last
-    assert_redirected_to user_schedule_path(@circle, created)
+    assert_redirected_to manage_user_schedule_path(@circle, created)
     assert created.top_image.present?
     assert_equal File.binread(@source.top_image.path), File.binread(created.top_image.path)
   ensure

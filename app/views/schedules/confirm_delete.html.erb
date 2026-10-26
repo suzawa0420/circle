@@ -1,0 +1,6 @@
+<div class="user_main event-management"><div class="container"><div class="em-shell">
+  <%= render 'schedules/management_header', title: 'イベントを削除しますか？', back_path: manage_user_schedule_path(@user, @schedule), back_label: 'イベント管理へ' %>
+  <section class="em-card"><h2><%= @schedule.title %></h2><p><%= calendar_schedule_date(Date.iso8601(@schedule.day)) %> <%= calendar_schedule_time(@schedule) %></p><p class="em-muted">参加 <%= @management.count(@schedule, 1) %>名 · 不参加 <%= @management.count(@schedule, 0) %>名</p></section>
+  <p class="em-note em-note--danger">このイベントに紐づく出欠回答も削除されます。この操作は取り消せません。</p>
+  <div class="em-stack"><%= link_to '削除せずに戻る', manage_user_schedule_path(@user, @schedule), class: 'em-button em-button--primary' %><%= button_to 'イベントと出欠回答を削除', user_schedule_path(@user, @schedule), method: :delete, class: 'em-button em-button--danger em-button--full', form: { class: 'em-delete-form' } %></div>
+</div></div></div>

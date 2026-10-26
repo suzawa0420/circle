@@ -1,0 +1,10 @@
+<div class="user_main event-management"><div class="container"><div class="em-shell">
+  <%= render 'schedules/management_header', title: 'イベント', description: '開催予定と出欠を、ここから管理できます。' %>
+  <%= link_to new_user_schedule_path(@user), class: 'em-button em-button--primary em-button--full' do %><%= lucide_icon 'calendar-plus' %>イベントを作成<% end %>
+  <nav class="em-tabs" aria-label="開催時期"><%= link_to '開催予定', user_schedules_path(@user), aria: { current: (@management.past ? nil : 'page') } %><%= link_to '過去のイベント', user_schedules_path(@user, past: '1'), aria: { current: (@management.past ? 'page' : nil) } %></nav>
+  <div class="em-events" id="event-list"><% if @management.schedules.any? %><%= render partial: 'schedules/management_card', collection: @management.schedules, as: :schedule %><%= paginate @management.schedules, params: { past: (@management.past ? '1' : nil) } %><% else %><section class="em-card em-empty"><h2><%= @management.past ? '過去のイベントはありません' : '開催予定のイベントはありません' %></h2><p class="em-muted">新しく作成するか、過去のイベントから複製できます。</p></section><% end %></div>
+  <section class="em-section"><h2>まとめて確認・共有</h2><div class="em-stack"><%= link_to (@user.unique_id.present? ? attendances_path(@user.unique_id) : "/users/#{@user.id}/mypage"), class: 'em-button' do %><%= lucide_icon 'users' %><%= @user.unique_id.present? ? '全日程の出欠を確認' : 'マイページでメンバー用URLを確認' %><% end %></div>
+    <details class="em-card em-disclosure" id="schedule-bulk-share"><summary>予定・出欠回答ページを共有</summary><div class="em-disclosure-body"><%= render 'schedules/management_bulk_share' %></div></details>
+    <details class="em-card em-disclosure" <%= 'open' if params[:month].present? || params[:date].present? %>><summary>カレンダーで確認</summary><div class="em-disclosure-body"><%= render 'schedules/calendar_list', calendar: @calendar %></div></details>
+  </section>
+</div></div></div>

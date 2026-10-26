@@ -1,0 +1,5 @@
+<div class="user_main event-management"><div class="container"><div class="em-shell">
+  <%= render 'schedules/management_header', title: @copy_schedule ? '内容を確認して複製' : 'イベントを作成', back_path: user_schedules_path(@user) %>
+  <% if @copy_schedules.present? %><details class="em-card em-disclosure em-copy-picker"><summary>過去のイベントから複製する</summary><div class="em-disclosure-body"><%= form_tag new_user_schedule_path(@user), method: :get do %><label class="em-label" for="copy-source">複製元のイベント</label><select name="copy" id="copy-source" required><option value="">イベントを選択してください</option><% @copy_schedules.reverse_each do |schedule| %><option value="<%= schedule.id %>" <%= 'selected' if @copy_schedule&.id == schedule.id %>><%= calendar_schedule_date(Date.iso8601(schedule.day)) %> <%= schedule.title %></option><% end %></select><div class="em-stack"><%= button_tag '同じ内容でコピー', name: 'copy_mode', value: 'same', class: 'em-button' %><%= button_tag '1週間後に同じ内容で作成', name: 'copy_mode', value: 'next_week', class: 'em-button' %></div><% end %></div></details><% end %>
+  <%= render 'schedules/form' %>
+</div></div></div>

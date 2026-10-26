@@ -104,3 +104,20 @@
   .attendance-form-errors ul { margin: 0; padding: 0; }
   .delete_btn { margin-top: cb-space(6); text-align: center; }
 }
+
+.attendance-management-return {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  margin: 16px 0;
+  padding: 14px 18px;
+  border: 1px solid $cb-border;
+  border-radius: 10px;
+  background: $cb-mint-soft;
+  color: $cb-action-hover;
+  font-size: 13px;
+  a { display: inline-flex; align-items: center; min-height: 44px; color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
+}

@@ -39,7 +39,7 @@ class CircleLevelCardTest < ActionDispatch::IntegrationTest
     assert_select '[data-level-up-preview], [data-level-up-replay], #circle-level-preview', count: 0
     refute_includes css_select('.dashboard-level').map(&:text).join, 'ポイント'
     refute_match(/\bpt\b/, css_select('.dashboard-level').map(&:text).join)
-    assert_select ".dashboard-action-grid a[href='#{user_schedules_path(@circle)}']", text: /スケジュール/
+    assert_select ".dashboard-action-grid a[href='#{user_schedules_path(@circle)}']", text: /イベント管理/
     assert_select ".dashboard-action-grid a[href='#{new_circle_blog_path(@circle)}']", text: /ブログ/
     assert_select '.dashboard-level__description', text: /まずは活動日を登録/
     assert_select '.dashboard-level__actions a', text: '口コミを依頼する', count: 0

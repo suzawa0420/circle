@@ -2,9 +2,12 @@ class SchedulesController < ApplicationController
 
 include Circlebook
 
-before_action :authenticate_owner_or_webmaster!, only: [:new, :create, :edit, :update, :destroy]
-before_action :ensure_correct_user, only: [:new, :create, :edit, :update, :destroy]
+MANAGEMENT_ACTIONS = %i[new create edit update destroy manage duplicate manage_attendance confirm_delete].freeze
+before_action :authenticate_owner_or_webmaster!, only: MANAGEMENT_ACTIONS
+before_action :ensure_correct_user, only: MANAGEMENT_ACTIONS
 before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :today, :tomorrow, :this_week, :next_week, :year, :month]}
+before_action :set_management_schedule, only: %i[manage duplicate manage_attendance confirm_delete]
+before_action :private_management_response, only: MANAGEMENT_ACTIONS
 before_action :set_dates, {only: [:dates, :day, :today, :tomorrow, :this_week, :next_week]}
 before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomorrow, :this_week, :next_week]
 
@@ -13,11 +16,20 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 		@schedule = @user.schedules.build
     @calendar = ScheduleCalendarData.new(user: @user, month: params[:month], date: params[:date],
       past: params[:past] == '1' || params[:page].present?, page: params[:page])
+    if can_manage_circle?(@user)
+      private_management_response
+      @management = ScheduleManagementData.new(user: @user, past: params[:past] == '1', page: params[:page])
+    end
 
 		@b1_name = @user.name
 		@b1_url = "/users/#{@user.id}"
 		@b2_name = "活動スケジュール"
 		@b2_url = ""
+    if @management
+      @b1_name = 'マイページ'
+      @b1_url = "/users/#{@user.id}/mypage"
+      @b2_name = 'イベント'
+    end
 	end
 
   def new
@@ -41,6 +53,32 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 		@b2_url = ""
   end
 
+  def manage
+    @management = ScheduleManagementData.new(user: @user, schedule: @schedule)
+  end
+
+  def duplicate
+  end
+
+  def confirm_delete
+    @management = ScheduleManagementData.new(user: @user, schedule: @schedule)
+  end
+
+  def manage_attendance
+    @management = ScheduleManagementData.new(user: @user, schedule: @schedule)
+    @attendance_filter = %w[yes no unanswered].include?(params[:answer]) ? params[:answer] : 'all'
+    answers = @schedule.name_schedules
+    names = Name.joins(:schedules).where(schedules: { user_id: @user.id }).distinct
+    names = case @attendance_filter
+    when 'yes' then names.where(id: answers.where(answer: 1).select(:name_id))
+    when 'no' then names.where(id: answers.where(answer: 0).select(:name_id))
+    when 'unanswered' then names.where.not(id: answers.where(answer: [0, 1]).where.not(name_id: nil).select(:name_id))
+    else names
+    end
+    @attendance_names = names.order(updated_at: :desc, id: :desc).page(params[:page]).per(30)
+    @attendance_answers = answers.where(name_id: @attendance_names.map(&:id)).order(:id).index_by(&:name_id)
+  end
+
 	def create
     set_copy_schedule
     @schedule_creation_key = params[:schedule_creation_key].presence || SecureRandom.uuid
@@ -52,7 +90,7 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
     @user.with_lock do
       @schedule = @user.schedules.find_by(creation_key: @schedule_creation_key)
       if @schedule
-        redirect_to user_schedule_path(@user, @schedule)
+        redirect_to manage_user_schedule_path(@user, @schedule)
       else
         create_schedule
       end
@@ -83,7 +121,7 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 
       flash[:created_schedule_id] = @schedule.id
       flash[:notice] = 'イベントを作成しました。' unless @user.publicly_visible?
-      redirect_to user_schedule_path(@user, @schedule)
+      redirect_to manage_user_schedule_path(@user, @schedule)
     else
       set_copy_schedules
       @btn_name = "新規作成"
@@ -93,10 +131,11 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
   end
 
 	def update
-		@schedule = Schedule.find(params[:id])
+		@schedule = @user.schedules.find(params[:id])
 
     if @schedule.name_schedules.where(answer: 1).size > schedule_params[:recruitment_numbers].to_i && schedule_params[:recruitment_numbers].to_i != 0
-      flash[:notice] = "募集人数がオーバーしています"
+      @schedule.assign_attributes(schedule_params)
+      @schedule.errors.add(:recruitment_numbers, 'は現在の参加人数以上に設定してください')
       render "edit"
 
     else
@@ -105,8 +144,8 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
         @user.user_time = Time.now
         @user.save
 
-        flash[:notice] = '更新完了！'
-        redirect_to user_schedules_path
+        flash[:notice] = 'イベントを更新しました。'
+        redirect_to manage_user_schedule_path(@user, @schedule)
       else
         render "edit"
       end
@@ -178,7 +217,7 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 	end
 
 	def edit
-		@schedule = Schedule.find(params[:id])
+		@schedule = @user.schedules.find(params[:id])
     @btn_name = "更新する"
 
 		@b1_name = @user.name
@@ -271,6 +310,23 @@ def next_week
 end
 
 private
+
+  def set_management_schedule
+    @schedule = @user.schedules.find(params[:id])
+    @b1_name = 'マイページ'
+    @b1_url = "/users/#{@user.id}/mypage"
+    @b2_name = 'イベント'
+    @b2_url = user_schedules_path(@user)
+    @b3_name = { 'manage' => @schedule.title.presence || 'イベント管理', 'duplicate' => 'イベントを複製',
+      'manage_attendance' => '出欠管理', 'confirm_delete' => '削除の確認' }.fetch(action_name)
+    @b3_url = ''
+  end
+
+  def private_management_response
+    response.headers['Cache-Control'] = 'private, no-store'
+    response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+    response.headers['Referrer-Policy'] = 'same-origin'
+  end
   def prepare_event_day(date, relative: nil, end_date: nil)
     period = relative ? action_name : nil
     path = EventSearchPage.path(**event_search_path_options, period: period, date: (date unless relative))

@@ -8,6 +8,10 @@
   <%= lucide_icon 'chevron-right' %><%= calendar_schedule_date(date) %>の<%= @user.event.name %>一覧
 <% end %>
 
+<% if can_manage_circle?(@user) %>
+  <div class="schedule-detail__management-preview"><span>一般公開ページのプレビュー</span><%= link_to '主催者の管理画面へ', manage_user_schedule_path(@user, @schedule), class: 'schedule-detail__back' %></div>
+<% end %>
+
 <% if just_created %>
   <%= render 'schedules/share', schedule: @schedule, owner: true, created: true %>
   <%= render 'columns/related_guides', event: @user.event, audience: 'organizer', heading: '開催までに、道具も確認しておきませんか？' %>
@@ -88,17 +92,7 @@
   </div>
 </section>
 
-<% if can_manage_circle?(@user) %>
-  <section class="schedule-detail__card schedule-detail__section schedule-detail__management" aria-labelledby="schedule-management-title">
-    <h2 id="schedule-management-title">主催者向けの操作</h2>
-    <div class="schedule-detail__actions">
-      <%= link_to edit_user_schedule_path(@user, @schedule), class: 'schedule-detail__button' do %><%= lucide_icon 'square-pen' %><span>編集</span><% end %>
-      <%= link_to user_schedule_path(@user, @schedule), class: 'schedule-detail__button schedule-detail__button--danger', method: :delete, data: { confirm: '投稿を削除しますか？' } do %><%= lucide_icon 'trash-2' %><span>削除</span><% end %>
-      <%= link_to new_user_schedule_path(@user, copy: @schedule.id), class: 'schedule-detail__button schedule-detail__button--wide' do %><%= lucide_icon 'copy' %><span>同じ内容でコピー</span><% end %>
-      <%= link_to new_user_schedule_path(@user, copy: @schedule.id, copy_mode: :next_week), class: 'schedule-detail__button schedule-detail__button--wide' do %><%= lucide_icon 'calendar-plus' %><span>1週間後に同じ内容で作成</span><% end %>
-    </div>
-  </section>
-<% end %>
+
 
 <p class="schedule-detail__notice">募集状況は変更されることがあります。参加前に主催者からの案内をご確認ください。</p>
 <% if shareable && !just_created %>

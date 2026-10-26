@@ -1,0 +1,14 @@
+<% count = @management.count(schedule, 1) %>
+<% status = public_schedule_status(schedule, accepted_count: count) %>
+<article class="em-card em-event" aria-labelledby="event-<%= schedule.id %>-title">
+  <div class="em-row em-between"><time class="em-date" datetime="<%= schedule.day %>"><%= "#{Date.iso8601(schedule.day).year}年" if Date.iso8601(schedule.day).year != Date.current.year %><%= calendar_schedule_date(Date.iso8601(schedule.day)) %></time><span class="em-status status-<%= status[:key] %>"><%= status[:label] %></span></div>
+  <h2 id="event-<%= schedule.id %>-title"><%= link_to schedule.title.presence || 'イベント', manage_user_schedule_path(@user, schedule) %></h2>
+  <p class="em-muted"><%= calendar_schedule_time(schedule) %> · <%= schedule.venue %></p>
+  <div class="em-count"><span>参加 <strong><%= count %></strong><%= schedule.recruitment_numbers.to_i.positive? ? " / #{schedule.recruitment_numbers}名" : '名' %></span><span>不参加 <%= @management.count(schedule, 0) %> · 未回答 <%= @management.unanswered(schedule) %></span></div>
+  <div class="em-event-actions">
+    <%= link_to manage_attendance_user_schedule_path(@user, schedule), class: 'em-button em-button--primary' do %><%= lucide_icon 'calendar-check' %>出欠確認<% end %>
+    <%= link_to edit_user_schedule_path(@user, schedule), class: 'em-button' do %><%= lucide_icon 'square-pen' %>編集<% end %>
+    <%= link_to duplicate_user_schedule_path(@user, schedule), class: 'em-button' do %><%= lucide_icon 'copy' %>複製<% end %>
+  </div>
+  <div class="em-row em-between em-event-secondary"><%= link_to '詳細・共有', manage_user_schedule_path(@user, schedule), class: 'em-text-link' %><%= link_to '削除', confirm_delete_user_schedule_path(@user, schedule), class: 'em-text-link em-danger' %></div>
+</article>

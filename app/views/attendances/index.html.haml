@@ -8,6 +8,10 @@
       = link_to circle_path(@user), class: "attendance-circle" do
         = circle_avatar_tag @user, class: "attendance-circle__avatar"
         %span= @user.name
+    - if can_manage_circle?(@user)
+      .attendance-management-return
+        %span メンバー用の出欠回答ページ
+        = link_to '主催者のイベント管理へ', user_schedules_path(@user)
     - if can_manage_circle?(@user) && !archived
       %section.attendance-share{ "aria-label" => "メンバーへの共有" }
         %h2 メンバーに出欠を確認する

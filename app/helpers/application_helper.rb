@@ -88,6 +88,7 @@ module ApplicationHelper
 
   def public_ad_page?
     return false if webmaster?
+    return false if controller_path == 'schedules' && action_name == 'index' && can_manage_circle?(@user)
     public_controller = %w[home categories matches schedules questions tags events prefectures places columns].include?(controller_path) ||
                         controller_path.start_with?('circles/', 'blogs/')
     return true if controller_path == "conversations" && %w[index show].include?(action_name)

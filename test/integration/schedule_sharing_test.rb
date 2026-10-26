@@ -7,6 +7,7 @@ class ScheduleSharingTest < ActionDispatch::IntegrationTest
 
   setup do
     create_chat_records
+    @circle.update!(unique_id: 'event-sharing-circle')
     @schedule = @circle.schedules.create!(day: '2026-10-25', title: '初心者歓迎 & ボードゲーム',
       venue: '東京都新宿区', time_s: '16:30', time_e: '18:00', member_venue: 'メンバーだけの会場',
       venue_address: 'メンバーだけの住所', google_map: '限定地図の情報')
@@ -67,21 +68,19 @@ class ScheduleSharingTest < ActionDispatch::IntegrationTest
     assert_public_share_content
   end
 
-  test 'successful creation redirects to that event and offers sharing once above its details' do
+  test 'successful creation returns to management with separate public and member sharing' do
     sign_in_owner
     post user_schedules_path(@circle), params: { schedule: { day: '2026-10-25', title: '作成したイベント', venue: '公開エリア' } }
     created = @circle.schedules.order(:id).last
-    assert_redirected_to user_schedule_path(@circle, created)
+    assert_redirected_to manage_user_schedule_path(@circle, created)
     follow_redirect!
-    assert_select '[data-share-created="true"][open]', count: 1
-    assert_select 'summary [data-share-heading]', text: 'イベントを公開しました！'
-    assert_select '#schedule-share + article.schedule-detail__card', count: 1
-    assert_select '[data-share-dismiss]', text: 'あとで共有する'
-    assert_select '[data-schedule-share-reopen]', count: 1
-    get user_schedule_path(@circle, created)
-    assert_select '[data-share-created="true"]', count: 0
-    assert_select '#schedule-share:not([open])'
-    assert_select '[data-share-dismiss]', count: 0
+    assert_select '.em-notice', text: /イベントを作成しました/
+    assert_select '#event-share', text: /一般公開.*限定URL/m
+    assert_select '[data-schedule-share]', count: 1
+    assert_select "a[href='#{user_schedule_path(@circle, created)}']", text: '一般公開ページを確認'
+    assert_select "a[href='#{attendances_path(@circle.unique_id)}']", text: 'メンバー用ページを確認'
+    get manage_user_schedule_path(@circle, created)
+    assert_select '.em-notice', count: 0
   end
 
   test 'failed creation preserves the form and never shows a published prompt' do
@@ -102,7 +101,7 @@ class ScheduleSharingTest < ActionDispatch::IntegrationTest
     post user_schedules_path(@circle), params: { schedule: { day: '2026-10-25', title: '準備の確認', venue: '公開エリア' } }
     created = @circle.schedules.order(:id).last
     follow_redirect!
-    assert_select '#schedule-share + .column-guide-links', count: 1
+    assert_select '.em-preparation .column-guide-links', count: 1
     assert_select '.column-guide-links__link', count: 2
     assert_select ".column-guide-links__link[href='#{column_path(organizer)}']"
     get user_schedule_path(@circle, created)

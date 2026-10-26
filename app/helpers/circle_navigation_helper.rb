@@ -2,6 +2,7 @@ module CircleNavigationHelper
   # Public circle pages only: editor and account screens keep the site header.
   def circle_navigation_tab
     return unless @user&.persisted?
+    return if controller_path == 'schedules' && action_name == 'index' && can_manage_circle?(@user)
 
     case controller_path
     when "circles/circles"

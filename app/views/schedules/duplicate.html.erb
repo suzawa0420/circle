@@ -1,0 +1,6 @@
+<div class="user_main event-management"><div class="container"><div class="em-shell">
+  <%= render 'schedules/management_header', title: 'イベントを複製', back_path: user_schedules_path(@user) %>
+  <section class="em-card"><p class="em-eyebrow">複製元</p><h2><%= @schedule.title %></h2><p class="em-muted"><%= calendar_schedule_date(Date.iso8601(@schedule.day)) %> <%= calendar_schedule_time(@schedule) %></p></section>
+  <div class="em-stack"><%= link_to '1週間後の日付で複製', new_user_schedule_path(@user, copy: @schedule.id, copy_mode: 'next_week'), class: 'em-button em-button--primary' %><%= link_to '日付を指定して複製', new_user_schedule_path(@user, copy: @schedule.id), class: 'em-button' %></div>
+  <p class="em-note">タイトル・時間・エリア・募集人数・参加費・開催場所・活動内容・画像を引き継ぎます。次の画面で内容を確認・変更してから作成できます。出欠回答は引き継ぎません。</p>
+</div></div></div>
