@@ -1,5 +1,5 @@
 <% guides = local_assigns.fetch(:guides) { column_related_guides(event: event, audience: audience) } || [] %>
-<% carousel = local_assigns.fetch(:carousel, false) %>
+<% carousel = local_assigns.fetch(:carousel, guides.size > 1) %>
 <% if guides.any? %>
   <section class="column-guide-links<%= ' column-guide-links--carousel' if carousel %>" aria-label="サークルの準備ガイド">
     <h2><%= local_assigns[:heading] || (audience == 'organizer' ? '開催の準備に。備品・チームウェア・合宿のヒント' : '参加前に、持ち物をそろえよう') %></h2>
