@@ -72,6 +72,19 @@ historical describe the earlier migration; their topology, rollback state and
 approval requests are superseded by current production state. Never start the
 obsolete `circle-unicorn` service on the new runtime.
 
+## Schedule submission deduplication (2026-10-26)
+
+Schedule creation forms retain a UUID through validation errors and resubmissions.
+Creation holds the circle's row lock and returns the existing schedule when that
+form was already saved, including requests reaching different app servers.
+Separate forms can still create separate activities with identical contents.
+
+Deployment applies additive migration `20261026000000` on server4 before either
+Puma restarts. It adds a nullable UUID column and a partial unique index created
+concurrently, with a five-second lock timeout. Existing schedules are unchanged.
+Rollback uses a normal application revert while retaining the additive schema;
+do not remove existing schedules or roll back the column during recovery.
+
 ## Official facility discovery (2026-10-25)
 
 Facility discovery starts with the Setagaya Sports Promotion Foundation's official

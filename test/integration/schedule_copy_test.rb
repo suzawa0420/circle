@@ -68,6 +68,61 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'resubmitting the weekly copy form creates just one schedule and calendar mark' do
+    get new_user_schedule_path(@circle), params: { copy: @source.id, copy_mode: 'next_week' }
+    key = css_select('input[name="schedule_creation_key"]').first['value']
+    attributes = @source.attributes.slice('venue', 'title', 'time_s', 'time_e', 'note')
+      .merge(day: '2027-01-05')
+    created_id = nil
+    assert_difference 'Schedule.count', 1 do
+      2.times do
+        post user_schedules_path(@circle), params: {
+          copy: @source.id, schedule_creation_key: key, schedule: attributes
+        }
+        created_id ||= @circle.schedules.order(:id).last.id
+        assert_redirected_to user_schedule_path(@circle, created_id)
+      end
+    end
+    get user_schedules_path(@circle), params: { month: '2027-01' }
+    assert_select '.schedule-calendar__day[aria-label*="1月5日（火） 1件"] .schedule-calendar__marks span', count: 1
+  end
+
+  test 'validation errors retain the creation key and allow one corrected submission' do
+    get new_user_schedule_path(@circle), params: { copy: @source.id, copy_mode: 'next_week' }
+    key = css_select('input[name="schedule_creation_key"]').first['value']
+    attributes = { day: '2027-01-05', title: '', venue: '体育館' }
+    assert_no_difference 'Schedule.count' do
+      post user_schedules_path(@circle), params: { copy: @source.id, schedule_creation_key: key, schedule: attributes }
+    end
+    assert_response :success
+    assert_select "input[name=schedule_creation_key][value='#{key}']"
+    attributes[:title] = '修正後の練習'
+    assert_difference 'Schedule.count', 1 do
+      2.times { post user_schedules_path(@circle), params: { copy: @source.id, schedule_creation_key: key, schedule: attributes } }
+    end
+  end
+
+  test 'separate creation forms can intentionally save the same contents' do
+    attributes = { day: '2027-01-05', title: @source.title, venue: @source.venue }
+    assert_difference 'Schedule.count', 2 do
+      2.times do
+        get new_user_schedule_path(@circle), params: { copy: @source.id, copy_mode: 'next_week' }
+        key = css_select('input[name="schedule_creation_key"]').first['value']
+        post user_schedules_path(@circle), params: { copy: @source.id, schedule_creation_key: key, schedule: attributes }
+        assert_response :redirect
+      end
+    end
+  end
+
+  test 'malformed creation keys cannot write a schedule' do
+    assert_no_difference 'Schedule.count' do
+      assert_raises(ActionController::BadRequest) do
+        post user_schedules_path(@circle), params: { schedule_creation_key: 'invalid',
+          schedule: { day: '2027-01-05', title: '練習', venue: '体育館' } }
+      end
+    end
+  end
+
   test 'copy saves the date and contents edited by the owner and leaves the original intact' do
     attributes = @source.attributes.slice('venue', 'title', 'cost', 'member_venue', 'venue_address',
       'note', 'recruitment_numbers', 'google_map').merge(day: '2027-01-07', title: '翌週の練習', time_s: '19:00', time_e: '21:00')

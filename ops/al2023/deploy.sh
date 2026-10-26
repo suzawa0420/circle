@@ -120,6 +120,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261021020000
     # Official facility discovery: additive candidates and execution history.
     bundle exec rails db:migrate:up VERSION=20261025010000
+    # A per-form key prevents repeated schedule submissions across servers.
+    bundle exec rails db:migrate:up VERSION=20261026000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

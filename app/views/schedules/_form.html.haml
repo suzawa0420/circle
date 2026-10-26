@@ -8,6 +8,7 @@
 .schedule_add_wrap
   .schedule_input
     = form_for ([@user, @schedule]) do |f|
+      = hidden_field_tag :schedule_creation_key, @schedule_creation_key if @schedule.new_record?
       = hidden_field_tag :copy, @copy_schedule.id if @copy_schedule
       .img_field_profile_wrap
         .label_item トップ画像

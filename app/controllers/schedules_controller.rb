@@ -22,6 +22,7 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 
   def new
 		@schedule = @user.schedules.build
+    @schedule_creation_key = SecureRandom.uuid
     @btn_name = "新規作成"
 
     set_copy_schedules
@@ -42,12 +43,28 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
 
 	def create
     set_copy_schedule
+    @schedule_creation_key = params[:schedule_creation_key].presence || SecureRandom.uuid
+    unless @schedule_creation_key.is_a?(String) && @schedule_creation_key.match?(/\A[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\z/)
+      raise ActionController::BadRequest
+    end
 
+    # Serialize submissions across Puma workers and both production servers.
+    @user.with_lock do
+      @schedule = @user.schedules.find_by(creation_key: @schedule_creation_key)
+      if @schedule
+        redirect_to user_schedule_path(@user, @schedule)
+      else
+        create_schedule
+      end
+    end
+  end
+
+  private def create_schedule
     @schedule = @user.schedules.new(schedule_params)
+    @schedule.creation_key = @schedule_creation_key
     @btn_name = "更新する"
 
-		if @schedule.save
-
+    if @schedule.save
       record_circle_activity(@user, @schedule)
 
       @schedule.date = Time.parse(@schedule.day).strftime("%Y年%-m月%-d日(#{%w(日曜日 月曜日 火曜日 水曜日 木曜日 金曜日 土曜日)[Time.parse(@schedule.day).wday]})")
@@ -59,7 +76,7 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
           @schedule.recruitment_numbers = @copy_schedule.recruitment_numbers
         end
       end
-      @schedule.save
+      @schedule.save!
 
       cb_point(@user)
       @user.save
