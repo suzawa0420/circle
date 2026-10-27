@@ -130,7 +130,18 @@ class User < ApplicationRecord
   def moderation_rule_reasons
     reasons = japanese_profile? ? [] : ['non_japanese_profile']
     reasons << 'adult_service_promotion' if CircleProfilePolicy.review?(self)
+    reasons << CircleProfilePolicy::DISGUISED_SOLICITATION if CircleProfilePolicy.disguised_solicitation?(self)
     reasons
+  end
+
+  def moderation_snapshot(reasons = moderation_rule_reasons)
+    ModerationReasonReport.snapshot(reasons).map do |reason|
+      if reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION
+        reason.merge('fingerprint' => CircleProfilePolicy.solicitation_fingerprint(self))
+      else
+        reason
+      end
+    end
   end
 
 	private
@@ -147,7 +158,7 @@ class User < ApplicationRecord
 
 	def flag_suspicious_profile
 		return if moderation_status == "blocked"
-		return unless new_record? || will_save_change_to_publication_status? || will_save_change_to_sport_details? ||
+		return unless new_record? || will_save_change_to_event_id? || will_save_change_to_publication_status? || will_save_change_to_sport_details? ||
       CircleProfilePolicy::FIELDS.any? { |field| will_save_change_to_attribute?(field) }
 
 		# Category and location labels are supplied by the site; only owner-written
@@ -156,13 +167,17 @@ class User < ApplicationRecord
     # A clear decision with saved evidence means a webmaster accepted these
     # reasons. Profile edits must not repeatedly enqueue the same concern.
     approved_reasons = if moderation_status == "clear" && moderation_checked_at.present?
-      moderation_reasons.map { |reason| reason['code'] }
+      moderation_reasons.filter_map do |reason|
+        next if reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION &&
+          reason['fingerprint'] != CircleProfilePolicy.solicitation_fingerprint(self)
+        reason['code']
+      end
     else
       []
     end
     if (reasons - approved_reasons).any?
       self.moderation_status = "review"
-      self.moderation_reasons = ModerationReasonReport.snapshot(reasons)
+      self.moderation_reasons = moderation_snapshot(reasons)
       self.moderation_checked_at = Time.current
     end
 	end

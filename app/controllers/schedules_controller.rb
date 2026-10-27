@@ -6,6 +6,7 @@ MANAGEMENT_ACTIONS = %i[new create edit update destroy manage duplicate manage_a
 before_action :authenticate_owner_or_webmaster!, only: MANAGEMENT_ACTIONS
 before_action :ensure_correct_user, only: MANAGEMENT_ACTIONS
 before_action :set_schedules, {except: [:secret, :attendance, :attendance_create, :attendance_update, :attendance_delete, :dates, :day, :today, :tomorrow, :this_week, :next_week, :year, :month]}
+before_action :ensure_schedule_visibility, only: %i[index show]
 before_action :set_management_schedule, only: %i[manage duplicate manage_attendance confirm_delete]
 before_action :private_management_response, only: MANAGEMENT_ACTIONS
 before_action :set_dates, {only: [:dates, :day, :today, :tomorrow, :this_week, :next_week]}
@@ -413,6 +414,14 @@ private
 
   def set_copy_schedule
     @copy_schedule = @user.schedules.find(params[:copy]) if params[:copy].present?
+  end
+
+  def ensure_schedule_visibility
+    return if @user.publicly_visible?
+
+    raise ActiveRecord::RecordNotFound unless can_manage_circle?(@user)
+
+    private_management_response
   end
 
   def set_schedules

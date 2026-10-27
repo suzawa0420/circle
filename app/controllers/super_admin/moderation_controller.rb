@@ -5,16 +5,28 @@ class SuperAdmin::ModerationController < ApplicationController
   def circle
     user = User.find(params[:id])
     status = moderation_status
-    attributes = { moderation_status: status }
-    # Legacy review entries may have no saved reasons. Remember what was
-    # accepted so subsequent edits do not send them back to the review queue.
-    if status == 'clear'
-      if user.moderation_reasons.empty?
-        attributes[:moderation_reasons] = ModerationReasonReport.snapshot(user.moderation_rule_reasons)
+    user.with_lock do
+      if status == 'clear' && user.moderation_reasons.any? { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION }
+        unless ActiveSupport::SecurityUtils.secure_compare(params[:profile_fingerprint].to_s, CircleProfilePolicy.solicitation_fingerprint(user))
+          redirect_to super_admin_circles_path, alert: '表示後に募集内容が変更されました。最新の内容を確認してから、もう一度承認してください。'
+          return
+        end
       end
-      attributes[:moderation_checked_at] = user.moderation_checked_at || Time.current
+      attributes = { moderation_status: status }
+      # Legacy review entries may have no saved reasons. Remember what was
+      # accepted so subsequent edits do not send them back to the review queue.
+      if status == 'clear'
+        if user.moderation_reasons.empty?
+          attributes[:moderation_reasons] = user.moderation_snapshot
+        elsif user.moderation_reasons.any? { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION }
+          # Approve the content actually reviewed, including edits made while held.
+          attributes[:moderation_reasons] = user.moderation_reasons.reject { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION } +
+            user.moderation_snapshot.select { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION }
+        end
+        attributes[:moderation_checked_at] = user.moderation_checked_at || Time.current
+      end
+      user.update_columns(attributes)
     end
-    user.update_columns(attributes)
     redirect_to super_admin_circles_path, notice: "サークルの確認状態を更新しました"
   end
 

@@ -55,7 +55,7 @@ jobs:
       - name: Test circle publication
         run: bundle exec rails test test/models/user_test.rb
       - name: Test circle profile validation and updates
-        run: bundle exec rails test test/integration/circle_profile_update_test.rb test/integration/organizer_profile_edit_test.rb test/integration/circle_profile_policy_test.rb test/integration/circle_video_test.rb
+        run: bundle exec rails test test/integration/circle_profile_update_test.rb test/integration/organizer_profile_edit_test.rb test/integration/circle_profile_policy_test.rb test/integration/disguised_circle_solicitation_test.rb test/integration/circle_video_test.rb
       - name: Test YouTube URLs and video dialog
         run: |
           bundle exec ruby test/services/youtube_video_test.rb
@@ -76,7 +76,7 @@ jobs:
           bundle exec rails test test/integration/circle_city_search_test.rb test/integration/circle_navigation_improvements_test.rb test/services/circle_upcoming_activities_test.rb
           node test/security/circle_city_search_js_test.js
       - name: Test circle owner permissions
-        run: bundle exec rails test test/integration/circle_owner_permissions_test.rb test/controllers/reviews_controller_test.rb test/integration/schedule_copy_test.rb test/integration/event_management_test.rb test/integration/schedule_listing_test.rb test/integration/schedule_calendar_test.rb test/integration/event_day_results_test.rb test/integration/event_search_landings_test.rb test/integration/schedule_detail_design_test.rb test/performance/schedule_day_queries_check.rb
+        run: bundle exec rails test test/integration/circle_owner_permissions_test.rb test/controllers/reviews_controller_test.rb test/integration/schedule_copy_test.rb test/integration/event_management_test.rb test/integration/schedule_listing_test.rb test/integration/schedule_calendar_test.rb test/integration/schedule_visibility_test.rb test/integration/event_day_results_test.rb test/integration/event_search_landings_test.rb test/integration/schedule_detail_design_test.rb test/performance/schedule_day_queries_check.rb
       - name: Test member attendance answers
         run: bundle exec rails test test/integration/attendance_answers_test.rb
       - name: Test event management clipboard
