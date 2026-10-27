@@ -176,6 +176,9 @@ class User < ApplicationRecord
       []
     end
     if (reasons - approved_reasons).any?
+      # An editor may have loaded a review record before a concurrent approval.
+      # Persist the hold even if this instance already thinks it is in review.
+      moderation_status_will_change!
       self.moderation_status = "review"
       self.moderation_reasons = moderation_snapshot(reasons)
       self.moderation_checked_at = Time.current

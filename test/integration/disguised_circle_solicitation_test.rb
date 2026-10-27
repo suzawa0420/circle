@@ -122,6 +122,15 @@ class DisguisedCircleSolicitationTest < ActionDispatch::IntegrationTest
     assert_equal 'review', @circle.reload.moderation_status
   end
 
+  test 'an edit loaded while held cannot overwrite a concurrent approval without returning to review' do
+    @circle.update!(@attributes)
+    stale_editor = User.find(@circle.id)
+    @circle.update_columns(moderation_status: 'clear')
+    stale_editor.update!(contact: 'Discord: concurrent_example')
+    assert_equal 'review', @circle.reload.moderation_status
+    assert_equal CircleProfilePolicy.solicitation_fingerprint(@circle), @circle.moderation_reasons.first['fingerprint']
+  end
+
   test 'pending edited names do not enter existing conversation notifications' do
     @circle.update!(@attributes)
     @conversation.reload.user = @circle
