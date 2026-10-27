@@ -45,7 +45,8 @@ class CircleCitySearchTest < ActionDispatch::IntegrationTest
       assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{path}"
       assert_select 'meta[name=robots][content*=noindex]', count: 0
       assert_select 'h1', text: /全1件東京都渋谷区/
-      assert_select 'details[open] select[name=city_id] option[selected][value=?]', @city.id.to_s
+      assert_select '.cb-search-city select[name=city_id] option[selected][value=?]', @city.id.to_s
+      assert_select 'details select[name=city_id]', count: 0
       assert_select '.cb-sort a[href*=city_id]', count: 0
     end
   end

@@ -1,0 +1,13 @@
+.circle-upcoming {
+  margin: 16px 0; padding: 16px; border: 1px solid #b9d4c9;
+  border-radius: 10px; background: #f2f8f5; color: #243d33;
+  text-align: left; overflow-wrap: anywhere;
+  h2 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+  p { margin: 0 0 8px; line-height: 1.7; }
+  time { font-weight: 700; }
+  a { display: inline-flex; align-items: center; min-height: 44px; color: #176047; text-decoration: underline; }
+  a:focus-visible { outline: 2px solid #16835d; outline-offset: 3px; }
+}
+.circle-upcoming__venue { display: block; }
+.circle-related-candidates { margin-top: 24px; }
+.circle-related-empty { padding: 16px; font-size: 14px; line-height: 1.7; }

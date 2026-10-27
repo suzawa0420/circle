@@ -65,5 +65,43 @@ assert.equal(city.value, '101');
   events.pageshow[0]();
   assert.equal(city.disabled, true);
   requests[4].resolve({ ok: true, json: async () => [] });
-  console.log('Municipality select: initial selection, reset, race, clearing, failure, retry and page restoration passed');
+  await new Promise(resolve => setImmediate(resolve));
+  assert.match(status.textContent, /ありません/);
+  // Restoring while a request was in flight must not strand a disabled select,
+  // and a response from the previous ready() handler must not win the race.
+  prefecture.value = '27';
+  const interrupted = prefecture.onchange();
+  events.pageshow[0]();
+  assert.equal(requests.length, 7);
+  requests[6].resolve({ ok: true, json: async () => [{ id: 272, name: '堺市' }] });
+  await new Promise(resolve => setImmediate(resolve));
+  requests[5].resolve({ ok: true, json: async () => [{ id: 271, name: '大阪市' }] });
+  await interrupted;
+  assert.equal(city.options[1].text, '堺市');
+  assert.equal(city.disabled, false);
+  context.window.history = { state: { turbolinks: 'keep' }, replaceState(state) { this.state = state; } };
+  city.value = '272';
+  city.onchange();
+  assert.equal(context.window.history.state.turbolinks, 'keep');
+  assert.equal(context.window.history.state.circleCitySearch.city, '272');
+  form.onsubmit();
+  // A history traversal can rebuild the original server form before dynamically
+  // loaded options are restored. Restore only a city present in the new response.
+  prefecture.value = '';
+  city.dataset.prefectureId = '';
+  city.disabled = true;
+  events.pageshow[0]();
+  assert.equal(prefecture.value, '27');
+  requests[7].resolve({ ok: true, json: async () => [{ id: 272, name: '堺市' }] });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(city.value, '272');
+  context.window.history.state.circleCitySearch.city = '999';
+  city.dataset.prefectureId = '';
+  events.pageshow[0]();
+  requests[8].resolve({ ok: true, json: async () => [{ id: 272, name: '堺市' }] });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(city.value, '', 'stale city cannot be resurrected from history');
+  context.window.history.replaceState = () => { throw new Error('blocked'); };
+  assert.doesNotThrow(() => city.onchange());
+  console.log('Municipality select: reset, races, failure/retry, restored in-flight forms, history selection, stale-city validation and blocked history passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -29,7 +29,8 @@ class DetailedCircleSearchTest < ActionDispatch::IntegrationTest
       assert_select 'select[name=prefecture_id]', count: 1
       assert_select 'details form', count: 0
       assert_select 'details input[name=q]', count: 0
-      assert_select 'details select[name=city_id]', count: 1
+      assert_select '.cb-search-city select[name=city_id]', count: 1
+      assert_select 'details select[name=city_id]', count: 0
       assert_select 'input[type=submit]', count: 1
       assert_select 'details input[type=submit]', count: 0
       assert_select '.cb-circle-search-form__actions input[type=submit][value=?]', 'この条件でサークルを検索'

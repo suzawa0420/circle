@@ -1,0 +1,12 @@
+%section.circle-upcoming{ 'aria-label' => '次の活動予定' }
+  %h2 次の活動予定
+  - if (schedule = @schedules.first)
+    %p
+      %time{ datetime: schedule.day }= Date.iso8601(schedule.day).strftime("%-m月%-d日（#{%w[日 月 火 水 木 金 土][Date.iso8601(schedule.day).wday]}）")
+      - if schedule.time_s
+        = schedule.time_s.in_time_zone('Tokyo').strftime('%H:%M')
+      %span.circle-upcoming__venue= schedule.venue
+    = link_to '活動スケジュールを見る', user_schedules_path(@user)
+  - else
+    %p 公開されている今後の活動予定はありません。
+    = link_to '活動スケジュールを確認する', user_schedules_path(@user)

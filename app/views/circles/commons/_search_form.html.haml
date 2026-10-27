@@ -13,6 +13,7 @@
     .search_select
       = select_tag :event_id, grouped_options_for_select(categories.map { |category| [category.name, category.events.map { |event| [event.name, event.id] }] }, filters[:event_id].presence || @event&.id), include_blank: 'サークル・チーム', 'aria-label' => '種目・カテゴリー'
       = select_tag :prefecture_id, grouped_options_for_select(prefecture_option_groups(prefectures).map { |region, items| [region, items.map { |prefecture| [prefecture.name, prefecture.id] }] }, filters[:prefecture_id].presence || @prefecture&.id), include_blank: '都道府県', 'aria-label' => '都道府県'
+    = render "circles/commons/city_select"
     = render "circles/commons/detailed_search"
     .cb-circle-search-form__actions
       = submit_tag 'この条件でサークルを検索', name: nil, class: 'cb-button'

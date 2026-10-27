@@ -1,0 +1,22 @@
+- similar_users = @users.to_a
+- if similar_users.any?
+  .user-list-wrap
+    %h2.others-user
+      = "条件が似ている#{@user.event.name if @user.event_id?}サークル"
+    - similar_users.each do |user|
+      = link_to(circle_path(user.id)) do
+        .user_list
+          .user-content
+            .user_list_header
+              = circle_avatar_tag user, class:'image_icon'
+              %h3.user_name= user.name.truncate(20)
+            .list_02
+              %span.user_schedule
+                = lucide_icon "calendar-days"
+                = user.schedule
+            .list_03
+              %span.user_area
+                = lucide_icon "map-pin"
+                = user.area
+- else
+  %p.circle-related-empty 同じ地域・種目で募集中のサークルは、ほかに見つかりませんでした。

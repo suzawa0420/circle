@@ -22,7 +22,9 @@ class Circles::CirclesController < Circles::ApplicationController
 			set_meta_tags noindex: true
 		end
 		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
-		@schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday).order(:day => :asc)
+		@schedules = @user.publicly_visible? ? CircleUpcomingActivities.from(@user.schedules
+      .where('day >= ?', Time.current.in_time_zone('Tokyo').to_date.iso8601)
+      .select(:id, :user_id, :day, :time_s, :time_e, :venue, :recruitment)) : []
 		@questions = Question.where(user_id: @user.id).order(created_at: "DESC")
 
     @admin_user = AdminUser.find(@user.admin_user.id)
@@ -31,7 +33,7 @@ class Circles::CirclesController < Circles::ApplicationController
     @user_groups = @user.users_groups.includes([:group]).map{|g| g.group}
 		@user_ages = @user.users_ages.includes([:age]).map{|a| a.age}
 
-		@users = User.publicly_visible.where.not(id: @user.id).prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中").order(:last_post => :desc).moderation_last.limit(5)
+		@users = User.publicly_visible.where.not(id: @user.id).prefecture(@user.prefecture_id).event(@user.event_id).where(switch: "募集中").order(:last_post => :desc).moderation_last.limit(3)
   end
 
 
