@@ -1,0 +1,11 @@
+<aside class="chat-report-guidance" role="note" aria-label="参加者の口コミと通報の案内">
+  <strong>参加時の出来事は、参加者への口コミへ</strong>
+  <p>無断欠席や直前のキャンセルなど、参加に関する感想は「参加者への口コミ」で共有できます。</p>
+  <p>確認できた事実を落ち着いた表現で書き、連絡先などの個人情報は載せないでください。</p>
+  <% if participant_report_review_available? %>
+    <%= link_to '参加者への口コミを書く', '#evaluation', class: 'chat-report-guidance__review-link', data: { open_evaluation: true, turbolinks: false } %>
+  <% else %>
+    <p>このやり取りでは、現在は口コミを投稿・編集できません。投稿期間やメールアドレスの確認状況などをご確認ください。</p>
+  <% end %>
+  <p class="chat-report-guidance__safety">脅迫・嫌がらせ・詐欺など、安全や規約に関わる問題は、下のフォームから通報を続けられます。</p>
+</aside>

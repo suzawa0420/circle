@@ -1,7 +1,9 @@
 module ApplicationHelper
 
   def default_user_avatar_path(gender)
-    "/images/avatars/default-#{default_user_avatar_variant(gender)}-v1.png"
+    variant = default_user_avatar_variant(gender)
+    version = variant == 'other' ? 'v2' : 'v1'
+    "/images/avatars/default-#{variant}-#{version}.png"
   end
 
   def default_user_avatar_variant(gender)

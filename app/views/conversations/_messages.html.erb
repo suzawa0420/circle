@@ -28,6 +28,7 @@
       </div>
       <% unless mine %>
         <details class="chat-message__report"><summary>通報</summary>
+          <%= render 'conversations/report_guidance' if @role == 'owner' && !@conversation.practice_match? %>
           <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
             <%= hidden_field_tag :message_id, message.id %>
             <%= f.label :reason, '通報理由', for: "message-report-#{message.id}" %>

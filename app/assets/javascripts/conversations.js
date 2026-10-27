@@ -36,6 +36,8 @@
       if (event.target.closest('[data-open-evaluation]')) revealEvaluation();
     }
     if (reviewPrompt) reviewPrompt.addEventListener('click', revealPromptEvaluation);
+    var reportHistory = document.getElementById('chat-messages');
+    if (reportHistory) reportHistory.addEventListener('click', revealPromptEvaluation);
     if (input) input.addEventListener('input', resize);
     window.addEventListener('resize', resize);
     window.addEventListener('hashchange', openEvaluation);
@@ -45,6 +47,7 @@
       replyLinks.forEach(function (link) { link.removeEventListener('click', revealComposer); });
       evaluationLinks.forEach(function (link) { link.removeEventListener('click', revealEvaluation); });
       if (reviewPrompt) reviewPrompt.removeEventListener('click', revealPromptEvaluation);
+      if (reportHistory) reportHistory.removeEventListener('click', revealPromptEvaluation);
       if (input) input.removeEventListener('input', resize);
       window.removeEventListener('resize', resize);
       window.removeEventListener('hashchange', openEvaluation);
