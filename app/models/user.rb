@@ -98,6 +98,7 @@ class User < ApplicationRecord
 
 	before_validation :refresh_publication_status
 	before_validation :flag_suspicious_profile
+  before_save :reconcile_solicitation_moderation
 
 	scope :publicly_visible, -> {
 		# Keep these fixed policy values literal so even generic prepared plans
@@ -176,14 +177,24 @@ class User < ApplicationRecord
       []
     end
     if (reasons - approved_reasons).any?
-      # An editor may have loaded a review record before a concurrent approval.
-      # Persist the hold even if this instance already thinks it is in review.
-      moderation_status_will_change!
       self.moderation_status = "review"
       self.moderation_reasons = moderation_snapshot(reasons)
       self.moderation_checked_at = Time.current
     end
 	end
+
+  def reconcile_solicitation_moderation
+    return unless persisted? && CircleProfilePolicy.disguised_solicitation?(self)
+
+    # Validation may have used a stale decision. Lock the current row until the
+    # save commits, preserving a concurrent block and rechecking any approval.
+    current = self.class.select(:id, :moderation_status, :moderation_reasons, :moderation_checked_at).lock.find(id)
+    self.moderation_status = current.moderation_status
+    self.moderation_reasons = current.moderation_reasons
+    self.moderation_checked_at = current.moderation_checked_at
+    flag_suspicious_profile
+    moderation_status_will_change! if moderation_status != current.moderation_status
+  end
 
 	public
 	has_many :blogs, dependent: :destroy

@@ -131,6 +131,23 @@ class DisguisedCircleSolicitationTest < ActionDispatch::IntegrationTest
     assert_equal CircleProfilePolicy.solicitation_fingerprint(@circle), @circle.moderation_reasons.first['fingerprint']
   end
 
+  test 'an edit loaded while held preserves a concurrent webmaster block' do
+    @circle.update!(@attributes)
+    stale_editor = User.find(@circle.id)
+    @circle.update_columns(moderation_status: 'blocked')
+    stale_editor.update!(contact: 'Discord: blocked_example')
+    assert_equal 'blocked', @circle.reload.moderation_status
+  end
+
+  test 'an edit loaded while blocked rechecks changed content after a concurrent release' do
+    @circle.update!(@attributes)
+    @circle.update_columns(moderation_status: 'blocked')
+    stale_editor = User.find(@circle.id)
+    @circle.update_columns(moderation_status: 'clear')
+    stale_editor.update!(contact: 'Discord: released_example')
+    assert_equal 'review', @circle.reload.moderation_status
+  end
+
   test 'pending edited names do not enter existing conversation notifications' do
     @circle.update!(@attributes)
     @conversation.reload.user = @circle
