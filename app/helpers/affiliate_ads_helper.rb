@@ -14,7 +14,13 @@ module AffiliateAdsHelper
   end
 
   def affiliate_ad_for_member(member)
-    affiliate_ad_for_genres(member.events.pluck(:ruby), 'participant_mypage')
+    affiliate_ad_for_genres(member.events.pluck(:ruby), 'participant_mypage', audience: 'participant')
+  end
+
+  def affiliate_ad_for_organizer(circle)
+    return unless admin_user_signed_in? && current_admin_user.id == circle.admin_user_id
+
+    affiliate_ad_for_genres([circle.event&.ruby].compact, 'organizer_mypage', audience: 'organizer')
   end
 
   def affiliate_ad_cache_key(ad)
@@ -28,9 +34,10 @@ module AffiliateAdsHelper
 
   private
 
-  def affiliate_ad_for_genres(genres, placement)
+  def affiliate_ad_for_genres(genres, placement, audience: 'public')
     AFFILIATE_ADS.find do |ad|
       ad['enabled'] == true && ad['approved'] == true &&
+        ad.fetch('audiences', %w[public participant organizer]).include?(audience) &&
         ad.fetch('placements').include?(placement) && (ad.fetch('events') & genres).any?
     end
   end

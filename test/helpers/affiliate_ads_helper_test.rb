@@ -11,8 +11,14 @@ class AffiliateAdsHelperTest < ActionView::TestCase
       assert ad.fetch('placements').any?
       assert_operator ad.fetch('title').length, :<=, 36
       assert_operator ad.fetch('description').length, :<=, 70
-      assert_operator ad.fetch('link_label').length, :<=, 24
-      [ad.fetch('link_url'), ad['image_url'], ad['image_link_url'], *ad.fetch('tracking_pixels', [])].compact.each do |url|
+      if ad['banner_only']
+        assert ad['image_url'].present?
+        assert_nil ad['link_url']
+      else
+        assert_operator ad.fetch('link_label').length, :<=, 24
+        assert ad['link_url'].present?
+      end
+      [ad['link_url'], ad['image_url'], ad['image_link_url'], *ad.fetch('tracking_pixels', [])].compact.each do |url|
         uri = URI.parse(url)
         assert_equal 'https', uri.scheme
         assert uri.host.present?

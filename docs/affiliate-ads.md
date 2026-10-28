@@ -98,3 +98,45 @@ Amazonの参加者表示は同ページに維持し、GoogleのCookie説明と�
 - [公式の体験案内・外国人メイトによる会話サポート](https://trial.lancul.com/211220a/top)
 - [公式料金プラン・プラン別の利用上限](https://lancul.com/plan)
 - [公式FAQ・予約と参加](https://faq.lancul.com/knowledge/service3)
+
+## 追加3案件（2026年10月28日）
+
+サークルブック用site ID `004`の提携済み素材だけを設定する。ローカルの公開候補は有効だが、
+このリリースの明示承認に基づき、通常のCI・masterデプロイで反映する。別リリースへ許可を持ち越さない。
+公式HTMLのURL・対応ピクセルを保持し、選択元の未改変HTMLを`test/fixtures/files/affiliate_ads/`に保存する。
+原画像は加工・切取りしない。旧Alpen017・旧Instabase003およびAlpen text006は使用しない。
+
+| 案件 | 表示対象 | 使用素材 |
+| --- | --- | --- |
+| スペースマーケット | `game`・`cooking`を管理する本人の`organizer_mypage` | text001・banner006 |
+| インスタベース | `gathering`・`study`を管理する本人の`organizer_mypage` | text001・banner036 |
+| Alpen | 明示された対象スポーツ／アウトドアの既存公開枠と、興味が合う参加者の`participant_mypage` | banner050のみ |
+
+主催者2社は同じマイページに並べず、ジャンルで分担する。一般スポーツ全体へ会場広告を一律掲載しない。
+主催者向けは本人所有のサークルであることを確認する。`audiences`指定案件は役割も一致した場合だけ選択する。
+公開のAlpen掲載面では匿名閲覧者の役割は推定せず、参加準備に関連する一般公開枠として扱う。
+複数の興味に該当しても設定順で1件だけ表示する。英会話も興味に登録されていれば既存LanCulが優先する。
+対象外・ジャンル未選択・キーワードだけの推定・メッセージ・公開プロフィール・サークル詳細には新しいカードを出さない。
+
+Alpen対象slug：`basketball volleyball soccer futsal baseball softball badminton tennis soft-tennis table-tennis running golf camping mountain yoga work-out`。
+公開掲載面：`search search_empty event_search event_search_empty blog_search blog_search_empty circle_blogs circle_blog`。
+
+Alpen050の送料・配送訴求は条件付き。本文に地域・商品・注文条件で異なることを明示し、
+全地域への翌日配送や一律送料無料を保証しない。本文で価格や特典を追加・増幅しない。
+2026年10月28日の公式テキストFAQでは、税込5,500円以上が基本送料無料、沖縄・離島や特殊商品等は例外。
+発送は午前9時までの注文の当日出荷が基本で、予約・大型・加工・決済・在庫・交通事情等で例外がある。
+配送日数図は取得不能だったため、図を根拠に翌日到着が確認済みとはしない。
+
+- [送料FAQ](https://faq.store.alpen-group.jp/送料-65f83a41add73b00230bb526)
+- [発送FAQ](https://faq.store.alpen-group.jp/商品の発送-65f83a41add73b00230bb50b)
+
+`banner_only`では公式バナーのリンクだけを表示し、Alpen用の独自テキスト広告リンクは生成しない。
+会場広告のCTAは「外部サイトで会場を探す」とし、募集参加や問い合わせと区別する。
+広告リンクや1px計測画像へテスト目的でアクセスしない。代替実画像は提供済みファイルを使用し、
+隔離ブラウザではローカル差し替え・全外部通信遮断で検証する。
+
+検証：`test/integration/a8_program_ads_test.rb`に加え、既存LanCul/PICTE・公開CSS・検索SEO・主催者権限を確認する。
+一覧では既存の1挿入位置・1カード選択とキャッシュダイジェストを再利用し、従来のAdSense行との排他を保つ。
+ただし空だった枠にA8が加わる対象ページでは、カードが1件増える。外部自動広告込みの総数不変は保証しない。
+今回低高さ施策は含めず、検索title/H1/metaとAdSense設定も変更しない。
+公開後のA8掲載URL提出は別作業。認証が必要な個人マイページURLを外部へ提出していない。

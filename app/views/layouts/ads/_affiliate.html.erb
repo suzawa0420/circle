@@ -7,10 +7,12 @@
   <% end %>
   <h2 class="affiliate-ad__title"><%= ad.fetch('title') %></h2>
   <p class="affiliate-ad__description"><%= ad.fetch('description') %></p>
+  <% unless ad['banner_only'] %>
   <div class="affiliate-ad__action">
     <%= link_to ad.fetch('link_label'), ad.fetch('link_url'), class: 'affiliate-ad__link', rel: 'sponsored nofollow noopener', target: '_blank', data: { turbolinks: false } %>
     <%= lucide_icon 'external-link', **{ 'aria-hidden' => 'true' } %>
   </div>
+  <% end %>
   <% ad.fetch('tracking_pixels', []).each do |pixel| %>
     <%= image_tag pixel, width: 1, height: 1, alt: '', class: 'affiliate-ad__pixel', loading: 'lazy' %>
   <% end %>
