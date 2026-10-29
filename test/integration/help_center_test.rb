@@ -77,6 +77,26 @@ class HelpCenterTest < ActionDispatch::IntegrationTest
     assert_equal '<script>bad()</script>', fragment.at_css('li').text
   end
 
+  test 'former inquiry methods are searchable and link to chat and profile editing guidance' do
+    ['公式LINE', 'LINEのみ', 'フォーム', 'メール', '両方'].each do |query|
+      get faq_path(help_query: query, audience: 'owner', category: 'message')
+      assert_response :success
+      assert_select "a[href='#{help_article_path('inquiry-method')}']"
+    end
+    get help_article_path('inquiry-method')
+    assert_response :success
+    assert_select ".help-links a[href='#{help_article_path('message-notification')}']"
+    assert_select ".help-links a[href='#{help_article_path('edit-listing')}']"
+    assert_select "a.cb-button[href='#{new_admin_user_session_path}']"
+    %w[contact-circle message-notification inquiry-guidance].each do |id|
+      get help_article_path(id)
+      assert_select "a[href='#{help_article_path('inquiry-method')}']"
+    end
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get help_article_path('inquiry-method')
+    assert_select "a.cb-button[href='/users/#{@circle.id}/mypage']"
+  end
+
   test 'search is normalized and audience/category filters and no-result guidance work without javascript' do
     get faq_path
     token = css_select('input[name=spam_form_token]').first['value']

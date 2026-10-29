@@ -12,6 +12,14 @@
       <% end %>
     </nav>
   <% end %>
+  <% if @article[:id] == 'inquiry-method' %>
+    <nav class="help-links" aria-label="問い合わせ方法の関連FAQ">
+      <%= link_to 'サイト内チャットの確認・返信方法', help_article_path('message-notification') %>
+      <%= link_to 'サークル紹介文の編集方法', help_article_path('edit-listing') %>
+    </nav>
+  <% elsif %w[contact-circle message-notification inquiry-guidance].include?(@article[:id]) %>
+    <p><%= link_to '公式LINE・フォーム・メールの問い合わせ受付方式について', help_article_path('inquiry-method') %></p>
+  <% end %>
   <% label, path = help_action(@article) %><%= link_to label, path, class: 'cb-button' %></article>
   <section class="help-card"><h2>この回答で解決できましたか？</h2><%= form_with url: help_feedback_path(@article[:id]), method: :post, local: true do %><%= hidden_field_tag :spam_form_token, spam_form_token("help-feedback:#{@article[:id]}") %><div class="help-actions"><%= button_tag '解決できた', name: 'answer', value: 'helpful', class: 'cb-button' %><%= button_tag '解決しなかった', name: 'answer', value: 'unhelpful', class: 'cb-button cb-button--secondary' %></div><% end %></section>
   <% if @article[:id] == 'report' %><section class="help-card"><h2>通報する画面にアクセスできない場合</h2><%= link_to '安全上の問題を運営に報告する', new_support_request_path(kind: 'safety', category: 'review'), class: 'cb-button' %></section><% end %>
