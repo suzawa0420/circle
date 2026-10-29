@@ -1,7 +1,7 @@
 %section.circle-upcoming{ 'aria-label' => '次の活動予定' }
   %h2 次の活動予定
   - if (schedule = @schedules.first)
-    %p
+    %p.circle-upcoming__summary{ tabindex: 0, 'aria-label' => '次の活動予定の日時と公開場所' }
       %time{ datetime: schedule.day }= Date.iso8601(schedule.day).strftime("%-m月%-d日（#{%w[日 月 火 水 木 金 土][Date.iso8601(schedule.day).wday]}）")
       - if schedule.time_s
         = schedule.time_s.in_time_zone('Tokyo').strftime('%H:%M')

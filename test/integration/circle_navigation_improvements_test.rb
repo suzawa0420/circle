@@ -23,7 +23,7 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.content_02 + .circle-upcoming' do
       assert_select 'time[datetime=?]', upcoming.day
-      assert_select 'p', text: /10月29日.*09:00.*公開の体育館/m
+      assert_select 'p.circle-upcoming__summary[tabindex="0"]', text: /10月29日.*09:00.*公開の体育館/m
       assert_select 'a[href=?]', user_schedules_path(@circle)
     end
     %w[過去の場所 終了の場所 中止の場所 参加者限定の体育館 参加者限定住所].each { |text| refute_includes response.body, text }

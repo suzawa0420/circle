@@ -9,5 +9,19 @@
   a:focus-visible { outline: 2px solid #16835d; outline-offset: 3px; }
 }
 .circle-upcoming__venue { display: block; }
+@media (max-width: 767px) {
+  .circle-upcoming {
+    padding: 12px;
+    h2 { margin-bottom: 4px; }
+    .circle-upcoming__summary {
+      margin-bottom: 0;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-wrap: normal;
+      &:focus-visible { outline: 2px solid #16835d; outline-offset: 3px; }
+    }
+    .circle-upcoming__venue { display: inline; }
+  }
+}
 .circle-related-candidates { margin-top: 24px; }
 .circle-related-empty { padding: 16px; font-size: 14px; line-height: 1.7; }
