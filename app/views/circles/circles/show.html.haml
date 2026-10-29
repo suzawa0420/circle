@@ -19,10 +19,6 @@
 
     - if webmaster?
       = render "webmasters/shared/moderation_reasons", record: @user
-      - if @user.moderation_status == "clear"
-        .attention_content
-          %p このサークルだけを非公開にし、運営の確認待ち一覧へ移します。主催者アカウントや他のサークルは変更しません。
-          = button_to "運営確認待ちにする", super_admin_circle_moderation_path(@user), method: :patch, params: { moderation_status: "review" }, class: "cb-button cb-button--secondary", data: { confirm: "このサークルを非公開にして、運営確認待ちにしますか？" }
 
     .user-profile
       .header-wrapper.ribbon-wrapper

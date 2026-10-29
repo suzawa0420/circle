@@ -102,7 +102,10 @@ class AdultDispatchModerationTest < ActionDispatch::IntegrationTest
     assert_select 'button', text: '運営確認待ちにする', count: 0
     login_master
     get circle_path(@circle)
-    assert_select "form[action='#{super_admin_circle_moderation_path(@circle)}'] input[name=moderation_status][value=review]"
+    assert_select 'button', text: '運営確認待ちにする', count: 0
+    assert_not_includes response.body, 'このサークルだけを非公開にし、運営の確認待ち一覧へ移します。'
+    assert_select "a[href='#{edit_user_path(@circle)}']"
+    assert_select "a[href='#{user_path(@circle)}'][data-method=delete]"
     assert_no_difference 'ActionMailer::Base.deliveries.size' do
       patch super_admin_circle_moderation_path(@circle), params: { moderation_status: 'review' }
     end
