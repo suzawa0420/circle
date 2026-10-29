@@ -7,7 +7,7 @@ class CircleLevelRankingTest < ActionDispatch::IntegrationTest
   setup { create_chat_records }
 
   def clone_circle(points, time)
-    User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(cb_point: points, last_post: time.to_s))
+    User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(name: "順位検証サークル#{points}", cb_point: points, last_post: time.to_s))
   end
 
   test 'integer levels and maximum use activity time rather than fractional or surplus points' do

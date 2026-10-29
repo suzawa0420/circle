@@ -178,7 +178,7 @@ class ScheduleCopyTest < ActionDispatch::IntegrationTest
   end
 
   test 'another circle cannot be used as a copy source for either read or write' do
-    other_circle = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id'))
+    other_circle = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(name: '別のコピー元サークル'))
     other = other_circle.schedules.create!(day: '2027-01-01', title: '別サークル', venue: '別エリア')
     assert_raises(ActiveRecord::RecordNotFound) do
       get new_user_schedule_path(@circle), params: { copy: other.id, copy_mode: 'next_week' }

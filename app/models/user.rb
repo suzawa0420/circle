@@ -75,6 +75,7 @@ class User < ApplicationRecord
   self.ignored_columns += %w[secondary_event_ids]
   include PublicListingOrder
   include SportDiscovery
+  include OwnerCircleNameUniqueness
   has_one :backlink_request, dependent: :destroy
   def unanswered_report_count
     legacy = Conversation.reported_unanswered.where(user_id: id).select(:id)

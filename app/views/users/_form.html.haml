@@ -71,7 +71,8 @@
     .label_item
       %span.label.label_danger> 必須
       サークル名
-    = f.text_field :name, class: 'form-control change_font', placeholder: "サークルブック"
+    = f.text_field :name, class: 'form-control change_font', placeholder: "サークルブック", aria: { describedby: 'circle-name-help' }
+    %p#circle-name-help.help-block 同じアカウントでは、同じサークル名を重複して登録できません。登録済みのサークルはマイページから編集してください。
     .label_item
       %span.label.label_danger> 必須
       サークル種目（大）

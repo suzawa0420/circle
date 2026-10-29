@@ -145,15 +145,15 @@ class UserTest < ActiveSupport::TestCase
     attributes = { event: event, prefecture: prefecture, category: category, admin_user: owner,
       name: "地域バスケサークル", switch: "募集中", appeal: "地域で楽しく活動しています。" * 10 }
     circles = [{ area: nil, schedule: "土曜日" }, { area: "体育館", schedule: "" },
-      { area: "  ", schedule: nil }].map { |activity| User.create!(**attributes, **activity) }
+      { area: "  ", schedule: nil }].map.with_index { |activity, index| User.create!(**attributes, **activity, name: "地域バスケサークル#{index}") }
     circles.each { |circle| circle.update_column(:publication_status, "draft") }
     blog = Blog.create!(user: circles.last, title: "活動記録", content: "地域で活動しました。" * 15)
-    incomplete = User.create!(**attributes, appeal: "<p>短い紹介</p>" + " " * 120)
-    missing_name = User.create!(**attributes)
+    incomplete = User.create!(**attributes, name: '紹介が短いサークル', appeal: "<p>短い紹介</p>" + " " * 120)
+    missing_name = User.create!(**attributes, name: '名前未入力検証用')
     missing_name.update_columns(name: "  ", publication_status: "draft")
-    reviewed = User.create!(**attributes, moderation_status: "review")
+    reviewed = User.create!(**attributes, name: '確認中のサークル', moderation_status: "review")
     reviewed.update_column(:publication_status, "draft")
-    blocked = User.create!(**attributes, moderation_status: "blocked")
+    blocked = User.create!(**attributes, name: '停止済みのサークル', moderation_status: "blocked")
     blocked.update_column(:publication_status, "draft")
     english = User.create!(**attributes, name: "home renovation ideas", appeal: "Home renovation ideas for your house. " * 10)
     english.update_columns(publication_status: "draft", moderation_status: "clear")
@@ -257,7 +257,7 @@ class UserTest < ActiveSupport::TestCase
 
     japanese.update!(appeal: "We meet each weekend to play basketball. " * 4)
     assert_equal "clear", japanese.moderation_status
-    japanese.update!(name: "Five88")
+    japanese.update!(name: "Five88 alternate")
     assert_equal "review", japanese.moderation_status
   end
 end

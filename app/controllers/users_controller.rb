@@ -160,7 +160,7 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
 
 		else
 			@admin_user = current_admin_user
-			render "/users/edit"
+			render "/users/edit", status: :unprocessable_entity
 		end
 
 	end

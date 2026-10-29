@@ -185,6 +185,7 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
 
   test 'different circles can apply independently and inactive or restricted circles retain scoring rules' do
     second = @circle.dup
+    second.name = '別のリンク掲載申請サークル'
     second.save!
     first_request = BacklinkRequest.submit!(@circle, 'https://example.test/')
     second_request = BacklinkRequest.submit!(second, 'https://example.test/second')

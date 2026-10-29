@@ -577,3 +577,22 @@ No migration is added. Deploy master through the normal checks, retained asset
 compilation and rolling Puma hot restarts on server4/server5. Roll back with an
 application revert; no database rollback is needed. Never validate withdrawal
 using a real production participant, organizer or webmaster account.
+
+## Circle names within one organizer account (2026-10-29)
+
+New circles, renamed circles and ownership changes reject a name already used
+by that organizer account. Comparison ignores surrounding Unicode whitespace;
+internal whitespace, case and character width remain distinct and display names
+are preserved. Different organizer accounts may use the same name. Existing
+duplicates are retained and remain editable when their name/account is unchanged.
+No automatic deletion, merging or renaming is performed.
+
+The model validates names and rechecks before saving while holding the account
+row's PostgreSQL `FOR NO KEY UPDATE` lock until the save transaction commits.
+This serializes concurrent creates/renames across application servers without
+adding a unique index that would reject existing duplicates. Normal writes must
+use model save/update methods; bulk SQL and update_columns bypass callbacks and
+must not be used for new circles, names or ownership changes. No migration is
+added. Deploy master through existing checks, asset preparation and sequential
+Puma hot restarts on server4/server5. Roll back with a normal application revert;
+no database rollback or existing-data cleanup is required.

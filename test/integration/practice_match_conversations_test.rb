@@ -189,8 +189,9 @@ class PracticeMatchConversationsTest < ActionDispatch::IntegrationTest
       post user_conversations_path(@circle), params: { kind: 'practice_match', source_user_id: @source.id, message: { body: '' } }
     end
     assert_redirected_to new_user_conversation_path(@circle, kind: 'practice_match')
-    20.times do
+    20.times do |index|
       target = @circle.dup
+      target.name = "練習試合の相談先#{index}"
       target.save!
       Conversation.for_circles!(target, @source)
     end

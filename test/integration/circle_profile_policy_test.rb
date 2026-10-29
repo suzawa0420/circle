@@ -61,13 +61,16 @@ class CircleProfilePolicyTest < ActionDispatch::IntegrationTest
   test 'backfill changes only matching clear profiles and preserves existing decisions' do
     @circle.update_columns(goal: '深夜舒壓', moderation_status: 'clear')
     allowed = @circle.dup
+    allowed.name = '通常の活動サークル'
     allowed.goal = '深夜のヨガでリフレッシュ'
     allowed.contact = 'Telegram：@sample LINE ID：sample Gleezy：sample'
     allowed.save!
     blocked = @circle.dup
+    blocked.name = '停止済みの活動サークル'
     blocked.moderation_status = 'blocked'
     blocked.save!
     held = @circle.dup
+    held.name = '確認中の活動サークル'
     held.moderation_status = 'review'
     held.goal = '通常のサークル'
     held.save!
@@ -121,16 +124,20 @@ class CircleProfilePolicyTest < ActionDispatch::IntegrationTest
   test 'delivery backfill is idempotent and preserves existing moderation decisions' do
     @circle.update_columns(appeal: '高品質なデリバリーサービス', moderation_status: 'clear')
     allowed = @circle.dup
+    allowed.name = '通常の料理サークル'
     allowed.appeal = '高品質な食材で料理会。お弁当のデリバリーサービスも利用します。' * 4
     allowed.save!
     detail = allowed.dup
+    detail.name = '詳細情報を検証する料理サークル'
     detail.save!
     detail.update_columns(sport_details: { 'activity_style' => '&#39640;品質なデリバリーサービス' })
     held = @circle.dup
+    held.name = '確認中の料理サークル'
     held.moderation_status = 'review'
     held.save!
     held.update_columns(moderation_reasons: [{ 'code' => 'manual', 'message' => '以前の理由' }])
     blocked = @circle.dup
+    blocked.name = '停止済みの料理サークル'
     blocked.moderation_status = 'blocked'
     blocked.save!
     checked_at = nil
@@ -169,7 +176,7 @@ class CircleProfilePolicyTest < ActionDispatch::IntegrationTest
       post users_path, params: { user: { name: 'デリ・ヘルのご案内', event_id: @circle.event_id,
         prefecture_id: @circle.prefecture_id, appeal: @circle.appeal } }
     end
-    assert_response :success
+    assert_response :unprocessable_entity
     assert_select '.form-error_message'
   end
 end

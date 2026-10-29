@@ -47,7 +47,7 @@ class ScheduleCalendarTest < ActionDispatch::IntegrationTest
   end
 
   test 'day selection includes every activity on that day and never another circle' do
-    other = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id'))
+    other = User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(name: '別のカレンダーサークル'))
     other.schedules.create!(day: '2026-10-24', title: '別サークルの予定', venue: '別会場')
     get user_schedules_path(@circle), params: { month: '2026-10', date: '2026-10-24' }
     assert_response :success
