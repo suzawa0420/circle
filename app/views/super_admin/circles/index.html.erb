@@ -14,7 +14,7 @@
         <%= render "webmasters/shared/moderation_reasons", record: record %>
         <div class="wm-actions">
           <% approval_params = { moderation_status: 'clear' } %>
-          <% if kind == 'circle' && record.moderation_reasons.any? { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION } %>
+          <% if kind == 'circle' && record.moderation_reasons.any? { |reason| CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code']) } %>
             <% approval_params[:profile_fingerprint] = CircleProfilePolicy.solicitation_fingerprint(record) %>
           <% end %>
           <%= button_to(blocked ? '公開停止を解除' : '確認済みにする', kind == 'circle' ? super_admin_circle_moderation_path(record) : super_admin_blog_moderation_path(record), method: :patch, params: approval_params) %>

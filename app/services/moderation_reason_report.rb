@@ -2,6 +2,7 @@
 # as the reason that actually triggered a previous decision.
 class ModerationReasonReport
   LABELS = {
+    'disguised_adult_service_promotion' => '女性等を自宅・ホテルへ派遣する説明と、女性の選択・私的な時間の案内、外部連絡先が組み合わされているため、成人向けサービスの宣伝でないか運営確認が必要です。',
     'disguised_romantic_solicitation' => '恋愛相手の募集と外部連絡先への案内があり、選択された趣味の活動内容が確認できないため、募集目的とカテゴリの確認が必要です。',
     'non_japanese_profile' => 'サークル名・詳細情報にひらがな・カタカナが含まれていません。',
     'adult_service_promotion' => '「深夜舒壓／深夜舒压」や「高品質なデリバリーサービス」など、性的サービスの宣伝の可能性がある表現が含まれるため確認が必要です。',

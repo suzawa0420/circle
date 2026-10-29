@@ -6,7 +6,7 @@ class SuperAdmin::ModerationController < ApplicationController
     user = User.find(params[:id])
     status = moderation_status
     user.with_lock do
-      if status == 'clear' && user.moderation_reasons.any? { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION }
+      if status == 'clear' && user.moderation_reasons.any? { |reason| CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code']) }
         unless ActiveSupport::SecurityUtils.secure_compare(params[:profile_fingerprint].to_s, CircleProfilePolicy.solicitation_fingerprint(user))
           redirect_to super_admin_circles_path, alert: '表示後に募集内容が変更されました。最新の内容を確認してから、もう一度承認してください。'
           return
@@ -18,12 +18,15 @@ class SuperAdmin::ModerationController < ApplicationController
       if status == 'clear'
         if user.moderation_reasons.empty?
           attributes[:moderation_reasons] = user.moderation_snapshot
-        elsif user.moderation_reasons.any? { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION }
+        elsif user.moderation_reasons.any? { |reason| CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code']) }
           # Approve the content actually reviewed, including edits made while held.
-          attributes[:moderation_reasons] = user.moderation_reasons.reject { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION } +
-            user.moderation_snapshot.select { |reason| reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION }
+          attributes[:moderation_reasons] = user.moderation_reasons.reject { |reason| CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code']) } +
+            user.moderation_snapshot.select { |reason| CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code']) }
         end
         attributes[:moderation_checked_at] = user.moderation_checked_at || Time.current
+      elsif status == 'review' && user.moderation_rule_reasons.any?
+        attributes[:moderation_reasons] = user.moderation_snapshot
+        attributes[:moderation_checked_at] = Time.current
       end
       user.update_columns(attributes)
     end

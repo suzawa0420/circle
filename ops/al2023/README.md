@@ -596,3 +596,26 @@ must not be used for new circles, names or ownership changes. No migration is
 added. Deploy master through existing checks, asset preparation and sequential
 Puma hot restarts on server4/server5. Roll back with a normal application revert;
 no database rollback or existing-data cleanup is required.
+
+## Contextual adult dispatch promotion review (2026-10-29)
+
+Profiles combining a dispatch-service offer, delivery/dispatch of women to a
+private home or hotel, private companionship or selection language, and an
+external destination are held for webmaster review. The check spans editable
+profile fields and ignores markup, Unicode spacing/punctuation and character
+width variations. Premium travel, women-led mobile lessons and hotel activities
+alone do not match. A stated hobby/category does not bypass the combined rule.
+
+Both initial registration and later edits use the existing review/visibility
+pipeline. Recorded reasons carry a content fingerprint: approval requires the
+content the webmaster viewed, and changes to accepted matching content require
+fresh review. Concurrent blocks remain in force. The webmaster-only control on
+a circle detail page can move that single circle into review and record current
+reasons; it does not suspend the owner, affect sibling circles or send mail.
+
+No migration or bulk reclassification is included. Only the specifically reported
+circle 81256 is to be held through the existing moderation action after deployment.
+Other existing posts must not be updated in a batch without separate approval.
+Deploy master normally with retained assets and sequential Puma hot restarts on
+server4/server5. Roll back using an application revert; retain the human review
+status and data. Do not automatically republish held content during recovery.

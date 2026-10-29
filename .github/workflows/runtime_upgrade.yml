@@ -55,7 +55,7 @@ jobs:
       - name: Test circle publication
         run: bundle exec rails test test/models/user_test.rb
       - name: Test circle profile validation and updates
-        run: bundle exec rails test test/integration/circle_profile_update_test.rb test/integration/circle_name_uniqueness_test.rb test/integration/circle_name_concurrency_test.rb test/integration/organizer_profile_edit_test.rb test/integration/circle_profile_policy_test.rb test/integration/disguised_circle_solicitation_test.rb test/integration/circle_video_test.rb
+        run: bundle exec rails test test/integration/circle_profile_update_test.rb test/integration/circle_name_uniqueness_test.rb test/integration/circle_name_concurrency_test.rb test/integration/organizer_profile_edit_test.rb test/integration/circle_profile_policy_test.rb test/integration/disguised_circle_solicitation_test.rb test/integration/adult_dispatch_moderation_test.rb test/integration/circle_video_test.rb
       - name: Test YouTube URLs and video dialog
         run: |
           bundle exec ruby test/services/youtube_video_test.rb

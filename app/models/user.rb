@@ -133,12 +133,13 @@ class User < ApplicationRecord
     reasons = japanese_profile? ? [] : ['non_japanese_profile']
     reasons << 'adult_service_promotion' if CircleProfilePolicy.review?(self)
     reasons << CircleProfilePolicy::DISGUISED_SOLICITATION if CircleProfilePolicy.disguised_solicitation?(self)
+    reasons << CircleProfilePolicy::DISGUISED_ADULT_SERVICE if CircleProfilePolicy.adult_dispatch_promotion?(self)
     reasons
   end
 
   def moderation_snapshot(reasons = moderation_rule_reasons)
     ModerationReasonReport.snapshot(reasons).map do |reason|
-      if reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION
+      if CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code'])
         reason.merge('fingerprint' => CircleProfilePolicy.solicitation_fingerprint(self))
       else
         reason
@@ -170,7 +171,7 @@ class User < ApplicationRecord
     # reasons. Profile edits must not repeatedly enqueue the same concern.
     approved_reasons = if moderation_status == "clear" && moderation_checked_at.present?
       moderation_reasons.filter_map do |reason|
-        next if reason['code'] == CircleProfilePolicy::DISGUISED_SOLICITATION &&
+        next if CircleProfilePolicy::FINGERPRINTED_REASONS.include?(reason['code']) &&
           reason['fingerprint'] != CircleProfilePolicy.solicitation_fingerprint(self)
         reason['code']
       end
@@ -185,7 +186,7 @@ class User < ApplicationRecord
 	end
 
   def reconcile_solicitation_moderation
-    return unless persisted? && CircleProfilePolicy.disguised_solicitation?(self)
+    return unless persisted? && CircleProfilePolicy.fingerprinted_review?(self)
 
     # Validation may have used a stale decision. Lock the current row until the
     # save commits, preserving a concurrent block and rechecking any approval.
