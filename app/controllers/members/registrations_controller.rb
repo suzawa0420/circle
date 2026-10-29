@@ -15,6 +15,11 @@ class Members::RegistrationsController < Devise::RegistrationsController
     member_path(resource)
   end
 
+  # All account deletion requests go through the participant confirmation screen.
+  def destroy
+    redirect_to unsubscribe_member_path, status: :see_other
+  end
+
   def after_sign_up_path_for(resource)
     send_registration_verification(resource, ChatMailer.verify_email(resource))
     member_email_verification_path

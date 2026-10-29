@@ -559,3 +559,21 @@ for `Google-Display-Ads-Bot` and `Mediapartners-Google`, paying attention to 403
 and Puma's journal in the same time range. Existing logs without timestamps or
 User-Agent cannot identify the crawler retrospectively. A successful local UA
 probe is insufficient to establish Google's actual access.
+
+## Participant withdrawal guidance (2026-10-29)
+
+The participant My Page, login settings, member menu and help article
+`/help/withdraw-member` link to `/unsubscribe/member`. Anonymous visitors use
+participant login and return to the confirmation page. Deletion always targets
+`current_member`; an explicit confirmation checkbox is required server-side.
+The alternate Devise deletion endpoint redirects to the same confirmation page.
+Existing dependent-deletion behavior is retained, followed by participant sign-out.
+Database constraints or aborted deletions roll back and show a support link;
+legacy `applications` records are retained and can prevent withdrawal. Their
+retention policy is not changed by this release. Support must review such cases
+rather than deleting those records as an automatic workaround.
+
+No migration is added. Deploy master through the normal checks, retained asset
+compilation and rolling Puma hot restarts on server4/server5. Roll back with an
+application revert; no database rollback is needed. Never validate withdrawal
+using a real production participant, organizer or webmaster account.

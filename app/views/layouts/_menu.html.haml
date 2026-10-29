@@ -35,6 +35,7 @@
       - elsif member_signed_in?
         %ul
           %li= link_to 'ログアウト', destroy_member_session_path, method: :delete
+          %li= link_to '参加者アカウントの退会', unsubscribe_member_path
           %li
             = link_to edit_member_registration_path do
               メールアドレス

@@ -1,2 +1,20 @@
 <% set_meta_tags title: '参加者アカウントの退会', noindex: true %>
-<main class="participant-shell participant-shell--narrow"><div class="participant-heading"><p class="participant-eyebrow">サークル参加者</p><h1>退会について</h1></div><section class="participant-card"><h2>アカウントを削除します</h2><p>プロフィール、お気に入り、メッセージや評価など、アカウントに紐づくデータが削除されます。一度削除すると元に戻せません。</p><div class="participant-form-actions"><%= link_to 'マイページへ戻る', member_path(current_member), class: 'participant-button' %><%= button_to '退会してアカウントを削除', unsubscribe_member_path, method: :delete, class: 'participant-danger', data: { confirm: 'アカウントと紐づくデータを削除します。元に戻せません。本当に退会しますか？' } %></div></section></main>
+<main class="participant-shell participant-shell--narrow">
+  <div class="participant-heading"><p class="participant-eyebrow">サークル参加者</p><h1>参加者アカウントの退会</h1><p>サークルブックの参加者アカウントを削除する手続きです。</p></div>
+  <section class="participant-card">
+    <h2>退会前にご確認ください</h2>
+    <p>ログイン中の参加者：<strong><%= current_member.nickname %></strong></p>
+    <ul>
+      <li>プロフィール、お気に入り、メッセージや評価などが削除され、元に戻せません。</li>
+      <li>メッセージや評価は、やり取りした主催者側からも閲覧できなくなります。必要な情報は事前に保存してください。</li>
+      <li>サークルの参加キャンセルや活動からの退会は、事前に主催者へ直接ご連絡ください。この操作では連絡されません。</li>
+      <li>主催者アカウントや掲載サークルを削除する手続きではありません。</li>
+    </ul>
+    <p class="participant-help">問い合わせ・不正利用防止に必要な記録やバックアップ等は、<%= link_to 'プライバシーポリシー', privacypolicy_path %>に基づき必要な期間残ることがあります。</p>
+    <%= form_with url: unsubscribe_member_path, method: :delete, local: true, class: 'participant-form' do %>
+      <div class="participant-field"><label><%= check_box_tag :confirm_withdrawal, '1', false, required: true %> 削除される内容と、元に戻せないことを確認しました</label></div>
+      <div class="participant-form-actions"><%= link_to '退会せずマイページへ戻る', member_path(current_member), class: 'participant-button' %><%= submit_tag '退会してアカウントを削除', class: 'participant-danger', data: { confirm: '参加者アカウントを削除します。元に戻せません。本当に退会しますか？', disable_with: '退会処理中…' } %></div>
+    <% end %>
+    <%= link_to '退会について運営へ問い合わせる', new_support_request_path(category: 'account', article_id: 'withdraw-member') %>
+  </section>
+</main>

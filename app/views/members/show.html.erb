@@ -26,5 +26,5 @@
     <%= render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'participant_mypage' %>
   <% end %>
   <% if @answers.any? %><section class="participant-section"><h2>回答した質問</h2><div class="participant-card participant-link-list"><% @answers.each do |answer| %><%= link_to answer.event_question.question, "/#{answer.event_question.event.ruby}/qa/#{answer.event_question.id}" %><% end %></div></section><% end %>
-  <section class="participant-section"><h2>アカウント設定</h2><div class="participant-card participant-link-list"><%= link_to 'プロフィールを編集', edit_member_path(@member) %><%= link_to 'メールアドレス・パスワードを変更', edit_member_registration_path %><%= link_to 'ログアウト', destroy_member_session_path, method: :delete %></div></section>
+  <section class="participant-section"><h2>アカウント設定</h2><div class="participant-card participant-link-list"><%= link_to 'プロフィールを編集', edit_member_path(@member) %><%= link_to 'メールアドレス・パスワードを変更', edit_member_registration_path %><%= link_to '参加者アカウントの退会', unsubscribe_member_path %><%= link_to 'ログアウト', destroy_member_session_path, method: :delete %></div></section>
 </main>

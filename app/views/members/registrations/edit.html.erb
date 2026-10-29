@@ -9,5 +9,5 @@
     <section class="participant-card"><h2>変更の確認</h2><div class="participant-field"><%= f.label :current_password, '現在のパスワード' %><%= f.password_field :current_password, required: true, autocomplete: 'current-password' %><p class="participant-help">安全のため、変更には現在のパスワードが必要です。</p></div></section>
     <div class="participant-form-actions"><%= f.submit '変更を保存する', class: 'participant-button', data: { disable_with: '保存中…' } %><%= link_to 'マイページへ戻る', member_path(current_member) %></div>
   <% end %>
-  <p class="participant-account-close"><%= link_to '退会について', unsubscribe_member_path %></p>
+  <p class="participant-account-close"><%= link_to '参加者アカウントの退会手続き', unsubscribe_member_path %></p>
 </main>
