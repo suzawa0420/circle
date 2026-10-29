@@ -20,6 +20,7 @@ class ParticipantWithdrawalTest < ActionDispatch::IntegrationTest
     [member_path(@member), edit_member_registration_path].each do |path|
       get path
       assert_select "a[href='#{unsubscribe_member_path}']"
+      assert_select "#mobile-menu-dialog a[href='#{unsubscribe_member_path}']", text: '参加者アカウントの退会'
     end
     get unsubscribe_member_path
     assert_response :success

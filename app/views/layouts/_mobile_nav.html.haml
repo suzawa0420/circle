@@ -65,6 +65,7 @@
         = link_to "マイページ", "/users/#{mobile_navigation_circle.id}/mypage"
       - elsif member_signed_in?
         = link_to "マイページ", member_path(current_member)
+        = link_to "参加者アカウントの退会", unsubscribe_member_path
         = link_to "サークルを登録", new_admin_user_registration_path
       - elsif exhibition_group_signed_in?
         = link_to "マイページ", exhibitor_mypage_path
