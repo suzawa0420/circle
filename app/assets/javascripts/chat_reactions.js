@@ -5,6 +5,11 @@
     var thread = document.getElementById('chat-messages');
     if (!thread) return;
     var opened, watcher, pending = {};
+    function closeReports(except) {
+      thread.querySelectorAll('.chat-message__report[open]').forEach(function (report) {
+        if (report !== except) report.open = false;
+      });
+    }
     function closePicker(restoreFocus) {
       if (!opened) return;
       var summary = opened.querySelector('summary');
@@ -19,6 +24,7 @@
         event.preventDefault();
         if (summary.parentElement === opened) return closePicker(false);
         closePicker(false);
+        closeReports();
         opened = summary.parentElement;
         opened.open = true;
         // Native close requests (including supported mobile Back buttons) do
@@ -32,12 +38,18 @@
       } else if (opened && !opened.contains(event.target)) {
         closePicker(false);
       }
+      var reportSummary = event.target.closest('.chat-message__report > summary');
+      if (reportSummary && thread.contains(reportSummary)) closeReports(reportSummary.parentElement);
+      else thread.querySelectorAll('.chat-message__report[open]').forEach(function (report) {
+        if (!report.contains(event.target)) report.open = false;
+      });
     }
     function keydown(event) {
       if (event.key === 'Escape' && opened) {
         event.preventDefault();
         closePicker(true);
       }
+      if (event.key === 'Escape') closeReports();
     }
     function submit(event) {
       var form = event.target.closest('[data-chat-reaction-form]');
@@ -53,6 +65,7 @@
       wrapper.setAttribute('aria-busy', 'true');
       form.querySelectorAll('button').forEach(function (button) { button.disabled = true; });
       var status = wrapper.querySelector('[role="status"]');
+      status.removeAttribute('data-error');
       status.textContent = '保存中…';
       fetch(form.action, { method: 'PUT', credentials: 'same-origin', cache: 'no-store',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-Token': form.querySelector('[name="authenticity_token"]').value },
@@ -73,7 +86,10 @@
           if (summary) summary.focus({ preventScroll: true });
         }
       }).catch(function (error) {
-        if (document.body.contains(wrapper)) status.textContent = error.message || '保存できませんでした。もう一度お試しください。';
+        if (document.body.contains(wrapper)) {
+          status.textContent = error.message || '保存できませんでした。もう一度お試しください。';
+          status.setAttribute('data-error', 'true');
+        }
       }).then(function () {
         delete pending[id];
         if (document.body.contains(wrapper)) {

@@ -3,7 +3,7 @@
     <% account = @conversation.actor(@role) %>
     <% reactions = message.chat_message_reactions.select { |reaction| Conversation::ROLES.any? { |role| reaction.by_account?(@conversation.actor(role)) } } %>
     <% own = reactions.find { |reaction| reaction.by_account?(account) } %>
-    <div class="chat-reactions__selected" aria-label="このメッセージへのリアクション">
+    <div class="chat-reactions__selected" role="group" aria-label="このメッセージへのリアクション。長い場合は横にスクロールできます"<% if reactions.any? %> tabindex="0"<% end %>>
       <% reactions.sort_by(&:id).each do |reaction| %>
         <% icon, label = ChatMessageReaction::OPTIONS.fetch(reaction.key) %>
         <% mine = reaction.by_account?(account) %>
@@ -11,7 +11,7 @@
       <% end %>
     </div>
     <details class="chat-reactions__picker">
-      <summary aria-controls="chat-reaction-options-<%= message.id %>" aria-label="このメッセージにリアクションを選ぶ"><%= lucide_icon 'smile' %><span>リアクション</span></summary>
+      <summary aria-controls="chat-reaction-options-<%= message.id %>" aria-label="このメッセージにリアクションを選ぶ"><%= lucide_icon 'smile' %><span class="sr-only">リアクション</span></summary>
       <div id="chat-reaction-options-<%= message.id %>" class="chat-reactions__options">
         <p>リアクションを選ぶ</p>
         <%= form_with url: reaction_conversation_path(@conversation, message_id: message.id), method: :put, scope: :reaction, local: true, data: { chat_reaction_form: true } do %>

@@ -14,7 +14,7 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
   test 'eligible organizer gets the existing participant review link before the report form' do
     get conversation_path(@conversation)
     assert_response :success
-    assert_select '.chat-message__report > .chat-report-guidance + form[action=?]', report_conversation_path(@conversation)
+    assert_select '.chat-message__report-panel > .chat-report-guidance + form[action=?]', report_conversation_path(@conversation)
     assert_select '.chat-report-guidance' do
       assert_select 'a[href="#evaluation"][data-open-evaluation]', text: '参加者への口コミを書く'
       assert_select 'a[href*=reviews]', count: 0

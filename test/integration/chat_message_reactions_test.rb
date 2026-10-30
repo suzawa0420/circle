@@ -61,6 +61,29 @@ class ChatMessageReactionsTest < ActionDispatch::IntegrationTest
     assert_equal 'thanks', html.css('button[type=submit]').find { |button| button.text.include?('ありがとうございます') }['value']
   end
 
+  test 'reaction selector badges and peer report share a single message toolbar' do
+    react('thanks')
+    sign_out @owner
+    sign_in @member
+    react('thanks')
+    sign_out @member
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_select "#chat-message-#{@message.id} .chat-message__tools", count: 1 do
+      assert_select '> .chat-reactions', count: 1 do
+        assert_select '.chat-reactions__selected[tabindex="0"] .chat-reactions__badge', count: 2
+        assert_select 'summary .sr-only', text: 'リアクション'
+      end
+      assert_select '> .chat-message__report > summary', text: '通報'
+      assert_select '.chat-message__report-panel textarea', count: 1
+    end
+    response_html = response.body
+    react('like')
+    assert_response :success
+    refute_includes response.parsed_body['html'], 'chat-message__report'
+    assert_includes response_html, '長い場合は横にスクロールできます'
+  end
+
   test 'invalid and missing choices do not write' do
     react('<script>')
     assert_response :unprocessable_entity

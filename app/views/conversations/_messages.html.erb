@@ -26,9 +26,11 @@
           <time datetime="<%= message.created_at.iso8601 %>" title="<%= message.created_at.strftime('%Y年%-m月%-d日 %H:%M') %>"><%= message.created_at.strftime('%H:%M') %></time>
         </div>
       </div>
+      <div class="chat-message__tools">
       <%= render 'conversations/reactions', message: message %>
       <% unless mine %>
         <details class="chat-message__report"><summary>通報</summary>
+          <div class="chat-message__report-panel">
           <%= render 'conversations/report_guidance' if @role == 'owner' && !@conversation.practice_match? %>
           <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
             <%= hidden_field_tag :message_id, message.id %>
@@ -36,8 +38,10 @@
             <%= f.text_area :reason, id: "message-report-#{message.id}", required: true, minlength: 6, maxlength: 2000 %>
             <%= f.submit '運営に通報する' %>
           <% end %>
+          </div>
         </details>
       <% end %>
+      </div>
     </div>
   </article>
   <% end %>

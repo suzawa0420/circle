@@ -9,7 +9,7 @@ function element(values = {}) {
 const summary = element();
 const picker = element({ open:false, querySelector: () => summary, contains: target => target === summary });
 summary.parentElement=picker;
-summary.closest = selector => selector.includes('summary') ? summary : null;
+summary.closest = selector => selector === '.chat-reactions__picker > summary' ? summary : null;
 const status = element({ textContent:'' });
 const buttons = [element({value:'thanks'}),element({value:''})];
 const form = element({ action:'/conversations/local/messages/1/reaction',
@@ -18,7 +18,8 @@ const form = element({ action:'/conversations/local/messages/1/reaction',
 });
 const wrapper=element({id:'chat-reactions-1', querySelector: () => status});
 const updated=element({querySelector: selector => selector === 'summary' ? summary : status});
-const thread=element({contains: () => true});
+let reports=[];
+const thread=element({contains: () => true,querySelectorAll: () => reports.filter(report => report.open)});
 const document=element({readyState:'loading', body:{contains:()=>true}, getElementById:id=>id==='chat-messages'?thread:updated});
 const window=element();
 let nativeWatcher;
@@ -36,12 +37,16 @@ async function flush(){for(let i=0;i<10;i++)await Promise.resolve();}
   click(summary);document.events.keydown({key:'Escape',preventDefault(){}});assert(!picker.open);assert(summary.focused);
   click(summary);nativeWatcher.close();assert(!picker.open);assert(nativeWatcher.destroyed);
   click(summary);click({closest:()=>null});assert(!picker.open);
+  const report=element({open:true,contains:()=>false});reports=[report];
+  click(summary);assert(!report.open,'opening reactions closes the report panel without resetting its form');
+  report.open=true;document.events.keydown({key:'Escape',preventDefault(){}});assert(!report.open);
+  report.open=true;click({closest:()=>null});assert(!report.open,'outside click closes the report popup');
   click(summary);submit(buttons[0]);submit(buttons[0]);assert.equal(requests.length,1,'repeated taps must not send concurrent mutations');
   assert.equal(requests[0].options.method,'PUT');assert.equal(requests[0].options.headers['X-CSRF-Token'],'per-form-token');
   assert.equal(JSON.parse(requests[0].options.body).reaction.key,'thanks');
   finish({ok:true,redirected:false,json:async()=>({html:'<div>updated</div>'})});await flush();assert.equal(wrapper.outerHTML,'<div>updated</div>');assert.equal(status.textContent,'リアクションを保存しました。');
   submit(buttons[1]);assert.equal(JSON.parse(requests[1].options.body).reaction.key,'','removal sends an idempotent empty desired state');
-  finish({ok:false,status:422,json:async()=>({error:'ブロック中です。'})});await flush();assert.equal(status.textContent,'ブロック中です。');assert(buttons.every(b=>!b.disabled));
+  finish({ok:false,status:422,json:async()=>({error:'ブロック中です。'})});await flush();assert.equal(status.textContent,'ブロック中です。');assert.equal(status['data-error'],'true');assert(buttons.every(b=>!b.disabled));
   submit(buttons[0]);finish({ok:true,redirected:true});await flush();assert(status.textContent.includes('ログイン状態'));assert(buttons.every(b=>!b.disabled));
   submit(buttons[1]);finish({ok:true,json:async()=>({html:'removed'})});await flush();assert.equal(status.textContent,'リアクションを取り消しました。');
   document.events['turbolinks:before-cache']();assert(!document.events.click);assert(!thread.events.submit);
