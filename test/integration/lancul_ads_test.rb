@@ -133,13 +133,14 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     assert_select '.affiliate-ad', count: 0
   end
 
-  test 'participant ad follows current interests and does not appear in messages or public profiles' do
+  test 'participant pages omit LanCul even when English is a saved interest' do
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     get member_path(@member)
     assert_select '.affiliate-ad', count: 0
     @member.events << @english
     get member_path(@member)
-    assert_ad 'participant_mypage'
+    assert_select '.affiliate-ad', count: 0
+    assert_select 'a[href*="a8.net"], img[src*="a8.net"]', count: 0
     assert_includes response.headers['Cache-Control'], 'no-store'
     get conversations_path
     assert_select '.affiliate-ad', count: 0

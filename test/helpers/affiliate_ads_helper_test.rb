@@ -44,4 +44,15 @@ class AffiliateAdsHelperTest < ActionView::TestCase
       assert_equal expected, positions
     end
   end
+
+  test 'login-only placements cannot select an A8 program' do
+    event = Struct.new(:ruby).new('english')
+    %w[participant_mypage organizer_mypage messages edit].each do |placement|
+      assert_nil affiliate_ad_for_event(event, placement: placement)
+    end
+    assert_equal 'lancul', affiliate_ad_for_event(event, placement: 'search')['id']
+    AFFILIATE_ADS.each do |ad|
+      assert_empty ad.fetch('placements') - PUBLIC_AFFILIATE_PLACEMENTS
+    end
+  end
 end

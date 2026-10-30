@@ -170,8 +170,10 @@ available for those operations.
 The approved LanCul A8 creatives for the registered Circlebook site appear
 only on English (`english`) discovery pages: as the third card after two circle
 results (or last result on a shorter page), matching empty searches, English blog discovery
-lists, and English circle blog archives/details. Participant home pages show it
-below recommended circles only when English is a saved interest. Generic lists,
+lists, and publicly visible English circle blog archives/details. As of 2026-10-30,
+all login-only placements (including organizer and participant home pages and private
+blog previews) omit A8 links, banners and pixels. Spacemarket/Instabase are disabled;
+existing public Alpen/LanCul and non-A8 placements remain. Generic lists,
 other genres, public participant profiles and conversations do not show it.
 English lists use one LanCul card in normal desktop grid flow, without the
 full-width in-list AdSense rows; the footer ad is retained. The official A8

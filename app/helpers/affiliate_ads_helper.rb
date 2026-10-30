@@ -2,25 +2,17 @@ require 'yaml'
 require 'digest'
 
 module AffiliateAdsHelper
+  PUBLIC_AFFILIATE_PLACEMENTS = %w[search search_empty event_search event_search_empty
+    blog_search blog_search_empty circle_blogs circle_blog].freeze
   # Public, reviewed campaign configuration; changes take effect on deployment.
   AFFILIATE_ADS = YAML.safe_load_file(Rails.root.join('config/affiliate_ads.yml')).map do |id, attributes|
     attributes.merge('id' => id).freeze
   end.freeze
 
   def affiliate_ad_for_event(event, placement:)
-    return unless event
+    return unless event && PUBLIC_AFFILIATE_PLACEMENTS.include?(placement)
 
     affiliate_ad_for_genres([event.ruby], placement)
-  end
-
-  def affiliate_ad_for_member(member)
-    affiliate_ad_for_genres(member.events.pluck(:ruby), 'participant_mypage', audience: 'participant')
-  end
-
-  def affiliate_ad_for_organizer(circle)
-    return unless admin_user_signed_in? && current_admin_user.id == circle.admin_user_id
-
-    affiliate_ad_for_genres([circle.event&.ruby].compact, 'organizer_mypage', audience: 'organizer')
   end
 
   def affiliate_ad_cache_key(ad)
@@ -34,10 +26,10 @@ module AffiliateAdsHelper
 
   private
 
-  def affiliate_ad_for_genres(genres, placement, audience: 'public')
+  def affiliate_ad_for_genres(genres, placement)
     AFFILIATE_ADS.find do |ad|
       ad['enabled'] == true && ad['approved'] == true &&
-        ad.fetch('audiences', %w[public participant organizer]).include?(audience) &&
+        ad.fetch('audiences', ['public']).include?('public') &&
         ad.fetch('placements').include?(placement) && (ad.fetch('events') & genres).any?
     end
   end

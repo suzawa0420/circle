@@ -49,7 +49,7 @@
                         - else
                           = simple_format blog.content.truncate(140)
         .ad_space
-        - if (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blogs'))
+        - if @user.publicly_visible? && (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blogs'))
           = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blogs'
         - else
           = render "/layouts/ad_square"

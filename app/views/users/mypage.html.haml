@@ -5,7 +5,5 @@
       = render "dashboard"
       - if @level_up
         = render "level_up", level_up: @level_up
-      - if (affiliate_ad = affiliate_ad_for_organizer(@user))
-        = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'organizer_mypage'
       = render "/layouts/ad_square"
       .ad_space

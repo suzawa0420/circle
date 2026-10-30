@@ -3,9 +3,10 @@
 lancul:
   enabled: true
   approved: true
+  audiences: [public]
   name: 英会話カフェ LanCul
   events: [english]
-  placements: [search, search_empty, event_search, event_search_empty, blog_search, blog_search_empty, circle_blogs, circle_blog, participant_mypage]
+  placements: [search, search_empty, event_search, event_search_empty, blog_search, blog_search_empty, circle_blogs, circle_blog]
   title: 通い放題プランで、カフェ英会話を日常に。
   description: 外国人メイトとカフェで直接話せる。初心者も会話をリードしてもらえるから、まずは無料体験で雰囲気をチェック。
   link_label: カフェ英会話を無料体験
@@ -21,14 +22,14 @@ lancul:
 
 # Approved circle-book.com materials, site 004, retrieved 2026-10-28.
 spacemarket:
-  enabled: true
+  enabled: false
   approved: true
   program_id: "s00000027019001"
   site_id: "004"
   banner_material_id: "006"
   name: "スペースマーケット"
   events: ["game", "cooking"]
-  placements: ["organizer_mypage"]
+  placements: [] # A8 support: login-only placements withdrawn (2026-10-30).
   audiences: ["organizer"]
   title: "主催者向け：活動の会場を探す"
   description: "ボードゲーム会や料理会の会場探しに。設備・料金・利用条件は外部サイトでご確認ください。"
@@ -43,14 +44,14 @@ spacemarket:
   tracking_pixels: ["https://www10.a8.net/0.gif?a8mat=4BEQI4+E8MAY2+5SHA+5ZMCH", "https://www15.a8.net/0.gif?a8mat=4BEQI4+E8MAY2+5SHA+5YJRM"]
 instabase:
 
-  enabled: true
+  enabled: false
   approved: true
   program_id: "s00000026212001"
   site_id: "004"
   banner_material_id: "036"
   name: "インスタベース"
   events: ["gathering", "study"]
-  placements: ["organizer_mypage"]
+  placements: [] # A8 support: login-only placements withdrawn (2026-10-30).
   audiences: ["organizer"]
   title: "主催者向け：集まりの会場を探す"
   description: "交流会・カフェ会や勉強会の会場探しに。設備・料金・利用条件は外部サイトでご確認ください。"
@@ -72,8 +73,8 @@ alpen:
   banner_material_id: "050"
   name: "アルペン公式オンラインストア"
   events: ["basketball", "volleyball", "soccer", "futsal", "baseball", "softball", "badminton", "tennis", "soft-tennis", "table-tennis", "running", "golf", "camping", "mountain", "yoga", "work-out"]
-  placements: ["search", "search_empty", "event_search", "event_search_empty", "blog_search", "blog_search_empty", "circle_blogs", "circle_blog", "participant_mypage"]
-  audiences: ["public", "participant"]
+  placements: ["search", "search_empty", "event_search", "event_search_empty", "blog_search", "blog_search_empty", "circle_blogs", "circle_blog"]
+  audiences: ["public"]
   title: "活動に使うスポーツ・アウトドア用品"
   description: "参加の準備に。送料・配送日は地域や商品、注文条件で異なります。詳細は公式サイトでご確認ください。"
   banner_only: true

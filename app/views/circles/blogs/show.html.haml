@@ -109,7 +109,7 @@
 
 
 
-    - if (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blog'))
+    - if @blog.publicly_visible? && (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blog'))
       = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blog'
     - else
       = render "/layouts/ad_square"
