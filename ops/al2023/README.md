@@ -46,6 +46,13 @@ cron is unnecessary for Puma, which logs via journald.
 
 ### Deployment and recovery
 
+Message reactions (2026-10-30): additive migration `20261030000000` creates a
+separate table with per-account uniqueness and foreign keys before either Puma
+restarts. Existing messages and notification/read state are not backfilled.
+It uses a five-second lock timeout. Rollback reverts application code through the
+normal deployment while retaining the additive table and saved reactions.
+See [reaction behavior and verification](../../docs/chat-reactions.md).
+
 The updated `deploy_prod.yml` targets only the two static IPs above, with pinned
 SSH host fingerprints. Existing GitHub deployment credentials are reused.
 Runtime tests must pass; both instances prepare the exact tested commit and

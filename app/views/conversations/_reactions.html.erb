@@ -1,0 +1,28 @@
+<div id="chat-reactions-<%= message.id %>" class="chat-reactions" data-chat-reactions>
+  <% if message.reactable? %>
+    <% account = @conversation.actor(@role) %>
+    <% reactions = message.chat_message_reactions.select { |reaction| Conversation::ROLES.any? { |role| reaction.by_account?(@conversation.actor(role)) } } %>
+    <% own = reactions.find { |reaction| reaction.by_account?(account) } %>
+    <div class="chat-reactions__selected" aria-label="このメッセージへのリアクション">
+      <% reactions.sort_by(&:id).each do |reaction| %>
+        <% icon, label = ChatMessageReaction::OPTIONS.fetch(reaction.key) %>
+        <% mine = reaction.by_account?(account) %>
+        <span class="chat-reactions__badge <%= 'chat-reactions__badge--mine' if mine %>"><span aria-hidden="true"><%= icon %></span><span><%= label %></span><small><%= mine ? '自分' : '相手' %></small></span>
+      <% end %>
+    </div>
+    <details class="chat-reactions__picker">
+      <summary aria-controls="chat-reaction-options-<%= message.id %>" aria-label="このメッセージにリアクションを選ぶ"><%= lucide_icon 'smile' %><span>リアクション</span></summary>
+      <div id="chat-reaction-options-<%= message.id %>" class="chat-reactions__options">
+        <p>リアクションを選ぶ</p>
+        <%= form_with url: reaction_conversation_path(@conversation, message_id: message.id), method: :put, scope: :reaction, local: true, data: { chat_reaction_form: true } do %>
+          <% ChatMessageReaction::OPTIONS.each do |key, (icon, label)| %>
+            <button type="submit" name="reaction[key]" value="<%= own&.key == key ? '' : key %>" aria-pressed="<%= own&.key == key %>"><span aria-hidden="true"><%= icon %></span><span><%= label %></span></button>
+          <% end %>
+        <% end %>
+        <p class="chat-reactions__hint">同じ選択でもう一度押すと取り消せます。メール通知は届きません。参加・予約の確定にはなりません。</p>
+        <button type="button" class="chat-reactions__close" data-chat-reaction-close>閉じる</button>
+      </div>
+    </details>
+  <% end %>
+  <p class="chat-reactions__status" role="status" aria-live="polite"></p>
+</div>

@@ -106,7 +106,7 @@
           }
           if (data.history_version !== container.dataset.historyVersion) {
             // Preserve any report the user is currently composing.
-            if (!container.contains(document.activeElement) && !container.querySelector('details[open]')) {
+            if (!container.contains(document.activeElement) && !container.querySelector('details[open]') && !container.querySelector('[data-chat-reactions][aria-busy="true"]')) {
               var atBottom = latest && latest.getBoundingClientRect().top <= window.innerHeight && latest.getBoundingClientRect().top >= 0;
               container.innerHTML = data.html;
               if (atBottom && latest) latest.scrollIntoView({ block: 'end' });

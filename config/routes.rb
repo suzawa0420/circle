@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     patch :private_note, on: :member
     post :message, on: :member
     patch 'messages/:message_id', action: :update_message, on: :member, as: :update_message
+    put 'messages/:message_id/reaction', action: :reaction, on: :member, as: :reaction
     delete 'messages/:message_id', action: :delete_message, on: :member, as: :delete_message
     post :block, on: :member
     delete :block, action: :unblock, on: :member

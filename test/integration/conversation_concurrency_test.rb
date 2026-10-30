@@ -68,6 +68,22 @@ class ConversationConcurrencyTest < ActiveSupport::TestCase
   end
 
   private
+  test 'simultaneous reactions converge without duplicate actor rows or message side effects' do
+    message = @conversation.chat_messages.find_by!(sender_role: 'member')
+    before = @conversation.reload.attributes
+    concurrently { ChatMessage.find(message.id).set_reaction!('owner', 'thanks') }
+    assert_equal 1, message.chat_message_reactions.count
+    assert_equal 'thanks', message.chat_message_reactions.sole.key
+    concurrently { |i| ChatMessage.find(message.id).set_reaction!('owner', i.zero? ? 'checked' : 'like') }
+    assert_equal 1, message.chat_message_reactions.count
+    assert_includes %w[checked like], message.chat_message_reactions.sole.key
+    concurrently { ChatMessage.find(message.id).set_reaction!('owner', '') }
+    assert_empty message.chat_message_reactions
+    concurrently { |i| ChatMessage.find(message.id).set_reaction!(i.zero? ? 'member' : 'owner', 'thanks') }
+    assert_equal 2, message.chat_message_reactions.count
+    assert_equal before, @conversation.reload.attributes
+  end
+
   def concurrently
     ready, start = Queue.new, Queue.new
     threads = 2.times.map do |i|

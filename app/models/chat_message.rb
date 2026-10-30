@@ -4,6 +4,7 @@ class ChatMessage < ApplicationRecord
   belongs_to :conversation
   has_many :chat_reports, dependent: :nullify
   has_many :conversation_reply_reports, dependent: :destroy
+  has_many :chat_message_reactions, dependent: :destroy
   validates :sender_role, inclusion: { in: Conversation::ROLES + ['system'] }
   validates :body, length: { maximum: 2000 }
   validates :body, prohibited_promotion: true
@@ -20,6 +21,35 @@ class ChatMessage < ApplicationRecord
   }
 
   def delivered? = moderation_status.in?(%w[delivered approved])
+
+  def reactable?
+    delivered? && !automatic? && deleted_at.nil? && !conversation.blocked? &&
+      Conversation::ROLES.all? { |role| conversation.actor(role).present? && !conversation.actor(role).suspended? }
+  end
+
+  # PUT desired state, rather than toggling on the server: retries are idempotent.
+  # Match message revision lock order so deletion/moderation cannot race a reaction.
+  def set_reaction!(role, key)
+    conversation.with_lock do
+      with_lock do
+        conversation.ensure_active_sender!(role)
+        actor = conversation.actor(role)
+        raise Conversation::NotAllowed, 'メールアドレスを確認してください。' unless actor.email_verified?
+        raise Conversation::NotAllowed, 'このメッセージにはリアクションできません。' unless reactable?
+        raise Conversation::NotAllowed, 'リアクションを選び直してください。' unless key == '' || ChatMessageReaction::OPTIONS.key?(key)
+        attributes = ChatMessageReaction.account_attributes(actor)
+        reaction = chat_message_reactions.find_by(attributes)
+        if key.empty?
+          reaction&.destroy!
+        elsif reaction
+          reaction.update!(key: key) unless reaction.key == key
+        else
+          chat_message_reactions.create!(attributes.merge(key: key))
+        end
+        chat_message_reactions.reset
+      end
+    end
+  end
 
   CHANGE_WINDOW = 12.hours
 

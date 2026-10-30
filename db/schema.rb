@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_26_000000) do
+ActiveRecord::Schema.define(version: 2026_10_30_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,6 +144,22 @@ ActiveRecord::Schema.define(version: 2026_10_26_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["destination"], name: "index_chat_spam_destinations_on_destination", unique: true
+  end
+
+  create_table "chat_message_reactions", force: :cascade do |t|
+    t.bigint "chat_message_id", null: false
+    t.bigint "member_id"
+    t.bigint "admin_user_id"
+    t.string "key", limit: 16, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id"], name: "index_chat_message_reactions_on_admin_user_id"
+    t.index ["chat_message_id", "admin_user_id"], name: "chat_reactions_owner_unique", unique: true, where: "(admin_user_id IS NOT NULL)"
+    t.index ["chat_message_id", "member_id"], name: "chat_reactions_member_unique", unique: true, where: "(member_id IS NOT NULL)"
+    t.index ["chat_message_id"], name: "index_chat_message_reactions_on_chat_message_id"
+    t.index ["member_id"], name: "index_chat_message_reactions_on_member_id"
+    t.check_constraint "(member_id IS NOT NULL) <> (admin_user_id IS NOT NULL)", name: "chat_reactions_one_account"
+    t.check_constraint "key::text = ANY (ARRAY['understood'::character varying, 'thanks'::character varying, 'checked'::character varying, 'like'::character varying, 'excited'::character varying]::text[])", name: "chat_reactions_key_valid"
   end
 
   create_table "chat_messages", force: :cascade do |t|
@@ -1048,6 +1064,9 @@ ActiveRecord::Schema.define(version: 2026_10_26_000000) do
   add_foreign_key "user_tags", "users"
   add_foreign_key "users", "prefectures"
 
+  add_foreign_key "chat_message_reactions", "admin_users", on_delete: :cascade
+  add_foreign_key "chat_message_reactions", "chat_messages", on_delete: :cascade
+  add_foreign_key "chat_message_reactions", "members", on_delete: :cascade
   add_foreign_key "chat_messages", "conversations"
   add_foreign_key "chat_reports", "chat_messages"
   add_foreign_key "chat_reports", "conversation_reviews"

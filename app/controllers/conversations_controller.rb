@@ -2,7 +2,7 @@ class ConversationsController < ApplicationController
   before_action :authenticate_chat_account!
   before_action :private_page
   before_action :load_conversation, except: [:index, :new, :create]
-  before_action :require_verified_chat_sender, only: [:new, :create, :message, :review, :update_message, :delete_message]
+  before_action :require_verified_chat_sender, only: [:new, :create, :message, :review, :update_message, :delete_message, :reaction]
   before_action :require_japanese_member_profile, only: [:new, :create, :message]
   rescue_from Conversation::NotAllowed, with: :invalid_action
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record
@@ -100,14 +100,14 @@ class ConversationsController < ApplicationController
     @conversation.publish_reviews!
     @review_prompt_due = @conversation.review_prompt_due?(@role)
     @initial_jump = ConversationJump.new(@conversation, role: @role).call if params[:page].blank?
-    @messages = @conversation.chat_messages.visible_to(@role).delivery_order.page(params[:page].presence || @initial_jump&.fetch(:page)).per(ConversationJump::PAGE_SIZE).load
+    @messages = @conversation.chat_messages.visible_to(@role).includes(:chat_message_reactions).delivery_order.page(params[:page].presence || @initial_jump&.fetch(:page)).per(ConversationJump::PAGE_SIZE).load
     mark_messages_read(advance_cursor: params[:page].blank? || params[:page] == '1')
     @own_review = @conversation.conversation_reviews.find_by(author_role: @role)
     @public_reviews = @conversation.conversation_reviews.publicly_visible.order(:id)
   end
 
   def messages
-    @messages = @conversation.chat_messages.visible_to(@role).delivery_order.limit(50).load
+    @messages = @conversation.chat_messages.visible_to(@role).includes(:chat_message_reactions).delivery_order.limit(50).load
     mark_messages_read
     render json: { latest_id: @messages.first&.id || 0,
                    html: render_to_string(partial: 'messages', formats: [:html]),
@@ -154,6 +154,21 @@ class ConversationsController < ApplicationController
     message = @conversation.chat_messages.find(params[:message_id])
     message.revise!(@role, delete: true)
     redirect_to conversation_path(@conversation, anchor: "chat-message-#{message.id}"), notice: 'メッセージを削除しました。'
+  end
+
+  def reaction
+    message = @conversation.chat_messages.find(params[:message_id])
+    key = params.require(:reaction).permit(:key).fetch(:key) { raise ActionController::ParameterMissing, :key }
+    message.set_reaction!(@role, key.to_s)
+    respond_to do |format|
+      format.json { render json: { html: render_to_string(partial: 'conversations/reactions', locals: { message: message }, formats: [:html]) } }
+      format.html { redirect_to conversation_path(@conversation, anchor: "chat-message-#{message.id}") }
+    end
+  rescue Conversation::NotAllowed, ActiveRecord::RecordInvalid => error
+    respond_to do |format|
+      format.json { render json: { error: error.is_a?(Conversation::NotAllowed) ? error.message : 'リアクションを保存できませんでした。' }, status: :unprocessable_entity }
+      format.html { redirect_to conversation_path(@conversation, anchor: "chat-message-#{message.id}"), alert: 'リアクションを保存できませんでした。' }
+    end
   end
 
   def unblock
@@ -266,7 +281,7 @@ class ConversationsController < ApplicationController
 
   helper_method :history_version
   def history_version
-    Digest::SHA256.hexdigest(@messages.map { |m| [m.id, m.moderation_status, m.released_at&.iso8601(6), m.edited_at&.iso8601(6), m.deleted_at&.iso8601(6), m.changeable_by?(@role)] }.to_json)
+    Digest::SHA256.hexdigest(@messages.map { |m| [m.id, m.moderation_status, m.released_at&.iso8601(6), m.edited_at&.iso8601(6), m.deleted_at&.iso8601(6), m.changeable_by?(@role), m.reactable?, m.chat_message_reactions.sort_by(&:id).map { |r| [r.id, r.key] }] }.to_json)
   end
 
   def private_page

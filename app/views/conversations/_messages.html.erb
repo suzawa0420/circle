@@ -26,6 +26,7 @@
           <time datetime="<%= message.created_at.iso8601 %>" title="<%= message.created_at.strftime('%Y年%-m月%-d日 %H:%M') %>"><%= message.created_at.strftime('%H:%M') %></time>
         </div>
       </div>
+      <%= render 'conversations/reactions', message: message %>
       <% unless mine %>
         <details class="chat-message__report"><summary>通報</summary>
           <%= render 'conversations/report_guidance' if @role == 'owner' && !@conversation.practice_match? %>

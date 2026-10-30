@@ -115,6 +115,9 @@ jobs:
       - run: bundle exec rails test test/integration/no_show_reports_test.rb
       - run: node test/security/chat_images_js_test.js
       - run: node test/security/chat_message_editor_js_test.js
+      - run: node test/security/chat_reactions_js_test.js
+      - name: Test chat message reactions
+        run: bundle exec rails test test/integration/chat_message_reactions_test.rb
       - run: node test/security/home_screen_install_js_test.js
       - run: node test/security/circle_level_up_js_test.js
       - run: node test/security/webmaster_bulk_selection_js_test.js

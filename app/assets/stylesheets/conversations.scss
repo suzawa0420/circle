@@ -333,3 +333,27 @@ body.cb-site .chat-inbox .chat-talk__preview { display: block; white-space: nowr
 .chat-composer .chat-edit-status p { margin: 0 0 6px; color: $cb-muted; font-size: 12px; line-height: 1.7; }
 .chat-edit-cancel { display: inline-flex; align-items: center; min-height: 32px; font-size: 13px; }
 .chat-compose-form [hidden] { display: none !important; }
+
+.chat-reactions { margin-top: 5px; max-width: 100%; }
+.chat-reactions__selected { display: flex; flex-wrap: wrap; gap: 5px; }
+.chat-reactions__badge { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 5px 8px; border: 1px solid $cb-border; border-radius: 14px; background: #fff; font-size: 12px; overflow-wrap: anywhere; }
+.chat-reactions__badge--mine { background: $cb-mint-soft; }
+.chat-reactions__badge small { color: $cb-muted; font-size: 10px; white-space: nowrap; }
+.chat-reactions__picker { margin-top: 2px; }
+.chat-reactions__picker > summary { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 6px 8px; cursor: pointer; color: $cb-muted; font-size: 11px; list-style: none; }
+.chat-reactions__picker > summary::-webkit-details-marker { display: none; }
+.chat-reactions__picker > summary svg { width: 19px; height: 19px; }
+.chat-reactions__picker > summary:focus-visible, .chat-reactions button:focus-visible { outline: 3px solid #3677a2; outline-offset: 2px; }
+.chat-reactions__options { width: 290px; max-width: 100%; padding: 12px; border: 1px solid $cb-border; border-radius: 12px; background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+.chat-reactions__options > p:first-child { margin: 0 0 8px; font-size: 12px; font-weight: 600; }
+.chat-reactions__options form { display: flex; flex-direction: column; gap: 5px; }
+.chat-reactions__options button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 10px; border: 1px solid $cb-border; border-radius: 8px; color: $cb-text; background: #fff; font-size: 13px; text-align: left; }
+.chat-reactions__options button[aria-pressed="true"] { background: $cb-mint-soft; border-color: $cb-action; }
+.chat-reactions__options button:disabled { opacity: .6; }
+.chat-reactions__options .chat-reactions__hint { margin: 10px 0 6px; color: $cb-muted; font-size: 11px; line-height: 1.6; }
+.chat-reactions__options .chat-reactions__close { justify-content: center; width: 100%; }
+.chat-reactions__status { margin: 2px 0 0; font-size: 11px; color: $cb-muted; }
+.chat-reactions__status:empty { display: none; }
+.chat-message--mine .chat-reactions__selected { justify-content: flex-end; }
+.chat-message--mine .chat-reactions__picker { text-align: right; }
+.chat-message--mine .chat-reactions__options { margin-left: auto; text-align: left; }

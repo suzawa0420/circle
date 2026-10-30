@@ -122,6 +122,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261025010000
     # A per-form key prevents repeated schedule submissions across servers.
     bundle exec rails db:migrate:up VERSION=20261026000000
+    # Additive per-account message reactions; no existing message updates or mail.
+    bundle exec rails db:migrate:up VERSION=20261030000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;
