@@ -75,6 +75,54 @@ class WebmasterOpinionsTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'ご意見はまだありません。'
   end
 
+  test 'both opinion sources link web URLs without changing posts or sending mail' do
+    text = "確認用（https://example.test/a?x=1&y=2）。\n二行目 http://example.test/path_(part).\nwww.example.test"
+    opinion = Opinion.create!(user: @circle, opinion: text)
+    suggestion = SupportRequest.create!(kind: 'suggestion', category: HelpCatalog::CATEGORIES.keys.first,
+                                        audience: 'member', body: text, status: 'pending')
+    login_master
+    assert_no_changes -> { [Opinion.count, SupportRequest.count, ActionMailer::Base.deliveries.size] } do
+      get super_admin_opinions_path
+    end
+    assert_response :success
+    assert_select '.wm-body a.message-url', count: 6
+    assert_select '.wm-body a[href="https://example.test/a?x=1&y=2"]', text: 'https://example.test/a?x=1&y=2', count: 2
+    assert_select '.wm-body a[href="http://example.test/path_(part)"]', count: 2
+    assert_select '.wm-body a[href="http://www.example.test"]', count: 2
+    assert_select '.wm-body a[target="_blank"][rel="noopener noreferrer nofollow"]', count: 6
+    assert_select '.wm-body br', count: 4
+    assert_includes response.body, '）。'
+    assert_equal text, opinion.reload.opinion
+    assert_equal text, suggestion.reload.body
+  end
+
+  test 'opinion links escape HTML and leave non-web protocols as text' do
+    text = %(<script>alert(1)</script> <img src=x onerror=alert(1)> <a href="javascript:alert(1)">偽リンク</a>\njavascript:alert(2) data:text/html,unsafe ftp://example.test/file file:///etc/passwd mailto:person@example.test\nhttps://example.test/safe)
+    Opinion.create!(opinion: text)
+    login_master
+    get super_admin_opinions_path
+    assert_response :success
+    assert_select '.wm-body a', count: 1
+    assert_select '.wm-body a[href="https://example.test/safe"]', count: 1
+    assert_select '.wm-body script, .wm-body img, .wm-body [onerror]', count: 0
+    assert_includes css_select('.wm-body').first.text, '<script>alert(1)</script>'
+    assert_includes css_select('.wm-body').first.text, 'ftp://example.test/file'
+    assert_includes css_select('.wm-body').first.text, 'mailto:person@example.test'
+  end
+
+  test 'link formatting preserves Japanese paths long URLs and plain text' do
+    helper = ApplicationController.helpers
+    long_url = 'https://example.test/' + 'long-path-' * 150
+    text = "日本語 https://example.test/記事\n#{long_url}\nftp://example.test/file https://name:password@example.test/private"
+    formatted = Nokogiri::HTML5.fragment(helper.webmaster_opinion_body(text))
+    assert_equal ['https://example.test/記事', long_url], formatted.css('a').map { |link| URI::DEFAULT_PARSER.unescape(link['href']) }
+    assert_equal 'https://example.test/記事', formatted.at_css('a').text
+    assert_includes formatted.text, 'ftp://example.test/file'
+    assert_includes formatted.text, 'https://name:password@example.test/private'
+    assert_equal 2, formatted.css('br').length
+    assert_empty Nokogiri::HTML5.fragment(helper.webmaster_opinion_body(nil)).css('a')
+  end
+
   private
 
   def login_master
