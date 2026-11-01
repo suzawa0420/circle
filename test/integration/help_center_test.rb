@@ -117,6 +117,21 @@ class HelpCenterTest < ActionDispatch::IntegrationTest
     assert_select 'script', text: 'alert(1)', count: 0
   end
 
+  test 'multiple circle pages guidance is searchable for participants and organizers' do
+    %w[member owner].each do |audience|
+      ['同じサークル', '重複', 'エリア', 'ジャンル'].each do |query|
+        get faq_path(help_query: query, audience: audience, category: 'listing')
+        assert_response :success
+        assert_select "a[href='#{help_article_path('multiple-circle-pages')}']"
+      end
+    end
+    get help_article_path('multiple-circle-pages')
+    assert_response :success
+    assert_select '.help-answer p', text: /活動エリアやジャンルが異なる場合.*複数のページを作成して問題ありません/
+    assert_select '.help-answer p', text: /同じアカウント.*完全に同じ名前.*新規作成できません/
+    assert_select '.help-answer p', text: /○○サークル（新宿）.*○○サークル（横浜）/
+  end
+
   test 'search requires signed token and does not store obvious personal information' do
     assert_no_difference('HelpEvent.count') { post help_search_path, params: { help_query: '検索' } }
     assert_response :unprocessable_entity
