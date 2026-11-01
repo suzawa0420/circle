@@ -104,8 +104,8 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
     4.times do |i|
       @circle.schedules.create!(day: Date.current.iso8601, title: "今日の英会話#{i}", venue: 'カフェ')
     end
-    date_path = Date.current.strftime('%Y/%m/%d')
-    ["/dates/english/#{date_path}", '/dates/english/today', '/dates/english/this_week',
+    date_path = EventSearchPage.path(event: 'english', date: Date.current)
+    [date_path, '/dates/english/today', '/dates/english/this_week',
      "/dates/english/#{@circle.prefecture.kana}/today"].each do |path|
       get path
       assert_ad 'event_search'
