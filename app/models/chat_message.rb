@@ -100,7 +100,9 @@ class ChatMessage < ApplicationRecord
     raise ArgumentError unless decision.in?(%w[approve spam])
     conversation.with_lock do
       with_lock do
-        return false unless moderation_status == 'held' && deleted_at.nil?
+        return false unless moderation_status == 'held'
+        # Deleted messages can be reviewed, but must never be released again.
+        return false if decision == 'approve' && deleted_at.present?
         update!(moderation_status: decision == 'approve' ? 'approved' : 'spam', reviewed_at: Time.current,
                 released_at: decision == 'approve' ? Time.current : nil, recipient_read_at: nil)
         if decision == 'approve'
@@ -108,7 +110,7 @@ class ChatMessage < ApplicationRecord
           last_notified = conversation["#{recipient}_notified_at"]
           conversation.update!("#{recipient}_notification_due_at" => conversation["#{recipient}_notification_due_at"] || [5.minutes.from_now, last_notified && last_notified + 15.minutes].compact.max)
         else
-          ChatSpamDetector.destinations(body).each { |destination| ChatSpamDestination.create_or_find_by!(destination: destination) if destination.length <= 2048 }
+          ChatSpamDetector.destinations(body).each { |destination| ChatSpamDestination.find_or_create_by!(destination: destination) if destination.length <= 2048 }
         end
         true
       end

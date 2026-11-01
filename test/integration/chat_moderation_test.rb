@@ -4,6 +4,7 @@ require_relative '../support/chat_records'
 class ChatModerationTest < ActionDispatch::IntegrationTest
   self.fixture_table_names = []
   include ChatRecords
+  include Devise::Test::IntegrationHelpers
   setup do
     create_chat_records
     @master = Webmaster.create!(id: 1, email: 'moderator@example.test', password: 'test-password-123')
@@ -104,6 +105,93 @@ class ChatModerationTest < ActionDispatch::IntegrationTest
     assert @conversation.reload.message_read?(held.reload)
     assert_equal 0, @conversation.owner_read_message_id
     assert @conversation.owner_notification_due_at
+  end
+
+  test 'participation and practice inquiries including deleted posts can be individually confirmed as spam' do
+    source_owner = AdminUser.create!(email: 'moderation-practice@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    source = @circle.dup
+    source.assign_attributes(name: '練習相手チーム', admin_user: source_owner)
+    source.save!
+    practice = Conversation.for_circles!(@circle, source)
+    sign_in @master
+
+    [@conversation, practice].each do |conversation|
+      [false, true].each do |deleted|
+        held = conversation.send_message!('member', @spam)
+        held.revise!('member', delete: true) if deleted
+        get super_admin_chat_moderations_path
+        assert_response :success
+        assert_select "form[action='#{super_admin_chat_moderation_path(held)}'] input[value=spam]", count: 1
+        assert_select "form[action='#{super_admin_chat_moderation_path(held)}'] input[value=approve]", count: deleted ? 0 : 1
+        if deleted
+          assert_select '.wm-body', text: /メッセージを削除しました/
+          patch super_admin_chat_moderation_path(held), params: { decision: 'approve' }
+          assert_equal 'held', held.reload.moderation_status
+          assert_nil held.reviewed_at
+        end
+
+        before = conversation.reload.attributes.slice('owner_notification_due_at', 'member_notification_due_at', 'owner_read_message_id', 'member_read_message_id')
+        assert_no_difference ['ChatMessage.count', 'Conversation.count', 'ActionMailer::Base.deliveries.size'] do
+          patch super_admin_chat_moderation_path(held), params: { decision: 'spam' }
+        end
+        assert_redirected_to super_admin_chat_moderations_path
+        assert_equal 'spam', held.reload.moderation_status
+        assert held.reviewed_at
+        assert_equal deleted, held.deleted_at.present?
+        assert_nil held.released_at
+        assert_equal before, conversation.reload.attributes.slice(*before.keys)
+        assert_not_includes conversation.chat_messages.deliverable.pluck(:id), held.id
+        reviewed_at = held.reviewed_at
+        assert_no_difference 'ChatSpamDestination.count' do
+          %w[spam approve].each do |decision|
+            patch super_admin_chat_moderation_path(held), params: { decision: decision }
+            assert_equal 'spam', held.reload.moderation_status
+            assert_equal reviewed_at, held.reviewed_at
+          end
+        end
+        get super_admin_chat_moderations_path
+        assert_select "form[action='#{super_admin_chat_moderation_path(held)}']", count: 0
+        get super_admin_chat_moderations_path(status: 'spam')
+        assert_response :success
+      end
+    end
+    get super_admin_chat_moderations_path
+    assert_select '.webmaster-card.wm-message', count: 0
+  end
+
+  test 'deleted held post keeps authorization and rejects invalid decisions and missing IDs' do
+    held = @conversation.send_message!('member', @spam)
+    held.revise!('member', delete: true)
+    patch super_admin_chat_moderation_path(held), params: { decision: 'spam' }
+    assert_redirected_to new_webmaster_session_path
+    assert_not Webmaster.new(id: 2, email: 'not-master@example.test', password: 'test-password-123').valid?
+    [@member, @owner].each do |actor|
+      sign_in actor
+      patch super_admin_chat_moderation_path(held), params: { decision: 'spam' }
+      assert_includes [302, 403], response.status
+      assert_equal 'held', held.reload.moderation_status
+      sign_out actor
+    end
+    sign_in @master
+    patch super_admin_chat_moderation_path(held), params: { decision: 'delete' }
+    assert_response :unprocessable_entity
+    assert_equal 'held', held.reload.moderation_status
+    assert_raises(ActiveRecord::RecordNotFound) do
+      patch super_admin_chat_moderation_path('invalid-id'), params: { decision: 'spam' }
+    end
+    assert_equal 'held', held.reload.moderation_status
+  end
+
+  test 'foreign keys prevent held reports losing their conversation or participants' do
+    @conversation.send_message!('member', @spam)
+    [@conversation, @member, @circle].each do |source|
+      assert_raises(ActiveRecord::InvalidForeignKey) do
+        source.class.transaction(requires_new: true) { source.delete }
+      end
+    end
+    sign_in @master
+    get super_admin_chat_moderations_path
+    assert_response :success
   end
 
   private
