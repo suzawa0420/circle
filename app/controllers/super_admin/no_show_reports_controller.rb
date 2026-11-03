@@ -13,13 +13,4 @@ class SuperAdmin::NoShowReportsController < ApplicationController
   def show
     @report = NoShowReport.find(params[:id])
   end
-
-  def update
-    @report = NoShowReport.find(params[:id])
-    if @report.update(params.require(:no_show_report).permit(:status, :operational_memo))
-      redirect_to super_admin_no_show_report_path(@report), notice: '確認状況と運営メモを保存しました。'
-    else
-      render :show, status: :unprocessable_entity
-    end
-  end
 end

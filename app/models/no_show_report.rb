@@ -1,6 +1,6 @@
 class NoShowReport < ApplicationRecord
   belongs_to :conversation
-  STATUSES = { 'pending' => '未確認の申告', 'confirmed' => '運営確認済み', 'dismissed' => '集計対象外' }.freeze
+  STATUSES = { 'pending' => '主催者からの申告', 'confirmed' => '運営確認済み（旧記録）', 'dismissed' => '集計対象外' }.freeze
   scope :counted, -> { where(status: %w[pending confirmed]) }
   validates :status, inclusion: { in: STATUSES.keys }
   validates :scheduled_at, presence: true, uniqueness: { scope: :conversation_id }

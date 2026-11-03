@@ -97,7 +97,7 @@ class NoShowReportsTest < ActionDispatch::IntegrationTest
     assert_equal 2, @member.no_show_report_count
   end
 
-  test 'other verified circle owners see only a summary and operators can dismiss a claim' do
+  test 'other verified circle owners see only a summary and operators have a read only record' do
     report = @conversation.no_show_reports.create!(@attributes)
     other_owner = AdminUser.create!(email: 'other-owner@example.test', password: 'test-password-123', email_verified_at: Time.current)
     circle = @circle.dup
@@ -117,9 +117,11 @@ class NoShowReportsTest < ActionDispatch::IntegrationTest
     get super_admin_no_show_report_path(report)
     assert_response :success
     assert_includes response.body, @attributes[:details]
-    patch super_admin_no_show_report_path(report), params: { no_show_report: { status: 'dismissed', operational_memo: '双方の説明を確認し、集計対象外としました。' } }
-    assert_equal 'dismissed', report.reload.status
-    assert_equal 0, @member.no_show_report_count
+    assert_select 'form[action=?]', super_admin_no_show_report_path(report), count: 0
+    assert_select '.webmaster-subnav a[href=?] .webmaster-subnav__count', super_admin_no_show_reports_path, count: 0
+    assert_raises(ActionController::RoutingError) { Rails.application.routes.recognize_path(super_admin_no_show_report_path(report), method: :patch) }
+    assert_equal 'pending', report.reload.status
+    assert_equal 1, @member.no_show_report_count
   end
 
   test 'an unverified owner or an organizer without circles cannot view claims' do
@@ -130,6 +132,70 @@ class NoShowReportsTest < ActionDispatch::IntegrationTest
     assert_select '[aria-label="主催者限定の欠席申告"]', count: 0
     assert_no_difference('NoShowReport.count') { post no_show_report_conversation_path(@conversation), params: { no_show_report: @attributes.merge(scheduled_at: 2.days.ago) } }
     assert_not NoShowReport.profile_viewable_by?(AdminUser.new(email_verified_at: Time.current))
+  end
+
+  test 'owner can withdraw their claim without erasing the report or participant explanation' do
+    report = @conversation.no_show_reports.create!(@attributes.merge(member_response: '事前に連絡を送りました。', member_responded_at: Time.current))
+    sign_in @owner
+    get conversation_path(@conversation)
+    assert_select 'form[action=?]', withdraw_no_show_report_conversation_path(@conversation), count: 1
+    assert_includes response.body, '主催者からの申告'
+    assert_no_difference('NoShowReport.count') do
+      patch withdraw_no_show_report_conversation_path(@conversation), params: { report_id: report.id, no_show_report: { status: 'confirmed', member_response: '書き換え' } }
+    end
+    assert_redirected_to conversation_path(@conversation, anchor: 'attendance-reports')
+    assert_equal 'dismissed', report.reload.status
+    assert_equal '事前に連絡を送りました。', report.member_response
+    assert_equal 0, @member.no_show_report_count
+    get conversation_path(@conversation)
+    assert_select 'form[action=?]', withdraw_no_show_report_conversation_path(@conversation), count: 0
+    assert_includes response.body, '集計対象外'
+    patch withdraw_no_show_report_conversation_path(@conversation), params: { report_id: report.id }
+    assert_equal 'dismissed', report.reload.status
+  end
+
+  test 'participant unrelated owner and unverified owner cannot withdraw a report' do
+    report = @conversation.no_show_reports.create!(@attributes)
+    sign_in @member
+    patch withdraw_no_show_report_conversation_path(@conversation), params: { report_id: report.id }
+    assert_equal 'pending', report.reload.status
+    sign_out @member
+    @stranger_owner = AdminUser.create!(email: 'stranger@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    stranger_circle = @circle.dup
+    stranger_circle.admin_user = @stranger_owner
+    stranger_circle.save!
+    sign_in @stranger_owner
+    assert_raises(ActiveRecord::RecordNotFound) do
+      patch withdraw_no_show_report_conversation_path(@conversation), params: { report_id: report.id }
+    end
+    sign_out @stranger_owner
+    sign_in @owner
+    another = Conversation.for_member!(@circle, @other_member)
+    another.update!(created_at: 4.days.ago, accepted_at: 4.days.ago)
+    other_report = another.no_show_reports.create!(@attributes)
+    assert_raises(ActiveRecord::RecordNotFound) do
+      patch withdraw_no_show_report_conversation_path(@conversation), params: { report_id: other_report.id }
+    end
+    @owner.update_columns(email_verified_at: nil)
+    patch withdraw_no_show_report_conversation_path(@conversation), params: { report_id: report.id }
+    assert_equal 'pending', report.reload.status
+    assert_equal 'pending', other_report.reload.status
+  end
+
+  test 'legacy confirmation and dismissal remain historical records and counts stay unchanged' do
+    confirmed = @conversation.no_show_reports.create!(@attributes.merge(status: 'confirmed', operational_memo: '過去の運営メモです。'))
+    dismissed = @conversation.no_show_reports.create!(@attributes.merge(scheduled_at: 2.days.ago, status: 'dismissed'))
+    master = Webmaster.create!(id: 1, email: 'webmaster@example.test', password: 'test-password-123')
+    sign_in master
+    get super_admin_no_show_report_path(confirmed)
+    assert_includes response.body, '運営確認済み（旧記録）'
+    assert_includes response.body, '過去の運営メモです。'
+    assert_select 'form[action=?]', super_admin_no_show_report_path(confirmed), count: 0
+    get super_admin_no_show_report_path(dismissed)
+    assert_includes response.body, '集計対象外'
+    assert_equal 'confirmed', confirmed.reload.status
+    assert_equal 'dismissed', dismissed.reload.status
+    assert_equal 1, @member.no_show_report_count
   end
 
   private

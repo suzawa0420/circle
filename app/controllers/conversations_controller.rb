@@ -222,6 +222,15 @@ class ConversationsController < ApplicationController
     render :show, status: :unprocessable_entity
   end
 
+  def withdraw_no_show_report
+    raise Conversation::NotAllowed, '主催者のみ申告を取り下げられます。' unless @role == 'owner' && !@conversation.practice_match?
+    @conversation.ensure_active_sender!('owner')
+    raise Conversation::NotAllowed, 'メールアドレスを確認してください。' unless current_admin_user.email_verified?
+    report = @conversation.no_show_reports.find(params[:report_id])
+    report.with_lock { report.update!(status: 'dismissed') }
+    redirect_to conversation_path(@conversation, anchor: 'attendance-reports'), notice: '欠席の申告を取り下げ、集計対象外にしました。申告と本人の説明は記録に残ります。'
+  end
+
   def no_show_response
     raise Conversation::NotAllowed, '参加者本人のみ説明を送れます。' unless @role == 'member' && !@conversation.practice_match?
     report = @conversation.no_show_reports.find(params[:report_id])
@@ -229,7 +238,7 @@ class ConversationsController < ApplicationController
       report.update!(member_response: params.require(:no_show_report).permit(:member_response)[:member_response].to_s,
                      member_responded_at: Time.current)
     end
-    redirect_to conversation_path(@conversation, anchor: 'attendance-reports'), notice: '説明・異議申し立てを保存しました。返信がないことだけを理由に運営確認済みにはしません。'
+    redirect_to conversation_path(@conversation, anchor: 'attendance-reports'), notice: '説明・異議申し立てを保存しました。主催者が内容を確認して対応します。'
   end
 
   private
