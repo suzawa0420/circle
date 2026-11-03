@@ -1,9 +1,5 @@
 class ColumnImageUploader < ImageUploader
-  # Keep the shared storage, orientation and legacy URL behavior, but retain
-  # enough pixels for an article cover instead of the shared 400px thumbnail.
-  self.processors = processors.map do |processor|
-    processor.first == :resize_to_limit ? [:resize_to_limit, [1600, 1600], nil, nil] : processor
-  end
+  # Article covers share the 1920px detail-photo processing and legacy URLs.
 
   def extension_allowlist
     %w[jpg jpeg png]

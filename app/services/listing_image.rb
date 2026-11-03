@@ -6,13 +6,14 @@ require 'uri'
 # Read-only derivatives of existing uploads. Originals and DB identifiers stay
 # intact; each server keeps its own atomic disk cache across deployments.
 class ListingImage
-  SIZES = { 'profile' => [160, 160], 'header' => [400, 160], 'detail_header' => [960, 384] }.freeze
+  SIZES = { 'profile' => [160, 160], 'header' => [800, 320], 'detail_header' => [1920, 768] }.freeze
+  CACHE_VERSION = 'retina-v2'.freeze
   MOUNTS = { 'profile' => :pic_profile, 'header' => :pic_header, 'detail_header' => :pic_header }.freeze
   CONTENT_TYPES = { 'jpg' => 'image/jpeg', 'webp' => 'image/webp' }.freeze
   MAX_BYTES = 20.megabytes
 
   def self.fingerprint(uploader)
-    Digest::SHA256.hexdigest(uploader.identifier.to_s)[0, 24]
+    Digest::SHA256.hexdigest("#{CACHE_VERSION}:#{uploader.identifier}")[0, 24]
   end
 
   def self.path(user, kind, format: 'jpg')
@@ -59,7 +60,7 @@ class ListingImage
             command.gravity 'center'
             command.extent "#{width}x#{height}"
             command.strip
-            command.quality '78'
+            command.quality '82'
             command.interlace 'Plane' if format == 'jpg'
             command << "#{format}:#{output.path}"
           end

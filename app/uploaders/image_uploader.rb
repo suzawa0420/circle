@@ -1,17 +1,25 @@
 class ImageUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MiniMagick
-  # include CarrierWave::RMagick
+  # Detail photos fill up to 960 CSS pixels on desktop (2x displays).
+  # Avatars stay smaller so lists do not download full-size detail photos.
+  AVATAR_MOUNTS = %i[pic_profile image_profile profile_img icon].freeze
+  MAX_PIXELS = 60_000_000
 
-    process resize_to_limit: [400, 400]
-    process :fix_rotate
+  process :normalize_image
 
-  # アップロードした写真が回転してしまう問題に対応
-  def fix_rotate
-    manipulate! do |img|
-      img = img.auto_orient
-      img = yield(img) if block_given?
-      img
+  def normalize_image
+    manipulate! do |image|
+      raise CarrierWave::ProcessingError, '画像のサイズが大きすぎます。' if image.width * image.height > MAX_PIXELS
+
+      edge = AVATAR_MOUNTS.include?(mounted_as&.to_sym) ? 640 : 1920
+      image.auto_orient
+      image.resize "#{edge}x#{edge}>"
+      image.strip
+      image.format 'jpg'
+      image.quality '88'
+      image.interlace 'Plane'
+      image
     end
   end
 
@@ -70,7 +78,6 @@ class ImageUploader < CarrierWave::Uploader::Base
     %w(jpg jpeg gif png HEIC HEIF heic heif)
   end
 
-  process :convert => 'jpg'
   # CarrierWave 3 otherwise rewrites retrieved legacy .png/.jpeg keys to .jpg.
   # New uploads already receive a .jpg filename below; preserve stored keys.
   force_extension false

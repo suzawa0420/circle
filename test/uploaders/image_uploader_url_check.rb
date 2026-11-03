@@ -12,9 +12,74 @@ module Rails
 end
 
 require_relative '../../app/uploaders/image_uploader'
+require_relative '../../app/uploaders/column_image_uploader'
 
 class ImageUploaderUrlTest < Minitest::Test
   Model = Struct.new(:id, :updated_at)
+
+  def with_processed_image(mount, width: 2400, height: 1600, uploader_class: ImageUploader)
+    require 'tmpdir'
+    Dir.mktmpdir('circle-quality') do |root|
+      source = File.join(root, 'source.png')
+      MiniMagick::Tool::Convert.new do |command|
+        command.size "#{width}x#{height}"
+        command << 'gradient:white-blue'
+        command << source
+      end
+      local = Class.new(uploader_class)
+      local.root = root
+      local.cache_dir = 'cache'
+      instance = local.new(Model.new(1, Time.utc(2026, 11, 3)), mount)
+      File.open(source) { |file| instance.store!(file) }
+      yield MiniMagick::Image.open(instance.path)
+    end
+  end
+
+  def test_detail_uploads_retain_pixels_for_desktop_and_mobile
+    %i[image_01 image_02 image_03 image_04 top_image pic_header header_img
+       gallery_01 gallery_02 gallery_03 gallery_04
+       gallery_img_01 gallery_img_02 gallery_img_03 gallery_img_04].each do |mount|
+      with_processed_image(mount) do |image|
+        assert_equal [1920, 1280], image.dimensions, mount.to_s
+        assert_equal 'JPEG', image.type
+        assert_equal 88, image['%Q'].to_i
+      end
+    end
+  end
+
+  def test_avatar_uploads_are_bounded_separately
+    %i[pic_profile image_profile profile_img icon].each do |mount|
+      with_processed_image(mount) { |image| assert_equal [640, 427], image.dimensions }
+    end
+  end
+
+  def test_portrait_and_small_images_keep_aspect_ratio_without_upscaling
+    with_processed_image(:image_01, width: 1600, height: 2400) do |image|
+      assert_equal [1280, 1920], image.dimensions
+    end
+    with_processed_image(:image_01, width: 320, height: 200) do |image|
+      assert_equal [320, 200], image.dimensions
+    end
+    with_processed_image(:image, uploader_class: ColumnImageUploader) do |image|
+      assert_equal [1920, 1280], image.dimensions
+    end
+  end
+
+  def test_normalization_checks_pixel_limit_and_orients_before_resizing
+    require 'minitest/mock'
+    instance = uploader
+    large = Struct.new(:width, :height).new(10_000, 6_001)
+    instance.stub(:manipulate!, ->(&block) { block.call(large) }) do
+      assert_raises(CarrierWave::ProcessingError) { instance.normalize_image }
+    end
+    calls = []
+    image = Struct.new(:width, :height).new(2400, 1600)
+    %i[auto_orient resize strip format quality interlace].each do |method|
+      image.define_singleton_method(method) { |*args| calls << [method, *args] }
+    end
+    instance.stub(:manipulate!, ->(&block) { block.call(image) }) { instance.normalize_image }
+    assert_equal [:auto_orient, :resize, :strip, :format, :quality, :interlace], calls.map(&:first)
+  end
   FakeFile = Struct.new(:location, :received_options) do
     def empty?
       raise 'URL generation must not check remote file existence'
