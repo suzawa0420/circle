@@ -110,7 +110,7 @@ class ColumnEditorTest < ActionDispatch::IntegrationTest
       article = Column.last
       assert_redirected_to edit_column_path(article)
       stored = MiniMagick::Image.open(article.image.path)
-      assert_equal 1600, stored.width
+      assert_equal 1200, stored.width
       assert_operator stored.height, :>, 400
       get columns_path
       assert_select '.column-management__cover[href=?] img.column-management__image', edit_column_path(article), count: 1
