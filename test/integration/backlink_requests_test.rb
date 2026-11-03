@@ -183,6 +183,50 @@ class BacklinkRequestsTest < ActionDispatch::IntegrationTest
     assert_equal @circle.id, BacklinkRequest.last.user_id
   end
 
+  test 'SNS submissions are rejected without saving or sending mail and keep entered URL' do
+    login_owner
+    urls = %w[https://instagram.com/a https://www.INSTAGRAM.com/a https://instagr.am/a
+              https://x.com/a https://mobile.twitter.com/a https://t.co/a https://note.com/a
+              https://note.mu/a https://www.facebook.com/a https://m.facebook.com/a
+              https://fb.com/a https://fb.me/a https://www.threads.net/a https://threads.com/a https://instagram.com./a https://%69nstagram.com/a]
+    urls.each do |url|
+      assert_no_enqueued_emails do
+        assert_no_difference 'BacklinkRequest.count' do
+          post circle_backlink_request_path(@circle), params: { backlink_request: { placement_url: " #{url} " } }
+        end
+      end
+      assert_response :unprocessable_entity
+      assert_select '[role=alert]', text: /SNSのURLではリンク申請できません/
+      assert_select 'input[name="backlink_request[placement_url]"][value=?]', url
+      assert_select 'input[type=submit]:not([disabled])'
+    end
+  end
+
+  test 'host boundaries and normal paths are accepted' do
+    %w[https://notfacebook.com/note https://example.test/instagram.com
+       https://instagram.com.example.test/a https://example.test/?url=https://x.com/a].each do |url|
+      request = BacklinkRequest.new(user: @circle, placement_url: url, submitted_at: Time.current)
+      assert request.valid?, request.errors.full_messages.join(', ')
+    end
+  end
+
+  test 'legacy SNS requests remain reviewable but cannot be resubmitted' do
+    request = BacklinkRequest.submit!(@circle, 'https://example.test/')
+    # Simulate a request stored before SNS validation was introduced.
+    request.update_columns(placement_url: 'https://note.com/legacy')
+    assert request.reload.review!('reject', @master, 'SNSは対象外です。')
+    login_owner
+    assert_no_enqueued_emails do
+      post circle_backlink_request_path(@circle), params: { backlink_request: { placement_url: 'https://note.com/legacy' } }
+    end
+    assert_response :unprocessable_entity
+    assert_equal 'rejected', request.reload.status
+    assert_equal 'SNSは対象外です。', request.review_note
+    post circle_backlink_request_path(@circle), params: { backlink_request: { placement_url: 'https://example.test/fixed' } }
+    assert_response :redirect
+    assert_equal 'pending', request.reload.status
+  end
+
   test 'different circles can apply independently and inactive or restricted circles retain scoring rules' do
     second = @circle.dup
     second.name = '別のリンク掲載申請サークル'

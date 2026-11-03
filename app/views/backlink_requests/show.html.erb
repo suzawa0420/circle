@@ -62,7 +62,8 @@
     <% if @backlink_request.new_record? || @backlink_request.status == 'rejected' %>
       <%= form_with model: @backlink_request, url: circle_backlink_request_path(@user), method: :post, local: true do |f| %>
         <%= f.label :placement_url, 'リンクを設置したページのURL' %>
-        <%= f.url_field :placement_url, required: true, maxlength: 2048, placeholder: 'https://example.com/', autocomplete: 'url', aria: { describedby: 'backlink-placement-help' } %>
+        <%= f.url_field :placement_url, required: true, maxlength: 2048, placeholder: 'https://example.com/', autocomplete: 'url', data: { backlink_sns_domains: BacklinkRequest::SNS_DOMAINS.to_json, backlink_sns_error: BacklinkRequest::SNS_URL_ERROR }, aria: { describedby: 'backlink-placement-help backlink-placement-error' } %>
+        <p id="backlink-placement-error" role="alert" hidden></p>
         <p id="backlink-placement-help">ご自身のWebサイトで、リンクを設置したページのURLを入力してください。SNS・リンクまとめサービスのURLや、リンク先のサークルブックのURLは入力しないでください。</p>
         <%= f.submit 'リンクの設置を報告する', class: 'backlink-button', data: { disable_with: '申請中…' } %>
       <% end %>

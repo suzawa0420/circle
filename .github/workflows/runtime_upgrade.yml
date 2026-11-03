@@ -100,6 +100,7 @@ jobs:
         run: bundle exec rails test test/integration/column_editor_test.rb test/models/column_product_test.rb
       - name: Test circle levels and ranking activity
         run: |
+          node test/security/backlink_requests_js_test.js
           bundle exec ruby test/helpers/circle_level_status_test.rb
           bundle exec ruby test/helpers/reviews_helper_test.rb
           bundle exec rails test test/integration/circle_level_ranking_test.rb test/integration/circle_level_card_test.rb test/integration/circle_level_notification_test.rb test/integration/circle_profile_completion_test.rb test/integration/legacy_contact_score_test.rb test/integration/backlink_requests_test.rb

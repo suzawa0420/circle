@@ -1,6 +1,8 @@
 require 'uri'
 
 class BacklinkRequest < ApplicationRecord
+  SNS_DOMAINS = %w[instagram.com instagr.am x.com twitter.com t.co note.com note.mu facebook.com fb.com fb.me threads.net threads.com].freeze
+  SNS_URL_ERROR = 'SNSのURLではリンク申請できません。サークルのホームページなどのURLを入力してください。'.freeze
   POINTS = 10
   STATUSES = { 'pending' => '確認中', 'approved' => '付与済み', 'rejected' => '差し戻し', 'revoked' => '付与取り消し' }.freeze
   belongs_to :user
@@ -46,7 +48,17 @@ class BacklinkRequest < ApplicationRecord
   def public_web_url
     uri = URI.parse(placement_url.to_s)
     valid = uri.is_a?(URI::HTTP) && uri.host.present? && uri.host.include?('.') && uri.userinfo.nil?
-    errors.add(:placement_url, 'は公開されている掲載ページの http:// または https:// URLを入力してください') unless valid
+    unless valid
+      errors.add(:placement_url, 'は公開されている掲載ページの http:// または https:// URLを入力してください')
+      return
+    end
+    # Existing requests must remain reviewable; recheck new submissions and URL edits.
+    if new_record? || will_save_change_to_placement_url? || (will_save_change_to_status? && status == 'pending')
+      host = URI::DEFAULT_PARSER.unescape(uri.host).downcase.sub(/\.+\z/, '')
+      if SNS_DOMAINS.any? { |domain| host == domain || host.end_with?(".#{domain}") }
+        errors.add(:base, SNS_URL_ERROR)
+      end
+    end
   rescue URI::InvalidURIError
     errors.add(:placement_url, 'の形式が正しくありません')
   end
