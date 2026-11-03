@@ -44,6 +44,16 @@ class HomePortalTest < ActionDispatch::IntegrationTest
     assert_select '#home-places .home-portal__item', count: 6
   end
 
+  test 'homepage loads bounded previews without separate existence scans' do
+    queries = []
+    subscriber = ->(*args) { queries << args.last[:name] }
+    ActiveSupport::Notifications.subscribed(subscriber, 'sql.active_record') { get root_path }
+    assert_response :success
+    %w[User Schedule Blog Match Place].each do |model|
+      refute_includes queries, "#{model} Exists?"
+    end
+  end
+
   test 'circle previews match the popular list ordering and stop at five' do
     @circle.update_columns(last_post: Time.current)
     6.times do |index|

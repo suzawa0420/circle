@@ -33,7 +33,7 @@
             %p= service[:description]
           %span.home-portal__label= service[:label]
         - records = { "circles" => @users, "events" => @schedules, "blogs" => @blogs, "matches" => @matches, "places" => @places }.fetch(service[:key])
-        - if records.any?
+        - if records.load.any?
           %p.home-portal__slide-hint
             横にスライドして見る
             = lucide_icon "chevron-right"
