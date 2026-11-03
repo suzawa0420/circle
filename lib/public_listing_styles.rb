@@ -35,7 +35,7 @@ class PublicListingStyles
         app/assets/javascripts/circle_readmore.js]
     end
     if input[:name] == 'public_directory'
-      globs += %w[app/views/home/* app/views/schedules/_event_card* app/views/places/* app/views/schedules/index* app/views/schedules/_calendar*
+      globs += %w[app/views/home/* app/views/schedules/_event* app/views/schedules/dates* app/views/schedules/day* app/views/places/* app/views/schedules/index* app/views/schedules/_calendar*
         app/views/schedules/_archive_link* app/views/users/parts/_user_switching*
         app/views/circles/circles/_mobile* app/views/bookmarks/*]
     end

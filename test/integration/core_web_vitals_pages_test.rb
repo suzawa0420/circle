@@ -27,6 +27,27 @@ class CoreWebVitalsPagesTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'event hubs and date results keep native filters and cards with lightweight assets' do
+    @circle.schedules.create!(day: Date.current.iso8601, title: '公開イベント', venue: '検証体育館', recruitment: '募集中')
+    [dates_path, EventDayListing.path(Date.current)].each do |path|
+      get path
+      assert_response :success
+      assert_lightweight_assets('public_directory')
+      assert_select 'form.event-results__filters[method=get]', count: 1
+      if path == dates_path
+        assert_select 'input[type=date][name=date]', count: 1
+      else
+        assert_select 'select[name=sort]', count: 1
+      end
+      assert_select '.event-results__status', minimum: 1
+      assert_select '.event-results__days a', minimum: 1
+    end
+    css = Rails.application.assets.find_asset('public_directory.css').to_s
+    %w[.event-results__date-group .event-results__filters .event-results__empty].each do |selector|
+      assert_includes css, selector
+    end
+  end
+
   test 'station listings preload the displayed image and keep results and filters' do
     base = "/#{@circle.prefecture.kana}/#{@city.city_kana}/#{@station.id}"
     ["/#{@circle.event.ruby}#{base}", "/prefectures#{base}"].each do |path|
