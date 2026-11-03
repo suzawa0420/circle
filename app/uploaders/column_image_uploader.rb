@@ -1,5 +1,5 @@
 class ColumnImageUploader < ImageUploader
-  # Article covers share the 1920px detail-photo processing and legacy URLs.
+  # Article covers share the 1200px detail-photo processing and legacy URLs.
 
   def extension_allowlist
     %w[jpg jpeg png]

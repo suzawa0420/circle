@@ -35,14 +35,14 @@ class ImageUploaderUrlTest < Minitest::Test
     end
   end
 
-  def test_detail_uploads_retain_pixels_for_desktop_and_mobile
+  def test_detail_uploads_retain_pixels_for_mobile
     %i[image_01 image_02 image_03 image_04 top_image pic_header header_img
        gallery_01 gallery_02 gallery_03 gallery_04
        gallery_img_01 gallery_img_02 gallery_img_03 gallery_img_04].each do |mount|
       with_processed_image(mount) do |image|
-        assert_equal [1920, 1280], image.dimensions, mount.to_s
+        assert_equal [1200, 800], image.dimensions, mount.to_s
         assert_equal 'JPEG', image.type
-        assert_equal 88, image['%Q'].to_i
+        assert_equal 85, image['%Q'].to_i
       end
     end
   end
@@ -55,13 +55,13 @@ class ImageUploaderUrlTest < Minitest::Test
 
   def test_portrait_and_small_images_keep_aspect_ratio_without_upscaling
     with_processed_image(:image_01, width: 1600, height: 2400) do |image|
-      assert_equal [1280, 1920], image.dimensions
+      assert_equal [800, 1200], image.dimensions
     end
     with_processed_image(:image_01, width: 320, height: 200) do |image|
       assert_equal [320, 200], image.dimensions
     end
     with_processed_image(:image, uploader_class: ColumnImageUploader) do |image|
-      assert_equal [1920, 1280], image.dimensions
+      assert_equal [1200, 800], image.dimensions
     end
   end
 

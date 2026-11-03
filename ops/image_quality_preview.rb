@@ -38,7 +38,7 @@ Dir.mktmpdir('image-quality-preview') do |temporary|
   end
 end
 sections = results.map do |label, values|
-  title = label == 'before' ? '変更前：長辺400px' : '変更後：長辺1920px以内'
+  title = label == 'before' ? '変更前：長辺400px' : '変更後：長辺1200px以内'
   data = Base64.strict_encode64(File.binread(File.join(output, "#{label}.jpg")))
   <<~HTML
     <section><h2>#{title}</h2><p>#{values[:dimensions].join(' × ')}px ／ #{(values[:bytes] / 1024.0).round(1)} KB</p>

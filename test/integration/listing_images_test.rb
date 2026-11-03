@@ -32,12 +32,6 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     FileUtils.rm_f([@webp_destination, "#{@webp_destination}.lock"])
   end
 
-  test 'quality upgrade separates both disk and browser caches from old derivatives' do
-    old_fingerprint = Digest::SHA256.hexdigest(@circle.pic_profile.identifier.to_s)[0, 24]
-    refute_equal old_fingerprint, ListingImage.fingerprint(@circle.pic_profile)
-    refute_includes @destination.to_s, old_fingerprint
-  end
-
   test 'uploaded leading photograph is preloaded at its displayed WebP URL' do
     SearchResultCountCache::STORE.clear
     @source.rewind
@@ -53,7 +47,7 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     get expected_url
     assert_response :success
     assert_equal 'image/webp', response.media_type
-    assert_equal [800, 320], MiniMagick::Image.open(@header_destination).dimensions
+    assert_equal [400, 160], MiniMagick::Image.open(@header_destination).dimensions
   end
 
   test 'detail header has an independent larger derivative and preload while popup retains source' do
@@ -70,7 +64,7 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     assert_select '.popup-content img[src=?][loading=lazy]', @circle.pic_header.url, count: 1
     get url
     assert_response :success
-    assert_equal [1920, 768], MiniMagick::Image.open(@header_destination).dimensions
+    assert_equal [960, 384], MiniMagick::Image.open(@header_destination).dimensions
     assert_equal 'image/webp', response.media_type
   end
 

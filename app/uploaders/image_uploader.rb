@@ -1,7 +1,7 @@
 class ImageUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MiniMagick
-  # Detail photos fill up to 960 CSS pixels on desktop (2x displays).
+  # Detail photos target roughly 400 CSS pixels on phones (up to 3x).
   # Avatars stay smaller so lists do not download full-size detail photos.
   AVATAR_MOUNTS = %i[pic_profile image_profile profile_img icon].freeze
   MAX_PIXELS = 60_000_000
@@ -12,12 +12,12 @@ class ImageUploader < CarrierWave::Uploader::Base
     manipulate! do |image|
       raise CarrierWave::ProcessingError, '画像のサイズが大きすぎます。' if image.width * image.height > MAX_PIXELS
 
-      edge = AVATAR_MOUNTS.include?(mounted_as&.to_sym) ? 640 : 1920
+      edge = AVATAR_MOUNTS.include?(mounted_as&.to_sym) ? 640 : 1200
       image.auto_orient
       image.resize "#{edge}x#{edge}>"
       image.strip
       image.format 'jpg'
-      image.quality '88'
+      image.quality '85'
       image.interlace 'Plane'
       image
     end
