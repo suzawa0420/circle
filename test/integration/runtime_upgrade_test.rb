@@ -70,8 +70,14 @@ class RuntimeUpgradeTest < ActionDispatch::IntegrationTest
       assert_match(/<body[^>]*>\s*<!-- Google Tag Manager \(noscript\) -->/, response.body)
       assert_not_includes response.body, '/gtag/js'
       assert_not_includes response.body, "gtag('config'"
-      assert_select 'head script[src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449"]', count: 1
-      assert_includes response.body, 'crossorigin="anonymous"'
+      adsense_url = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744112029922449'
+      if path == '/'
+        assert_select 'head meta[name=listing-adsense][content=?]', adsense_url, count: 1
+        assert_select 'head script[src=?]', adsense_url, count: 0
+        assert_select 'script[src*="/assets/public_listing-"][defer]', count: 1
+      else
+        assert_select 'head script[src=?][crossorigin=anonymous]', adsense_url, count: 1
+      end
       assert_not_includes response.body, 'data-ad-client'
     end
   end
