@@ -44,7 +44,8 @@ module ApplicationHelper
   end
 
   def fast_public_directory?
-    directory = (controller_path == 'places' && %w[index global_search event prefecture city search].include?(action_name)) ||
+    directory = (controller_path == 'home' && action_name == 'index') ||
+      (controller_path == 'places' && %w[index global_search event prefecture city search].include?(action_name)) ||
       (controller_path == 'schedules' && action_name == 'index')
     directory && !admin_user_signed_in? && !member_signed_in? && !webmaster? && !exhibition_group_signed_in?
   end
