@@ -14,7 +14,10 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
   test 'eligible organizer gets the existing participant review link before the report form' do
     get conversation_path(@conversation)
     assert_response :success
-    assert_select '.chat-message__report-panel > .chat-report-guidance + form[action=?]', report_conversation_path(@conversation)
+    assert_select '.chat-profile-report form[action=?]', report_conversation_path(@conversation)
+    assert_select '.chat-profiles + #chat-profile-report', count: 1
+    assert_select '#chat-profile-report[open]', count: 0
+    assert_select '.chat-history .chat-message__report', count: 0
     assert_select '.chat-report-guidance' do
       assert_select 'a[href="#evaluation"][data-open-evaluation]', text: '参加者への口コミを書く'
       assert_select 'a[href*=reviews]', count: 0
@@ -46,12 +49,12 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
     assert_guidance_without_review
   end
 
-  test 'member and practice-match reports are not directed to participant reviews' do
+  test 'member gets circle reviews while practice matches have reporting without reviews' do
     delete destroy_admin_user_session_path
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     get conversation_path(@conversation)
-    assert_select '.chat-report-guidance', count: 0
-    assert_select '.chat-message__report form[action=?]', report_conversation_path(@conversation)
+    assert_select '.chat-report-guidance a[href="#evaluation"]', text: 'サークルへの口コミを書く'
+    assert_select '.chat-profile-report form[action=?]', report_conversation_path(@conversation)
     delete destroy_member_session_path
     source_owner = AdminUser.create!(email: 'guidance-source@example.test', password: 'test-password-123', email_verified_at: Time.current)
     source = @circle.dup
@@ -62,17 +65,17 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
     post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
     get conversation_path(practice)
     assert_select '.chat-report-guidance, #evaluation', count: 0
-    assert_select '.chat-message__report form[action=?]', report_conversation_path(practice)
+    assert_select '.chat-profile-report form[action=?]', report_conversation_path(practice)
   end
 
-  test 'polled messages keep guidance without disclosing the peers private review' do
+  test 'polled messages omit reporting and never disclose the peers private review' do
     @conversation.conversation_reviews.create!(author_role: 'member', score: 0, comment: 'まだ非公開の相手の感想です。')
     get messages_conversation_path(@conversation), as: :json
     assert_response :success
     fragment = Nokogiri::HTML.fragment(response.parsed_body.fetch('html'))
-    assert fragment.at_css('.chat-report-guidance a[href="#evaluation"]')
+    assert_empty fragment.css('.chat-report-guidance, .chat-profile-report, .chat-message__report')
     refute_includes response.body, 'まだ非公開の相手の感想です。'
-    assert_equal 1, fragment.css('input[name=message_id]').length
+    assert_empty fragment.css('input[name=message_id]')
   end
 
   test 'genuine reports still save normally without reviews or status changes on existing reports' do
@@ -97,6 +100,54 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) { get messages_conversation_path(@conversation), as: :json }
   end
 
+  test 'both roles can report the conversation without posting a review' do
+    %w[owner member].each do |role|
+      if role == 'member'
+        delete destroy_admin_user_session_path
+        post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+      end
+      assert_no_difference 'ConversationReview.count' do
+        assert_difference 'ChatReport.count', 1 do
+          post report_conversation_path(@conversation), params: { report: { reason: '危険な行為について確認をお願いします。' } }
+        end
+      end
+      assert_redirected_to conversation_path(@conversation)
+      report = @conversation.chat_reports.order(:id).last
+      assert_equal role, report.reporter_role
+      assert_nil report.chat_message_id
+    end
+  end
+
+  test 'both roles can select peer messages and retain the report message association' do
+    %w[owner member].each do |role|
+      if role == 'member'
+        delete destroy_admin_user_session_path
+        post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+      end
+      target = @conversation.chat_messages.where(sender_role: role == 'owner' ? 'member' : 'owner').detect { |message| !message.automatic? }
+      get conversation_path(@conversation)
+      assert_select '.chat-profile-report select[name=message_id] option[value=?]', target.id.to_s
+      @conversation.chat_messages.where(sender_role: role).each do |mine|
+        assert_select '.chat-profile-report select[name=message_id] option[value=?]', mine.id.to_s, count: 0
+      end
+      assert_difference 'ChatReport.count', 1 do
+        post report_conversation_path(@conversation), params: { message_id: target.id, report: { reason: 'このメッセージの危険な内容を確認してください。' } }
+      end
+      assert_redirected_to conversation_path(@conversation)
+      assert_equal target.id, @conversation.chat_reports.order(:id).last.chat_message_id
+    end
+  end
+
+  test 'member review permissions also control the circle review link' do
+    delete destroy_admin_user_session_path
+    post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+    @member.update_columns(email_verified_at: nil)
+    assert_guidance_without_review
+    @member.update_columns(email_verified_at: Time.current)
+    @conversation.update_columns(legacy_member_review: true)
+    assert_guidance_without_review
+  end
+
   private
 
   def assert_guidance_without_review
@@ -105,6 +156,6 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
     assert_select '.chat-report-guidance', count: 1
     assert_select '.chat-report-guidance a', count: 0
     assert_select '.chat-report-guidance p', text: /現在は口コミを投稿・編集できません/
-    assert_select '.chat-message__report form[action=?] textarea[required][name="report[reason]"]', report_conversation_path(@conversation)
+    assert_select '.chat-profile-report form[action=?] textarea[required][name="report[reason]"]', report_conversation_path(@conversation)
   end
 end

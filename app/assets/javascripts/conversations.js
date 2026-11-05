@@ -1,6 +1,12 @@
 (function () {
   var timer, cleanup = function () {};
-  function stop() { window.clearTimeout(timer); cleanup(); cleanup = function () {}; }
+  function stop() {
+    window.clearTimeout(timer);
+    cleanup();
+    cleanup = function () {};
+    var report = document.getElementById('chat-profile-report');
+    if (report) report.open = false;
+  }
   function setupComposer() {
     var composer = document.querySelector('.chat-composer');
     if (!composer) return;

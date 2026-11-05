@@ -6,6 +6,7 @@
   </header>
   <div id="chat-review-prompt"><%= render "review_prompt" if @review_prompt_due %></div>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
+  <%= render 'conversations/report' %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
   <% if @role == 'owner' && Conversation.reported_unanswered.exists?(@conversation.id) %>
     <aside class="chat-card chat-penalty-summary">

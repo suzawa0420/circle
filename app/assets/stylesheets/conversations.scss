@@ -71,16 +71,25 @@
 .chat-message--mine .chat-message__row { flex-direction: row-reverse; }
 .chat-message__meta { display: flex; flex-direction: column; gap: 2px; flex: none; align-items: flex-start; color: $cb-muted; padding-bottom: 3px; font-size: 12px; line-height: 1.4; white-space: nowrap; }
 .chat-message--mine .chat-message__meta { align-items: flex-end; }
-.chat-message__report { font-size: 12px; color: $cb-muted; }
+.chat-profile-report { margin: -12px 0 20px; color: $cb-muted; font-size: 13px; }
+.chat-profile-report > summary { cursor: pointer; width: fit-content; max-width: 100%; margin-left: auto; min-height: 44px; padding: 10px 4px; box-sizing: border-box; }
+.chat-profile-report > summary:focus-visible { outline: 2px solid $cb-action; outline-offset: 2px; }
+.chat-profile-report:not([open]) > .chat-profile-report__panel { display: none; }
+.chat-profile-report__panel { margin-top: 4px; padding: 20px; border: 1px solid $cb-border; border-radius: 14px; background: #fff; color: $cb-text; overflow-wrap: anywhere; }
+.chat-profile-report__panel form { margin-top: 20px; padding-top: 16px; border-top: 1px solid $cb-border; }
+.chat-profile-report__panel label { display: block; margin: 14px 0 6px; font-weight: 700; }
+.chat-profile-report__panel form > label:first-child { margin-top: 0; }
+.chat-profile-report__panel form > p { margin: 6px 0 12px; color: $cb-muted; font-size: 12px; }
+.chat-profile-report__panel textarea, .chat-profile-report__panel select { width: 100%; max-width: 100%; min-height: 44px; box-sizing: border-box; font-size: 16px; }
 .chat-report-guidance {
-  margin: 12px 0; padding: 12px; border: 1px solid $cb-border;
-  border-radius: 10px; background: #f2f8f5; color: $cb-text;
-  font-size: 13px; line-height: 1.7; overflow-wrap: anywhere;
+  margin: 0 0 16px; padding: 0; border: 0; background: transparent;
+  color: $cb-text; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere;
+  > strong { display: block; font-size: 14px; }
   p { margin: 8px 0; }
 }
 .chat-report-guidance__review-link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
 .chat-report-guidance__review-link:focus-visible { outline: 2px solid #16835d; outline-offset: 3px; }
-.chat-report-guidance__safety { font-weight: 700; }
+.chat-report-guidance__safety { color: $cb-muted; }
 .chat-message time { font-size: 10px; }
 .chat-message details { margin: 0; }
 .chat-message details summary { min-height: 24px; }

@@ -1,9 +1,10 @@
-<aside class="chat-report-guidance" role="note" aria-label="参加者の口コミと通報の案内">
-  <strong>参加時の出来事は、参加者への口コミへ</strong>
-  <p>無断欠席や直前のキャンセルなど、参加に関する感想は「参加者への口コミ」で共有できます。</p>
+<aside class="chat-report-guidance" role="note" aria-label="口コミと通報の案内">
+  <% review_target = @role == 'owner' ? '参加者' : 'サークル' %>
+  <strong>活動ややり取りの感想・評価は、口コミへ</strong>
+  <p>活動や返信の対応などの感想は、<%= review_target %>への口コミで今後の利用者に共有できます。</p>
   <p>確認できた事実を落ち着いた表現で書き、連絡先などの個人情報は載せないでください。</p>
-  <% if participant_report_review_available? %>
-    <%= link_to '参加者への口コミを書く', '#evaluation', class: 'chat-report-guidance__review-link', data: { open_evaluation: true, turbolinks: false } %>
+  <% if report_review_available? %>
+    <%= link_to "#{review_target}への口コミを書く", '#evaluation', class: 'chat-report-guidance__review-link', data: { open_evaluation: true, turbolinks: false } %>
   <% else %>
     <p>このやり取りでは、現在は口コミを投稿・編集できません。投稿期間やメールアドレスの確認状況などをご確認ください。</p>
   <% end %>

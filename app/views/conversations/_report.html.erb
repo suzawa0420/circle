@@ -1,0 +1,17 @@
+<details id="chat-profile-report" class="chat-profile-report">
+  <summary>相手を運営に通報する</summary>
+  <div class="chat-profile-report__panel">
+    <%= render 'conversations/report_guidance' unless @conversation.practice_match? %>
+    <% if @conversation.practice_match? %><p>脅迫・嫌がらせ・詐欺など、安全や規約に関わる問題を運営へお知らせください。</p><% end %>
+    <p>口コミの投稿は不要です。通報内容は相手には表示されません。</p>
+    <%= form_with url: report_conversation_path(@conversation), scope: :report, local: true do |f| %>
+      <%= label_tag 'report-message-id', '対象のメッセージ（任意）' %>
+      <p id="report-message-help">このページに表示されている相手のメッセージを選べます。会話全体についても通報できます。</p>
+      <%= select_tag :message_id, options_for_select(report_message_options), include_blank: '会話全体・その他', id: 'report-message-id', aria: { describedby: 'report-message-help' } %>
+      <%= f.label :reason, '通報理由', for: 'conversation-report-reason' %>
+      <p id="conversation-report-help">問題の内容や、該当するメッセージの日時などを記載してください。</p>
+      <%= f.text_area :reason, id: 'conversation-report-reason', required: true, minlength: 6, maxlength: 2000, rows: 4, aria: { describedby: 'conversation-report-help' } %>
+      <%= f.submit '運営に通報する' %>
+    <% end %>
+  </div>
+</details>

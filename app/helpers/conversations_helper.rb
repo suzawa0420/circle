@@ -1,8 +1,15 @@
 module ConversationsHelper
-  def participant_report_review_available?
-    return @participant_report_review_available if defined?(@participant_report_review_available)
+  def report_message_options
+    @messages.reject { |message| message.automatic? || message.sender_role == @role }.map do |message|
+      body = message.deleted_at ? '削除されたメッセージ' : (message.body.presence || '写真')
+      ["#{message.created_at.strftime('%Y/%m/%d %H:%M')} #{truncate(body, length: 60)}", message.id]
+    end
+  end
 
-    @participant_report_review_available = @role == 'owner' && !@conversation.practice_match? &&
+  def report_review_available?
+    return @report_review_available if defined?(@report_review_available)
+
+    @report_review_available = Conversation::ROLES.include?(@role) && !@conversation.practice_match? &&
       @conversation.review_writable?(@role) &&
       @conversation.conversation_reviews.none? do |review|
         review.author_role == @role && (review.deleted_at || review.published_at)

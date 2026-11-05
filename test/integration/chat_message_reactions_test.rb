@@ -74,8 +74,7 @@ class ChatMessageReactionsTest < ActionDispatch::IntegrationTest
         assert_select '.chat-reactions__selected[tabindex="0"] .chat-reactions__badge', count: 2
         assert_select 'summary .sr-only', text: 'リアクション'
       end
-      assert_select '> .chat-message__report > summary', text: '通報'
-      assert_select '.chat-message__report-panel textarea', count: 1
+      assert_select '.chat-message__report', count: 0
     end
     response_html = response.body
     react('like')
