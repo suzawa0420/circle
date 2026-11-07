@@ -153,6 +153,71 @@ class PlaceImportsNationwideTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { runner.retry_pending([]) }
   end
 
+  test 'reviewed sources rotate across fresh runners with one total batch limit' do
+    other = Source.new(@data.map { |item| item.merge('name' => "別市#{item['name']}", 'address' => item['address'] + '別館') })
+    other.define_singleton_method(:key) { 'reviewed_city' }
+    selected = 3.times.map do
+      run = PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true, batch_size: 1)
+      assert_equal 1, run.summary.values_at('registered', 'duplicate', 'pending').compact.sum
+      run.source
+    end
+    assert_equal ['mizuno_nationwide', 'reviewed_city', 'mizuno_nationwide'], selected
+    assert_equal 3, @source.requests.size + other.requests.size
+  end
+
+  test 'failed attempts rotate and preview runs do not consume an apply turn' do
+    other = Source.new(@data)
+    other.define_singleton_method(:key) { 'reviewed_city' }
+    PlaceImports::NationwideRunner.new(sources: [@source, other]).call(batch_size: 1)
+    first_apply = PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true, batch_size: 1)
+    assert_equal @source.key, first_apply.source
+    other.define_singleton_method(:fetch) { |_url| raise 'unexpected_failure' }
+    assert_raises(RuntimeError) do
+      PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true, batch_size: 1)
+    end
+    assert_equal 'failed', PlaceImportRun.last.status
+    next_run = PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true, batch_size: 1)
+    assert_equal @source.key, next_run.source
+  end
+
+  test 'cross source identity retains candidates but publishes a venue only once' do
+    other = Source.new(@data)
+    other.define_singleton_method(:key) { 'reviewed_city' }
+    assert_difference('Place.count', 3) do
+      PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true)
+      PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true)
+    end
+    assert_equal 6, PlaceImportCandidate.count
+    report = PlaceImports::NationwideRunner.new(sources: [@source, other]).report
+    assert_equal({ 'registered' => 3, 'duplicate' => 3 }, report[:counts])
+    assert_equal 0, report[:remaining]
+    assert_equal false, report[:complete]
+    assert_equal false, report[:directory_complete]
+    assert_equal 2, report[:sources].size
+    assert_equal({ 'duplicate' => 3 }, report[:sources]['reviewed_city'][:counts])
+    assert_equal 6, @source.requests.size + other.requests.size
+    assert_raises(ArgumentError) do
+      PlaceImports::NationwideRunner.new(sources: [@source, other]).retry_pending([1])
+    end
+  end
+
+  test 'multi source selection cannot bypass the shared nonblocking import lock' do
+    other = Source.new(@data)
+    other.define_singleton_method(:key) { 'reviewed_city' }
+    File.open(Rails.root.join('tmp', 'place-import.lock'), File::RDWR | File::CREAT, 0o600) do |lock|
+      assert lock.flock(File::LOCK_EX | File::LOCK_NB)
+      assert_no_difference('PlaceImportRun.count') do
+        assert_raises(RuntimeError) do
+          PlaceImports::NationwideRunner.new(sources: [@source, other]).call(apply: true)
+        end
+      end
+    end
+    assert_empty @source.requests
+    assert_empty other.requests
+    assert_raises(ArgumentError) { PlaceImports::NationwideRunner.new(sources: []) }
+    assert_raises(ArgumentError) { PlaceImports::NationwideRunner.new(sources: [@source, @source]) }
+  end
+
   test 'a failed fetch cannot overwrite a simultaneous human dismissal' do
     @source.define_singleton_method(:fetch) do |url|
       PlaceImportCandidate.find_by!(source_url: url).update!(status: 'dismissed')

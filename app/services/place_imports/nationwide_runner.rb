@@ -3,21 +3,31 @@ require 'digest'
 module PlaceImports
   class NationwideRunner
     PROCESSABLE = %w[queued collected ready].freeze
-    RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError].freeze
+    RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError, SapporoSource::SourceError].freeze
     # Persist only reviewed diagnostic codes, never remote bodies or exception text.
     SAFE_ERROR_CODES = %w[robots_disallowed http_error network_error response_too_large invalid_encoding
       unapproved_url directory_pagination_loop directory_page_limit empty_or_changed_directory
-      unapproved_facility_url missing_facility_metadata].freeze
+      unapproved_facility_url missing_facility_metadata directory_scope_unverified].freeze
 
-    def initialize(source: MizunoSource.new, registrar: Registrar.new)
-      @source, @registrar = source, registrar
+    def initialize(source: nil, sources: nil, registrar: Registrar.new)
+      raise ArgumentError, 'choose source or sources, not both' if source && sources
+      @sources = sources || [source || MizunoSource.new]
+      unless @sources.is_a?(Array) && @sources.any? && @sources.map(&:key).uniq.size == @sources.size
+        raise ArgumentError, 'reviewed sources must be a nonempty list with unique keys'
+      end
+      @source, @registrar = @sources.first, registrar
     end
 
     def call(apply: false, batch_size: 10, discover: true)
       raise ArgumentError, 'batch_size must be 1..20' unless batch_size.is_a?(Integer) && (1..20).cover?(batch_size)
       File.open(Rails.root.join('tmp', 'place-import.lock'), File::RDWR | File::CREAT, 0o600) do |lock|
         raise 'place_import_already_running' unless lock.flock(File::LOCK_EX | File::LOCK_NB)
-        run = PlaceImportRun.create!(source: @source.key, mode: apply ? 'apply' : 'preview')
+        mode = apply ? 'apply' : 'preview'
+        # Pick inside the shared nonblocking lock. Attempts, including failed or
+        # interrupted ones, rotate fairly; previews never consume an apply turn.
+        latest = PlaceImportRun.where(source: @sources.map(&:key), mode: mode).group(:source).maximum(:id)
+        @source = @sources.each_with_index.min_by { |source, index| [latest.fetch(source.key, 0), index] }.first
+        run = PlaceImportRun.create!(source: @source.key, mode: mode)
         counts = Hash.new(0)
         begin
           if discover
@@ -91,13 +101,34 @@ module PlaceImports
     end
 
     def progress
-      queue.group(:status).count
+      PlaceImportCandidate.where(source: @sources.map(&:key)).group(:status).count
     end
 
     def report
-      last_discovery = PlaceImportRun.where(source: @source.key).where('summary LIKE ?', '%"directory_complete":%').order(id: :desc).first
-      discovered_all = last_discovery&.summary&.fetch('directory_complete', false) == true
+      reports = @sources.to_h { |source| [source.key, source_report(source)] }
+      return reports.values.first if @sources.one?
       counts = progress
+      {
+        counts: counts, known_targets: counts.values.sum, remaining: counts.slice(*PROCESSABLE).values.sum,
+        directory_complete: reports.values.all? { |report| report[:directory_complete] },
+        complete: reports.values.all? { |report| report[:complete] },
+        source_review_required: reports.values.any? { |report| report[:source_review_required] },
+        sources: reports
+      }
+    end
+
+    def retry_pending(ids)
+      raise ArgumentError, 'choose one explicit source before retrying' unless @sources.one?
+      raise ArgumentError, 'explicit numeric candidate IDs required' unless ids.any? && ids.all? { |id| id.is_a?(Integer) && id.positive? }
+      queue.where(id: ids, status: 'pending').update_all(status: 'queued', reason: '管理者の指定により再収集待ち', updated_at: Time.current)
+    end
+
+    private
+
+    def source_report(source)
+      last_discovery = PlaceImportRun.where(source: source.key).where('summary LIKE ?', '%"directory_complete":%').order(id: :desc).first
+      discovered_all = last_discovery&.summary&.fetch('directory_complete', false) == true
+      counts = PlaceImportCandidate.where(source: source.key).group(:status).count
       { counts: counts, known_targets: counts.values.sum, remaining: counts.slice(*PROCESSABLE).values.sum,
         directory_complete: discovered_all, complete: discovered_all && counts.slice(*PROCESSABLE).values.sum.zero?,
         directory_error_code: last_discovery&.summary&.fetch('directory_error_code', nil),
@@ -105,13 +136,6 @@ module PlaceImports
         related_inspected: last_discovery&.summary&.fetch('related_inspected', 0) || 0,
         related_failed: last_discovery&.summary&.fetch('related_failed', 0) || 0 }
     end
-
-    def retry_pending(ids)
-      raise ArgumentError, 'explicit numeric candidate IDs required' unless ids.any? && ids.all? { |id| id.is_a?(Integer) && id.positive? }
-      queue.where(id: ids, status: 'pending').update_all(status: 'queued', reason: '管理者の指定により再収集待ち', updated_at: Time.current)
-    end
-
-    private
 
     def safe_error_code(error)
       SAFE_ERROR_CODES.include?(error.message) ? error.message : 'source_error'

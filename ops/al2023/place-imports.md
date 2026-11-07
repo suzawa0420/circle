@@ -143,3 +143,27 @@ HTTPクライアントの許可ホスト・HTTPS・リダイレクト禁止・ro
 DB構造・タイマー間隔・既存施設を変更しない。既存のserver4の30分タイマーのみを使う。
 反映後は登録数・確認待ち数・新規発見数とタイマー/service状態を確認する。
 ロールバックはこのコード変更を戻し、すでに公開された施設と候補履歴は保持する。
+
+## Reviewed municipal sources, one scheduler
+
+Only adapters in `PlaceImports::ReviewedSources` are enabled. Unknown domains and operator websites are never followed automatically.
+Within the existing shared nonblocking lock, each `places:nationwide` invocation selects the least recently attempted source for its mode.
+Never-attempted sources run first; failed or interrupted attempts also advance rotation. Preview runs do not consume apply turns.
+The total batch remains 10, with the existing 30-minute timer. No additional timer, process, or database table is needed.
+
+The Sapporo adapter rereads the municipal gym/tennis listing on every discovery pass. Completeness refers only to those reviewed listing categories,
+not every facility in Sapporo or nationwide. Unknown layouts and missing mandatory evidence remain pending.
+Retain seasonal periods, time bands, age qualifications, and additional fee conditions. Ordinance ceilings are not actual operating prices.
+
+`places:nationwide_status` performs no HTTP requests and returns aggregate counts plus per-source reports under `sources`.
+Overall completion requires verified directory traversal for every enabled source and no processable candidates.
+Pending and duplicate candidates are not published additions. Retrying a municipal candidate requires a reviewed source and explicit numeric IDs.
+The default retry source remains `mizuno_nationwide` for compatibility.
+
+```sh
+SOURCE=sapporo_sports IDS=101,102 bundle exec rake places:nationwide_retry
+```
+
+Deploy through the existing master workflow, which updates and restarts server4/server5 sequentially. No new migration is introduced.
+Verify both servers, public pages, the existing timer, source rotation, and actual registered/duplicate/pending outcomes.
+Rollback only this application change; preserve published facilities, candidates, and decision history.
