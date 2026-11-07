@@ -4,7 +4,7 @@ class PlaceImportsNationwideTest < ActiveSupport::TestCase
   self.fixture_table_names = []
 
   class Source
-    attr_accessor :data, :directory_available, :failures
+    attr_accessor :data, :directory_available, :failures, :directory_error
     attr_reader :requests
     def initialize(data)
       @data, @requests, @failures, @directory_available = data, [], [], false
@@ -12,7 +12,7 @@ class PlaceImportsNationwideTest < ActiveSupport::TestCase
     def key; 'mizuno_nationwide'; end
     def seeds; data.map { |item| item.slice('name', 'url') }; end
     def discover
-      raise PlaceImports::OfficialClient::FetchError, 'private response' unless directory_available
+      raise PlaceImports::OfficialClient::FetchError, directory_error || 'private response' unless directory_available
       seeds
     end
     def fetch(url)
@@ -45,6 +45,8 @@ class PlaceImportsNationwideTest < ActiveSupport::TestCase
     assert_equal 1, Place.count
     assert_equal @city.id, Place.last.city_id
     assert_not_includes first.summary.to_json, 'private response'
+    assert_equal 'source_error', first.summary['directory_error_code']
+    assert_equal false, PlaceImports::NationwideRunner.new(source: @source).report[:source_review_required]
     assert_difference('Place.count', 2) do
       second = PlaceImports::NationwideRunner.new(source: @source).call(apply: true)
       assert_equal 0, second.summary['remaining']
@@ -52,9 +54,45 @@ class PlaceImportsNationwideTest < ActiveSupport::TestCase
     assert_no_difference('Place.count') { PlaceImports::NationwideRunner.new(source: @source).call(apply: true) }
     assert_equal 3, @source.requests.size
     assert_equal false, PlaceImports::NationwideRunner.new(source: @source).report[:complete]
+    assert_equal true, PlaceImports::NationwideRunner.new(source: @source).report[:source_review_required]
     @source.directory_available = true
     PlaceImports::NationwideRunner.new(source: @source).call(apply: true)
     assert_equal true, PlaceImports::NationwideRunner.new(source: @source).report[:complete]
+    assert_equal false, PlaceImports::NationwideRunner.new(source: @source).report[:source_review_required]
+    assert_nil PlaceImports::NationwideRunner.new(source: @source).report[:directory_error_code]
+  end
+
+  test 'robots restrictions remain visible after the known queue is exhausted' do
+    @source.directory_error = 'robots_disallowed'
+    runner = PlaceImports::NationwideRunner.new(source: @source)
+    run = runner.call(apply: true)
+    assert_equal 'robots_disallowed', run.summary['directory_error_code']
+    assert_equal 'robots_disallowed', runner.report[:directory_error_code]
+    assert_equal true, runner.report[:source_review_required]
+    assert_equal false, runner.report[:complete]
+    assert_equal 3, Place.count
+  end
+
+  test 'related discovery resumes its cursor and never republishes known facilities' do
+    @source.define_singleton_method(:seeds) { data.first(1).map { |item| item.slice('name', 'url') } }
+    calls = []
+    @source.define_singleton_method(:discover_related) do |urls:, after:, limit:|
+      calls << { urls: urls, after: after, limit: limit }
+      { targets: data.drop(1).map { |item| item.slice('name', 'url') },
+        cursor: urls.sort.last, inspected: 1, failed: 0 }
+    end
+    runner = PlaceImports::NationwideRunner.new(source: @source)
+    first = runner.call(apply: true, batch_size: 1)
+    assert_equal 3, first.summary['discovered']
+    assert_equal 1, first.summary['related_inspected']
+    assert_equal 10, calls.first[:limit]
+    assert_nil calls.first[:after]
+    assert_difference('Place.count', 2) { runner.call(apply: true) }
+    assert_equal @data.first['url'], calls.last[:after]
+    assert_equal @data.map { |item| item['url'] }.sort, calls.last[:urls].uniq.sort
+    assert_no_difference('Place.count') { runner.call(apply: true) }
+    assert_equal 3, PlaceImportCandidate.count
+    assert_equal false, runner.report[:complete]
   end
 
   test 'preview advances past ready candidates and apply uses already collected facts' do

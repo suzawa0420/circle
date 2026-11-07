@@ -42,6 +42,12 @@ class PlaceImportsMizunoTest < ActiveSupport::TestCase
     assert_equal ['体育館閉館のお知らせ'], data['alerts']
   end
 
+  test 'construction and restricted use notices remain pending evidence' do
+    @pages[@url] = '<a href="/m-test/news/page/2">空調設備工事に伴う体育館の利用制限</a><a href="/m-test/news/page/3">コート床の隆起について</a>'
+    data = PlaceImports::MizunoSource.new(client: Client.new(@pages)).fetch(@url)
+    assert_equal ['空調設備工事に伴う体育館の利用制限', 'コート床の隆起について'], data['alerts']
+  end
+
   test 'bare route text after bullet spans and unwrapped parking conditions survive extraction' do
     @pages["#{@url}/access"].sub!(/<div class="show_body_access">.*<\/div><\/main>/, <<~HTML)
       <div class="show_body_access"><h3>車でご来場の場合</h3>
@@ -173,6 +179,34 @@ class PlaceImportsMizunoTest < ActiveSupport::TestCase
     assert_equal [@url, @url + '-two'], source.discover.map { |item| item['url'] }
     @pages[directory] = '<h1>メンテナンス中です</h1>'
     assert_raises(PlaceImports::MizunoSource::SourceError) { PlaceImports::MizunoSource.new(client: Client.new(@pages)).discover }
+  end
+
+  test 'related discovery rotates bounded official roots and accepts only official facility links' do
+    other = @url + '-other'
+    @pages[@url] = "<a href='mailto:'>メール</a><a href='#{other}'>関連施設</a><a href='https://evil.test/m-bad'>外部</a><a href='https://sports-service.mizuno.jp/search/'>全国</a><a href='#{@url}?private=x'>query</a>"
+    @pages[other] = "<a href='#{@url}'>戻る</a>"
+    client = Client.new(@pages)
+    source = PlaceImports::MizunoSource.new(client: client)
+    first = source.discover_related(urls: [other, @url, 'https://evil.test/m-bad'], limit: 1)
+    assert_equal [{ 'url' => other, 'discovered_from' => @url }], first[:targets]
+    assert_equal 1, first[:inspected]
+    second = source.discover_related(urls: [@url, other], after: first[:cursor], limit: 1)
+    assert_equal other, second[:cursor]
+    wrapped = source.discover_related(urls: [@url, other], after: second[:cursor], limit: 1)
+    assert_equal @url, wrapped[:cursor]
+    assert_equal ['https://shisetsu.mizuno.jp/robots.txt', @url, other, @url], client.requests
+    assert_raises(ArgumentError) { source.discover_related(urls: [@url], limit: 21) }
+  end
+
+  test 'related discovery honors robots and advances past unavailable roots without fetching blocked paths' do
+    other = @url + '-other'
+    @pages['https://shisetsu.mizuno.jp/robots.txt'] = "User-agent: *\nDisallow: /m-test"
+    client = Client.new(@pages)
+    result = PlaceImports::MizunoSource.new(client: client).discover_related(urls: [@url, other], limit: 1)
+    assert_empty result[:targets]
+    assert_equal 1, result[:failed]
+    assert_equal @url, result[:cursor]
+    assert_equal ['https://shisetsu.mizuno.jp/robots.txt'], client.requests
   end
 
   test 'new client rejects unrelated hosts ports credentials and queries before network access' do

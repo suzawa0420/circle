@@ -4,6 +4,10 @@ module PlaceImports
   class NationwideRunner
     PROCESSABLE = %w[queued collected ready].freeze
     RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError].freeze
+    # Persist only reviewed diagnostic codes, never remote bodies or exception text.
+    SAFE_ERROR_CODES = %w[robots_disallowed http_error network_error response_too_large invalid_encoding
+      unapproved_url directory_pagination_loop directory_page_limit empty_or_changed_directory
+      unapproved_facility_url missing_facility_metadata].freeze
 
     def initialize(source: MizunoSource.new, registrar: Registrar.new)
       @source, @registrar = source, registrar
@@ -24,6 +28,17 @@ module PlaceImports
             rescue *RETRYABLE_ERRORS => error
               counts['directory_complete'] = false
               counts['directory_error'] = error.class.name
+              counts['directory_error_code'] = safe_error_code(error)
+              if @source.respond_to?(:discover_related)
+                previous = PlaceImportRun.where(source: @source.key)
+                  .where('summary LIKE ?', '%"related_cursor":%').order(id: :desc).first
+                related = @source.discover_related(urls: targets.map { |item| item.fetch('url') } + queue.pluck(:source_url),
+                  after: previous&.summary&.fetch('related_cursor', nil), limit: 10)
+                targets += related.fetch(:targets)
+                counts['related_cursor'] = related.fetch(:cursor)
+                counts['related_inspected'] = related.fetch(:inspected)
+                counts['related_failed'] = related.fetch(:failed)
+              end
             end
             targets.uniq { |item| item.fetch('url') }.each do |seed|
               candidate = PlaceImportCandidate.find_or_initialize_by(source: @source.key,
@@ -84,7 +99,11 @@ module PlaceImports
       discovered_all = last_discovery&.summary&.fetch('directory_complete', false) == true
       counts = progress
       { counts: counts, known_targets: counts.values.sum, remaining: counts.slice(*PROCESSABLE).values.sum,
-        directory_complete: discovered_all, complete: discovered_all && counts.slice(*PROCESSABLE).values.sum.zero? }
+        directory_complete: discovered_all, complete: discovered_all && counts.slice(*PROCESSABLE).values.sum.zero?,
+        directory_error_code: last_discovery&.summary&.fetch('directory_error_code', nil),
+        source_review_required: !discovered_all && counts.slice(*PROCESSABLE).values.sum.zero?,
+        related_inspected: last_discovery&.summary&.fetch('related_inspected', 0) || 0,
+        related_failed: last_discovery&.summary&.fetch('related_failed', 0) || 0 }
     end
 
     def retry_pending(ids)
@@ -93,6 +112,10 @@ module PlaceImports
     end
 
     private
+
+    def safe_error_code(error)
+      SAFE_ERROR_CODES.include?(error.message) ? error.message : 'source_error'
+    end
 
     def queue
       PlaceImportCandidate.where(source: @source.key)

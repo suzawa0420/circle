@@ -48,6 +48,36 @@ module PlaceImports
       urls.uniq.sort.map { |url| { 'url' => url } }
     end
 
+    # Independent, allowed facility-to-facility links are not a mirror of the
+    # blocked nationwide directory. Bound each pass and resume from its cursor.
+    # This partial discovery must never imply nationwide coverage is complete.
+    def discover_related(urls:, after: nil, limit: 10)
+      raise ArgumentError, 'limit must be 1..20' unless limit.is_a?(Integer) && (1..20).cover?(limit)
+      roots = urls.filter_map { |url| canonical_facility_url(url) }.uniq.sort
+      remaining = after.present? ? roots.select { |url| url > after } : roots
+      remaining = roots if remaining.empty?
+      result = { targets: [], cursor: after, inspected: 0, failed: 0 }
+      remaining.first(limit).each do |root|
+        result[:cursor] = root
+        result[:inspected] += 1
+        begin
+          document(root).css('a[href]').each do |link|
+            begin
+              url = canonical_facility_url(URI.join(root, link['href'].to_s).to_s)
+              next if url.nil? || url == root
+              result[:targets] << { 'url' => url, 'discovered_from' => root }
+            rescue URI::Error
+              next
+            end
+          end
+        rescue OfficialClient::FetchError, SourceError
+          result[:failed] += 1
+        end
+      end
+      result[:targets].uniq! { |item| item.fetch('url') }
+      result
+    end
+
     def fetch(url)
       canonical = canonical_facility_url(url)
       raise SourceError, 'unapproved_facility_url' unless canonical == url
@@ -111,7 +141,7 @@ module PlaceImports
       end.join("\n\n")
       transport = text(access_body) if transport_sections.empty? && access_body
       alerts = home.css('a[href]').select do |a|
-        a['href'].include?("#{URI(url).path}/news/") && text(a).match?(/閉館|閉鎖|長期休館|臨時休館|営業休止|利用停止/)
+        a['href'].include?("#{URI(url).path}/news/") && text(a).match?(/閉館|閉鎖|長期休館|臨時休館|営業休止|利用停止|利用制限|利用不可|工事|改修|隆起/)
       end.map { |a| text(a).first(250) }.uniq
       meta_note = text(info.at_css('.holiday'))
       time = summary.find { |label, _| label.match?(/営業時間|開館時間|体育館利用時間/) }&.last
