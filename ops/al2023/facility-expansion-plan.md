@@ -10,7 +10,7 @@ The goal is to add missing verified facilities and expand repeatable official-so
 
 - Mizuno: permitted individual-facility related links rotate in bounded batches. The restricted nationwide directory remains excluded.
 - Sapporo: municipal gym/tennis listing discovery and reviewed tennis parsing deployed in 7020b13d5. First timed apply on 2026-11-07 registered Hiragishi tennis courts (public ID2402); 18 candidates yielded 1 registration, 8 duplicates, 1 pending, and 8 queued at that checkpoint. Public page and key fields were verified.
-- Sendai: independently linked Ideka Gym operator layout implemented and tested; release review pending. Its single seed does not imply city coverage.
+- Sendai: deployed in 16bdc1b7c. The existing timer registered Ideka Gym (public ID2403) on 2026-11-07 at 17:32 JST; public page and all six detail fields verified. Its single seed does not imply city coverage.
 - Hiroshima: association HTTPS is unavailable. Other city-designated operator pages have unresolved access/sport/notice evidence; do not publish incomplete records.
 
 ## Repeatable expansion process
@@ -27,7 +27,39 @@ Prioritize operator/layout families that cover multiple venues and prefectures. 
 The current scheduler remains one invocation every 30 minutes, selecting one reviewed source, up to 10 candidates total.
 Before enabling many sources, measure queue age and source refresh intervals and review throughput; avoid silently starving active backfills.
 
-## Next research priorities
+## Sustained operation and actual limits
+
+The application does not research arbitrary new websites or generate new adapters. It only fetches reviewed hosts, paths and layouts.
+Mizuno discovers bounded related links; Sapporo discovers reviewed gym/tennis listing categories; Sendai currently has one reviewed seed.
+A running timer with zero additions can therefore be healthy but have no sufficiently evidenced new venue. It must not be described as full national coverage.
+
+`places:nationwide_status` remains read-only and reports `coverage_scope: reviewed_sources_only`, the latest apply run ID/time/status,
+latest candidate discovery, latest actual publication, and oldest unprocessed candidate per source. Preview runs do not mask a missing apply run.
+Use these signals alongside systemd timer/service status to distinguish a stopped scheduler, a growing queue, and exhausted sources.
+No new timer, paid service, automatic retry of pending records, or external notification is introduced by the status report.
+
+Operational review should check scheduler health daily and the source-expansion backlog at least weekly. When sources have no new candidates,
+review another small batch of official sources rather than repeatedly accessing prohibited directories or weakening publication requirements.
+New domains and layouts need implementation review; source restrictions and ambiguous facts remain blockers. Preserve pending evidence for later targeted review.
+This research/release work is separate from the 30-minute importer and must be scheduled by the operator; the application does not silently claim to perform it.
+
+## Reviewed next batch, 2026-11-07
+
+- Kochi: East Sports Ground tennis courts are absent from existing registrations. Current linked fee PDF, its full applicable qualifications,
+  parent-park access, facility-specific address and outdoor identity have been reviewed. Implementation verifies the current official link and exact PDF digest;
+  changed bytes/link fail closed. Shared reservation contact requires an explicit venue-identity review, not a general phone-deduplication exemption.
+- Tottori: Yonago Yodoe/Kamo gym pages are absent but lack verified written access/current parking. Yodoe also has unresolved partial spectator-seat restrictions.
+- Miyazaki: Hinata Tennis Park has mixed indoor/outdoor courts; retain for review rather than assign one inaccurate category.
+- Yamanashi: Kofu's Midorigaoka courts lack written access/parking in the reviewed sources. Higashishimojo is soft-tennis-only and must not become standard tennis.
+- Ehime: Matsuyama Central Park's primary detail page returned 403. Do not use indexed content or another route to bypass that response.
+- Nagasaki: Kakidomari courts have current fee/access evidence, but the park's official address variants and outdoor identity still need resolution.
+- Tokushima: reviewed sports center is already registered. Nishinomaru courts have conflicting official addresses/hours; Jonai courts link an inapplicable fee PDF.
+- Iwate: Mori-no-Arena is already registered. Iwate Town tennis courts lack verified written access; an additional source returned robots 403 and was not fetched.
+- Okayama: Shigeto Arena is existing ID1844 under the former Zip Arena name; do not add it again. Current September fees differ from an old linked subarena PDF.
+
+These holds are not pending permission requests and not automatic retry candidates. Resolve the identified evidence gap before enabling a source.
+
+## Further research priorities
 
 - Tokushima city sports operator: reusable details plus municipal counterpart; current linked PDF fees need qualified table/version review.
 - Iwate town municipality and sports association: structured fees and facilities; written access and current operational notices still need verification.

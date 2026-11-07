@@ -27,7 +27,7 @@ module PlaceImports
         end
         # Serializes registration across importer workers, even across hosts.
         prefecture.with_lock do
-          matches = duplicate_ids(data, prefecture)
+          matches = duplicate_ids(data, prefecture, source: candidate.source, source_url: candidate.source_url)
           if matches.any?
             candidate.update!(status: 'duplicate', reason: "既存施設の確認が必要です（ID: #{matches.first(10).join(', ')}）")
             return 'duplicate'
@@ -74,19 +74,24 @@ module PlaceImports
 
     private
 
-    def duplicate_ids(data, prefecture)
+    def duplicate_ids(data, prefecture, source: nil, source_url: nil)
       name = self.class.normalize(data['name'])
       address = self.class.normalize(data['address'])
       phone = data['tel'].to_s.unicode_normalize(:nfkc).gsub(/\D/, '')
       url = self.class.canonical_url(data['url'])
-      Place.where(prefecture_id: prefecture.id).pluck(:id, :name, :address, :tel, :url).filter_map do |id, other_name, other_address, other_phone, other_url|
+      Place.where(prefecture_id: prefecture.id).pluck(:id, :name, :address, :tel, :url, :tag).filter_map do |id, other_name, other_address, other_phone, other_url, other_tag|
         n = self.class.normalize(other_name)
         a = self.class.normalize(other_address)
-        # Same location/contact may contain multiple courts: retain for review.
-        id if (name.present? && n.present? && (name.include?(n) || n.include?(name))) ||
+        same_identity = (name.present? && n.present? && (name.include?(n) || n.include?(name))) ||
           (address.present? && a.present? && (address.include?(a) || a.include?(address))) ||
-          (phone.present? && phone == other_phone.to_s.unicode_normalize(:nfkc).gsub(/\D/, '')) ||
           (url.present? && url == self.class.canonical_url(other_url))
+        same_phone = phone.present? && phone == other_phone.to_s.unicode_normalize(:nfkc).gsub(/\D/, '')
+        # Never exempt a name/address/URL match. A telephone-only overlap can
+        # pass solely for an exact, separately reviewed indoor/outdoor pair.
+        reviewed_separate = same_phone && !same_identity && ReviewedDistinctVenues.phone_only_overlap_reviewed?(
+          source: source, source_url: source_url, data: data,
+          name: other_name, address: other_address, tag: other_tag)
+        id if same_identity || (same_phone && !reviewed_separate)
       end
     end
   end

@@ -2,7 +2,7 @@ module PlaceImports
   # Only reviewed, permissioned adapters belong here. This is not a domain crawler.
   module ReviewedSources
     def self.all
-      [MizunoSource.new, SapporoSource.new, SendaiSource.new]
+      [MizunoSource.new, SapporoSource.new, SendaiSource.new, KochiSource.new]
     end
 
     def self.fetch(key)

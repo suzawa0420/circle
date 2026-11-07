@@ -226,4 +226,46 @@ class PlaceImportsNationwideTest < ActiveSupport::TestCase
     assert_no_difference('Place.count') { PlaceImports::NationwideRunner.new(source: @source).call(apply: true) }
     assert_equal({ 'dismissed' => 3 }, PlaceImports::NationwideRunner.new(source: @source).progress)
   end
+
+  test 'read only health distinguishes exhausted sources from absent apply runs' do
+    runner = PlaceImports::NationwideRunner.new(source: @source)
+    report = runner.report
+    assert_equal 'reviewed_sources_only', report[:coverage_scope]
+    assert_nil report[:last_apply_at]
+    assert_nil report[:last_published_at]
+    assert_nil report[:oldest_unprocessed_at]
+    runner.call(batch_size: 1)
+    preview_report = runner.report
+    assert_nil preview_report[:last_apply_at]
+    assert_nil preview_report[:last_published_at]
+    assert_equal PlaceImportCandidate.minimum(:created_at).iso8601, preview_report[:oldest_unprocessed_at]
+    apply = runner.call(apply: true)
+    fetch_count = @source.requests.size
+    assert_no_difference(['PlaceImportCandidate.count', 'PlaceImportRun.count', 'Place.count']) do
+      report = runner.report
+      assert_equal apply.id, report[:last_apply_run_id]
+      assert_equal apply.created_at.iso8601, report[:last_apply_at]
+      assert_equal 'completed', report[:last_apply_status]
+      assert_equal Place.maximum(:created_at).iso8601, report[:last_published_at]
+      assert_equal PlaceImportCandidate.maximum(:created_at).iso8601, report[:last_discovered_at]
+      assert_nil report[:oldest_unprocessed_at]
+      assert_equal true, report[:source_review_required]
+    end
+    assert_equal fetch_count, @source.requests.size
+  end
+
+  test 'health never exposes unknown run state or summary data' do
+    run = PlaceImportRun.create!(source: @source.key, mode: 'apply', status: 'untrusted response', summary: {
+      'error' => 'private response', 'directory_complete' => false,
+      'directory_error_code' => 'private response', 'related_inspected' => 'private response', 'related_failed' => -1
+    })
+    report = PlaceImports::NationwideRunner.new(source: @source).report
+    assert_equal run.id, report[:last_apply_run_id]
+    assert_equal 'unknown', report[:last_apply_status]
+    assert_equal 'source_error', report[:directory_error_code]
+    assert_equal 0, report[:related_inspected]
+    assert_equal 0, report[:related_failed]
+    assert_not_includes report.to_json, 'untrusted response'
+    assert_not_includes report.to_json, 'private response'
+  end
 end

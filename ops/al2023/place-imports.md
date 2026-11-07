@@ -177,3 +177,15 @@ Preserve admission/nonprofit/commercial distinctions, full/half court time bands
 Sports require exact line-anchored names and counts. Missing news, qualification structure, or mandatory fields fail closed.
 The source retains explicit parking categories rather than reconciling a rounded total from a different page.
 The existing scheduler and total batch limit remain unchanged. No database migration is added.
+
+### Read-only health and reviewed shared contacts
+
+The status report labels its scope as `reviewed_sources_only` and adds per-source timestamps for the last apply attempt,
+last discovered candidate, last published facility, and oldest unprocessed candidate. These distinguish an exhausted source from a stopped timer.
+They make no network requests and do not reset pending records. An apply attempt is separate from a preview attempt; unknown stored statuses are not echoed.
+
+Shared telephone numbers continue to block automatic registration by default. The only reviewed exception is the outdoor East Sports Ground tennis venue
+at Kochi-shi Kera 1221-1 versus the two named indoor venues at Godaisan using its shared reservation office.
+The source key/URL, candidate name/address/sport/outdoor category/contact, and existing indoor names/addresses/category must all match the reviewed identities.
+Only a telephone-only overlap may pass. Matching names, addresses or canonical URLs still block; other shared-contact venues still block.
+The exception never accepts arbitrary IDs or exemption flags from a candidate payload and never alters existing facilities.

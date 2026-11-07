@@ -3,13 +3,15 @@ require 'digest'
 module PlaceImports
   class NationwideRunner
     PROCESSABLE = %w[queued collected ready].freeze
-    RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError, SapporoSource::SourceError, SendaiSource::SourceError].freeze
+    RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError, SapporoSource::SourceError, SendaiSource::SourceError, KochiSource::SourceError].freeze
     # Persist only reviewed diagnostic codes, never remote bodies or exception text.
     SAFE_ERROR_CODES = %w[robots_disallowed http_error network_error response_too_large invalid_encoding
       unapproved_url directory_pagination_loop directory_page_limit empty_or_changed_directory
       unapproved_facility_url missing_facility_metadata directory_scope_unverified partial_reviewed_seed_only
       unverified_rate_qualifications unverified_booking_qualifications unverified_notice_structure
-      unsupported_rate_table missing_facility_content].freeze
+      unsupported_rate_table missing_facility_content changed_facility_identity changed_available_sports
+      missing_access changed_current_rate_link changed_rate_qualifications unreviewed_rate_document
+      invalid_content_type invalid_pdf].freeze
 
     def initialize(source: nil, sources: nil, registrar: Registrar.new)
       raise ArgumentError, 'choose source or sources, not both' if source && sources
@@ -112,6 +114,7 @@ module PlaceImports
       counts = progress
       {
         counts: counts, known_targets: counts.values.sum, remaining: counts.slice(*PROCESSABLE).values.sum,
+        coverage_scope: 'reviewed_sources_only',
         directory_complete: reports.values.all? { |report| report[:directory_complete] },
         complete: reports.values.all? { |report| report[:complete] },
         source_review_required: reports.values.any? { |report| report[:source_review_required] },
@@ -129,18 +132,38 @@ module PlaceImports
 
     def source_report(source)
       last_discovery = PlaceImportRun.where(source: source.key).where('summary LIKE ?', '%"directory_complete":%').order(id: :desc).first
+      last_apply = PlaceImportRun.where(source: source.key, mode: 'apply').order(id: :desc).first
       discovered_all = last_discovery&.summary&.fetch('directory_complete', false) == true
-      counts = PlaceImportCandidate.where(source: source.key).group(:status).count
+      candidates = PlaceImportCandidate.where(source: source.key)
+      counts = candidates.group(:status).count
+      stored_error = last_discovery&.summary&.fetch('directory_error_code', nil)
       { counts: counts, known_targets: counts.values.sum, remaining: counts.slice(*PROCESSABLE).values.sum,
+        coverage_scope: 'reviewed_sources_only',
         directory_complete: discovered_all, complete: discovered_all && counts.slice(*PROCESSABLE).values.sum.zero?,
-        directory_error_code: last_discovery&.summary&.fetch('directory_error_code', nil),
+        directory_error_code: stored_error.nil? ? nil : safe_diagnostic_code(stored_error),
         source_review_required: !discovered_all && counts.slice(*PROCESSABLE).values.sum.zero?,
-        related_inspected: last_discovery&.summary&.fetch('related_inspected', 0) || 0,
-        related_failed: last_discovery&.summary&.fetch('related_failed', 0) || 0 }
+        related_inspected: safe_count(last_discovery&.summary&.fetch('related_inspected', 0)),
+        related_failed: safe_count(last_discovery&.summary&.fetch('related_failed', 0)),
+        # Read-only timestamps distinguish a healthy but exhausted source from
+        # a stopped scheduler. Preview runs must not mask an absent apply run.
+        last_apply_run_id: last_apply&.id,
+        last_apply_at: last_apply&.created_at&.iso8601,
+        last_apply_status: last_apply && (%w[running completed failed].include?(last_apply.status) ? last_apply.status : 'unknown'),
+        last_discovered_at: candidates.maximum(:created_at)&.iso8601,
+        last_published_at: candidates.where(status: 'registered').joins(:place).maximum('places.created_at')&.iso8601,
+        oldest_unprocessed_at: candidates.where(status: PROCESSABLE).minimum(:created_at)&.iso8601 }
     end
 
     def safe_error_code(error)
-      SAFE_ERROR_CODES.include?(error.message) ? error.message : 'source_error'
+      safe_diagnostic_code(error.message)
+    end
+
+    def safe_diagnostic_code(value)
+      SAFE_ERROR_CODES.include?(value) ? value : 'source_error'
+    end
+
+    def safe_count(value)
+      value.is_a?(Integer) && value >= 0 ? value : 0
     end
 
     def queue
