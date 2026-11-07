@@ -167,3 +167,13 @@ SOURCE=sapporo_sports IDS=101,102 bundle exec rake places:nationwide_retry
 Deploy through the existing master workflow, which updates and restarts server4/server5 sequentially. No new migration is introduced.
 Verify both servers, public pages, the existing timer, source rotation, and actual registered/duplicate/pending outcomes.
 Rollback only this application change; preserve published facilities, candidates, and decision history.
+
+### Sendai reviewed operator pilot
+
+The foundation directory links Ideka Gym to `https://ideka.spf-sendai.com/`. The adapter allows only that exact host and reviewed public paths.
+It does not retry or route around the unavailable municipality directory. Additional operator hosts require source/layout review before enabling.
+The initial seed is one verified venue; discovery deliberately reports `partial_reviewed_seed_only`, never complete city coverage.
+Preserve admission/nonprofit/commercial distinctions, full/half court time bands, weekend surcharges, concessions, and usage availability.
+Sports require exact line-anchored names and counts. Missing news, qualification structure, or mandatory fields fail closed.
+The source retains explicit parking categories rather than reconciling a rounded total from a different page.
+The existing scheduler and total batch limit remain unchanged. No database migration is added.
