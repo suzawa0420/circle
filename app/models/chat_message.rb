@@ -58,6 +58,10 @@ class ChatMessage < ApplicationRecord
       created_at.present? && created_at <= now && created_at + CHANGE_WINDOW > now
   end
 
+  def editable_by?(role)
+    changeable_by?(role) && !conversation.blocked?
+  end
+
   def deletion_notice
     "#{conversation.participant_name(sender_role)}さんがメッセージを削除しました。"
   end
@@ -71,6 +75,7 @@ class ChatMessage < ApplicationRecord
           # Retain the record and moderation evidence; all displays hide its contents.
           update!(deleted_at: Time.current)
         else
+          raise Conversation::NotAllowed, 'ブロック中はメッセージを編集できません。' if conversation.blocked?
           return false if self.body == body.to_s
           self.body = body.to_s
           self.edited_at = Time.current
@@ -101,6 +106,7 @@ class ChatMessage < ApplicationRecord
     conversation.with_lock do
       with_lock do
         return false unless moderation_status == 'held'
+        raise Conversation::NotAllowed, 'ブロック中の会話には配信できません。' if decision == 'approve' && conversation.blocked?
         # Deleted messages can be reviewed, but must never be released again.
         return false if decision == 'approve' && deleted_at.present?
         update!(moderation_status: decision == 'approve' ? 'approved' : 'spam', reviewed_at: Time.current,

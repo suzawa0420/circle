@@ -4,9 +4,16 @@ const fs = require('fs');
 const vm = require('vm');
 const source = fs.readFileSync(__dirname + '/../../app/assets/javascripts/conversations.js', 'utf8');
 
-async function checkPolling({ hidden = false, focused = false, latestId = 10, receiptText = '既読', historyVersion = 'initial', noticeHtml, noticeFocused = false, noticeInitial = '' } = {}) {
+async function checkPolling({ hidden = false, focused = false, latestId = 10, receiptText = '既読', historyVersion = 'initial', noticeHtml, noticeFocused = false, noticeInitial = '', blocked, initiallyBlocked = false } = {}) {
   const events = {};
   let scheduled, requests = 0, replacements = 0;
+  const fields = { disabled: false };
+  const draftInput = { value: '入力中の内容' };
+  const draftText = { textContent: '' };
+  const blockedDraft = { hidden: true, querySelector: () => draftText };
+  const form = { hidden: false, draft: '入力中の内容', querySelector: () => draftInput };
+  const blockNotice = { hidden: true };
+  const composer = { dataset: { blocked: String(initiallyBlocked) }, querySelector: selector => selector === '.chat-compose-form' ? form : fields };
   const reviewPrompt = { innerHTML: noticeInitial, contains: () => noticeFocused };
   const receipt = { dataset: { messageId: '10' }, textContent: '未読' };
   const container = {
@@ -20,18 +27,18 @@ async function checkPolling({ hidden = false, focused = false, latestId = 10, re
     hidden, activeElement: {},
     body: { contains: () => true },
     querySelector: () => null,
-    getElementById: id => id === 'chat-messages' ? container : (id === 'chat-review-prompt' ? reviewPrompt : null),
+    getElementById: id => ({ 'chat-messages': container, 'chat-review-prompt': reviewPrompt, 'chat-reply': composer, 'chat-block-state-notice': blockNotice, 'chat-blocked-draft': blockedDraft })[id] || null,
     addEventListener: (name, callback) => { events[name] = callback; }
   };
   const window = { clearTimeout() {}, setTimeout(fn) { scheduled = fn; }, location: { hash: '' } };
   vm.runInNewContext(source, { window, document, fetch: async () => {
     requests++;
-    return { ok: true, redirected: false, json: async () => ({ latest_id: latestId, recipient_read_id: 10, receipts: { 10: receiptText }, history_version: historyVersion, html: 'new messages', accepted: true, review_prompt_html: noticeHtml }) };
+    return { ok: true, redirected: false, json: async () => ({ blocked, latest_id: latestId, recipient_read_id: 10, receipts: { 10: receiptText }, history_version: historyVersion, html: 'new messages', accepted: true, review_prompt_html: noticeHtml }) };
   } });
   events.DOMContentLoaded();
   scheduled();
   await new Promise(resolve => setImmediate(resolve));
-  return { receipt, requests, replacements, reviewPrompt };
+  return { receipt, requests, replacements, reviewPrompt, fields, form, blockNotice, blockedDraft, draftText };
 }
 function checkInitialJump({ readyState = 'complete', hash = '', event, cancel = false, alignment = 'start' } = {}) {
   const events = {}, windowEvents = {}, frames = new Map();
@@ -103,6 +110,21 @@ function checkReplyShortcuts() {
   assert.equal(clicks.size, 2, 'returning to the conversation rebinds shortcuts');
 }
 (async () => {
+  const blocked = await checkPolling({ blocked: true });
+  assert.equal(blocked.fields.disabled, true);
+  assert.equal(blocked.form.hidden, true);
+  assert.equal(blocked.form.draft, '入力中の内容');
+  assert.equal(blocked.blockNotice.hidden, false);
+  assert.equal(blocked.blockedDraft.hidden, false);
+  assert.equal(blocked.draftText.textContent, '入力中の内容');
+  const unblocked = await checkPolling({ blocked: false, initiallyBlocked: true });
+  assert.equal(unblocked.fields.disabled, false);
+  assert.equal(unblocked.form.hidden, false);
+  assert.equal(unblocked.blockedDraft.hidden, true);
+  assert.equal(unblocked.blockNotice.hidden, false);
+  const unchanged = await checkPolling({ blocked: false });
+  assert.equal(unchanged.blockNotice.hidden, true);
+
   const peerNotice = await checkPolling({ noticeHtml: '<aside>口コミが届いています</aside>' });
   assert.equal(peerNotice.reviewPrompt.innerHTML, '<aside>口コミが届いています</aside>', 'peer notice appears without a new chat message');
   const published = await checkPolling({ noticeHtml: '', noticeInitial: 'old invitation' });

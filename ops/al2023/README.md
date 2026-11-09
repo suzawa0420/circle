@@ -46,6 +46,19 @@ cron is unnecessary for Puma, which logs via journald.
 
 ### Deployment and recovery
 
+Message blocking controls (2026-11-09): the conversation's existing block flags
+are now controlled below the participant/organizer profile cards. Either side
+can stop sends, photos, reactions, content edits and held-message approvals in
+that conversation. Only the side that set a block can clear it. Existing history,
+message deletion, reports and review rights remain available; unrelated circles
+and participants are unchanged. Blocking sends no notification and cancels pending
+message/review email deadlines. The same conversation row lock serializes block,
+send, edit, approval and notification operations across app servers. A notification
+already sent before the block cannot be recalled. No database migration is added.
+Deploy with the normal CI, assets and rolling Puma hot restarts on server4/server5.
+Rollback is a normal application revert; retain all block flags and chat history.
+See [message blocking verification](../../docs/message-blocking.md).
+
 Message reactions (2026-10-30): additive migration `20261030000000` creates a
 separate table with per-account uniqueness and foreign keys before either Puma
 restarts. Existing messages and notification/read state are not backfilled.

@@ -41,6 +41,7 @@
       var link = event.target.closest('[data-chat-edit]');
       if (!link || event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
+      if (composer.dataset && composer.dataset.blocked === 'true') return;
       if (!draft && form.dataset.editing !== 'true') {
         draft = { action: form.action, body: text.value, submit: submit.value,
           token: token && token.value, disableWith: submit.dataset.disableWith, title: title.textContent, previewHidden: preview.hidden };

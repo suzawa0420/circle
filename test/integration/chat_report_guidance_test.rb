@@ -15,7 +15,7 @@ class ChatReportGuidanceTest < ActionDispatch::IntegrationTest
     get conversation_path(@conversation)
     assert_response :success
     assert_select '.chat-profile-report form[action=?]', report_conversation_path(@conversation)
-    assert_select '.chat-profiles + #chat-profile-report', count: 1
+    assert_select '.chat-profiles + .chat-block-controls + #chat-profile-report', count: 1
     assert_select '#chat-profile-report[open]', count: 0
     assert_select '.chat-history .chat-message__report', count: 0
     assert_select '.chat-report-guidance' do

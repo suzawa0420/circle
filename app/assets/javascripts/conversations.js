@@ -105,6 +105,25 @@
           container.querySelectorAll('.chat-read-receipt').forEach(function (receipt) {
             if (data.receipts && data.receipts[receipt.dataset.messageId]) receipt.textContent = data.receipts[receipt.dataset.messageId];
           });
+          var composer = document.getElementById('chat-reply');
+          if (composer && typeof data.blocked === 'boolean') {
+            var blocked = String(data.blocked);
+            if (composer.dataset.blocked !== blocked) {
+              var blockNotice = document.getElementById('chat-block-state-notice');
+              if (blockNotice) blockNotice.hidden = false;
+            }
+            composer.dataset.blocked = blocked;
+            var composeForm = composer.querySelector('.chat-compose-form');
+            var fields = composer.querySelector('.chat-compose-fields');
+            var blockedDraft = document.getElementById('chat-blocked-draft');
+            var draftInput = composeForm && composeForm.querySelector('.chat-compose-input');
+            if (blockedDraft) {
+              blockedDraft.hidden = !data.blocked || !draftInput || !draftInput.value;
+              blockedDraft.querySelector('[data-blocked-draft-text]').textContent = draftInput ? draftInput.value : '';
+            }
+            if (composeForm) composeForm.hidden = data.blocked;
+            if (fields) fields.disabled = data.blocked;
+          }
           var reviewPrompt = document.getElementById('chat-review-prompt');
           if (reviewPrompt && typeof data.review_prompt_html === 'string' &&
               !reviewPrompt.contains(document.activeElement) && reviewPrompt.innerHTML !== data.review_prompt_html) {

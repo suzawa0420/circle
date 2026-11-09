@@ -6,6 +6,7 @@
   </header>
   <div id="chat-review-prompt"><%= render "review_prompt" if @review_prompt_due %></div>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
+  <%= render 'conversations/block_controls' %>
   <%= render 'conversations/report' %>
   <%= render "help_center/context_link", article: "message-notification", label: "返信・通知で困ったときはこちら" %>
   <% if @role == 'owner' && Conversation.reported_unanswered.exists?(@conversation.id) %>
@@ -28,7 +29,7 @@
     </div>
   </section>
   <div id="chat-latest" tabindex="-1"></div>
-  <section id="chat-reply" class="chat-composer" aria-labelledby="chat-reply-title" tabindex="-1">
+  <section id="chat-reply" class="chat-composer" data-blocked="<%= @conversation.blocked? %>" aria-labelledby="chat-reply-title" tabindex="-1">
     <div class="chat-composer-heading">
       <span class="chat-composer-heading__icon"><%= lucide_icon 'square-pen' %></span>
       <div>
@@ -36,6 +37,8 @@
         <h2 id="chat-reply-title"><%= @editing_message ? 'メッセージを編集' : 'メッセージを返信' %></h2>
       </div>
     </div>
+    <p id="chat-block-state-notice" role="status" hidden>送信停止の状態が変わりました。<%= link_to 'ページを更新して確認する', conversation_path(@conversation, anchor: 'chat-reply') %>（入力中の内容は更新前に控えてください）</p>
+    <details id="chat-blocked-draft" hidden><summary>入力中の下書きを確認する</summary><p data-blocked-draft-text></p></details>
     <% if @conversation.actor(@role).suspended? %>
       <p>利用停止中のため送信できません。過去の会話は確認できます。</p>
     <% elsif (@role == 'owner' || @conversation.practice_match?) && !current_admin_user.email_verified? %>
@@ -44,10 +47,11 @@
     <% elsif !@editing_message && !@conversation.practice_match? && @role == 'member' && !current_member.japanese_profile? %>
       <p>自己紹介を日本語（ひらがな・カタカナを含む文章）に修正してから送信してください。</p>
       <%= link_to '自己紹介を修正する', edit_member_path(current_member) %>
-    <% elsif !@editing_message && @conversation.blocked? %>
+    <% elsif @conversation.blocked? %>
       <p>ブロック中のため、双方とも送信できません。履歴の閲覧・通報は引き続き利用できます。</p>
     <% else %>
       <%= form_with url: (@editing_message ? update_message_conversation_path(@conversation, message_id: @editing_message.id) : message_conversation_path(@conversation)), method: (@editing_message ? :patch : :post), scope: :message, local: true, html: { class: "chat-compose-form", multipart: true, data: { editing: @editing_message.present?, edit_image: @editing_message&.image? } } do |f| %>
+        <fieldset class="chat-compose-fields">
         <% if @message_error %><p class="chat-upload-error" role="alert"><%= @message_error %><%= ' 写真は選び直してください。' unless @editing_message %></p><% end %>
         <div class="chat-edit-status" <%= 'hidden' unless @editing_message %>>
           <p>送信済みの本文を編集中です。更新すると「編集済み」と表示されます。写真は変更されません。</p>
@@ -64,15 +68,10 @@
         <%= f.text_area :body, value: @draft_body, maxlength: 2000, rows: 4, placeholder: "メッセージを入力", class: "chat-compose-input" %>
         <%= f.submit (@editing_message ? '変更を保存' : '送信'), class: 'chat-button', data: { disable_with: (@editing_message ? '更新中…' : '送信中…') } %>
         </div>
+        </fieldset>
       <% end %>
     <% end %>
   </section>
-  <% if @conversation["#{@role}_blocked"] %>
-    <div class="chat-card chat-controls">
-      <p>ご自身の設定によりメッセージの送信を停止しています。</p>
-      <%= button_to '自分のブロックを解除', block_conversation_path(@conversation), method: :delete %>
-    </div>
-  <% end %>
   <details class="chat-card chat-controls"><summary><span class="chat-section-label"><%= lucide_icon 'clock' %><span><%= @role == 'owner' && !@conversation.practice_match? ? '返信なし・連絡なしの欠席' : '返信がない場合' %></span></span></summary>
     <% if @role == 'owner' && !@conversation.practice_match? %>
       <div class="chat-report-choices" aria-label="報告の種類">

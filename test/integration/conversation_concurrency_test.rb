@@ -67,6 +67,49 @@ class ConversationConcurrencyTest < ActiveSupport::TestCase
     source_owner&.destroy!
   end
 
+  test 'simultaneous blocks and unilateral unblocks preserve the other participant flag' do
+    concurrently { |i| Conversation.find(@conversation.id).set_blocked!(i.zero? ? 'member' : 'owner', blocked: true) }
+    assert @conversation.reload.member_blocked?
+    assert @conversation.owner_blocked?
+    concurrently { Conversation.find(@conversation.id).set_blocked!('member', blocked: false) }
+    assert_not @conversation.reload.member_blocked?
+    assert @conversation.owner_blocked?
+  end
+
+  test 'a sender loaded before blocking rechecks the committed block under its row lock' do
+    stale_sender = Conversation.find(@conversation.id)
+    ready, release = Queue.new, Queue.new
+    blocker = Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        conversation = Conversation.find(@conversation.id)
+        conversation.with_lock do
+          conversation.set_blocked!('owner', blocked: true)
+          ready << true
+          release.pop
+        end
+      end
+    end
+    ready.pop
+    sender = Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        begin
+          stale_sender.send_message!('member', 'ブロックとの競合を確認します。')
+        rescue Conversation::NotAllowed => error
+          error
+        end
+      end
+    end
+    release << true
+    blocker.value
+    assert_instance_of Conversation::NotAllowed, sender.value
+    assert_equal 1, @conversation.chat_messages.where(sender_role: 'member').count
+    assert_nil @conversation.reload.owner_notification_due_at
+  ensure
+    release << true if release && blocker&.alive?
+    blocker&.join
+    sender&.join
+  end
+
   private
   test 'simultaneous reactions converge without duplicate actor rows or message side effects' do
     message = @conversation.chat_messages.find_by!(sender_role: 'member')

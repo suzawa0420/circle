@@ -134,6 +134,22 @@ class Conversation < ApplicationRecord
     member_blocked? || owner_blocked?
   end
 
+  # Share the conversation lock with sends, edits, moderation and mail delivery.
+  # A retry sets the desired state; it must never toggle the peer's block.
+  def set_blocked!(role, blocked:)
+    raise NotAllowed, 'この操作はできません。' unless ROLES.include?(role) && [true, false].include?(blocked)
+    with_lock do
+      self["#{role}_blocked"] = blocked
+      if blocked
+        ROLES.each do |recipient|
+          self["#{recipient}_notification_due_at"] = nil
+          self["#{recipient}_review_notification_due_at"] = nil
+        end
+      end
+      save!
+    end
+  end
+
   # Serialize initial inquiries across different circles for the same sender.
   def send_message!(role, body, image: nil, inquiry_context: nil)
     if role == 'member'

@@ -92,7 +92,7 @@ class ConversationsController < ApplicationController
   def show
     if params[:edit_message_id].present? && !@editing_message
       @editing_message = @conversation.chat_messages.find(params[:edit_message_id])
-      unless @editing_message.changeable_by?(@role)
+      unless @editing_message.editable_by?(@role)
         raise Conversation::NotAllowed, '自分が送信した12時間以内のメッセージのみ編集・削除できます。'
       end
       @draft_body = @editing_message.body
@@ -114,6 +114,7 @@ class ConversationsController < ApplicationController
                    history_version: history_version,
                    receipts: @messages.reject(&:automatic?).select { |m| m.sender_role == @role }.to_h { |m| [m.id, m.receipt_text(@conversation)] },
                    recipient_read_id: @conversation.recipient_read_message_id(@role),
+                   blocked: @conversation.blocked?,
                    accepted: @conversation.accepted_at.present?,
                    review_prompt_html: @conversation.review_prompt_due?(@role) ? render_to_string(partial: "review_prompt", formats: [:html]) : "" }
   end
@@ -134,7 +135,7 @@ class ConversationsController < ApplicationController
   end
 
   def block
-    @conversation.with_lock { @conversation.update!("#{@role}_blocked" => true) }
+    @conversation.set_blocked!(@role, blocked: true)
     redirect_to conversation_path(@conversation), notice: @conversation.practice_match? ? 'ブロックしました。過去の履歴は残ります。' : 'ブロックしました。評価権や過去の履歴は残ります。'
   end
 
@@ -172,7 +173,7 @@ class ConversationsController < ApplicationController
   end
 
   def unblock
-    @conversation.with_lock { @conversation.update!("#{@role}_blocked" => false) }
+    @conversation.set_blocked!(@role, blocked: false)
     redirect_to conversation_path(@conversation), notice: 'ご自身のブロックを解除しました。'
   end
 

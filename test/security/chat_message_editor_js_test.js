@@ -73,6 +73,12 @@ assert.equal(preview.hidden, false);
 assert.equal(status.hidden, true);
 assert.equal(submit.value, '送信');
 assert.equal(submit.dataset.disableWith, '送信中…');
+// A stale edit link must not change a composer after the peer blocks it.
+composer.dataset.blocked = 'true';
+edit();
+assert.equal(form.action, '/messages');
+assert.equal(text.value, '返信の下書き');
+composer.dataset.blocked = 'false';
 // Turbolinks must not cache an editing action with a reply draft.
 edit();
 document.events['turbolinks:before-cache']();

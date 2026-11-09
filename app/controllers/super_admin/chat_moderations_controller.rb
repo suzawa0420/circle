@@ -1,5 +1,8 @@
 class SuperAdmin::ChatModerationsController < ApplicationController
   before_action :require_webmaster!
+  rescue_from Conversation::NotAllowed do |error|
+    redirect_to super_admin_chat_moderations_path, alert: error.message
+  end
 
   def index
     @status = params[:status].in?(%w[held approved spam]) ? params[:status] : 'held'

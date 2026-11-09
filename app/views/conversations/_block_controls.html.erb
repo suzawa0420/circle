@@ -1,0 +1,13 @@
+<section class="chat-block-controls" aria-label="この相手とのメッセージの設定">
+  <div>
+    <% if @conversation["#{@role}_blocked"] %>
+      <strong>この相手をブロック中</strong>
+      <p>この会話では双方の送信を停止しています。履歴・通報<%= '・口コミ' unless @conversation.practice_match? %>は引き続き利用できます。</p>
+      <%= button_to '自分のブロックを解除', block_conversation_path(@conversation), method: :delete, class: 'chat-block-button', data: { confirm: 'ご自身のブロックを解除しますか？相手もブロックしている場合は、引き続き双方とも送信できません。', disable_with: '解除中…' } %>
+    <% else %>
+      <strong>この相手とのやり取りを止めたいとき</strong>
+      <p>ブロックすると、この会話では双方とも送信できなくなります。相手にブロックの通知は送りません。</p>
+      <%= button_to block_conversation_path(@conversation), class: 'chat-block-button', data: { confirm: 'この相手をブロックしますか？この会話では双方のメッセージ・写真・リアクションの送信と本文編集を停止します。履歴は残り、ご自身のブロックはいつでも解除できます。', disable_with: '設定中…' } do %><%= lucide_icon 'ban' %><span>相手をブロック</span><% end %>
+    <% end %>
+  </div>
+</section>

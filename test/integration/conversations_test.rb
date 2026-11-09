@@ -50,7 +50,7 @@ class ConversationsTest < ActionDispatch::IntegrationTest
         assert_select '.message-role'
         assert_select '.chat-message__name'
       end
-      assert_select 'input[value="相手をブロック"]', count: 0
+      assert_select '.chat-profiles + .chat-block-controls button', text: '相手をブロック'
       assert_select '.chat-controls summary', text: actor == @owner ? '返信なし・連絡なしの欠席' : '返信がない場合'
       if actor == @member
         assert_select '#chat-acceptance-status', count: 0

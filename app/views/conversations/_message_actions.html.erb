@@ -1,6 +1,8 @@
 <div class="chat-message__actions">
+  <% if message.editable_by?(@role) %>
   <%= link_to conversation_path(@conversation, edit_message_id: message.id, anchor: 'chat-reply'), class: 'chat-message__action chat-message__edit', data: { chat_edit: true, edit_url: update_message_conversation_path(@conversation, message_id: message.id), edit_token: form_authenticity_token(form_options: { action: update_message_conversation_path(@conversation, message_id: message.id), method: :patch }), edit_body: message.body, edit_image: message.image? } do %>
     <%= lucide_icon 'square-pen' %><span>編集</span>
+  <% end %>
   <% end %>
   <%= button_to delete_message_conversation_path(@conversation, message_id: message.id), method: :delete, class: 'chat-message__action chat-message__delete', form_class: 'chat-message__delete-form', data: { confirm: 'このメッセージを削除しますか？相手にも削除したことが表示されます。' } do %>
     <%= lucide_icon 'trash-2' %><span>削除</span>
