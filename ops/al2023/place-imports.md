@@ -189,3 +189,33 @@ at Kochi-shi Kera 1221-1 versus the two named indoor venues at Godaisan using it
 The source key/URL, candidate name/address/sport/outdoor category/contact, and existing indoor names/addresses/category must all match the reviewed identities.
 Only a telephone-only overlap may pass. Matching names, addresses or canonical URLs still block; other shared-contact venues still block.
 The exception never accepts arbitrary IDs or exemption flags from a candidate payload and never alters existing facilities.
+
+### Miyazaki reviewed tennis pilot (2026-11-09)
+
+Production coverage was checked before expansion: Tottori 7, Miyazaki 8 and Tokushima 9 published places.
+The original desktop task was idle; server4's existing 30-minute timer was active with its last service result successful.
+Its four reviewed sources had 84 candidates (10 registered, 36 duplicate, 38 pending), zero unprocessed, and incomplete nationwide coverage.
+No duplicate importer invocation or new timer was started.
+
+The new `miyazaki_ikimeno` source contains only アイ・ホームテニスコート（生目の杜運動公園）.
+The operator is https://ikimenomori.jp/; the city lists the venue at
+https://www.city.miyazaki.miyazaki.jp/institution/list/item778/ . Public operator paths are allowed by its robots.txt;
+`/wp-admin/` is excluded. No photos are republished. The outdoor classification was visually checked against the official court photograph.
+
+Current venue, hours, access, parking and notice pages were reviewed together. The July 4 electricity outage is explicitly superseded by
+July 25 restoration including court lights and use after 19:00. The temporary parking notice concerns October 24–26, October 31 and November 1,
+which are past. Paid-facility-only shower eligibility remains in the published description. Current operator hours take precedence over older
+third-party summaries: 09:00–22:00, open Wednesdays until 17:00. Admission-charging, age, non-amateur, lighting and management-building tariffs,
+and the parking payment time window and vehicle categories are retained.
+
+For this small pilot, every reviewed page is fingerprinted over its complete visible body, link/image identities and table cell spans.
+Any changed/removed qualification, identity, price, closure notice, recovery notice or new homepage news holds the candidate for fresh review.
+Only exact reviewed paths are fetched; changed links are never followed. Robots is checked before each fetch sequence. The registry and existing
+runner preserve partial-source scope, shared locking, duplicate detection and the total batch limit. Before apply, Miyazaki collected/ready previews are fetched and verified again, including robots. Registered/pending candidates are not reset.
+
+Deployment adds no migration or scheduler. The master workflow runs the complete runtime checks, prepares assets and hot-restarts server4/server5
+sequentially. Publication occurs through the existing server4 timer. Roll back by reverting this application change and deploying normally,
+keeping already published facilities and candidate history. No new costs, server plan changes or unrelated edits are included.
+
+Tottori candidates remain out of this batch: Sakaiminato municipal gyms have unverified current effects of FY2026 work and insufficient
+metadata; city robots disallows the importer's user-agent. Do not spoof an allowed agent. Ayameike's official page returned 403 and was not bypassed.

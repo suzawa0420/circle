@@ -1,0 +1,47 @@
+[
+  {
+    "path": "/",
+    "fixture": "home",
+    "sha256": "e4f34b2b6aa75b4d7878a4f5ba830e457aad5bed3e0fb3de4e0261e0b4d0b61d"
+  },
+  {
+    "path": "/facilities/facilities07/",
+    "fixture": "tennis",
+    "sha256": "3d84772b337ef63cf4db9183b3f09a71d06740a9bca7fffb0395dee3fbd8e945"
+  },
+  {
+    "path": "/usage/",
+    "fixture": "usage",
+    "sha256": "002937c21c2e7d5cbfa303f1e411e041ef33db9cea50f291d2295363606d4b43"
+  },
+  {
+    "path": "/access/",
+    "fixture": "access",
+    "sha256": "62d9d4f0503dc93b643a3bb936cb2021bf9354590f575ba796a39aa6836399a1"
+  },
+  {
+    "path": "/facilities/facilities09/",
+    "fixture": "parking",
+    "sha256": "08d460adb7c752c09c8616fdab575aa20d7000460eef4ce6e0feb2db42f21d35"
+  },
+  {
+    "path": "/%e8%87%a8%e6%99%82%e9%a7%90%e8%bb%8a%e5%a0%b4%e3%81%ae%e3%81%94%e6%a1%88%e5%86%85/",
+    "fixture": "notice-0",
+    "sha256": "d41a3aac06a3afc445fa13325e9547b4e9a0915540fe0e90e982aa296acb2d15"
+  },
+  {
+    "path": "/%e3%80%90%e3%81%94%e9%80%a3%e7%b5%a1%e3%80%91-%e4%b8%80%e9%83%a8%e6%96%bd%e8%a8%ad%e3%81%ab%e3%81%8a%e3%81%91%e3%82%8b%e5%81%9c%e9%9b%bb%e3%81%ae%e5%be%a9%e6%97%a7%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+    "fixture": "notice-1",
+    "sha256": "83a1e7e57f1112b8cd132a7c5eb4bf2634714aaaa19aca7697f9da1c179345fc"
+  },
+  {
+    "path": "/7-4%e3%80%90-%e7%b7%8a%e6%80%a5%e9%80%a3%e7%b5%a1-%e3%80%91-%e4%b8%80%e9%83%a8%e6%96%bd%e8%a8%ad%e3%81%ab%e3%81%8a%e3%81%91%e3%82%8b%e5%81%9c%e9%9b%bb%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+    "fixture": "notice-2",
+    "sha256": "d7055f24d7f8b6bb2c3b38691b7697b63428e030bc37839ce6ba481c489633a1"
+  },
+  {
+    "path": "/%e3%82%b7%e3%83%a3%e3%83%af%e3%83%bc%e3%83%ab%e3%83%bc%e3%83%a0%e3%81%ae%e3%81%94%e5%88%a9%e7%94%a8%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+    "fixture": "notice-3",
+    "sha256": "d42866fcd6897b56fa3d6286d52c56c0d06dba44ec3b07bc90a000f0f1f48f27"
+  }
+]

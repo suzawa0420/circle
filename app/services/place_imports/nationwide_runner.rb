@@ -3,7 +3,7 @@ require 'digest'
 module PlaceImports
   class NationwideRunner
     PROCESSABLE = %w[queued collected ready].freeze
-    RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError, SapporoSource::SourceError, SendaiSource::SourceError, KochiSource::SourceError].freeze
+    RETRYABLE_ERRORS = [OfficialClient::FetchError, MizunoSource::SourceError, SetagayaSource::SourceError, SapporoSource::SourceError, SendaiSource::SourceError, KochiSource::SourceError, MiyazakiSource::SourceError].freeze
     # Persist only reviewed diagnostic codes, never remote bodies or exception text.
     SAFE_ERROR_CODES = %w[robots_disallowed http_error network_error response_too_large invalid_encoding
       unapproved_url directory_pagination_loop directory_page_limit empty_or_changed_directory
@@ -11,7 +11,7 @@ module PlaceImports
       unverified_rate_qualifications unverified_booking_qualifications unverified_notice_structure
       unsupported_rate_table missing_facility_content changed_facility_identity changed_available_sports
       missing_access changed_current_rate_link changed_rate_qualifications unreviewed_rate_document
-      invalid_content_type invalid_pdf].freeze
+      invalid_content_type invalid_pdf unreviewed_source_change].freeze
 
     def initialize(source: nil, sources: nil, registrar: Registrar.new)
       raise ArgumentError, 'choose source or sources, not both' if source && sources
@@ -67,10 +67,11 @@ module PlaceImports
           states = apply ? PROCESSABLE : %w[queued collected]
           queue.where(status: states).order(:id).limit(batch_size).each do |candidate|
             begin
-              if candidate.status == 'queued'
+              refresh_before_apply = apply && @source.respond_to?(:revalidate_before_apply?) && @source.revalidate_before_apply?
+              if candidate.status == 'queued' || refresh_before_apply
                 data = @source.fetch(candidate.source_url)
                 candidate.with_lock do
-                  if candidate.status == 'queued'
+                  if candidate.status == 'queued' || (refresh_before_apply && PROCESSABLE.include?(candidate.status))
                     candidate.update!(payload: data, status: 'collected', reason: '公式情報を収集済み・登録判定待ち',
                       checked_at: Time.current, place_import_run: run)
                   end
