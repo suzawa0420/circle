@@ -379,3 +379,8 @@ body.cb-site .chat-inbox .chat-talk__preview { display: block; white-space: nowr
 .chat-message__report-panel textarea { width: 100%; max-width: 100%; box-sizing: border-box; }
 .chat-message--mine .chat-message__tools { justify-content: flex-end; margin-left: auto; }
 .chat-message--mine .chat-reactions__options { left: auto; right: 0; }
+
+.chat-inquiry-limit { margin: 16px 0; padding: 14px 16px; border: 1px solid $cb-border; border-radius: 12px; background: #f4f8f6; overflow-wrap: anywhere; }
+.chat-inquiry-limit strong { display: block; font-size: 15px; line-height: 1.7; }
+.chat-inquiry-limit p { margin: 6px 0 0; font-size: 13px; }
+.chat-shell .chat-button:disabled { opacity: .55; cursor: not-allowed; }

@@ -52,6 +52,7 @@ class ConversationsController < ApplicationController
     existing = Conversation.find_by(user: @user, member: current_member)
     return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists? && @inquiry_context.blank?
     @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
+    @new_inquiry = !existing&.chat_messages&.where(sender_role: 'member')&.exists?
   end
 
   def private_note
@@ -79,9 +80,6 @@ class ConversationsController < ApplicationController
     raise Conversation::NotAllowed, '現在、このサークルは募集を停止しています。' unless @user.switch == '募集中'
     raise Conversation::NotAllowed, 'ご自身のサークルには問い合わせできません。' if current_admin_user&.id == @user.admin_user_id || @user.admin_user.email.casecmp?(current_member.email)
     current_member.with_lock do
-      if current_member.conversations.where('created_at > ?', 1.day.ago).count >= 20
-        raise Conversation::NotAllowed, '本日の問い合わせ上限に達しました。明日お試しください。'
-      end
       @conversation = Conversation.for_member!(@user, current_member)
       @sent_message = @conversation.send_message!('member', params.require(:message).permit(:body)[:body], inquiry_context: CircleInquiryContext.resolve(@user, params[:inquiry_context]))
     end
@@ -360,7 +358,7 @@ class ConversationsController < ApplicationController
   end
 
   def invalid_action(error)
-    redirect_to(@conversation&.persisted? ? conversation_path(@conversation) : conversations_path, alert: error.message)
+    redirect_to(@conversation&.persisted? && Conversation.exists?(@conversation.id) ? conversation_path(@conversation) : conversations_path, alert: error.message)
   end
 
   def invalid_record(error)

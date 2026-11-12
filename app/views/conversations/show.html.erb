@@ -4,6 +4,7 @@
     <h1><%= @conversation.practice_match? ? '対戦・練習試合の相談' : 'メッセージ' %></h1>
     <a href="#chat-reply" data-turbolinks="false" class="chat-reply-link"><%= lucide_icon 'undo-2' %>返信欄へ</a>
   </header>
+  <%= render "inquiry_limit" if @role == "member" && !@conversation.practice_match? %>
   <div id="chat-review-prompt"><%= render "review_prompt" if @review_prompt_due %></div>
   <%= render 'conversations/profiles', conversation: @conversation, viewer_role: @role %>
   <%= render 'conversations/block_controls' %>

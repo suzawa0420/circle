@@ -1,5 +1,6 @@
 <main class="chat-shell chat-inbox <%= "cb-participant" if member_signed_in? && !admin_user_signed_in? %>">
   <h1>メッセージ</h1>
+  <%= render "inquiry_limit" if member_signed_in? %>
   <p class="chat-muted"><%= member_signed_in? ? 'サークルへの問い合わせ・参加の相談' : '参加の相談・対戦や練習試合の相談' %></p>
   <% if @penalty_count.to_i.positive? || @penalty_only %>
     <aside class="chat-card chat-penalty-summary">

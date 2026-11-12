@@ -1,4 +1,9 @@
 module ConversationsHelper
+  # Display only; sending always recalculates under the account row lock.
+  def remaining_member_inquiries
+    @remaining_member_inquiries ||= MemberInquiryLimit.new(current_member).remaining
+  end
+
   def report_message_options
     @messages.reject { |message| message.automatic? || message.sender_role == @role }.map do |message|
       body = message.deleted_at ? '削除されたメッセージ' : (message.body.presence || '写真')

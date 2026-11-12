@@ -174,6 +174,7 @@ class Conversation < ApplicationRecord
       if !practice_match? && role == 'owner' && !chat_messages.deliverable.where(sender_role: 'member').exists?
         raise NotAllowed, '参加者からの問い合わせを受けてから返信できます。'
       end
+      MemberInquiryLimit.new(member).ensure_available!(self) if !practice_match? && role == 'member'
       if !practice_match? && role == 'member' && !chat_messages.exists?
         CircleInquiryGuidance.new(user).messages.each do |guidance|
           chat_messages.create!(sender_role: 'system', body: guidance)

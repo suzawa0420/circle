@@ -36,6 +36,29 @@ class ConversationConcurrencyTest < ActiveSupport::TestCase
     assert_equal 1, @member.received_conversation_reviews.count
   end
 
+  test 'simultaneous first inquiries share the last daily slot across circles' do
+    circles = 5.times.map do |i|
+      circle = @circle.dup
+      circle.name = "同時問い合わせ検証#{i}"
+      circle.save!
+      circle
+    end
+    circles.first(3).each { |circle| Conversation.for_member!(circle, @member).send_message!('member', '参加したいです。') }
+    pending = circles.last(2).map { |circle| Conversation.for_member!(circle, @member) }
+    results = concurrently do |i|
+      begin
+        Conversation.find(pending[i].id).send_message!('member', '初回の問い合わせです。')
+      rescue Conversation::NotAllowed => error
+        error
+      end
+    end
+    assert_equal 1, results.count { |result| result.is_a?(ChatMessage) }
+    assert_equal 1, results.count { |result| result.is_a?(Conversation::NotAllowed) }
+    assert_equal 5, MemberInquiryLimit.new(@member).used
+  ensure
+    circles&.each(&:destroy!)
+  end
+
   test 'simultaneous contact creation cannot create duplicate conversation pairs' do
     results = concurrently { Conversation.for_member!(@circle, @other_member) }
     assert_equal 1, results.map(&:id).uniq.count

@@ -1,0 +1,8 @@
+<% remaining = remaining_member_inquiries %>
+<aside class="chat-inquiry-limit" aria-label="本日の新規お問い合わせ">
+  <strong>本日、新しく問い合わせできるサークル：あと<%= remaining %>件 / <%= MemberInquiryLimit::DAILY_LIMIT %>件</strong>
+  <p>すでに問い合わせたサークルとのやり取りは、この制限の対象外です。残り件数は日本時間の午前0時にリセットされます。</p>
+  <% if remaining.zero? %>
+    <p>新しいサークルへのお問い合わせは、明日お試しください。日付が変わったらページを更新してください。</p>
+  <% end %>
+</aside>
