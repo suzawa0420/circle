@@ -124,6 +124,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261026000000
     # Additive per-account message reactions; no existing message updates or mail.
     bundle exec rails db:migrate:up VERSION=20261030000000
+    # Approved additive state for continuous official facility discovery.
+    bundle exec rails db:migrate:up VERSION=20261113000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;
@@ -151,6 +153,8 @@ case "$mode" in
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.timer /etc/systemd/system/circle-chat-maintenance.timer
       sudo -n install -m 0644 ops/al2023/circle-place-import.service /etc/systemd/system/circle-place-import.service
       sudo -n install -m 0644 ops/al2023/circle-place-import.timer /etc/systemd/system/circle-place-import.timer
+      # Keep the already enabled server4-only 30-minute facility timer.
+      sudo -n install -m 0644 ops/al2023/circle-place-nationwide.service /etc/systemd/system/circle-place-nationwide.service
       # The facility timer is enabled separately after reviewing the initial preview.
       sudo -n systemctl daemon-reload
       sudo -n systemctl enable --now circle-chat-maintenance.timer
