@@ -14,6 +14,7 @@ Environment=PATH=/opt/circle/ruby-3.4.11/bin:/opt/circle/node-v24.21.0-linux-x64
 Environment=AWS_EC2_METADATA_DISABLED=true
 Environment=APPLY=1
 Environment=BATCH_SIZE=10
+Environment=OFFICIAL_DISCOVERY=1
 UMask=0007
 ExecStart=/opt/circle/ruby-3.4.11/bin/bundle exec rake places:nationwide
 Nice=10

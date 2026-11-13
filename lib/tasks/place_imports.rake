@@ -10,6 +10,15 @@ end
 namespace :places do
   desc 'Discover and resume nationwide facilities; APPLY=1 publishes verified entries only'
   task nationwide: :environment do
+    # Bounded discovery has its own state/lock and never bypasses registration review.
+    if ENV['OFFICIAL_DISCOVERY'] == '1'
+      begin
+        puts({ official_discovery: PlaceImports::OfficialDiscoveryRunner.new.call }.to_json)
+      rescue StandardError
+        # Discovery failures must not starve the existing verified registrar.
+        puts({ official_discovery: { status: 'failed', error_code: 'discovery_initialization_failed' } }.to_json)
+      end
+    end
     batch_size = Integer(ENV.fetch('BATCH_SIZE', '10'), 10)
     runner = PlaceImports::NationwideRunner.new(sources: PlaceImports::ReviewedSources.all)
     run = runner.call(apply: ENV['APPLY'] == '1', batch_size: batch_size, discover: ENV['DISCOVER'] != '0')
@@ -27,5 +36,17 @@ namespace :places do
     abort 'IDS must contain comma-separated numeric IDs' unless raw.match?(/\A[1-9][0-9]*(,[1-9][0-9]*)*\z/)
     source = PlaceImports::ReviewedSources.fetch(ENV.fetch('SOURCE', 'mizuno_nationwide'))
     puts({ source: source.key, requeued: PlaceImports::NationwideRunner.new(source: source).retry_pending(raw.split(',').map(&:to_i)) }.to_json)
+  end
+end
+
+namespace :places do
+  desc 'Discover bounded official-site candidates without publishing them'
+  task official_discovery: :environment do
+    puts PlaceImports::OfficialDiscoveryRunner.new.call.to_json
+  end
+
+  desc 'Read official discovery progress without fetching external pages'
+  task official_discovery_status: :environment do
+    puts PlaceImports::OfficialDiscoveryRunner.new.report.to_json
   end
 end

@@ -1,0 +1,196 @@
+[
+  {
+    "prefecture": "北海道",
+    "root": "https://www.pref.hokkaido.lg.jp/"
+  },
+  {
+    "prefecture": "青森県",
+    "root": "https://www.pref.aomori.lg.jp/"
+  },
+  {
+    "prefecture": "岩手県",
+    "root": "https://www.pref.iwate.jp/"
+  },
+  {
+    "prefecture": "宮城県",
+    "root": "https://www.pref.miyagi.jp/"
+  },
+  {
+    "prefecture": "秋田県",
+    "root": "https://www.pref.akita.lg.jp/"
+  },
+  {
+    "prefecture": "山形県",
+    "root": "https://www.pref.yamagata.jp/"
+  },
+  {
+    "prefecture": "福島県",
+    "root": "https://www.pref.fukushima.lg.jp/"
+  },
+  {
+    "prefecture": "茨城県",
+    "root": "https://www.pref.ibaraki.jp/"
+  },
+  {
+    "prefecture": "栃木県",
+    "root": "https://www.pref.tochigi.lg.jp/"
+  },
+  {
+    "prefecture": "群馬県",
+    "root": "https://www.pref.gunma.jp/"
+  },
+  {
+    "prefecture": "埼玉県",
+    "root": "https://www.pref.saitama.lg.jp/"
+  },
+  {
+    "prefecture": "千葉県",
+    "root": "https://www.pref.chiba.lg.jp/"
+  },
+  {
+    "prefecture": "東京都",
+    "root": "https://www.metro.tokyo.lg.jp/"
+  },
+  {
+    "prefecture": "神奈川県",
+    "root": "https://www.pref.kanagawa.jp/"
+  },
+  {
+    "prefecture": "新潟県",
+    "root": "https://www.pref.niigata.lg.jp/"
+  },
+  {
+    "prefecture": "富山県",
+    "root": "https://www.pref.toyama.jp/"
+  },
+  {
+    "prefecture": "石川県",
+    "root": "https://www.pref.ishikawa.lg.jp/"
+  },
+  {
+    "prefecture": "福井県",
+    "root": "https://www.pref.fukui.lg.jp/",
+    "entrypoints": [
+      "https://www.pref.fukui.lg.jp/doc/dx-suishin/opendata/list_ct.html"
+    ]
+  },
+  {
+    "prefecture": "山梨県",
+    "root": "https://www.pref.yamanashi.jp/"
+  },
+  {
+    "prefecture": "長野県",
+    "root": "https://www.pref.nagano.lg.jp/"
+  },
+  {
+    "prefecture": "岐阜県",
+    "root": "https://www.pref.gifu.lg.jp/"
+  },
+  {
+    "prefecture": "静岡県",
+    "root": "https://www.pref.shizuoka.jp/"
+  },
+  {
+    "prefecture": "愛知県",
+    "root": "https://www.pref.aichi.jp/"
+  },
+  {
+    "prefecture": "三重県",
+    "root": "https://www.pref.mie.lg.jp/"
+  },
+  {
+    "prefecture": "滋賀県",
+    "root": "https://www.pref.shiga.lg.jp/"
+  },
+  {
+    "prefecture": "京都府",
+    "root": "https://www.pref.kyoto.jp/"
+  },
+  {
+    "prefecture": "大阪府",
+    "root": "https://www.pref.osaka.lg.jp/"
+  },
+  {
+    "prefecture": "兵庫県",
+    "root": "https://web.pref.hyogo.lg.jp/"
+  },
+  {
+    "prefecture": "奈良県",
+    "root": "https://www.pref.nara.lg.jp/"
+  },
+  {
+    "prefecture": "和歌山県",
+    "root": "https://www.pref.wakayama.lg.jp/"
+  },
+  {
+    "prefecture": "鳥取県",
+    "root": "https://www.pref.tottori.lg.jp/"
+  },
+  {
+    "prefecture": "島根県",
+    "root": "https://www.pref.shimane.lg.jp/",
+    "entrypoints": [
+      "https://www.pref.shimane.lg.jp/sport/shogai/shisetsu/"
+    ]
+  },
+  {
+    "prefecture": "岡山県",
+    "root": "https://www.pref.okayama.lg.jp/"
+  },
+  {
+    "prefecture": "広島県",
+    "root": "https://www.pref.hiroshima.lg.jp/"
+  },
+  {
+    "prefecture": "山口県",
+    "root": "https://www.pref.yamaguchi.lg.jp/"
+  },
+  {
+    "prefecture": "徳島県",
+    "root": "https://www.pref.tokushima.lg.jp/"
+  },
+  {
+    "prefecture": "香川県",
+    "root": "https://www.pref.kagawa.lg.jp/"
+  },
+  {
+    "prefecture": "愛媛県",
+    "root": "https://www.pref.ehime.jp/"
+  },
+  {
+    "prefecture": "高知県",
+    "root": "https://www.pref.kochi.lg.jp/"
+  },
+  {
+    "prefecture": "福岡県",
+    "root": "https://www.pref.fukuoka.lg.jp/"
+  },
+  {
+    "prefecture": "佐賀県",
+    "root": "https://www.pref.saga.lg.jp/"
+  },
+  {
+    "prefecture": "長崎県",
+    "root": "https://www.pref.nagasaki.jp/"
+  },
+  {
+    "prefecture": "熊本県",
+    "root": "https://www.pref.kumamoto.jp/"
+  },
+  {
+    "prefecture": "大分県",
+    "root": "https://www.pref.oita.jp/"
+  },
+  {
+    "prefecture": "宮崎県",
+    "root": "https://www.pref.miyazaki.lg.jp/"
+  },
+  {
+    "prefecture": "鹿児島県",
+    "root": "https://www.pref.kagoshima.jp/"
+  },
+  {
+    "prefecture": "沖縄県",
+    "root": "https://www.pref.okinawa.jp/"
+  }
+]

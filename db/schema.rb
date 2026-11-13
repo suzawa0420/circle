@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_30_000000) do
+ActiveRecord::Schema.define(version: 2026_11_13_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -708,6 +708,17 @@ ActiveRecord::Schema.define(version: 2026_10_30_000000) do
     t.text "summary"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "place_discovery_sources", force: :cascade do |t|
+    t.string "prefecture_name", null: false
+    t.string "root_url", null: false
+    t.text "state"
+    t.datetime "last_checked_at"
+    t.string "last_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prefecture_name"], name: "index_place_discovery_sources_on_prefecture_name", unique: true
   end
 
   create_table "place_import_candidates", force: :cascade do |t|
