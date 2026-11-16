@@ -219,3 +219,21 @@ keeping already published facilities and candidate history. No new costs, server
 
 Tottori candidates remain out of this batch: Sakaiminato municipal gyms have unverified current effects of FY2026 work and insufficient
 metadata; city robots disallows the importer's user-agent. Do not spoof an allowed agent. Ayameike's official page returned 403 and was not bypassed.
+
+## 2026-11-16 Minimum verified facts (pending deployment)
+
+The owner approved publication when optional details are unavailable. The earlier
+all-details-required policy is superseded for access, parking, hours, regular
+holidays and scale only. Missing fields remain blank, not invented as free,
+no parking, open every day or no closure. Known verified information is retained.
+Facility name, address, mapped municipality, sport and indoor/outdoor category,
+official evidence and qualified price remain required. Sport/category are needed
+by the directory schema. Closure alerts, stale evidence, duplicates and robots
+restrictions remain blocking. This does not authorize unknown source adapters.
+
+Pending records are not automatically released. Explicit reviewed IDs must be
+refetched before applying the new policy. Current pilot candidate 67 from
+sapporo_sports was held only for hours; missing-price candidate 23 remains pending.
+No migration or new timer is required. Deploy through normal master runtime tests
+and sequential server4/server5 restarts. Rollback is an ordinary code revert and
+deploy preserving registered facilities. No publication was performed locally.
