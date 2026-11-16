@@ -50,7 +50,7 @@ class PlaceImportsTest < ActiveSupport::TestCase
   end
 
   test 'missing ambiguous stale closed and unsupported facilities remain pending' do
-    [{ 'price' => nil }, { 'access' => '' }, { 'sports' => [] }, { 'tag' => nil }, { 'address' => '不明' }, { 'city' => '不明区' },
+    [{ 'price' => nil }, { 'sports' => [] }, { 'tag' => nil }, { 'address' => '不明' }, { 'city' => '不明区' },
       { 'alerts' => ['改修工事に伴う休館'] }, { 'sports' => ['未対応種目'] }, { 'evidence' => [] }].each_with_index do |changes, index|
       candidate = build_candidate("invalid-#{index}", @data.merge(changes))
       assert_no_difference('Place.count') { assert_equal 'pending', PlaceImports::Registrar.new.call(candidate, apply: true) }
@@ -58,6 +58,29 @@ class PlaceImportsTest < ActiveSupport::TestCase
     candidate = build_candidate('stale')
     candidate.update!(checked_at: 8.days.ago)
     assert_equal 'pending', PlaceImports::Registrar.new.call(candidate, apply: true)
+  end
+
+  test 'optional facility details may be absent and are not invented' do
+    optional = %w[access parking time regular_holiday scale]
+    candidate = build_candidate('minimum-facts', @data.except(*optional))
+    assert_difference('Place.count', 1) do
+      assert_equal 'registered', PlaceImports::Registrar.new.call(candidate, apply: true)
+    end
+    optional.each { |key| assert_nil candidate.reload.place.public_send(key) }
+    assert_equal @data['price'], candidate.place.price
+  end
+
+  test 'optional omissions never bypass closure evidence or duplicate checks' do
+    sparse = @data.except('access', 'parking', 'time', 'regular_holiday', 'scale')
+    closed = build_candidate('minimum-closed', sparse.merge('alerts' => ['閉鎖中']))
+    no_evidence = build_candidate('minimum-evidence', sparse.merge('evidence' => []))
+    [closed, no_evidence].each do |candidate|
+      assert_no_difference('Place.count') { assert_equal 'pending', PlaceImports::Registrar.new.call(candidate, apply: true) }
+    end
+    existing = build_candidate('minimum-first', sparse)
+    PlaceImports::Registrar.new.call(existing, apply: true)
+    duplicate = build_candidate('minimum-duplicate', sparse)
+    assert_no_difference('Place.count') { assert_equal 'duplicate', PlaceImports::Registrar.new.call(duplicate, apply: true) }
   end
 
   test 'dismissal survives collection and actual insert cap ignores already registered candidates' do
