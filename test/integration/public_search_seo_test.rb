@@ -149,6 +149,26 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'meta[name=robots][content*=noindex]', count: 0
   end
 
+  test 'primary and secondary regions retain their existing visibility rules' do
+    secondary = Prefecture.create!(name: '神奈川県', kana: 'sitemap-kanagawa')
+    invalid = Prefecture.create!(name: '非掲載地域', kana: 'nil')
+    @circle.update_columns(prefecture_sub_id: secondary.id)
+    @circle.dup.tap do |record|
+      record.assign_attributes(name: '別の公開サークル', prefecture_sub_id: invalid.id)
+      record.save!
+    end
+    event = @circle.event.ruby
+    primary = @circle.prefecture.kana
+
+    expected = ["/events/#{event}", "/events/#{event}/prefectures/#{primary}",
+      "/events/#{event}/prefectures/#{secondary.kana}", "/prefectures/#{primary}"].sort
+    assert_equal expected, CircleSitemapLandings.each_path.map { |path, _| path }.sort
+    assert_equal [0.8], CircleSitemapLandings.each_path.map { |_, priority| priority }.uniq
+
+    @owner.update_columns(check: AdminUser::SHADOW_BANNED_CHECK)
+    assert_empty CircleSitemapLandings.each_path.to_a
+  end
+
   test 'sitemap always emits an index and truthful canonical landings' do
     today = Time.current.in_time_zone('Tokyo').to_date
     @circle.schedules.create!(day: today.iso8601, title: '本日のバスケ', venue: '公開体育館')

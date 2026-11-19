@@ -22,31 +22,19 @@ SitemapGenerator::Sitemap.create(create_index: true, include_root: false) do
 
   if Column.published.exists?
     add columns_path, changefreq: 'weekly', priority: 0.5
-    Column.published.find_each do |column|
+    Column.published.select(:id, :updated_at).find_each do |column|
       add column_path(column), lastmod: column.updated_at, changefreq: 'monthly', priority: 0.5
     end
   end
 
-  User.publicly_visible.find_each do |user|
+  User.publicly_visible.select(:id, :updated_at).find_each do |user|
     add circle_path(user), :lastmod => user.updated_at, :priority => 0.3, :changefreq => 'weekly'
   end
 
   # Only populated, canonical landing pages belong in the sitemap. Arbitrary
   # internal search terms and sort/date combinations are deliberately omitted.
-  population = User.publicly_visible
-  Event.find_each do |event|
-    sport_users = population.for_event(event.id)
-    next unless sport_users.exists?
-    next if event.ruby.blank? || event.ruby == 'nil'
-    add event_path(event.ruby), lastmod: nil, changefreq: 'daily', priority: 0.8
-    Prefecture.where(id: sport_users.select(:prefecture_id)).or(Prefecture.where(id: sport_users.select(:prefecture_sub_id))).find_each do |prefecture|
-      next if prefecture.kana.blank? || prefecture.kana == 'nil'
-      add event_prefecture_path(event.ruby, prefecture.kana), lastmod: nil, changefreq: 'daily', priority: 0.8
-    end
-  end
-  Prefecture.where(id: population.select(:prefecture_id)).find_each do |prefecture|
-    next if prefecture.kana.blank? || prefecture.kana == 'nil'
-    add prefecture_path(prefecture.kana), lastmod: nil, changefreq: 'daily', priority: 0.8
+  CircleSitemapLandings.each_path do |path, priority|
+    add path, lastmod: nil, changefreq: 'daily', priority: priority
   end
   CircleFilterLanding.each_populated_path do |path|
     add path, lastmod: nil, changefreq: 'daily', priority: 0.6

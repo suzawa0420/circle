@@ -29,14 +29,19 @@ class CircleCityDirectory
     return enum_for(__method__) unless block_given?
 
     population = User.publicly_visible
-    cities = City.where(id: UsersCity.where(user_id: population.select(:id)).select(:city_id))
-      .where.not(city_kana: [nil, '', 'nil']).includes(:prefecture).to_a
+    city_pairs = UsersCity.joins(:user).merge(population).distinct
+      .pluck('users.event_id', 'users_cities.city_id')
+    by_sport = city_pairs.group_by(&:first)
+    cities = City.where(id: city_pairs.map(&:last).uniq)
+      .where.not(city_kana: [nil, '', 'nil']).includes(:prefecture).order(:id).to_a
     cities.select! { |city| city.prefecture && city.prefecture.kana.present? && city.prefecture.kana != 'nil' }
     cities.each { |city| yield path(city) }
-    Event.where.not(ruby: [nil, '', 'nil']).find_each do |event|
-      city_ids = UsersCity.where(user_id: population.for_event(event.id).select(:id)).distinct.pluck(:city_id)
-      city_ids = city_ids.to_set
-      cities.each { |city| yield path(city, event: event) if city_ids.include?(city.id) }
+    city_by_id = cities.index_by(&:id)
+    Event.where(id: by_sport.keys.compact).where.not(ruby: [nil, '', 'nil']).find_each do |event|
+      by_sport.fetch(event.id).map(&:last).compact.sort.each do |city_id|
+        city = city_by_id[city_id]
+        yield path(city, event: event) if city
+      end
     end
   end
 end
