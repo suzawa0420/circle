@@ -16,6 +16,18 @@ module SchedulesHelper
     lines.concat(['', '詳細・お問い合わせはこちら']).join("\n")
   end
 
+  def attendance_schedule_share_text(schedules, unique_id)
+    entries = schedules.map do |schedule|
+      date = Date.iso8601(schedule.day)
+      time = calendar_schedule_time(schedule).gsub('–', ' - ')
+      lines = ["#{date.month}月#{date.day}日(#{SCHEDULE_WEEKDAYS[date.wday]}) #{time}"]
+      venue = (schedule.member_venue.presence || schedule.venue).to_s.squish
+      lines << "@#{venue}" if venue.present?
+      lines.join("\n")
+    end
+    (["【スケジュール】"] + entries + ["▼出欠の登録・編集\nhttps://circle-book.com#{attendances_path(unique_id)}"]).join("\n\n")
+  end
+
   def schedule_share_intent(destination, text:, url:)
     base = destination == :threads ? 'https://www.threads.com/intent/post' : 'https://twitter.com/intent/tweet'
     "#{base}?#{ { text: text, url: url }.to_query }"

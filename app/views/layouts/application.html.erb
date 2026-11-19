@@ -25,7 +25,7 @@
       <% end %>
       <% end %>
 
-      <% if webmaster? || %w[conversations support_requests place_information_reports backlink_requests member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
+      <% if @schedule_share_allowed || webmaster? || %w[conversations support_requests place_information_reports backlink_requests member_email_verifications admin_user_email_verifications super_admin/chat_reports members members/registrations members/passwords].include?(controller_path) %>
         <meta name="turbolinks-cache-control" content="no-cache">
         <meta name="robots" content="noindex,nofollow">
       <% end %>

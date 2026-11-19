@@ -21,6 +21,17 @@
           %button.copyBtn.attendance-copy{ type: "button" }
             = lucide_icon "copy", **{ "aria-hidden" => "true" }
             URLをコピー
+        - if @schedule_share_allowed && @schedules.present?
+          %details.attendance-schedule-share
+            %summary.attendance-copy
+              = lucide_icon "calendar-days", **{ "aria-hidden" => "true" }
+              スケジュール共有文を表示
+            .attendance-schedule-share__body{ data: { management_copy: true } }
+              = text_area_tag nil, attendance_schedule_share_text(@schedules, @user.unique_id), readonly: true, rows: 8, class: 'em-copy-source attendance-schedule-share__text', aria: { label: 'スケジュール共有文' }
+              %button.attendance-copy{ type: "button", data: { management_copy_button: true } }
+                = lucide_icon "copy", **{ "aria-hidden" => "true" }
+                全文をコピー
+              %p{ role: "status", aria: { live: "polite" }, data: { management_copy_status: true } }
     - unless archived
       = image_tag "/images/attendance_ogp.png", class: "attendance-illustration", alt: "ログイン不要で日程ごとに出欠を回答できる画面のイメージ", width: 1200, height: 630
       .attendance-intro

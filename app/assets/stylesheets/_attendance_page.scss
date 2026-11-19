@@ -18,6 +18,16 @@
   .attendance-share__url { flex: 1 1 220px; min-width: 0; max-width: 100%; white-space: nowrap; overflow-x: auto; overflow-wrap: normal; word-break: normal; padding: cb-space(3); background: $cb-canvas; border-radius: $cb-radius-control; @include cb-type(compact); @include cb-focus; }
   .attendance-illustration { display: block; width: 100%; max-width: 600px; height: auto; margin: 0 auto cb-space(6); border: 1px solid $cb-border; border-radius: $cb-radius-card; }
   .attendance-copy { @include cb-button(secondary); flex: none; margin: 0; }
+  .attendance-schedule-share { margin-top: cb-space(4); }
+  .attendance-schedule-share summary { display: inline-flex; max-width: 100%; cursor: pointer; }
+  .attendance-schedule-share summary::-webkit-details-marker { display: none; }
+  .attendance-schedule-share__body { margin-top: cb-space(3); }
+  .attendance-schedule-share__text {
+    box-sizing: border-box; display: block; width: 100%; margin-bottom: cb-space(3);
+    padding: cb-space(3); border: 1px solid $cb-border; border-radius: $cb-radius-control;
+    background: $cb-canvas; color: $cb-text; resize: vertical;
+    @include cb-type(compact); @include cb-focus;
+  }
   .attendance-intro { margin-bottom: cb-space(6); display: flex; align-items: center; flex-wrap: wrap; gap: cb-space(4); }
   .attendance-intro > div { flex: 1 1 300px; }
   .attendance-intro p { color: $cb-muted; @include cb-type(compact); }

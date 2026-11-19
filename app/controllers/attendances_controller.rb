@@ -5,6 +5,9 @@ include Circlebook
 before_action :set_attendances
 
 	def index
+    # Never cache an organizer's response where a participant could receive it.
+    @schedule_share_allowed = admin_user_signed_in? && current_admin_user.id == @user&.admin_user_id
+    response.headers["Cache-Control"] = "private, no-store" if @schedule_share_allowed
 
     if params[:archive] == "1"
       @schedules = Schedule.where(user_id: @user.id).where("day <= ?", DateTime.yesterday).limit(5).order(:day => :desc)

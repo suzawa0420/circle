@@ -19,6 +19,58 @@ class AttendanceAnswersTest < ActionDispatch::IntegrationTest
 
   teardown { travel_back }
 
+  test 'organizer can copy a full chronological schedule with member venue and attendance link' do
+    @today.update!(time_s: '18:50', time_e: '21:00', member_venue: '西中原中学校')
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get attendances_path(@circle.unique_id), params: { tracking: 'omit-from-link' }
+
+    assert_response :success
+    assert_includes response.headers['Cache-Control'], 'no-store'
+    assert_select 'meta[name="turbolinks-cache-control"][content="no-cache"]', count: 1
+    assert_select 'details.attendance-schedule-share:not([open]) summary', text: 'スケジュール共有文を表示'
+    assert_select 'details.attendance-schedule-share button[data-management-copy-button]', text: '全文をコピー'
+    assert_select 'textarea[readonly][aria-label="スケジュール共有文"]' do |fields|
+      assert_equal <<~TEXT.strip, fields.first.text.strip
+        【スケジュール】
+
+        10月17日(土) 18:50 - 21:00
+        @西中原中学校
+
+        10月18日(日) 時間未定
+        @体育館
+
+        ▼出欠の登録・編集
+        https://circle-book.com#{attendances_path(@circle.unique_id)}
+      TEXT
+    end
+
+    get attendances_path(@circle.unique_id, archive: 1)
+    assert_response :success
+    assert_select '.attendance-schedule-share', count: 0
+  end
+
+  test 'visitor and another circle organizer do not receive the schedule copy controls' do
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    assert_select '.attendance-schedule-share', count: 0
+
+    other = AdminUser.create!(email: 'another-owner@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(admin_user_id: other.id, name: '別のサークル'))
+    post admin_user_session_path, params: { admin_user: { email: other.email, password: 'test-password-123' } }
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    assert_select '.attendance-schedule-share', count: 0
+  end
+
+  test 'organizer is not offered an empty schedule to copy' do
+    @today.update!(day: '2026-10-14')
+    @future.update!(day: '2026-10-15')
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    assert_select '.attendance-schedule-share', count: 0
+  end
+
   test 'selecting an existing name opens its answers and offers new upcoming dates' do
     get attendances_path(@circle.unique_id)
     assert_response :success

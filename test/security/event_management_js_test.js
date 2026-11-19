@@ -8,7 +8,7 @@ async function copyScenario({ secure, clipboardFails, fallbackWorks }) {
   const copied = [];
   let selected = false;
   let restored = false;
-  const source = { value: 'メンバー向けの限定URL', focus() {}, select() { selected = true; } };
+  const source = { value: '【スケジュール】\n\n11月7日(土) 18:50 - 21:00\n@西中原中学校\n\n▼出欠の登録・編集\nhttps://circle-book.com/s/example/attendances', focus() {}, select() { selected = true; } };
   const status = { textContent: '' };
   const panel = { querySelector(selector) { return selector === '.em-copy-source' ? source : status; } };
   const button = { closest(selector) { assert.equal(selector, '[data-management-copy]'); return panel; } };
