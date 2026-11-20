@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-export PATH=/opt/circle/ruby-3.4.11/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin
+export PATH=/opt/circle/ruby-3.4.13/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin
 export RAILS_ENV=production BUNDLE_PATH=/var/www/circle/vendor/bundle AWS_EC2_METADATA_DISABLED=true
 cd /var/www/circle
 umask 0007
@@ -133,7 +133,7 @@ case "$mode" in
     test "$(git rev-parse HEAD)" = "$revision"
     puma_pid=$(systemctl show circle-puma --property MainPID --value)
     current_ruby=$(sudo -n runuser -u ec2-user -g nginx -- readlink -f "/proc/$puma_pid/exe")
-    expected_ruby=$(readlink -f /opt/circle/ruby-3.4.11/bin/ruby)
+    expected_ruby=$(readlink -f /opt/circle/ruby-3.4.13/bin/ruby)
     if [[ "$current_ruby" != "$expected_ruby" ]]; then
       # USR2 re-execs the old interpreter. A runtime change needs the new unit
       # and a full restart; the workflow activates only one server at a time.
