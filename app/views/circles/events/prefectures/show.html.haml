@@ -1,4 +1,10 @@
-- set_meta_tags title: circle_listing_title,description: circle_listing_description,keywords: "#{@event.name},#{@prefecture.name},サークル,チーム",og: {image:image_url("/images/events/#{@event.ruby}.jpg")}
+- if request.path == "/events/badminton/prefectures/tokyo" && request.query_string.empty?
+  - title = "東京都のバドミントンサークル募集｜初心者・社会人も探せる"
+  - description = "東京都で募集中のバドミントンサークルを検索。初心者・社会人・学生などの条件で絞り込み、活動場所・開催曜日・参加費を比べられます。"
+- else
+  - title = circle_listing_title
+  - description = circle_listing_description
+- set_meta_tags title: title, description: description, keywords: "#{@event.name},#{@prefecture.name},サークル,チーム", og: {image: image_url("/images/events/#{@event.ruby}.jpg")}
 - breadcrumb :event_prefecture_show, @event, @prefecture
 = render "circles/markups/circles_list", users: @users
 

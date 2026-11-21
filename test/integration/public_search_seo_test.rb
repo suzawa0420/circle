@@ -75,6 +75,56 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'title', text: '【全0件】東京都の50代のバドミントンサークル募集 | サークルブック'
   end
 
+  test 'only the clean Tokyo badminton listing has the tailored search snippet' do
+    @circle.event.update!(name: 'バドミントン', txt: 'バドミントンサークル・クラブ', ruby: 'badminton')
+    @circle.prefecture.update!(kana: 'tokyo')
+    path = '/events/badminton/prefectures/tokyo'
+    title = '東京都のバドミントンサークル募集｜初心者・社会人も探せる | サークルブック'
+    description = '東京都で募集中のバドミントンサークルを検索。初心者・社会人・学生などの条件で絞り込み、活動場所・開催曜日・参加費を比べられます。'
+
+    ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'].each do |agent|
+      get path, headers: { 'User-Agent' => agent }
+      assert_response :success
+      assert_select 'title', text: title
+      assert_select 'meta[name=description][content=?]', description, count: 1
+      assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{path}", count: 1
+      assert_select 'meta[name=robots][content*=noindex]', count: 0
+      assert_select 'h1', text: '全1件東京都のバドミントンサークル募集'
+      assert_select ".user_item_wrap a[href='#{circle_path(@circle)}']"
+      assert_select 'meta[name=listing-adsense]', count: 1
+    end
+
+    [{ sort: '2' }, { age: '1' }, { page: '1' }, { utm_source: 'test' }].each do |query|
+      get path, params: query
+      assert_response :success
+      assert_select 'title', text: '【全1件】東京都のバドミントンサークル募集 | サークルブック'
+      assert_select 'meta[name=description][content=?]', description, count: 0
+      expected_canonical = "https://circle-book.com#{path}#{'?age=1' if query.key?(:age)}"
+      assert_select 'link[rel=canonical][href=?]', expected_canonical, count: 1
+    end
+
+    Event.create!(name: 'バスケ', txt: 'バスケチーム', ruby: 'basketball', category: @circle.category, order: '2')
+    city = City.create!(name: '世田谷区', city_kana: 'setagaya', prefecture: @circle.prefecture)
+    UsersCity.create!(user: @circle, city: city)
+    ['/events/badminton', "#{path}/cities/#{city.city_kana}", '/events/basketball/prefectures/tokyo', '/prefectures/tokyo', '/dates/badminton/tokyo'].each do |other|
+      get other
+      assert_response :success
+      assert_select 'title', text: title, count: 0
+      assert_select 'meta[name=description][content=?]', description, count: 0
+    end
+
+    total = User.list.page(1).limit_value + 1
+    (total - 1).times do |i|
+      User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id').merge(name: "検索検証バドミントン#{i}"))
+    end
+    SearchResultCountCache::STORE.clear
+    get path, params: { page: '2' }
+    assert_response :success
+    assert_select 'title', text: "【全#{total}件】東京都のバドミントンサークル募集（2ページ目） | サークルブック"
+    assert_select 'meta[name=description][content=?]', description, count: 0
+    assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{path}?page=2", count: 1
+  end
+
   test 'public landing page prioritizes first image and omits editing scripts' do
     get @path, params: { sort: '3', page: '1', utm_source: 'test', gclid: 'test' }
     assert_response :success
