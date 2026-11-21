@@ -17,6 +17,7 @@ module BreadcrumbsHelper
 
   BREADCRUMB_LABELS = {
     'members' => '参加者', 'admin_users' => '主催者', 'exhibition_groups' => '出展者',
+    'schedule_check_ins' => '当日チェックイン', 'schedule_check_in_management' => '会場掲示用QRコード',
     'webmasters' => 'ウェブマスター', 'attendances' => '出欠管理', 'reviews' => '口コミ・評価',
     'questions' => '質問コーナー', 'event_questions' => '質問一覧', 'opinions' => 'ご意見',
     'links' => 'サークルリンク', 'user_contacts' => 'お問い合わせ', 'member_profiles' => '参加者プロフィール',
