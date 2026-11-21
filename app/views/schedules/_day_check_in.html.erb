@@ -1,0 +1,24 @@
+<section class="em-card" id="day-check-ins">
+  <h2>当日チェックイン</h2>
+  <% if @user.attendance_check_in_token.present? %>
+    <p>会場で毎回使える固定QRコードです。</p>
+    <%= link_to '会場掲示用QRコードを表示', check_in_qr_user_schedule_path(@user, @schedule), class: 'em-button', data: { turbolinks: false } %>
+  <% else %>
+    <p>会場掲示用のQRコードを発行できます。発行したQRコードは今後の開催でも使えます。</p>
+    <%= button_to enable_check_in_user_schedule_path(@user, @schedule), class: 'em-button' do %>受付QRコードを発行<% end %>
+  <% end %>
+  <h3>チェックイン済み <%= @day_check_ins.size %>名</h3>
+  <% if @day_check_ins.any? %>
+    <ul class="em-answer-list">
+      <% @day_check_ins.each do |check_in| %>
+        <li>
+          <strong><%= check_in.display_name %></strong>
+          <span class="em-status"><%= l(check_in.checked_in_at.in_time_zone('Tokyo'), format: '%H:%M') %></span>
+          <%= button_to remove_check_in_user_schedule_path(@user, @schedule, check_in_id: check_in.id), method: :delete, data: { confirm: "#{check_in.display_name}さんのチェックインを取り消しますか？" } do %>チェックインを訂正<% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="em-muted">まだチェックインはありません。</p>
+  <% end %>
+</section>

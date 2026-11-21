@@ -1,0 +1,15 @@
+<h1>当日チェックイン</h1>
+<% if @events.any? %>
+  <p><%= @circle.name %></p>
+  <p>参加するイベントを選んでください。</p>
+  <ul class="check-in-options">
+    <% @events.each do |event| %>
+      <li><%= link_to circle_check_in_event_path(event, token: params[:token]) do %>
+        <strong><%= event.title %></strong>
+        <span><%= render 'event_details', event: event %></span>
+      <% end %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>本日チェックインを受け付けているイベントはありません。</p>
+<% end %>

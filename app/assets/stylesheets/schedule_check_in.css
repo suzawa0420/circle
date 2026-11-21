@@ -1,0 +1,12 @@
+.check-in-page { margin: 0; background: #f4f7f8; color: #192834; font: 16px/1.6 system-ui, sans-serif; }
+.check-in-panel { box-sizing: border-box; max-width: 520px; margin: 24px auto; padding: 24px; background: #fff; border: 1px solid #c7d1d5; border-radius: 12px; overflow-wrap: anywhere; }
+.check-in-panel h1 { font-size: 1.5rem; margin-top: 0; }
+.check-in-panel h2 { font-size: 1.18rem; }
+.check-in-panel a { color: #075a73; }
+.check-in-options { list-style: none; display: grid; gap: 10px; padding: 0; margin: 16px 0; }
+.check-in-options a, .check-in-options button { box-sizing: border-box; display: block; width: 100%; min-height: 46px; padding: 10px 14px; border-radius: 8px; border: 1px solid #8da6ad; background: #eef8fa; color: #153e4b; text-align: left; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+.check-in-options span { display: block; font-size: .875rem; font-weight: 400; }
+.check-in-panel :focus-visible { outline: 3px solid #007b9c; outline-offset: 2px; }
+@media (max-width: 540px) { .check-in-panel { margin: 12px; padding: 18px; } }
+#check-in-copy { box-sizing: border-box; width: 100%; padding: .5rem; font: inherit; }
+[data-attendance-qr-copy] { min-height: 44px; margin-top: .5rem; padding: .3rem .75rem; font: inherit; }

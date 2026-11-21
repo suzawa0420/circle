@@ -1,0 +1,6 @@
+<h1>名前の確認</h1>
+<p><%= @event.title %>に、<strong><%= @name.name %></strong>さんとしてチェックインしますか？</p>
+<div class="check-in-options">
+  <%= button_to circle_check_in_event_path(@event, token: params[:token]), params: { name_id: @name.id } do %>チェックインする<% end %>
+</div>
+<%= link_to '名前の選択に戻る', circle_check_in_event_path(@event, token: params[:token]) %>

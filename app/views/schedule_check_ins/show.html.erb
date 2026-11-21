@@ -1,0 +1,14 @@
+<h1>当日チェックイン</h1>
+<h2><%= @event.title %></h2>
+<p><%= render 'event_details', event: @event %></p>
+<% if @answers.any? %>
+  <p>ご自身の名前を選んでください。</p>
+  <ul class="check-in-options">
+    <% @answers.each do |answer| %>
+      <li><%= button_to confirm_circle_check_in_path(@event, token: params[:token]), params: { name_id: answer.name_id } do %><%= answer.name.name %><% end %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>参加予定の名前がありません。主催者にお声がけください。</p>
+<% end %>
+<% if @multiple_events %><%= link_to 'イベントの選択へ戻る', circle_check_in_path(token: params[:token]) %><% end %>

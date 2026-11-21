@@ -66,6 +66,7 @@ before_action :prepare_event_search_filters, only: [:dates, :day, :today, :tomor
   end
 
   def manage_attendance
+    @day_check_ins = @schedule.schedule_check_ins.order(:checked_in_at, :id)
     @management = ScheduleManagementData.new(user: @user, schedule: @schedule)
     @attendance_filter = %w[yes no unanswered].include?(params[:answer]) ? params[:answer] : 'all'
     answers = @schedule.name_schedules

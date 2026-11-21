@@ -78,8 +78,8 @@ jobs:
           node test/security/circle_city_search_js_test.js
       - name: Test circle owner permissions
         run: bundle exec rails test test/integration/circle_owner_permissions_test.rb test/controllers/reviews_controller_test.rb test/integration/schedule_copy_test.rb test/integration/event_management_test.rb test/integration/schedule_listing_test.rb test/integration/schedule_calendar_test.rb test/integration/schedule_visibility_test.rb test/integration/event_day_results_test.rb test/integration/event_search_landings_test.rb test/integration/schedule_detail_design_test.rb test/performance/schedule_day_queries_check.rb
-      - name: Test member attendance answers
-        run: bundle exec rails test test/integration/attendance_answers_test.rb
+      - name: Test member attendance answers and day-of check-ins
+        run: bundle exec rails test test/integration/attendance_answers_test.rb test/integration/schedule_check_ins_test.rb
       - name: Test event management clipboard
         run: node test/security/event_management_js_test.js
       - name: Test concurrent schedule creation

@@ -1,0 +1,5 @@
+<%= l(Date.iso8601(event.day), format: '%-m月%-d日') %>
+<% if event.time_s %><%= l(event.time_s, format: '%H:%M') %><% end %>
+<% if event.time_e %>〜 <%= l(event.time_e, format: '%H:%M') %><% end %>
+<%# Member-only venues and other event data do not go into the link-accessible guest page. %>
+<%= event.venue %>

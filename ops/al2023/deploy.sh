@@ -126,6 +126,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261030000000
     # Approved additive state for continuous official facility discovery.
     bundle exec rails db:migrate:up VERSION=20261113000000
+    # Additive circle QR key and independent check-in records.
+    bundle exec rails db:migrate:up VERSION=20261122000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

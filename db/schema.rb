@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_11_13_000000) do
+ActiveRecord::Schema.define(version: 2026_11_22_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -854,6 +854,14 @@ ActiveRecord::Schema.define(version: 2026_11_13_000000) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
+  create_table "schedule_check_ins", force: :cascade do |t|
+    t.bigint "schedule_id", null: false
+    t.bigint "name_id", null: false
+    t.string "display_name", null: false
+    t.datetime "checked_in_at", null: false
+    t.index ["schedule_id", "name_id"], name: "index_schedule_check_ins_on_schedule_id_and_name_id", unique: true
+  end
+
   create_table "schedules", force: :cascade do |t|
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -922,6 +930,8 @@ ActiveRecord::Schema.define(version: 2026_11_13_000000) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "attendance_check_in_token"
+    t.index ["attendance_check_in_token"], name: "index_users_on_attendance_check_in_token", unique: true
     t.jsonb "sport_details", default: {}, null: false
     t.string "name"
     t.string "email"
@@ -1089,4 +1099,5 @@ ActiveRecord::Schema.define(version: 2026_11_13_000000) do
   add_foreign_key "reviews", "conversation_reviews"
   add_foreign_key "place_import_candidates", "places"
   add_foreign_key "place_import_candidates", "place_import_runs"
+  add_foreign_key "schedule_check_ins", "schedules", on_delete: :cascade
 end

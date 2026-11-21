@@ -33,6 +33,7 @@ class Schedule < ApplicationRecord
   include PublicListingOrder
   include RemembersCircleActivity
   belongs_to :user
+  has_many :schedule_check_ins
 	has_many :name_schedules, dependent: :destroy
   has_many :names, through: :name_schedules
   validates :day, presence: true, date: true
