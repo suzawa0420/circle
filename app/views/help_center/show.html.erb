@@ -12,6 +12,16 @@
       <% end %>
     </nav>
   <% end %>
+  <% if @article[:id] == 'reset-mail' %>
+    <nav class="help-links" aria-label="メール確認画面と関連する案内">
+      <%= link_to '参加者のメール確認画面（要ログイン）', member_email_verification_path %>
+      <%= link_to '主催者のメール確認画面（要ログイン）', admin_user_email_verification_path %>
+      <%= link_to 'iCloudの空き容量を増やす方法（Appleサポート）', 'https://support.apple.com/ja-jp/108922' %>
+      <%= link_to 'サイト内メッセージの確認方法', help_article_path('message-notification') %>
+    </nav>
+  <% elsif @article[:id] == 'message-notification' %>
+    <p><%= link_to '確認メールが届かないときの受信設定・容量の確認', help_article_path('reset-mail') %></p>
+  <% end %>
   <% if @article[:id] == 'inquiry-method' %>
     <nav class="help-links" aria-label="問い合わせ方法の関連FAQ">
       <%= link_to 'サイト内チャットの確認・返信方法', help_article_path('message-notification') %>

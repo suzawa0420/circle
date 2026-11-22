@@ -42,6 +42,22 @@ class HelpCenterTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{help_article_path('owner-reply')}']"
   end
 
+  test 'mail article is shared by both roles with accurate resending paths' do
+    %w[member owner].each do |role|
+      get faq_path(help_query: 'iCloud 届かない', audience: role, category: 'account')
+      assert_select "a[href='#{help_article_path('reset-mail')}']"
+    end
+    get help_article_path('reset-mail')
+    assert_response :success
+    assert_select '.help-answer', text: /迷惑メール.*受信拒否設定.*打ち間違い.*iCloudストレージ.*確認メールを再送.*通知メール.*サイト内の「メッセージ」/m
+    assert_select ".help-links a[href='#{member_email_verification_path}']"
+    assert_select ".help-links a[href='#{admin_user_email_verification_path}']"
+    assert_select ".help-links a[href='https://support.apple.com/ja-jp/108922']"
+    assert_select ".help-links a[href='#{help_article_path('message-notification')}']"
+    get help_article_path('message-notification')
+    assert_select "a[href='#{help_article_path('reset-mail')}']"
+  end
+
   test 'message help separates roles and links to login and missing reply guidance' do
     get help_article_path('message-notification')
     assert_response :success
