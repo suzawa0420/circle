@@ -103,6 +103,8 @@ class MemberInquiryLimitTest < ActionDispatch::IntegrationTest
     fill_quota
     get new_user_conversation_path(new_circle)
     assert_select '.chat-inquiry-limit strong', text: /あと0件 \/ 5件/
+    assert_select '.chat-inquiry-limit--compact p', text: /日本時間の午前0時/
+    assert_select 'textarea#message_body'
     assert_select 'input[type=submit][disabled][value="問い合わせを送信"]'
     get conversation_path(@conversation)
     assert_select '#chat-reply input[type=submit]:not([disabled])'

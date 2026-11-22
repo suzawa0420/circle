@@ -21,6 +21,11 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
       get new_user_conversation_path(@circle)
     end
     assert_response :success
+    assert_select '.chat-new-inquiry label[for=message_body] + textarea#message_body[name="message[body]"]'
+    assert_select 'textarea#message_body + details.inquiry-guidance:not([open]) summary', text: 'サークルの活動予定・確認事項'
+    assert_select '.chat-new-inquiry > details:not([open]) a', text: '利用規約'
+    assert_select '.chat-inquiry-limit--compact strong', text: /あと5件 \/ 5件/
+    assert_select '.chat-inquiry-limit--compact p', count: 0
     assert_select '.inquiry-guidance__message', count: 2
     assert_select '.inquiry-guidance', text: /活動1/
     assert_select '.inquiry-guidance', text: /活動3/

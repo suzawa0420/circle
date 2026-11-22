@@ -1,47 +1,49 @@
-<main class="chat-shell cb-participant">
+<main class="chat-shell cb-participant chat-new-inquiry">
   <%= link_to @user.name, circle_path(@user) %>
   <h1>サークルに問い合わせる</h1>
-  <%= render "inquiry_limit" %>
+  <%= render "inquiry_limit", compact: true, new_inquiry: @new_inquiry %>
   <%= render "conversations/no_reply_notice", user: @user %>
-  <p>返信はこのサイトのメッセージで確認できます。初回の返信後、双方が対応について評価できます。</p>
-  <%= render 'conversations/participation_notice' %>
   <% if [1, 2].include?(@user.admin_user.check) %>
     <aside class="chat-card" aria-label="参加前の注意">
-      <img src="/images/mascot/squirrel-warning.png" alt="参加前の確認を呼びかけるリス" width="160" height="160" style="display:block;margin:0 auto;object-fit:contain">
+      <h2>参加前の注意</h2>
       <%= render 'users/parts/admin_user_check', admin_user: @user.admin_user %>
     </aside>
   <% end %>
-  <% if @inquiry_guidance.any? %>
-    <section class="inquiry-guidance" aria-label="問い合わせ前の自動案内">
-      <h2>メッセージを送る前に</h2>
-      <p>サークルの活動予定・確認事項をご覧ください。</p>
-      <% @inquiry_guidance.each do |body| %>
-        <article class="chat-card inquiry-guidance__message"><strong class="message-role message-role--owner">サークルからの自動案内</strong><div class="chat-body"><%= automatic_message_body(body) %></div></article>
-      <% end %>
-      <% if CircleInquiryGuidance.template_for(@user).present? %>
-        <button type="button" class="cb-button cb-button--secondary" data-inquiry-template-copy="<%= CircleInquiryGuidance.template_for(@user) %>">確認事項を回答欄に引用する</button>
-      <% end %>
-    </section>
-  <% end %>
-  <div class="chat-card">
+  <div class="chat-card chat-new-inquiry__form">
     <%= form_with url: user_conversations_path(@user), scope: :message, local: true do |f| %>
       <% if @inquiry_context.present? %>
         <%= hidden_field_tag :inquiry_context, params[:inquiry_context] %>
-        <p class="chat-muted">ご覧になったページは自動で記録され、送信後にシステムから案内されます。選択や入力は不要です。</p>
       <% end %>
       <%= f.label :body, '問い合わせ内容' %>
-      <%= f.text_area :body, required: true, maxlength: 2000, rows: 8, data: { inquiry_preview_input: true }, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
+      <%= f.text_area :body, id: 'message_body', required: true, maxlength: 2000, rows: 5, data: { inquiry_preview_input: true }, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
+      <% if @inquiry_guidance.any? %>
+        <details class="inquiry-guidance chat-new-inquiry__details" aria-label="問い合わせ前の自動案内">
+          <summary>サークルの活動予定・確認事項</summary>
+          <% @inquiry_guidance.each do |body| %>
+            <article class="chat-card inquiry-guidance__message"><strong class="message-role message-role--owner">サークルからの自動案内</strong><div class="chat-body"><%= automatic_message_body(body) %></div></article>
+          <% end %>
+          <% if CircleInquiryGuidance.template_for(@user).present? %>
+            <button type="button" class="cb-button cb-button--secondary" data-inquiry-template-copy="<%= CircleInquiryGuidance.template_for(@user) %>">確認事項を回答欄に引用する</button>
+          <% end %>
+        </details>
+      <% end %>
       <% if @inquiry_context.present? %>
         <details class="chat-inquiry-preview" open>
           <summary>送信後の表示プレビュー</summary>
+          <p class="chat-muted">ご覧になったページは自動で記録され、送信後にシステムから案内されます。選択や入力は不要です。</p>
           <%= render 'inquiry_context', context: @inquiry_context %>
           <div class="chat-body">
             <p data-inquiry-body-preview>ここに入力したお問い合わせ内容が表示されます。</p>
           </div>
         </details>
       <% end %>
-      <p>ニックネームと公開プロフィール・評価は主催者に表示されます。</p>
+      <p class="chat-new-inquiry__hint">返信はサイト内のメッセージに届きます。</p>
       <%= f.submit '問い合わせを送信', class: 'chat-button', disabled: @new_inquiry && remaining_member_inquiries.zero? %>
     <% end %>
   </div>
+  <details class="chat-new-inquiry__details">
+    <summary>公開範囲・参加前の注意事項</summary>
+    <p class="participant-help">ニックネームと公開プロフィール・評価は主催者に表示されます。初回の返信後、双方が対応について評価できます。</p>
+    <%= render 'conversations/participation_notice' %>
+  </details>
 </main>

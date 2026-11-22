@@ -384,3 +384,16 @@ body.cb-site .chat-inbox .chat-talk__preview { display: block; white-space: nowr
 .chat-inquiry-limit strong { display: block; font-size: 15px; line-height: 1.7; }
 .chat-inquiry-limit p { margin: 6px 0 0; font-size: 13px; }
 .chat-shell .chat-button:disabled { opacity: .55; cursor: not-allowed; }
+
+// First inquiry: keep the message field ahead of supporting information.
+.chat-new-inquiry .chat-inquiry-limit--compact { margin: 8px 0; padding: 7px 12px; }
+.chat-new-inquiry .chat-inquiry-limit--compact strong { font-size: 13px; }
+.chat-new-inquiry .chat-new-inquiry__form { margin: 10px 0; }
+.chat-new-inquiry .chat-new-inquiry__details { margin: 8px 0; }
+.chat-new-inquiry .chat-new-inquiry__details > summary { cursor: pointer; padding: 10px 0; font-weight: 600; }
+.chat-new-inquiry .chat-new-inquiry__hint { margin: 6px 0; font-size: 13px; }
+@media (max-width: 599px) {
+  .chat-new-inquiry.chat-shell { margin-top: 8px; padding-top: 8px; }
+  .chat-new-inquiry.chat-shell h1 { font-size: 20px; margin: 8px 0; }
+  .chat-new-inquiry .chat-new-inquiry__form { padding: 12px; }
+}
