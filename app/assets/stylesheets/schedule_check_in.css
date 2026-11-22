@@ -13,3 +13,17 @@
 .check-in-url-hint { margin: .35rem 0 0; font-size: .875rem; }
 [data-attendance-qr-copy] { min-height: 44px; margin-top: .5rem; padding: .3rem .75rem; font: inherit; }
 .check-in-issue-button { min-height: 44px; padding: .4rem .8rem; border-radius: 8px; border: 1px solid #8da6ad; background: #eef8fa; color: #153e4b; font: inherit; font-weight: 600; cursor: pointer; }
+
+/* Keep the participant experience independent of the site's ads and navigation. */
+.check-in-participant { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; color: #202124; }
+.check-in-site-header { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 64px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e3e6e8; }
+.check-in-site-header img { display: block; max-width: 100%; height: auto; }
+.check-in-participant .check-in-panel { width: min(calc(100% - 32px), 520px); margin: 24px auto; border-color: #e3e6e8; border-radius: 16px; }
+.check-in-participant .check-in-panel a { color: #0f6849; }
+.check-in-participant .check-in-options a, .check-in-participant .check-in-options button { background: #edf7f2; border-color: #91b3a1; color: #0f6849; }
+.check-in-participant .check-in-options .check-in-submit { background: #0f6849; border-color: #0f6849; color: #fff; text-align: center; }
+.check-in-participant .check-in-panel :focus-visible { outline-color: #16835d; }
+.check-in-site-footer { box-sizing: border-box; margin-top: auto; padding: 16px; color: #656b73; text-align: center; }
+@media (max-width: 540px) {
+  .check-in-participant .check-in-panel { width: calc(100% - 24px); margin-top: 16px; }
+}

@@ -61,6 +61,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     get check_in_qr_user_schedule_path(@circle, @future)
     assert_response :success
     assert_equal 'strict-origin', response.headers['Referrer-Policy']
+    assert_select '.check-in-site-header, .check-in-site-footer', count: 0
     assert_includes response.headers['Cache-Control'], 'no-store'
     assert_select 'script[src^="http"]', false
     assert_select '[data-attendance-qr][data-url=?]', "https://circle-book.com#{circle_check_in_path(token: key)}"
@@ -78,6 +79,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     get circle_check_in_path(token: token)
     assert_response :success
     assert_select 'h2', text: @event.title
+    assert_participant_brand
     assert_select 'button', text: @yes.name.name
     assert_select 'button', text: @no.name.name, count: 0
     [@yes.comment, @foreign_yes.name.name, @event.member_venue, @future.title, @cancelled.title].each do |private_text|
@@ -93,12 +95,14 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
   test 'multiple JST events are selected by event and closed days do not list participants' do
     second = event(@circle, '午後のバスケ', time_e: '20:00')
     get circle_check_in_path(token: token)
+    assert_participant_brand
     assert_select 'a[href=?]', circle_check_in_event_path(second, token: token), text: /午後のバスケ.*20:00.*川崎市/m
     assert_select 'a[href=?]', circle_check_in_event_path(@event, token: token)
     assert_not_includes response.body, @yes.name.name
     travel_to Time.utc(2026, 11, 21, 14, 59)
     get circle_check_in_path(token: token)
     assert_response :success
+    assert_participant_brand
     assert_select 'p', text: '本日チェックインを受け付けているイベントはありません。'
     assert_not_includes response.body, @yes.name.name
   end
@@ -133,12 +137,15 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
       post confirm_circle_check_in_path(@event, token: token), params: { name_id: @yes.name_id }
       assert_response :success
       assert_select 'h1', text: '名前の確認'
+      assert_participant_brand
+      assert_select 'button.check-in-submit', text: 'チェックインする'
     end
     assert_difference('ScheduleCheckIn.count', 1) do
       2.times do
         post circle_check_in_event_path(@event, token: token), params: { name_id: @yes.name_id }
         assert_response :success
         assert_select 'h1', text: 'チェックインが完了しました'
+        assert_participant_brand
       end
     end
     assert_equal 1, @yes.reload.answer
@@ -293,6 +300,15 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
   ensure
     ActionController::Base.allow_forgery_protection = original_protection
     ActionController::Base.forgery_protection_origin_check = original_origin_check
+  end
+
+
+  private
+
+  def assert_participant_brand
+    assert_select 'header.check-in-site-header img[src="/images/listing-logo-320-v2.webp"][alt="サークルブック"]'
+    assert_select 'header.check-in-site-header + main.check-in-panel + footer.check-in-site-footer', text: /サークルブック/
+    assert_select 'script, iframe, img[src^="http"]', count: 0
   end
 
 end

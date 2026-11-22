@@ -8,7 +8,16 @@
   <%= csrf_meta_tags %>
   <%= stylesheet_link_tag 'schedule_check_in' %>
 </head>
-<body class="check-in-page">
+<% participant_page = controller_path == 'schedule_check_ins' %>
+<body class="check-in-page<%= ' check-in-participant' if participant_page %>">
+  <% if participant_page %>
+    <header class="check-in-site-header">
+      <%= image_tag '/images/listing-logo-320-v2.webp', alt: 'サークルブック', width: 160, height: 42 %>
+    </header>
+  <% end %>
   <main class="check-in-panel"><%= yield %></main>
+  <% if participant_page %>
+    <footer class="check-in-site-footer"><small>© サークルブック</small></footer>
+  <% end %>
 </body>
 </html>
