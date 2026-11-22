@@ -10,7 +10,12 @@
       <div class="participant-field"><%= f.label :nickname do %>ニックネーム <span class="participant-required">必須</span><% end %><%= f.text_field :nickname, required: true, maxlength: 30, autocomplete: 'nickname', placeholder: 'サークルブック' %><p class="participant-help">プロフィールや口コミに表示されます。</p></div>
       <fieldset class="participant-field"><legend>性別</legend><div class="participant-options"><% [['1', '男性'], ['2', '女性'], ['0', 'その他・回答しない']].each do |value, label| %><label><%= f.radio_button :gender, value %><span><%= label %></span></label><% end %></div></fieldset>
       <div class="participant-field"><%= f.label :date_of_birth, '生年月日' %><%= f.date_field :date_of_birth, min: '1900-01-01', max: Date.current.iso8601, autocomplete: 'bday', 'aria-describedby': 'birth-privacy' %><p class="participant-help" id="birth-privacy"><strong>生年月日は公開されません。</strong>公開画面には、生年月日から自動計算した「20代」「40代」などの年代だけを表示します。</p></div>
-      <div class="participant-field"><%= f.label :prefecture_id do %>メインの活動エリア <span class="participant-required">必須</span><% end %><%= f.collection_select :prefecture_id, @prefectures, :id, :name, { prompt: '都道府県を選択してください' }, { required: true } %></div>
+      <div class="participant-field">
+        <%= f.label :prefecture_id do %>メインの活動エリア <span class="participant-required">必須</span><% end %>
+        <div class="participant-area-picker">
+          <%= f.collection_select :prefecture_id, @prefectures, :id, :name, { prompt: '都道府県を選択してください' }, { required: true } %>
+        </div>
+      </div>
     </section>
     <section class="participant-card" id="interests"><h2>興味のある種目 <span class="participant-required">必須</span></h2><p class="participant-help">複数選択できます。気になるスポーツや趣味を選んでください。</p>
       <%= hidden_field_tag 'member[event_ids][]', '' %>

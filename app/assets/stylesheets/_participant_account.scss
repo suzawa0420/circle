@@ -53,6 +53,32 @@
 .participant-field > label, .participant-field > legend { display: block; margin: 0 0 8px; font-size: 14px; font-weight: 700; border: 0; }
 .participant-required { display: inline-block; padding: 2px 6px; margin-left: 5px; border-radius: 4px; color: $cb-participant-hover; background: $cb-participant-soft; font-size: 10px; vertical-align: middle; }
 .participant-form input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]), .participant-form select, .participant-form textarea { display: block; width: 100%; min-width: 0; min-height: 48px; padding: 10px 12px; border: 1px solid $cb-input-border; border-radius: $cb-radius-control; background: $cb-surface; font-size: 16px; color: $cb-text; box-sizing: border-box; }
+// Keep the selected label centered and unclipped in iOS Safari's native select.
+.participant-area-picker { position: relative; }
+.participant-form .participant-area-picker select {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 52px;
+  min-height: 52px;
+  padding: 0 36px 0 12px;
+  line-height: 1.5;
+}
+.participant-area-picker::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+@media (max-width: 359px) {
+  .participant-form .participant-area-picker select { padding-left: 8px; padding-right: 18px; }
+  .participant-area-picker::after { right: 7px; width: 7px; height: 7px; }
+}
 .participant-form input[type=file] { font-size: 13px !important; }
 .participant-form textarea { resize: vertical; }
 .participant-form :focus-visible, .participant-shell a:focus-visible { outline: 2px solid $cb-participant; outline-offset: 3px; }

@@ -65,6 +65,19 @@ class ParticipantAccountsTest < ActionDispatch::IntegrationTest
     assert_equal [@circle.event_id, extra.id].sort, @member.event_ids.sort
   end
 
+  test 'the native activity area field keeps its prompt, long selection, and saved value' do
+    prefecture = Prefecture.create!(name: '合成テスト用の長い都道府県名', kana: 'long-test-area', order: '3', sort: 3)
+    get edit_member_path(@member)
+    assert_response :success
+    assert_select 'label[for=member_prefecture_id]', text: /メインの活動エリア/
+    assert_select '.participant-area-picker select#member_prefecture_id[required] option[value=""]', text: '都道府県を選択してください'
+    patch member_path(@member), params: { member: { prefecture_id: prefecture.id, event_ids: [@circle.event_id] } }
+    assert_redirected_to member_path(@member)
+    assert_equal prefecture.id, @member.reload.prefecture_id
+    get edit_member_path(@member)
+    assert_select '.participant-area-picker select option[selected]', text: prefecture.name
+  end
+
   test 'self introduction requires Japanese kana and keeps invalid input for correction' do
     get edit_member_path(@member)
     assert_select '#profile-language-help', text: /必ず日本語でお書きください/
