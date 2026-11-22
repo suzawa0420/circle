@@ -60,7 +60,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     assert_select 'a[href=?]', check_in_qr_user_schedule_path(@circle, @future)
     get check_in_qr_user_schedule_path(@circle, @future)
     assert_response :success
-    assert_equal 'no-referrer', response.headers['Referrer-Policy']
+    assert_equal 'strict-origin', response.headers['Referrer-Policy']
     assert_includes response.headers['Cache-Control'], 'no-store'
     assert_select 'script[src^="http"]', false
     assert_select '[data-attendance-qr][data-url=?]', "https://circle-book.com#{circle_check_in_path(token: key)}"
@@ -84,7 +84,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     end
     assert_includes response.headers['Cache-Control'], 'no-store'
     assert_equal 'noindex, nofollow, noarchive', response.headers['X-Robots-Tag']
-    assert_equal 'no-referrer', response.headers['Referrer-Policy']
+    assert_equal 'strict-origin', response.headers['Referrer-Policy']
     assert_equal '/ci?token=[FILTERED]', request.filtered_path
     assert_select 'script', false
   end
@@ -202,7 +202,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     get attendances_path(@circle.unique_id)
     assert_response :success
     assert_includes response.headers['Cache-Control'], 'no-store'
-    assert_select 'header.attendance-heading + section[aria-label=?] a[href=?]', '主催者向け当日チェックイン', user_check_in_qr_path(@circle), text: /当日チェックインのQR・URLを表示/
+    assert_select 'section[aria-label="メンバーへの共有"] + section[aria-label=?] a[href=?]', '主催者向け当日チェックイン', user_check_in_qr_path(@circle), text: /当日チェックインのQR・URLを表示/
     assert_select 'a[href=?]', new_attendance_path(@circle.unique_id)
     get user_check_in_qr_path(@circle)
     assert_response :success
@@ -250,6 +250,46 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert_equal key, @circle.reload.attendance_check_in_token
     assert_equal 1, @yes.reload.answer
+  end
+
+
+  test 'browser form submissions work with CSRF enabled and still reject invalid origin or token' do
+    sign_in
+    original_protection = ActionController::Base.allow_forgery_protection
+    original_origin_check = ActionController::Base.forgery_protection_origin_check
+    ActionController::Base.allow_forgery_protection = true
+    ActionController::Base.forgery_protection_origin_check = true
+
+    get user_check_in_qr_path(@circle)
+    assert_equal 'strict-origin', response.headers['Referrer-Policy']
+    issuer_csrf = css_select('meta[name=csrf-token]').first['content']
+    issuer_origin = request.base_url
+    assert_raises(ActionController::InvalidAuthenticityToken) do
+      post user_check_in_qr_path(@circle), params: { authenticity_token: issuer_csrf }, headers: { 'Origin' => 'null' }
+    end
+    assert_nil @circle.reload.attendance_check_in_token
+    post user_check_in_qr_path(@circle), params: { authenticity_token: issuer_csrf }, headers: { 'Origin' => issuer_origin }
+    assert_response :see_other
+
+    key = @circle.reload.attendance_check_in_token
+    get circle_check_in_path(token: key)
+    assert_equal 'strict-origin', response.headers['Referrer-Policy']
+    guest_csrf = css_select('meta[name=csrf-token]').first['content']
+    guest_origin = request.base_url
+    assert_raises(ActionController::InvalidAuthenticityToken) do
+      post circle_check_in_event_path(@event, token: key), params: { name_id: @yes.name_id, authenticity_token: guest_csrf }, headers: { 'Origin' => 'https://unrelated.example' }
+    end
+    assert_raises(ActionController::InvalidAuthenticityToken) do
+      post circle_check_in_event_path(@event, token: key), params: { name_id: @yes.name_id }, headers: { 'Origin' => guest_origin }
+    end
+    post confirm_circle_check_in_path(@event, token: key), params: { name_id: @yes.name_id, authenticity_token: guest_csrf }, headers: { 'Origin' => guest_origin }
+    assert_response :success
+    post circle_check_in_event_path(@event, token: key), params: { name_id: @yes.name_id, authenticity_token: guest_csrf }, headers: { 'Origin' => guest_origin }
+    assert_response :success
+    assert_equal @yes.name_id, @event.schedule_check_ins.sole.name_id
+  ensure
+    ActionController::Base.allow_forgery_protection = original_protection
+    ActionController::Base.forgery_protection_origin_check = original_origin_check
   end
 
 end

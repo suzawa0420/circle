@@ -42,7 +42,7 @@ class ScheduleCheckInManagementController < ApplicationController
   def private_response
     response.headers['Cache-Control'] = 'private, no-store'
     response.headers['X-Robots-Tag'] = 'noindex, nofollow'
-    response.headers['Referrer-Policy'] = 'no-referrer'
+    response.headers['Referrer-Policy'] = 'strict-origin'
   end
 
   def set_scope
