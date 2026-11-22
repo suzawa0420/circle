@@ -2,6 +2,7 @@
 // gallery, datepicker, jQuery, or Bootstrap JavaScript bundles.
 //= require rails-ujs
 //= require mobile_navigation
+//= require page_navigation_scroll
 //= require circle_scroll_header
 //= require home_screen_install
 //= require circle_inquiry_tracking

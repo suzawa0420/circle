@@ -13,6 +13,7 @@
 //= require rails-ujs
 //= require activestorage
 
+//= require page_navigation_scroll
 //= require turbolinks
 //= require jquery3
 //= require moment

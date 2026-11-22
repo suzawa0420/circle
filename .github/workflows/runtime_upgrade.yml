@@ -130,6 +130,7 @@ jobs:
       - run: node test/security/sport_discovery_tracking_js_test.js
       - run: node test/security/circle_inquiry_tracking_js_test.js
       - run: node test/security/circle_search_navigation_js_test.js
+      - run: node test/security/page_navigation_scroll_js_test.js
       - run: node test/security/circle_readmore_js_test.js
       - run: bundle exec ruby test/uploaders/image_uploader_url_check.rb
       - run: bundle exec ruby test/performance/unicorn_readiness_test.rb
