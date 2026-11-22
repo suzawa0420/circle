@@ -100,7 +100,7 @@ input,
 /* 共通レイアウト ================================ */
 body {
   color: $cb-text;
-  background-color: $cb-canvas;
+  background-color: $cb-page-canvas;
   margin: 0;
   padding: 0;
   min-height: 1vh;
@@ -115,7 +115,7 @@ body {
   width: 100%;
   height: auto;
   min-height: 100%;
-  background-color: $cb-canvas;
+  background-color: $cb-page-canvas;
 }
 
 .user_main {
@@ -6973,7 +6973,7 @@ td.ui-datepicker-week-end a.ui-state-highlight {
 .footer_wrap {
   margin: 30px auto 0;
   // padding: 0px 0px 80px;
-  background: $cb-canvas;
+  background: $cb-page-canvas;
 
   .breadcrumbs_wrapper {
     width: 100%;

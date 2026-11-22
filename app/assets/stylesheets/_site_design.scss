@@ -4,7 +4,7 @@
 
 .cb-site {
   @include cb-type(body);
-  background: $cb-canvas;
+  background: $cb-page-canvas;
   color: $cb-text;
   a:hover, a:active { opacity: 1; }
   :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid $cb-action; outline-offset: 3px; }

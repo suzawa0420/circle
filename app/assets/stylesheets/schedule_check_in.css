@@ -1,4 +1,4 @@
-.check-in-page { margin: 0; background: #f4f7f8; color: #192834; font: 16px/1.6 system-ui, sans-serif; }
+.check-in-page { margin: 0; background: #f8f9fa; color: #192834; font: 16px/1.6 system-ui, sans-serif; }
 .check-in-panel { box-sizing: border-box; max-width: 520px; margin: 24px auto; padding: 24px; background: #fff; border: 1px solid #c7d1d5; border-radius: 12px; overflow-wrap: anywhere; }
 .check-in-panel h1 { font-size: 1.5rem; margin-top: 0; }
 .check-in-panel h2 { font-size: 1.18rem; }
