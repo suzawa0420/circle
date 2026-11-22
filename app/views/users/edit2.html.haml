@@ -1,7 +1,7 @@
-- set_meta_tags title: "活動エリア・カテゴリー", noindex: true
+- set_meta_tags title: "メンバー・募集条件", noindex: true
 .main.users-edit
   .container
-    %h1.cb-page-title 活動エリア・カテゴリー
+    %h1.cb-page-title メンバー・募集条件
     = render "users/parts/user_switching", user: @user
     .form.users-form
       = render "users/parts/step_bar"
@@ -21,8 +21,20 @@
               %br>/
               ※記号などは使用できません
             = fin.text_field :unique_id, id: 'change_order', class: 'form-control', placeholder: "circlebook"
-          .edit02_warp
-            %span.edit02_subtitle カテゴリー
+          %section.edit02_warp
+            %h2.edit02_subtitle 現在のメンバー
+            %p 現在活動しているメンバーの年齢層を選びます。
+            .check_boxes
+              = f.collection_check_boxes(:age_ids, Age.all, :id, :name)
+            = render "users/member_composition_fields", f: f
+          %section.edit02_warp
+            %h2.edit02_subtitle 募集対象
+            %p これから参加してほしい方に当てはまる項目を選びます。
+            .check_boxes
+              = f.collection_check_boxes(:group_ids, Group.all.order(:id => :asc), :id, :name)
+          %section.edit02_warp
+            %h2.edit02_subtitle 検索用タグ
+            %p サークル探しの絞り込みに使われるタグです。
             .check_boxes
               = f.collection_check_boxes(:tag_ids, @tags, :id, :name)
           - if @user.prefecture_id != 50

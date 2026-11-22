@@ -8,10 +8,11 @@
   box-sizing: border-box;
   padding: 16px;
   margin: 16px 0;
-  border: 1px solid $cb-border;
   border-radius: 12px;
   background: $cb-surface;
 }
+.cb-composition-fields { border: 1px solid $cb-border; }
+
 .cb-composition-fields > legend {
   width: auto;
   padding: 0 5px;

@@ -178,17 +178,7 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
 
 	def edit2
 		@user = User.find(params[:id])
-		@prefecture = Prefecture.find(@user.prefecture_id)
-		@cities = City.where(prefecture_id: @user.prefecture_id).order(:id => :asc)
-		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
-		@sub_cities = City.where(prefecture_id: @user.prefecture_sub_id).order(:id => :asc)
-		@user.users_cities.build
-
-    if @user.link.present?
-    else
-      @user.build_link
-    end
-
+    set_edit2_fields
   end
 
 	def edit3
@@ -248,23 +238,27 @@ before_action :inquiry_settings_privacy, only: [:inquiry_settings, :update_inqui
 
 	end
 
-	def update2
-		@user = User.find(params[:id])
-		@prefecture = Prefecture.find(@user.prefecture_id)
-		@cities = City.where(prefecture_id: @user.prefecture_id).order(:id => :asc)
-		@sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
-		@sub_cities = City.where(prefecture_id: @user.prefecture_sub_id).order(:id => :asc)
+  def update2
+    @user = User.find(params[:id])
+    fields = user_params
+    saved = User.transaction(requires_new: true) do
+      raise ActiveRecord::Rollback unless @user.update(fields)
 
-    if @user.update(user_params)
-      @user.id = @user.id
-      @user.save
-      flash[:notice] = 'ステップ２更新完了！'
-      redirect_to "/users/#{@user.id}/edit3"
-    else
-      render "/users/edit2"
+      # Keep the existing search text in step with submitted checkbox collections,
+      # but leave it untouched when an older form did not send a collection.
+      @user.grouping = @user.users_groups.includes(:group).map { |row| row.group.name } if fields.key?(:group_ids)
+      @user.average_age = @user.users_ages.includes(:age).map { |row| row.age.name } if fields.key?(:age_ids)
+      @user.save! if @user.changed?
+      true
     end
 
-	end
+    if saved
+      redirect_to "/users/#{@user.id}/edit3", notice: 'ステップ２更新完了！'
+    else
+      set_edit2_fields
+      render "/users/edit2", status: :unprocessable_entity
+    end
+  end
 
   def update3
 		@user = User.find(params[:id])
@@ -691,6 +685,14 @@ private
     return if webmaster? || current_admin_user.email_verified?
     store_location_for(:admin_user, new_user_path)
     redirect_to admin_user_email_verification_path, alert: 'サークルの登録前にメールアドレスを確認してください。'
+  end
+
+  def set_edit2_fields
+    @prefecture = Prefecture.find(@user.prefecture_id)
+    @cities = City.where(prefecture_id: @user.prefecture_id).order(id: :asc)
+    @sub_prefecture = Prefecture.find_by(id: @user.prefecture_sub_id)
+    @sub_cities = City.where(prefecture_id: @user.prefecture_sub_id).order(id: :asc)
+    @user.build_link unless @user.link
   end
 
 	def user_params

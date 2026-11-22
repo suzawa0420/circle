@@ -98,15 +98,16 @@
     = f.text_field :recruitment, class: 'form-control', placeholder: "初心者・経験者でもOKです！"
     .label_item 現在の構成メンバー
     = f.text_field :member, class: 'form-control', placeholder: "10名程"
-    .edit01_warp
-      %span.edit01_subtitle 年齢層
-      .check_boxes
-        = f.collection_check_boxes(:age_ids, Age.all, :id, :name)
-    = render "users/member_composition_fields", f: f
-    .edit01_warp
-      %span.edit01_subtitle 募集内容
-      .check_boxes
-        = f.collection_check_boxes(:group_ids, Group.all.order(:id => :asc), :id, :name)
+    - if @user.new_record?
+      .edit01_warp
+        %span.edit01_subtitle 年齢層
+        .check_boxes
+          = f.collection_check_boxes(:age_ids, Age.all, :id, :name)
+      = render "users/member_composition_fields", f: f
+      .edit01_warp
+        %span.edit01_subtitle 募集内容
+        .check_boxes
+          = f.collection_check_boxes(:group_ids, Group.all.order(:id => :asc), :id, :name)
     .label_item 会費・費用
     = f.text_field :cost, class: 'form-control', placeholder: "500円（無料の場合は「無料」）"
     .label_item サークル目標

@@ -15,7 +15,7 @@
         プロフィール
     - elsif @user.persisted?
       - current_step = { "edit" => 1, "update" => 1, "edit2" => 2, "update2" => 2, "edit3" => 3, "update3" => 3 }[controller.action_name]
-      - [["基本情報", edit_user_path(@user)], ["活動エリア・カテゴリー", "/users/#{@user.id}/edit2"], ["主催者プロフィール", "/users/#{@user.id}/edit3"]].each_with_index do |(title, path), index|
+      - [["基本情報", edit_user_path(@user)], ["メンバー・募集条件", "/users/#{@user.id}/edit2"], ["主催者プロフィール", "/users/#{@user.id}/edit3"]].each_with_index do |(title, path), index|
         - step = index + 1
         %li.edit-step{class: (step == current_step ? "active" : (current_step && step < current_step ? "complete" : nil))}
           = link_to path, class: "edit-step-link", aria: { current: (step == current_step ? "step" : nil) } do
