@@ -2,6 +2,7 @@
 <h2><%= @circle.name %></h2>
 <p>このサークルで毎回使えるQRコードです。当日、会場で参加者に読み取ってもらってください。</p>
 <p>URLを知っている人は当日の参加予定者の名前を見てチェックインできます。公開ページやSNSには掲載せず、会場での掲示にお使いください。</p>
+<% if @circle.attendance_check_in_token.present? %>
 <% check_in_url = "https://circle-book.com#{circle_check_in_path(token: @circle.attendance_check_in_token)}" %>
 <div data-attendance-qr data-url="<%= check_in_url %>">
   <div data-attendance-qr-image aria-label="当日チェックイン用QRコード" role="img"></div>
@@ -14,11 +15,15 @@
 <details>
   <summary>QRコードを再発行</summary>
   <p>共有先が分からなくなったときなどに再発行できます。これまでのQRコードと受付URLは使えなくなります。</p>
-  <%= form_with url: enable_check_in_user_schedule_path(@circle, @schedule), local: true do |form| %>
+  <%= form_with url: check_in_issue_path, local: true do |form| %>
     <%= form.hidden_field :reissue, value: '1' %>
     <label><%= check_box_tag :confirm_reissue, '1', false, required: true %> これまでのQRコードを無効にする</label>
     <%= form.submit '再発行' %>
   <% end %>
 </details>
-<p><%= link_to '出欠管理に戻る', manage_attendance_user_schedule_path(@circle, @schedule, anchor: 'day-check-ins') %></p>
-<%= javascript_include_tag 'schedule_check_in_qr', defer: true %>
+<% else %>
+  <p>QRコードは主催者が発行するまで使えません。開催予定を登録する前でも発行できます。</p>
+  <%= button_to check_in_issue_path, class: 'check-in-issue-button' do %>受付QRコードを発行<% end %>
+<% end %>
+<p><%= link_to (@schedule ? '出欠管理に戻る' : '出欠確認に戻る'), check_in_back_path, data: { turbolinks: false } %></p>
+<%= javascript_include_tag 'schedule_check_in_qr', defer: true if @circle.attendance_check_in_token.present? %>

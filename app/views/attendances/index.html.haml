@@ -8,6 +8,13 @@
       = link_to circle_path(@user), class: "attendance-circle" do
         = circle_avatar_tag @user, class: "attendance-circle__avatar"
         %span= @user.name
+    - if @schedule_share_allowed
+      %section.attendance-share{ 'aria-label' => '主催者向け当日チェックイン' }
+        %h2 当日チェックイン
+        %p 主催者のみ表示。会場で使う固定QRコードと受付URLを確認できます。
+        = link_to user_check_in_qr_path(@user), class: 'attendance-answer-button', data: { turbolinks: false } do
+          = lucide_icon 'calendar-check', **{ 'aria-hidden' => 'true' }
+          当日チェックインのQR・URLを表示
     - if can_manage_circle?(@user)
       .attendance-management-return
         %span メンバー用の出欠回答ページ

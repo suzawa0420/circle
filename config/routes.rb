@@ -176,6 +176,8 @@ Rails.application.routes.draw do
 
 
 	resources :users, except: [:show, :index] do
+    resource :check_in_qr, only: [:show, :create], controller: :schedule_check_in_management
+
 		resources :matches, only: [:new, :create]
 		resources :links, only: [:new, :create]
     resources :schedules do

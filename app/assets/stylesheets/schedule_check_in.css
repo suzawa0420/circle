@@ -10,3 +10,4 @@
 @media (max-width: 540px) { .check-in-panel { margin: 12px; padding: 18px; } }
 #check-in-copy { box-sizing: border-box; width: 100%; padding: .5rem; font: inherit; }
 [data-attendance-qr-copy] { min-height: 44px; margin-top: .5rem; padding: .3rem .75rem; font: inherit; }
+.check-in-issue-button { min-height: 44px; padding: .4rem .8rem; border-radius: 8px; border: 1px solid #8da6ad; background: #eef8fa; color: #153e4b; font: inherit; font-weight: 600; cursor: pointer; }

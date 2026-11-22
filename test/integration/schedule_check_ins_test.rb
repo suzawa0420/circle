@@ -195,4 +195,61 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     assert_not_equal 200, response.status
     assert_not_includes response.body, check_in.display_name
   end
+
+  test 'matching organizer has a prominent check-in link on the existing RSVP page without an event' do
+    @circle.schedules.destroy_all
+    sign_in
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    assert_includes response.headers['Cache-Control'], 'no-store'
+    assert_select 'header.attendance-heading + section[aria-label=?] a[href=?]', '主催者向け当日チェックイン', user_check_in_qr_path(@circle), text: /当日チェックインのQR・URLを表示/
+    assert_select 'a[href=?]', new_attendance_path(@circle.unique_id)
+    get user_check_in_qr_path(@circle)
+    assert_response :success
+    assert_includes response.headers['Cache-Control'], 'no-store'
+    assert_select 'button', text: '受付QRコードを発行'
+    assert_select '[data-attendance-qr]', false
+    assert_nil @circle.reload.attendance_check_in_token
+    post user_check_in_qr_path(@circle)
+    assert_redirected_to user_check_in_qr_path(@circle)
+    key = @circle.reload.attendance_check_in_token
+    assert_match(/\A[A-Za-z0-9_-]{32}\z/, key)
+    follow_redirect!
+    assert_select '[data-attendance-qr][data-url=?]', "https://circle-book.com#{circle_check_in_path(token: key)}"
+    assert_select 'label', text: '当日チェックイン受付URL'
+    assert_select 'button', text: '受付URLをコピー'
+    assert_select 'a[href=?]', attendances_path(@circle.unique_id), text: '出欠確認に戻る'
+    post user_check_in_qr_path(@circle)
+    assert_equal key, @circle.reload.attendance_check_in_token
+  end
+
+  test 'anonymous members and unrelated organizers keep existing RSVP access but cannot get or issue a QR' do
+    key = token
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    assert_select 'a[href=?]', new_attendance_path(@circle.unique_id)
+    assert_select 'a[href=?]', user_check_in_qr_path(@circle), count: 0
+    assert_not_includes response.body, key
+    get user_check_in_qr_path(@circle)
+    assert_response :redirect
+    post user_check_in_qr_path(@circle)
+    assert_response :redirect
+    other = AdminUser.create!(email: 'unrelated-entry@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    User.create!(@circle.attributes.except('id', 'created_at', 'updated_at', 'unique_id', 'attendance_check_in_token').merge(name: '別の主催者', admin_user: other))
+    sign_in(other)
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    assert_select 'a[href=?]', new_attendance_path(@circle.unique_id)
+    assert_select 'a[href=?]', user_check_in_qr_path(@circle), count: 0
+    assert_not_includes response.body, key
+    get user_check_in_qr_path(@circle)
+    assert_response :forbidden
+    assert_includes response.headers['Cache-Control'], 'no-store'
+    assert_not_includes response.body, key
+    post user_check_in_qr_path(@circle), params: { reissue: '1', confirm_reissue: '1' }
+    assert_response :forbidden
+    assert_equal key, @circle.reload.attendance_check_in_token
+    assert_equal 1, @yes.reload.answer
+  end
+
 end
