@@ -58,9 +58,7 @@
 <section class="schedule-detail__card schedule-detail__section">
   <h2>活動内容・参加条件</h2>
   <% if @schedule.note.present? %>
-    <div class="schedule-detail__body cb-reading-body">
-      <%= sanitize Rinku.auto_link(@schedule.note.include?('<div>') ? @schedule.note : simple_format(@schedule.note)), tags: %w[p a br strong ul ol li div], attributes: %w[href] %>
-    </div>
+    <%= render 'schedules/note', schedule: @schedule, extra_class: 'schedule-detail__body cb-reading-body' %>
   <% else %>
     <p>活動内容の掲載はありません。レベルや持ち物、当日の流れは主催者へお問い合わせください。</p>
   <% end %>

@@ -1,6 +1,17 @@
 module SchedulesHelper
   SCHEDULE_WEEKDAYS = %w[日 月 火 水 木 金 土].freeze
 
+  def schedule_note_html(note)
+    text = note.to_s
+    formatted = if text.match?(/<(?:div|p|h[123]|blockquote|pre|ul|ol)(?:\s[^>]*)?>/i)
+      text
+    else
+      simple_format(text)
+    end
+    safe = ScheduleNote.clean(Rinku.auto_link(formatted))
+    safe.gsub(/<(\/?)h[12](?=[\s>])/i, '<\1h3').html_safe
+  end
+
   # Never carry request parameters or a member-only URL into a public share.
   def schedule_share_url(schedule)
     "https://circle-book.com#{user_schedule_path(schedule.user_id, schedule.id)}"

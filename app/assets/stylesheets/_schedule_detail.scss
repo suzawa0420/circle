@@ -114,3 +114,28 @@
   font-size: 13px;
   .schedule-detail__back { margin: 0; min-height: 44px; display: inline-flex; align-items: center; }
 }
+
+.schedule-note {
+  color: $cb-text;
+  overflow-wrap: anywhere;
+
+  h3 {
+    margin: 1rem 0 .4rem;
+    font-size: 1.35em;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  ul, ol, blockquote, pre {
+    margin: .65em 0;
+    padding: .75em 1em .75em 1.75em;
+    background: $cb-canvas;
+    border: 0;
+    border-radius: 6px;
+    font-size: inherit;
+    line-height: inherit;
+  }
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+  pre { white-space: pre-wrap; }
+}

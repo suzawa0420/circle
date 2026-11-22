@@ -470,7 +470,9 @@ private
   end
 
   def schedule_params
-    params.require(:schedule).permit(:day, :venue, :date, :time_s, :time_e, :venue_address, :note, :title, :google_map, :recruitment, :member_venue, :recruitment_numbers, :cost, :top_image, :top_image_cache)
+    attributes = params.require(:schedule).permit(:day, :venue, :date, :time_s, :time_e, :venue_address, :note, :title, :google_map, :recruitment, :member_venue, :recruitment_numbers, :cost, :top_image, :top_image_cache)
+    attributes[:note] = ScheduleNote.clean(attributes[:note]) if attributes.key?(:note)
+    attributes
   end
 
   def name_params

@@ -82,4 +82,47 @@ class ScheduleDetailDesignTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '非公開体育館'
     assert_includes response.body, '非公開住所'
   end
+
+  test 'the public, member and organizer event overview preserves safe Trix heading and blocks' do
+    @schedule.update!(note: '<h1>持ち物</h1><ul><li>シューズ</li></ul><blockquote>初参加歓迎</blockquote><pre>時間厳守</pre><div>詳細 https://example.test/info</div><div>候補 <a href="javascript:alert(1)">リンク</a><img src="https://untrusted.example/pixel" onerror="alert(1)"></div>')
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    [user_schedule_path(@circle, @schedule), "/schedules/#{@circle.unique_id}/#{@schedule.id}", manage_user_schedule_path(@circle, @schedule)].each do |location|
+      get location
+      assert_response :success
+      assert_select '.schedule-note h3', text: '持ち物'
+      assert_select '.schedule-note ul li', text: 'シューズ'
+      assert_select '.schedule-note blockquote', text: '初参加歓迎'
+      assert_select '.schedule-note pre', text: '時間厳守'
+      assert_select '.schedule-note a[href="https://example.test/info"]'
+      assert_select '.schedule-note img, .schedule-note a[href^="javascript:"]', count: 0
+    end
+  end
+
+  test 'legacy plain notes preserve newlines and link URLs' do
+    @schedule.update!(note: "一行目\n二行目\n\n参考リンク https://example.test/info")
+    get user_schedule_path(@circle, @schedule)
+    assert_response :success
+    assert_select '.schedule-note p', count: 2
+    assert_select '.schedule-note p br', count: 1
+    assert_select '.schedule-note a[href="https://example.test/info"]'
+  end
+
+
+  test 'event editor and saving reject embedded media without removing cover upload' do
+    @schedule.update!(note: '<h1>見出し</h1><img src="https://untrusted.example/image.jpg"><action-text-attachment sgid="example"></action-text-attachment>')
+    post admin_user_session_path, params: { admin_user: { email: @owner.email, password: 'test-password-123' } }
+    get edit_user_schedule_path(@circle, @schedule)
+    assert_response :success
+    description = css_select('input#event-description').sole['value']
+    assert_includes description, '<h1>見出し</h1>'
+    assert_not_includes description, '<img'
+    assert_not_includes description, 'action-text-attachment'
+    assert_select 'input[type=file][name="schedule[top_image]"]'
+    patch user_schedule_path(@circle, @schedule), params: { schedule: { note: '<div><em>新しい本文</em><img src="https://untrusted.example/again.jpg"><figure data-trix-attachment="{}"></figure></div>' } }
+    assert_response :redirect
+    assert_includes @schedule.reload.note, '<em>新しい本文</em>'
+    assert_not_includes @schedule.note, 'untrusted.example'
+    assert_not_includes @schedule.note, 'data-trix-attachment'
+  end
+
 end

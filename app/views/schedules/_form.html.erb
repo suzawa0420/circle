@@ -12,7 +12,7 @@
     <div class="em-grid"><div class="em-field"><%= f.label :recruitment_numbers, '募集人数' %><%= render 'schedules/recruitment_numbers', f: f %></div><div class="em-field"><%= f.label :cost, '参加費' %><%= f.text_field :cost, placeholder: '500円' %></div></div>
     <% if editing %><div class="em-field"><%= f.label :recruitment, '募集状況' %><%= f.select :recruitment, %w[募集中 募集終了 中止] %></div><% end %>
   </section>
-  <section class="em-card"><h2>活動内容</h2><div class="em-field"><%= f.label :note, '説明・持ち物' %><%= f.hidden_field :note, id: 'event-description' %><details class="em-formatting"><summary>文字を装飾する</summary><trix-toolbar id="event-description-toolbar"></trix-toolbar></details><trix-editor toolbar="event-description-toolbar" input="event-description" id="schedule_note" aria-label="活動内容" placeholder="活動の流れや、持ち物を入力してください。"></trix-editor><p class="em-muted">文字の装飾は、文章を入力したあとに行えます。</p></div>
+  <section class="em-card"><h2>活動内容</h2><div class="em-field"><%= f.label :note, '説明・持ち物' %><%= f.hidden_field :note, id: 'event-description', value: ScheduleNote.clean(@schedule.note) %><details class="em-formatting"><summary>文字を装飾する</summary><trix-toolbar id="event-description-toolbar"></trix-toolbar></details><trix-editor toolbar="event-description-toolbar" input="event-description" id="schedule_note" aria-label="活動内容" placeholder="活動の流れや、持ち物を入力してください。"></trix-editor><p class="em-muted">文字の装飾は、文章を入力したあとに行えます。</p></div>
     <% image_schedule = @schedule.top_image.present? ? @schedule : @copy_schedule %>
     <details class="em-image-disclosure" <%= 'open' if image_schedule&.top_image.present? %>>
       <summary>トップ画像を設定・変更</summary>

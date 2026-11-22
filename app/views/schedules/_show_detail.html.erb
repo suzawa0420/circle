@@ -175,15 +175,7 @@
     <% if @schedule.note.present? %>
       <h2 class="schedule_sub_title"><%= lucide_icon "book-open" %> 活動内容の詳細</h2>
 
-      <% if @schedule.note.include?("<div>") %>
-        <div class="profile_list_p profile_list_a rich_text_sub cb-reading-body">
-          <%= raw Rinku.auto_link(sanitize @schedule.note, tags: %w(p a br strong ul li div), attributes:  %w(id class href)) %>
-        </div>
-      <% else %>
-        <div class="profile_list_p profile_list_a">
-          <%= raw Rinku.auto_link(simple_format @schedule.note) %>
-        </div>
-      <% end %>
+      <%= render 'schedules/note', schedule: @schedule, extra_class: 'profile_list_p profile_list_a cb-reading-body' %>
 
     <% end %>
   </div>

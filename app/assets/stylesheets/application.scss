@@ -9722,3 +9722,7 @@ trix-toolbar .button_group button.icon {
 
 @import "event_management";
 @import "circle_detail_discovery";
+
+// Rich-text fields accept text formatting only. Dedicated cover/photo fields stay available.
+trix-toolbar [data-trix-button-group="file-tools"],
+trix-toolbar [data-trix-action="attachFiles"] { display: none !important; }
