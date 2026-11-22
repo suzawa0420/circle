@@ -102,6 +102,7 @@
       %span.edit01_subtitle 年齢層
       .check_boxes
         = f.collection_check_boxes(:age_ids, Age.all, :id, :name)
+    = render "users/member_composition_fields", f: f
     .edit01_warp
       %span.edit01_subtitle 募集内容
       .check_boxes

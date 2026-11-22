@@ -2,6 +2,8 @@ ja:
   activerecord:
     attributes:
       user:
+        member_age_percentages: 年齢の割合
+        member_male_percentage: 男女比
         youtube_url: 紹介動画のURL
         email: メールアドレス
         password: パスワード

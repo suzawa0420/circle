@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_11_22_000000) do
+ActiveRecord::Schema.define(version: 2026_11_22_001000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -930,6 +930,8 @@ ActiveRecord::Schema.define(version: 2026_11_22_000000) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.jsonb "member_age_percentages"
+    t.integer "member_male_percentage", limit: 2
     t.string "attendance_check_in_token"
     t.index ["attendance_check_in_token"], name: "index_users_on_attendance_check_in_token", unique: true
     t.jsonb "sport_details", default: {}, null: false

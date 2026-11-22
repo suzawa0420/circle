@@ -75,6 +75,7 @@ class User < ApplicationRecord
   self.ignored_columns += %w[secondary_event_ids]
   include PublicListingOrder
   include SportDiscovery
+  include HasMemberComposition
   include OwnerCircleNameUniqueness
   has_one :backlink_request, dependent: :destroy
   def unanswered_report_count

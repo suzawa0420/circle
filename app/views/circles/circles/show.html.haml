@@ -285,6 +285,8 @@
                     = link_to user_reviews_path(@user) do
                       = render "layouts/review_score", review_score: @user.review_score.to_f, reviews_count: @user.reviews.count
 
+        = render "circles/circles/member_composition", circle: @user
+
         - if @user.link.present?
           - if @user.link.link02_url.present?
             .content_08

@@ -1,0 +1,37 @@
+<% age_values = f.object.member_age_percentages || {} %>
+<% male_value = f.object.member_male_percentage_before_type_cast %>
+<% male = f.object.member_male_percentage if HasMemberComposition::PERCENTAGES.map(&:to_s).include?(male_value.to_s) %>
+<% options = HasMemberComposition::PERCENTAGES.map { |percent| ["#{percent}%", percent] } %>
+<div data-member-composition class="cb-composition-editor">
+  <fieldset class="cb-composition-fields">
+    <legend>年齢の割合 <span>任意</span></legend>
+    <p>主催者の目安を入力してください。入力する場合は合計100%にしてください。空欄の年代は0%になります。</p>
+    <div class="cb-composition-selects">
+      <% HasMemberComposition::BANDS.each do |band, label| %>
+        <% field_id = "member-age-#{band}" %>
+        <div>
+          <%= label_tag field_id, label %>
+          <%= select_tag "user[member_age_percentages][#{band}]", options_for_select(options, age_values[band]), include_blank: '未入力', id: field_id, class: 'form-control', data: { composition_age: true }, aria: { describedby: 'composition-age-total' } %>
+        </div>
+      <% end %>
+    </div>
+    <p id="composition-age-total" data-composition-age-total role="status" aria-live="polite">すべて空欄にすると公開されません。</p>
+    <button type="button" class="btn btn-default cb-composition-clear" data-composition-clear-ages hidden>年齢の割合をクリア</button>
+  </fieldset>
+  <fieldset class="cb-composition-fields">
+    <legend>男女比 <span>任意</span></legend>
+    <p>主催者の目安です。男性・女性として把握しているメンバーの中での割合を入力してください。</p>
+    <div class="cb-composition-selects">
+      <div>
+        <%= f.label :member_male_percentage, '男性' %>
+        <%= f.select :member_male_percentage, options_for_select(options, male), { include_blank: '未入力' }, class: 'form-control', data: { composition_male: true } %>
+      </div>
+      <div data-composition-female-field hidden>
+        <%= label_tag 'member-female-percentage', '女性' %>
+        <%= select_tag nil, options_for_select(options, male.nil? ? nil : 100 - male), include_blank: '未入力', id: 'member-female-percentage', class: 'form-control', data: { composition_female: true } %>
+      </div>
+    </div>
+    <p data-composition-gender-status role="status" aria-live="polite"><%= male.nil? ? '空欄のままにすると公開されません。' : "男性 #{male}%・女性 #{100 - male}%" %></p>
+    <button type="button" class="btn btn-default cb-composition-clear" data-composition-clear-gender hidden>男女比をクリア</button>
+  </fieldset>
+</div>

@@ -128,6 +128,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261113000000
     # Additive circle QR key and independent check-in records.
     bundle exec rails db:migrate:up VERSION=20261122000000
+    # Optional organizer-supplied demographic estimates; no existing rows are backfilled.
+    bundle exec rails db:migrate:up VERSION=20261122001000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

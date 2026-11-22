@@ -694,10 +694,23 @@ private
   end
 
 	def user_params
-		permitted = params.require(:user).permit(
+    fields = params.require(:user)
+    if fields.key?(:member_age_percentages)
+      ages = fields[:member_age_percentages]
+      unless ages.is_a?(ActionController::Parameters) && (ages.keys - HasMemberComposition::BANDS.keys).empty? &&
+          ages.values.all? { |value| value.nil? || value.is_a?(String) || value.is_a?(Integer) }
+        raise ActionController::BadRequest
+      end
+    end
+    if fields.key?(:member_male_percentage) && !fields[:member_male_percentage].nil? &&
+        !fields[:member_male_percentage].is_a?(String) && !fields[:member_male_percentage].is_a?(Integer)
+      raise ActionController::BadRequest
+    end
+    permitted = fields.permit(
 			:name, :email, :image_name, :header_image, :line_id, :switch, :item, :prefecture, :area, :schedule, :time_s, :time_e, :venue_address, :note, :age, :recruitment, :foundation, :member, :cost, :web, :appeal, :password, :goal, :user_id, :category_id, :event_id, :decade, :prefecture_id, :image, :pic_profile, :pic_header, :image_01, :image_02, :gallery_01, :gallery_02, :gallery_03, :gallery_04, :requirement, :impressions_count, :line_count, :mail_count, :user_time, :contact, :twitter, :instagram, :txt, :prefecture_sub_id, :opinion, :template, :sent_count, :unique_id,
-      :youtube_url, :remove_pic_profile, :remove_pic_header, :remove_gallery_01, :remove_gallery_02, :remove_gallery_03, :remove_gallery_04,
+      :youtube_url, :member_male_percentage, :remove_pic_profile, :remove_pic_header, :remove_gallery_01, :remove_gallery_02, :remove_gallery_03, :remove_gallery_04,
 			decade_age:[], average_age:[] ,grouping:[], age_ids:[], group_ids:[], city_ids:[], tag_ids:[],
+      member_age_percentages: HasMemberComposition::BANDS.keys,
       link_attributes: [:id, :unique_id]
     )
     permitted[:review_permit] = params[:user][:review_permit] if webmaster? && params[:user].key?(:review_permit)

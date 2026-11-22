@@ -1,0 +1,52 @@
+@import "brand_palette";
+
+.cb-composition-editor, .cb-composition-display {
+  min-width: 0;
+  color: $cb-text;
+}
+.cb-composition-fields, .cb-composition-display {
+  box-sizing: border-box;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid $cb-border;
+  border-radius: 12px;
+  background: $cb-surface;
+}
+.cb-composition-fields > legend {
+  width: auto;
+  padding: 0 5px;
+  margin: 0;
+  border: 0;
+  color: $cb-text;
+  font-size: 16px;
+  font-weight: 700;
+}
+.cb-composition-fields > legend span, .cb-composition-fields > p, .cb-composition-caption {
+  color: $cb-muted;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.cb-composition-selects { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cb-composition-selects .form-control { box-sizing: border-box; width: 100%; min-height: 44px; font-size: 16px; }
+.cb-composition-fields [data-total-state] { margin: 12px 0 8px; font-variant-numeric: tabular-nums; }
+.cb-composition-fields [data-total-state="excess"] { color: #a0253b; }
+.cb-composition-fields [data-total-state="complete"] { color: $cb-action-hover; }
+.cb-composition-clear { min-height: 44px; }
+.cb-composition-editor [hidden] { display: none !important; }
+
+.cb-composition-display h2 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+.cb-composition-group { margin: 16px 0 0; }
+.cb-composition-group h3 { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.cb-composition-ages { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 6px; }
+.cb-composition-axis { display: flex; flex-direction: column; justify-content: space-between; height: 128px; font-size: 11px; line-height: 1; color: $cb-muted; }
+.cb-composition-bars { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; list-style: none; margin: 0; padding: 0; text-align: center; }
+.cb-composition-bars li { min-width: 0; font-size: 11px; }
+.cb-composition-bar-track { height: 128px; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px solid $cb-border; background-image: linear-gradient(to top, $cb-border 1px, transparent 1px); background-size: 100% 25%; }
+.cb-composition-bar-fill { height: var(--composition-ratio); width: min(72%, 42px); background: $cb-action; border-radius: 4px 4px 0 0; }
+.cb-composition-band, .cb-composition-percent { display: block; margin-top: 4px; line-height: 1.3; }
+.cb-composition-percent { font-weight: 700; }
+.cb-composition-gender-bar { display: flex; height: 18px; overflow: hidden; border-radius: 10px; }
+.cb-composition-gender-bar span { flex: 0 0 var(--composition-ratio); }
+.cb-composition-gender-male { background: #357cba; }
+.cb-composition-gender-female { background: #ce6090; }
+.cb-composition-gender-labels { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14px; }
