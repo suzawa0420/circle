@@ -12,9 +12,26 @@ class CircleInquiryGuidance
     例）初心者ですがよろしくお願いします！
   TEXT
 
+  DEFAULT_ANSWER = "名前：\n性別：\n年代：\n経歴：\n\n▼メッセージ\n".freeze
+
   def self.template_for(circle)
     circle.template.presence || DEFAULT_TEMPLATE
   end
+
+  def self.default_answer_for(circle)
+    # The existing free-text setting may contain organizer announcements, not just questions.
+    DEFAULT_ANSWER if without_whitespace(template_for(circle)) == without_whitespace(DEFAULT_TEMPLATE)
+  end
+
+  def self.unchanged_default_answer?(circle, answer)
+    default = default_answer_for(circle)
+    default && without_whitespace(answer) == without_whitespace(default)
+  end
+
+  def self.without_whitespace(text)
+    text.to_s.gsub(/[[:space:]]/, '')
+  end
+  private_class_method :without_whitespace
 
   def initialize(circle)
     @circle = circle

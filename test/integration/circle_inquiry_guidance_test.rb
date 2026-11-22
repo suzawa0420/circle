@@ -22,7 +22,7 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
     assert_select '.chat-new-inquiry label[for=message_body] + textarea#message_body[name="message[body]"]'
-    assert_select 'textarea#message_body + details.inquiry-guidance:not([open]) summary', text: 'サークルの活動予定・確認事項'
+    assert_select 'textarea#message_body + details.inquiry-guidance:not([open]) summary', text: 'サークルの活動予定・確認事項（テンプレートはこちら）'
     assert_select '.chat-new-inquiry > details:not([open]) a', text: '利用規約'
     assert_select '.chat-inquiry-limit--compact strong', text: /あと5件 \/ 5件/
     assert_select '.chat-inquiry-limit--compact p', count: 0
@@ -35,6 +35,7 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_select '.inquiry-guidance a', text: '他のスケジュールを見る'
     assert_not_includes response.body, '参加確定者だけの集合場所'
     assert_select '[data-inquiry-template-copy]'
+    assert_select 'textarea#message_body', text: ''
   end
 
   test 'compact schedule labels escape HTML and link to their own details' do
@@ -112,13 +113,12 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '参加希望日'
   end
 
-  test 'default guidance can be quoted edited and preserved as a snapshot' do
+  test 'default answer is editable while the original guidance is preserved as a snapshot' do
     @circle.update!(template: nil)
     post member_session_path, params: { member: { email: @other_member.email, password: 'test-password-123' } }
     get new_user_conversation_path(@circle)
-    assert_select '[data-inquiry-template-copy]' do |buttons|
-      assert_equal CircleInquiryGuidance::DEFAULT_TEMPLATE, buttons.first['data-inquiry-template-copy']
-    end
+    assert_select '[data-inquiry-template-copy]', count: 0
+    assert_select 'textarea#message_body', text: CircleInquiryGuidance::DEFAULT_ANSWER
     conversation = Conversation.for_member!(@circle, @other_member)
     conversation.send_message!('member', '参加希望です。')
     snapshot = conversation.chat_messages.where(sender_role: 'system').pluck(:body)
@@ -131,6 +131,28 @@ class CircleInquiryGuidanceTest < ActionDispatch::IntegrationTest
     assert_equal '参加希望日を教えてください。', @circle.reload.template
     assert_includes CircleInquiryGuidance.new(@circle).messages.join, @circle.template
     assert_equal snapshot, conversation.chat_messages.where(sender_role: 'system').pluck(:body)
+  end
+
+  test 'an untouched default answer does not send or discard the submitted draft' do
+    @circle.update!(template: nil)
+    post member_session_path, params: { member: { email: @other_member.email, password: 'test-password-123' } }
+    draft = CircleInquiryGuidance::DEFAULT_ANSWER.sub('名前：', "名前：　")
+    assert_no_difference('ChatMessage.count') do
+      post user_conversations_path(@circle), params: { message: { body: draft } }
+    end
+    assert_response 422
+    assert_includes response.body, 'テンプレートに回答を入力するか、問い合わせ内容をご記入ください。'
+    assert_includes Nokogiri::HTML(response.body).at_css('textarea#message_body').text, "名前：　"
+
+    # Deleting all preset text is not undone when an invalid request re-renders the form.
+    assert_no_difference('ChatMessage.count') do
+      post user_conversations_path(@circle), params: { message: { body: '' } }
+    end
+    assert_response 422
+    assert_select 'textarea#message_body', text: ''
+    post user_conversations_path(@circle), params: { message: { body: '土曜の練習に参加希望です。' } }
+    assert_response :redirect
+    assert_equal '土曜の練習に参加希望です。', ChatMessage.where(sender_role: 'member').last.body
   end
 
   test 'only owner can edit guidance and unrelated fields cannot be changed' do

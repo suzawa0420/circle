@@ -51,8 +51,8 @@ class ConversationsController < ApplicationController
     @inquiry_context = CircleInquiryContext.resolve(@user, params[:inquiry_context])
     existing = Conversation.find_by(user: @user, member: current_member)
     return redirect_to conversation_path(existing) if existing && existing.chat_messages.exists? && @inquiry_context.blank?
-    @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
-    @new_inquiry = !existing&.chat_messages&.where(sender_role: 'member')&.exists?
+    prepare_member_inquiry_form(existing)
+    @inquiry_body = @inquiry_default_answer
   end
 
   def private_note
@@ -81,7 +81,14 @@ class ConversationsController < ApplicationController
     raise Conversation::NotAllowed, 'ご自身のサークルには問い合わせできません。' if current_admin_user&.id == @user.admin_user_id || @user.admin_user.email.casecmp?(current_member.email)
     current_member.with_lock do
       @conversation = Conversation.for_member!(@user, current_member)
-      @sent_message = @conversation.send_message!('member', params.require(:message).permit(:body)[:body], inquiry_context: CircleInquiryContext.resolve(@user, params[:inquiry_context]))
+      body = params.require(:message).permit(:body)[:body]
+      if !@conversation.chat_messages.where(sender_role: 'member').exists? &&
+         CircleInquiryGuidance.unchanged_default_answer?(@user, body)
+        draft = @conversation.chat_messages.build(sender_role: 'member', body: body)
+        draft.errors.add(:base, 'テンプレートに回答を入力するか、問い合わせ内容をご記入ください。')
+        raise ActiveRecord::RecordInvalid, draft
+      end
+      @sent_message = @conversation.send_message!('member', body, inquiry_context: CircleInquiryContext.resolve(@user, params[:inquiry_context]))
     end
     flash[:sport_inquiry_delivered] = @user.event.ruby if @sent_message.delivered?
     redirect_to conversation_path(@conversation), notice: @sent_message.delivered? ? 'お問い合わせを送信しました。' : '運営による確認後に配信します。相手にはまだ届いていません。'
@@ -357,11 +364,27 @@ class ConversationsController < ApplicationController
     @role = @conversation.role_for(current_member, current_admin_user)
   end
 
+  def prepare_member_inquiry_form(existing)
+    @inquiry_guidance = CircleInquiryGuidance.new(@user).messages
+    @new_inquiry = !existing&.chat_messages&.where(sender_role: 'member')&.exists?
+    @inquiry_default_answer = CircleInquiryGuidance.default_answer_for(@user) if @new_inquiry
+  end
+
   def invalid_action(error)
     redirect_to(@conversation&.persisted? && Conversation.exists?(@conversation.id) ? conversation_path(@conversation) : conversations_path, alert: error.message)
   end
 
   def invalid_record(error)
+    if action_name == 'create' && @user && !practice_match_request? && member_signed_in? &&
+       !@conversation&.chat_messages&.where(sender_role: 'member')&.exists? &&
+       params[:message].is_a?(ActionController::Parameters)
+      @inquiry_context = CircleInquiryContext.resolve(@user, params[:inquiry_context])
+      prepare_member_inquiry_form(@conversation)
+      @inquiry_body = params[:message].permit(:body)[:body].to_s
+      flash.now[:alert] = error.record.errors.full_messages.join('、')
+      return render :new, status: 422
+    end
+
     redirect_to(@conversation&.persisted? && Conversation.exists?(@conversation.id) ? conversation_path(@conversation) : new_user_conversation_path(params[:user_id], kind: params[:kind]),
                 alert: error.record.errors.full_messages.join('、'))
   end

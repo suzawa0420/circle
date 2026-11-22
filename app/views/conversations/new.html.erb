@@ -15,15 +15,16 @@
         <%= hidden_field_tag :inquiry_context, params[:inquiry_context] %>
       <% end %>
       <%= f.label :body, '問い合わせ内容' %>
-      <%= f.text_area :body, id: 'message_body', required: true, maxlength: 2000, rows: 5, data: { inquiry_preview_input: true }, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
+      <%= f.text_area :body, id: 'message_body', required: true, maxlength: 2000, rows: 5, value: @inquiry_body, data: { inquiry_preview_input: true }, placeholder: '参加希望の旨や、確認したいことをご記入ください。' %>
       <% if @inquiry_guidance.any? %>
         <details class="inquiry-guidance chat-new-inquiry__details" aria-label="問い合わせ前の自動案内">
-          <summary>サークルの活動予定・確認事項</summary>
+          <summary>サークルの活動予定・確認事項<% if @new_inquiry && !@inquiry_default_answer %>（テンプレートはこちら）<% end %></summary>
           <% @inquiry_guidance.each do |body| %>
             <article class="chat-card inquiry-guidance__message"><strong class="message-role message-role--owner">サークルからの自動案内</strong><div class="chat-body"><%= automatic_message_body(body) %></div></article>
           <% end %>
-          <% if CircleInquiryGuidance.template_for(@user).present? %>
+          <% unless @inquiry_default_answer %>
             <button type="button" class="cb-button cb-button--secondary" data-inquiry-template-copy="<%= CircleInquiryGuidance.template_for(@user) %>">確認事項を回答欄に引用する</button>
+            <p id="inquiry-template-status" class="chat-muted" role="status"></p>
           <% end %>
         </details>
       <% end %>
