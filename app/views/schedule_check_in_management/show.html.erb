@@ -7,8 +7,9 @@
 <div data-attendance-qr data-url="<%= check_in_url %>">
   <div data-attendance-qr-image aria-label="当日チェックイン用QRコード" role="img"></div>
   <p><a data-attendance-qr-download download="circle-book-check-in.svg" hidden>印刷用QRコードを保存</a></p>
-  <label for="check-in-copy">当日チェックイン受付URL</label>
-  <input id="check-in-copy" type="url" readonly value="<%= check_in_url %>">
+  <p id="check-in-url-label" class="check-in-url-label">当日チェックイン受付URL</p>
+  <div id="check-in-copy" role="region" tabindex="0" dir="ltr" aria-labelledby="check-in-url-label" aria-describedby="check-in-url-hint"><%= check_in_url %></div>
+  <p id="check-in-url-hint" class="check-in-url-hint">横にスクロールするとURLの末尾まで確認できます。</p>
   <button type="button" data-attendance-qr-copy hidden>受付URLをコピー</button>
   <p data-attendance-qr-copy-status role="status"></p>
 </div>

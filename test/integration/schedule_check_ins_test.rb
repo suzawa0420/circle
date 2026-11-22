@@ -64,6 +64,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     assert_includes response.headers['Cache-Control'], 'no-store'
     assert_select 'script[src^="http"]', false
     assert_select '[data-attendance-qr][data-url=?]', "https://circle-book.com#{circle_check_in_path(token: key)}"
+    assert_select '#check-in-copy[tabindex="0"]', text: "https://circle-book.com#{circle_check_in_path(token: key)}"
     post enable_check_in_user_schedule_path(@circle, @event), params: { reissue: '1' }
     assert_equal key, @circle.reload.attendance_check_in_token
     post enable_check_in_user_schedule_path(@circle, @event), params: { reissue: '1', confirm_reissue: '1' }
@@ -216,7 +217,9 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     assert_match(/\A[A-Za-z0-9_-]{32}\z/, key)
     follow_redirect!
     assert_select '[data-attendance-qr][data-url=?]', "https://circle-book.com#{circle_check_in_path(token: key)}"
-    assert_select 'label', text: '当日チェックイン受付URL'
+    assert_select '#check-in-url-label', text: '当日チェックイン受付URL'
+    assert_select '#check-in-copy[role=region][tabindex="0"][aria-labelledby=check-in-url-label]', text: "https://circle-book.com#{circle_check_in_path(token: key)}"
+    assert_select '#check-in-url-hint', text: /横にスクロール/
     assert_select 'button', text: '受付URLをコピー'
     assert_select 'a[href=?]', attendances_path(@circle.unique_id), text: '出欠確認に戻る'
     post user_check_in_qr_path(@circle)

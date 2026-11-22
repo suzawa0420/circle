@@ -1313,8 +1313,16 @@ module.exports = QRCode;
           await navigator.clipboard.writeText(panel.dataset.url);
           status.textContent = "受付URLをコピーしました。";
         } catch (_error) {
-          panel.querySelector("input[readonly]").select();
-          status.textContent = "選択したURLをコピーしてください。";
+          var url = panel.querySelector("#check-in-copy");
+          url.focus();
+          var selection = window.getSelection();
+          if (selection) {
+            var range = document.createRange();
+            range.selectNodeContents(url);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+          status.textContent = "URLを選択してコピーしてください。";
         }
       });
     }
