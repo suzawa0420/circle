@@ -17,8 +17,28 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
         assert_select '.mobile-circle-summary__image', count: 1
         assert_select '.mobile-circle-summary__bookmark', count: 0
       end
-      assert_select '.mobile-circle-summary__bookmark', count: 1
+      assert_select '.mobile-circle-summary__bookmark', count: path == circle_path(@circle) ? 0 : 1
     end
+  end
+
+  test 'circle details keeps the share row bookmark without a second mobile bookmark' do
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.contact_area .bookmark_btn_wrap', count: 1
+    assert_select '.mobile-circle-summary__bookmark', count: 0
+    post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
+    assert_response :redirect
+    get circle_path(@circle)
+    assert_select '.contact_area .bookmark_btn_wrap a[data-method=post]', count: 1
+    assert_select '.mobile-circle-summary__bookmark', count: 0
+    @member.bookmarks.create!(user: @circle)
+    get circle_path(@circle)
+    assert_select '.contact_area .bookmark_btn_wrap a[data-method=delete]', text: '保存済み', count: 1
+    delete destroy_member_session_path
+    login(@owner)
+    get circle_path(@circle)
+    assert_select '.contact_area .bookmark_btn_wrap', count: 0
+    assert_select '.mobile-circle-summary__bookmark', count: 1
   end
 
   test 'blog list retains the complete long circle name for accessible single line display' do
@@ -94,9 +114,11 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.login-choice__card.cb-participant #organizer-login-title', count: 0
     get circle_path(@circle)
     assert_response :success
-    assert_select '.mobile-circle-save.cb-participant', minimum: 1
+    assert_select '.contact_area .bookmark_btn_wrap a[href=?]', new_member_registration_path, count: 1
     assert_select '.mobile-circle-summary__image--empty', text: 'チ'
     assert_select '.circle-avatar--empty.profile_imege', text: 'チ'
+    get user_schedules_path(@circle)
+    assert_select '.mobile-circle-save.cb-participant', count: 1
   end
 
   test 'participant chat scope and author identities remain distinct' do

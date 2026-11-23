@@ -83,6 +83,9 @@ class MemberCompositionTest < ActionDispatch::IntegrationTest
     assert_select '.cb-composition-axis span', count: 5
     assert_select '.cb-composition-bar-fill', count: 6
     assert_select '.cb-composition-bars li[aria-label="30代 75%"]'
+    assert_select '.cb-composition-bars li[aria-label="10代 0%"]'
+    assert_select '.cb-composition-bars li', text: /%/, count: 0
+    assert_select '.cb-composition-percent', count: 0
     assert_select '.cb-composition-bars li:last-child .cb-composition-band', text: '60歳以上'
     assert_select '.cb-composition-gender-bar', false
 

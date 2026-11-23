@@ -87,7 +87,7 @@
 
 
       .circle-header-sentinel{ "aria-hidden" => "true" }
-      = render "mobile_summary", active_tab: :details, show_back: false
+      = render "mobile_summary", active_tab: :details, show_back: false, show_bookmark: (webmaster? || admin_user_signed_in?)
 
       .profile-content
         - if @user.user_time.present?
