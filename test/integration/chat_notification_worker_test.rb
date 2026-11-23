@@ -60,11 +60,14 @@ class ChatNotificationWorkerTest < ActiveSupport::TestCase
       sleep 0.1
     end
     stopped = Queue.new
+    readiness = Queue.new
     worker = nil
 
     ChatMailer.stub(:new_messages, fake_mail) do
-      worker = Thread.new { ChatNotificationWorker.new.run(stopping: -> { !stopped.empty? }) }
-      # The worker must handle both a wake after LISTEN and a committed row already due on startup.
+      worker = Thread.new do
+        ChatNotificationWorker.new.run(stopping: -> { !stopped.empty? }, ready: -> { readiness << true })
+      end
+      assert Timeout.timeout(5) { readiness.pop }
       started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       accept_conversation
       due = @conversation.reload.member_notification_due_at
@@ -85,6 +88,32 @@ class ChatNotificationWorkerTest < ActiveSupport::TestCase
       ChatNotificationWake.signal
       worker&.value
     end
+  end
+
+  test 'a lost listener session exits so the supervisor can restart and discover committed pending work' do
+    ready = Queue.new
+    first = Thread.new do
+      Thread.current.report_on_exception = false
+      ChatNotificationWorker.new.run(ready: -> {
+        pool = ActiveRecord::Base.connection_pool
+        pid = pool.with_connection { |connection| connection.select_value('SELECT pg_backend_pid()') }
+        ready << pid
+      })
+    end
+    pid = Timeout.timeout(5) { ready.pop }
+    assert_equal true, ActiveRecord::Base.connection.select_value("SELECT pg_terminate_backend(#{Integer(pid)})")
+    assert_raises(PG::Error, ActiveRecord::ConnectionNotEstablished) { Timeout.timeout(5) { first.value } }
+
+    ChatNotificationWake.stub(:signal, -> { nil }) { accept_conversation }
+    @conversation.update!(member_notification_due_at: 1.second.ago)
+    delivered = Queue.new
+    mailer = Object.new
+    mailer.define_singleton_method(:deliver_now) { delivered << true }
+    ChatMailer.stub(:new_messages, mailer) do
+      ChatNotificationWorker.new.run(stopping: -> { !delivered.empty? })
+    end
+    assert_equal true, delivered.pop
+    assert_nil @conversation.reload.member_notification_due_at
   end
 
   test 'a dropped wake or transient SMTP error leaves an existing due row for periodic fallback' do

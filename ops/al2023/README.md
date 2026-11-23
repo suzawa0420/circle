@@ -654,10 +654,15 @@ lock are used by both workers. As before, an ambiguous SMTP acceptance or
 process/DB failure between SMTP acceptance and recording completion can retry
 rather than guaranteeing exactly-once delivery.
 
-The server4 activation path installs `circle-chat-notifier.service`, reloads
-systemd, checks the existing timer is active, then enables and restarts the
-listener. It runs as `ec2-user:nginx`. Confirm both units are active after
-activation and check that the listener did not enter a restart loop. Server5
+The server4 activation path verifies the existing timer first, then installs
+`circle-chat-notifier.service` and starts the listener as `ec2-user:nginx`.
+Systemd waits up to 45 seconds for readiness from `/usr/bin/systemd-notify`
+after the PostgreSQL LISTEN and a queue read succeed. On first rollout the
+deploy account needs non-interactive sudo permission for the new unit's
+install, daemon-reload, restart and enable commands. If permissions or startup
+fail, deployment logs a warning and continues the web rollout with the existing
+timer; do not report fast notifications live unless activation explicitly
+reports readiness. Check both units and any restart loop after activation. Server5
 does not run a notifier; messages sent on either node wake the shared listener.
 If the listener needs to be stopped, disable/stop only `circle-chat-notifier.service`
 and leave the timer active. Before rolling the code back to a revision without

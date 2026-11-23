@@ -5,11 +5,14 @@ class ChatNotificationWorker
   IDLE_RESCAN_SECONDS = 15
   FAILURE_BACKOFF_SECONDS = 15
 
-  def run(stopping: -> { false })
+  def run(stopping: -> { false }, ready: -> {})
     ActiveRecord::Base.connection_pool.with_connection do |connection|
       connection.execute("LISTEN #{ChatNotificationWake::CHANNEL}")
       listener = connection.raw_connection
       begin
+        # Fail startup before announcing readiness if the queue cannot be read.
+        notification_scope.limit(1).pick(:id)
+        ready.call unless stopping.call
         until stopping.call
           # No Rails request executor, and avoid caching future/previous due queries.
           wait = ActiveRecord::Base.uncached { process_due }
@@ -36,8 +39,12 @@ class ChatNotificationWorker
     end
   end
 
+  def notification_scope
+    Conversation.where(source_user_id: nil)
+  end
+
   def process_due
-    participant_conversations = Conversation.where(source_user_id: nil)
+    participant_conversations = notification_scope
     if ChatMaintenance.deliver_due_messages(participant_conversations).positive?
       # Let the existing timer also retry. A provider failure must not spin.
       return nil

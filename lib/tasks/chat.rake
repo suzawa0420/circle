@@ -3,7 +3,12 @@ namespace :chat do
   task notify: :environment do
     stopping = false
     %w[TERM INT].each { |signal| Signal.trap(signal) { stopping = true } }
-    ChatNotificationWorker.new.run(stopping: -> { stopping })
+    ready = lambda do
+      if ENV['NOTIFY_SOCKET'].present? && !system('/usr/bin/systemd-notify', '--ready')
+        abort 'Could not report chat listener readiness to systemd'
+      end
+    end
+    ChatNotificationWorker.new.run(stopping: -> { stopping }, ready: ready)
   end
 
   desc 'Publish due mutual reviews and deliver batched unread-message notifications'
