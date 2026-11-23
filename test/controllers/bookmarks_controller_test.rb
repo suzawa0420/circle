@@ -15,8 +15,10 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".mobile-bottom-nav a[href='#{circles_path}']", text: 'サークル検索'
     assert_select ".mobile-bottom-nav a[href='#{dates_path}']", text: 'イベント検索'
     assert_select ".mobile-bottom-nav a[href='#{login_path}']", text: '無料登録・ログイン'
-    assert_select ".mobile-circle-summary__identity a[href='#{new_member_registration_path}']", text: '保存'
-    assert_select ".bookmark_btn_wrap a[href='#{new_member_registration_path}']"
+    assert_select '.mobile-circle-summary__bookmark', count: 0
+    assert_select ".bookmark_btn_wrap a[href='#{new_member_registration_path}']", text: '保存', count: 1
+    get user_schedules_path(@circle)
+    assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 1
     assert_select '.mobile-circle-save[data-remote]', count: 0
     get login_path
     assert_select "a[href='#{new_admin_user_registration_path}']", text: '無料で新規登録'
@@ -30,7 +32,7 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'participant can repeatedly save and unsave with synchronized header and body buttons' do
+  test 'participant can repeatedly save and unsave with the right control on details and schedules' do
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     assert_response :redirect
     2.times do
@@ -39,15 +41,19 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
       assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}"
       assert_includes response.body, 'replaceWith'
       get circle_path(@circle)
-      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み'
-      assert_select '.bookmark_btn_wrap a', text: '保存済み'
+      assert_select '.mobile-circle-save', count: 0
+      assert_select '.bookmark_btn_wrap a[data-method=delete]', text: '保存済み', count: 1
+      get user_schedules_path(@circle)
+      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 1
 
       assert_difference('Bookmark.count', -1) { delete user_bookmarks_path(@circle), xhr: true }
       assert_response :success
       assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}"
       get circle_path(@circle)
-      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存'
-      assert_select '.bookmark_btn_wrap a', text: '保存'
+      assert_select '.mobile-circle-save', count: 0
+      assert_select '.bookmark_btn_wrap a[data-method=post]', text: '保存', count: 1
+      get user_schedules_path(@circle)
+      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 1
     end
   end
 end
