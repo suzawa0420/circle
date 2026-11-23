@@ -12,6 +12,7 @@
           <ul class="cb-composition-bars">
             <% HasMemberComposition::BANDS.each do |band, label| %>
               <% value = ages.fetch(band) %>
+              <% label = "60歳以上" if band == "sixties_plus" %>
               <li aria-label="<%= "#{label} #{value}%" %>">
                 <div class="cb-composition-bar-track" aria-hidden="true">
                   <div class="cb-composition-bar-fill" style="--composition-ratio: <%= value.to_i %>%"></div>
@@ -35,7 +36,6 @@
           <li>男性 <strong><%= male %>%</strong></li>
           <li>女性 <strong><%= 100 - male %>%</strong></li>
         </ul>
-        <p class="cb-composition-caption">男性・女性として把握しているメンバー内の割合です。</p>
       </div>
     <% end %>
   </section>

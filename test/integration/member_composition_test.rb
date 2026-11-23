@@ -83,6 +83,7 @@ class MemberCompositionTest < ActionDispatch::IntegrationTest
     assert_select '.cb-composition-axis span', count: 5
     assert_select '.cb-composition-bar-fill', count: 6
     assert_select '.cb-composition-bars li[aria-label="30代 75%"]'
+    assert_select '.cb-composition-bars li:last-child .cb-composition-band', text: '60歳以上'
     assert_select '.cb-composition-gender-bar', false
 
     patch @step2, params: { user: { member_male_percentage: '0', member_age_percentages: HasMemberComposition::BANDS.keys.index_with { '' } } }
@@ -93,6 +94,8 @@ class MemberCompositionTest < ActionDispatch::IntegrationTest
     assert_select '.cb-composition-bars', false
     assert_select '.cb-composition-gender-labels li', text: /男性.*0%/
     assert_select '.cb-composition-gender-labels li', text: /女性.*100%/
+    assert_select '.cb-composition-caption', count: 1, text: '主催者による目安です。'
+    assert_not_includes response.body, '男性・女性として把握しているメンバー内の割合です'
     patch @step2, params: { user: { member_male_percentage: '' } }
     assert_response :redirect
     assert_nil @circle.reload.member_male_percentage
