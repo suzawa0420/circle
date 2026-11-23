@@ -641,3 +641,24 @@ Other existing posts must not be updated in a batch without separate approval.
 Deploy master normally with retained assets and sequential Puma hot restarts on
 server4/server5. Roll back using an application revert; retain the human review
 status and data. Do not automatically republish held content during recovery.
+
+### Fast unread chat notifications (server4 only)
+
+The participant/organizer send records the next delivery time in the shared
+PostgreSQL database. After commit a fixed LISTEN/NOTIFY channel sends an empty
+wake hint; lost hints are recovered by re-scanning and by the existing
+`circle-chat-maintenance.timer`. The listener uses one PostgreSQL session
+connection (requires session semantics, not a transaction-pooling proxy), no
+Redis or additional paid service. Existing unread/block checks and the same row
+lock are used by both workers. As before, an ambiguous SMTP acceptance or
+process/DB failure between SMTP acceptance and recording completion can retry
+rather than guaranteeing exactly-once delivery.
+
+The server4 activation path installs `circle-chat-notifier.service`, reloads
+systemd, checks the existing timer is active, then enables and restarts the
+listener. It runs as `ec2-user:nginx`. Confirm both units are active after
+activation and check that the listener did not enter a restart loop. Server5
+does not run a notifier; messages sent on either node wake the shared listener.
+If the listener needs to be stopped, disable/stop only `circle-chat-notifier.service`
+and leave the timer active. Before rolling the code back to a revision without
+the unit, disable/stop it on server4. Pending rows are not rewritten or lost.

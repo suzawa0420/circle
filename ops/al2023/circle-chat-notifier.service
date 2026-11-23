@@ -1,0 +1,23 @@
+[Unit]
+Description=Circle Book event-driven unread chat notifications (server4 only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ec2-user
+Group=nginx
+WorkingDirectory=/var/www/circle
+Environment=RAILS_ENV=production
+Environment=BUNDLE_PATH=/var/www/circle/vendor/bundle
+Environment=PATH=/opt/circle/ruby-3.4.13/bin:/opt/circle/node-v24.21.0-linux-x64/bin:/usr/local/bin:/usr/bin:/bin
+Environment=AWS_EC2_METADATA_DISABLED=true
+UMask=0007
+ExecStart=/opt/circle/ruby-3.4.13/bin/bundle exec rake chat:notify
+Nice=10
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=20s
+
+[Install]
+WantedBy=multi-user.target

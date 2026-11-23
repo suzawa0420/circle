@@ -155,6 +155,7 @@ case "$mode" in
       sudo -n install -m 0644 ops/al2023/circle-sitemap.service /etc/systemd/system/circle-sitemap.service
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.service /etc/systemd/system/circle-chat-maintenance.service
       sudo -n install -m 0644 ops/al2023/circle-chat-maintenance.timer /etc/systemd/system/circle-chat-maintenance.timer
+      sudo -n install -m 0644 ops/al2023/circle-chat-notifier.service /etc/systemd/system/circle-chat-notifier.service
       sudo -n install -m 0644 ops/al2023/circle-place-import.service /etc/systemd/system/circle-place-import.service
       sudo -n install -m 0644 ops/al2023/circle-place-import.timer /etc/systemd/system/circle-place-import.timer
       # Keep the already enabled server4-only 30-minute facility timer.
@@ -163,6 +164,9 @@ case "$mode" in
       sudo -n systemctl daemon-reload
       sudo -n systemctl enable --now circle-chat-maintenance.timer
       systemctl is-active circle-chat-maintenance.timer
+      sudo -n systemctl enable circle-chat-notifier.service
+      sudo -n systemctl restart circle-chat-notifier.service
+      systemctl is-active circle-chat-notifier.service
     fi
     systemctl is-active circle-puma nginx
     puma_pid=$(systemctl show circle-puma --property MainPID --value)

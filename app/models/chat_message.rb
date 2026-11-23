@@ -112,9 +112,8 @@ class ChatMessage < ApplicationRecord
         update!(moderation_status: decision == 'approve' ? 'approved' : 'spam', reviewed_at: Time.current,
                 released_at: decision == 'approve' ? Time.current : nil, recipient_read_at: nil)
         if decision == 'approve'
-          recipient = sender_role == 'member' ? 'owner' : 'member'
-          last_notified = conversation["#{recipient}_notified_at"]
-          conversation.update!("#{recipient}_notification_due_at" => conversation["#{recipient}_notification_due_at"] || [5.minutes.from_now, last_notified && last_notified + 15.minutes].compact.max)
+          conversation.schedule_unread_message_notification(sender_role)
+          conversation.save!
         else
           ChatSpamDetector.destinations(body).each { |destination| ChatSpamDestination.find_or_create_by!(destination: destination) if destination.length <= 2048 }
         end

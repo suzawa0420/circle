@@ -195,10 +195,7 @@ class Conversation < ApplicationRecord
         had_no_reply_report = respond_check == "NG"
         self.respond_check = nil
       end
-      recipient = role == 'member' ? 'owner' : 'member'
-      due_key = "#{recipient}_notification_due_at"
-      last_notified = self["#{recipient}_notified_at"]
-      self[due_key] ||= [5.minutes.from_now, last_notified && last_notified + 15.minutes].compact.max
+      schedule_unread_message_notification(role)
       save!
       refresh_circle_score! if had_no_reply_report
       message
@@ -206,6 +203,18 @@ class Conversation < ApplicationRecord
   end
 
   private :send_message_locked!
+
+  # Call under the conversation lock and persist in the same transaction.
+  def schedule_unread_message_notification(sender_role)
+    recipient = sender_role == 'member' ? 'owner' : 'member'
+    due_key = "#{recipient}_notification_due_at"
+    return if self[due_key]
+
+    last_notified = self["#{recipient}_notified_at"]
+    grace = practice_match? ? 5.minutes : 7.seconds
+    self[due_key] = [grace.from_now, last_notified && last_notified + 15.minutes].compact.max
+    ActiveRecord.after_all_transactions_commit { ChatNotificationWake.signal } unless practice_match?
+  end
 
   def recipient_read_message_id(sender_role)
     self[sender_role == 'owner' ? 'member_read_message_id' : 'owner_read_message_id']

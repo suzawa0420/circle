@@ -122,6 +122,45 @@ class ConversationTest < ActiveSupport::TestCase
     end
   end
 
+  test 'unread mail for both roles becomes eligible after seven seconds and keeps the repeat cooldown' do
+    ActionMailer::Base.deliveries.clear
+    @conversation.update!(owner_notification_due_at: nil)
+    freeze_time do
+      @conversation.send_message!('member', '練習に参加したいです。')
+      accept_conversation
+      assert_equal 7.seconds.from_now, @conversation.reload.owner_notification_due_at
+      assert_equal 7.seconds.from_now, @conversation.member_notification_due_at
+      due = 7.seconds.from_now
+
+      travel 6.seconds
+      @conversation.send_message!('owner', '土曜日です。')
+      assert_equal due, @conversation.reload.member_notification_due_at
+      ChatMaintenance.run
+      assert_empty ActionMailer::Base.deliveries
+
+      travel 1.second
+      ChatMaintenance.run
+      assert_equal [[@member.email], [@owner.email]].sort, ActionMailer::Base.deliveries.map(&:to).sort
+      assert_nil @conversation.reload.owner_notification_due_at
+      assert_nil @conversation.member_notification_due_at
+      notified = Time.current
+
+      @conversation.send_message!('member', 'ありがとうございます。')
+      reply = @conversation.send_message!('owner', 'お待ちしています。')
+      assert_equal notified + 15.minutes, @conversation.reload.owner_notification_due_at
+      assert_equal notified + 15.minutes, @conversation.member_notification_due_at
+      @conversation.mark_read!('member', through: reply.id)
+
+      travel 14.minutes + 59.seconds
+      ChatMaintenance.run
+      assert_equal 2, ActionMailer::Base.deliveries.size
+      travel 1.second
+      ChatMaintenance.run
+      assert_equal 3, ActionMailer::Base.deliveries.size
+      assert_equal [@owner.email], ActionMailer::Base.deliveries.last.to
+    end
+  end
+
   test 'reading an earlier page cannot mark a newer concurrent message read' do
     seen_id = @conversation.chat_messages.maximum(:id)
     @conversation.send_message!('member', '新しいメッセージです。')

@@ -5,18 +5,7 @@ class ChatMaintenance
   def self.run
     HelpEvent.where('created_at < ?', 90.days.ago).delete_all
     Conversation.where(reviews_published_at: nil).where('review_deadline <= ?', Time.current).find_each(&:publish_reviews!)
-    failures = 0
-    Conversation::ROLES.each do |role|
-      Conversation.where("#{role}_notification_due_at <= ?", Time.current).find_each do |conversation|
-        begin
-          deliver_pending(conversation, role)
-        rescue StandardError => error
-          # Never put message bodies, addresses or mail-provider error details in logs.
-          Rails.logger.error("[ChatMaintenance] delivery_failed conversation_id=#{conversation.id} role=#{role} error_class=#{error.class.name}")
-          failures += 1
-        end
-      end
-    end
+    failures = deliver_due_messages(Conversation.all)
     # The minute timer may load new code while deployment is still preparing assets.
     # Continue ordinary notifications until the additive migration has committed.
     if Conversation.column_names.include?('member_review_notification_due_at')
@@ -32,6 +21,22 @@ class ChatMaintenance
       end
     end
     raise DeliveryFailed, 'One or more notifications failed; pending notifications will be retried.' if failures.positive?
+  end
+
+  def self.deliver_due_messages(scope)
+    failures = 0
+    Conversation::ROLES.each do |role|
+      scope.where("#{role}_notification_due_at <= ?", Time.current).find_each do |conversation|
+        begin
+          deliver_pending(conversation, role)
+        rescue StandardError => error
+          # Never put message bodies, addresses or mail-provider error details in logs.
+          Rails.logger.error("[ChatMaintenance] delivery_failed conversation_id=#{conversation.id} role=#{role} error_class=#{error.class.name}")
+          failures += 1
+        end
+      end
+    end
+    failures
   end
 
   def self.deliver_review_invitation(conversation, role)
