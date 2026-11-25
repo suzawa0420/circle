@@ -22,6 +22,9 @@ class ScheduleDetailDesignTest < ActionDispatch::IntegrationTest
     get user_schedule_path(@circle, @schedule)
     assert_response :success
     assert_select '.schedule-detail__title', text: @schedule.title
+    assert_select '.cb-destination__grid > .schedule-detail__hero.cb-destination__main + .schedule-detail__host.cb-destination__side + .schedule-detail__content.cb-destination__main + .schedule-detail__follow-up.cb-destination__side', count: 1
+    assert_select '.schedule-detail__host .schedule-detail__contact[data-circle-inquiry-click]', count: 1
+    assert_select '.schedule-detail__content .schedule-detail__contact--secondary[data-circle-inquiry-click]', count: 1
     assert_select '.schedule-detail__card > .schedule-detail__heading + .schedule-detail__image + .schedule-detail__summary', count: 1
     assert_select '.schedule-detail__image img[src="/images/events/basketball.jpg"][fetchpriority="high"]'
     assert_select '.schedule-detail__facts', text: /18:30–21:30.*駒込／田端.*男性1,500円／女性1,000円/m
@@ -34,6 +37,24 @@ class ScheduleDetailDesignTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, '非公開体育館'
     assert_not_includes response.body, '非公開住所'
     assert_select '.schedule-detail__management', count: 0
+  end
+
+  test 'public activity list leads to the redesigned detail and both inquiry links disappear when recruitment is closed' do
+    get user_schedules_path(@circle), params: { month: '2026-10', date: '2026-10-13' }
+    assert_response :success
+    card = css_select('.schedule-calendar__events a.schedule-calendar__event').sole
+    assert_equal user_schedule_path(@circle, @schedule), card['href']
+
+    get card['href']
+    assert_response :success
+    assert_select '.schedule-detail__host a[href=?]', user_schedules_path(@circle)
+    assert_select '.schedule-detail__contact', count: 2
+
+    @circle.update!(switch: '募集終了')
+    get card['href']
+    assert_response :success
+    assert_select '.schedule-detail__contact', count: 0
+    assert_select '.schedule-detail__host a[href=?]', user_schedules_path(@circle)
   end
 
   test 'uploaded announcement image is used intact instead of the common sport image' do

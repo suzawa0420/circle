@@ -4,11 +4,13 @@
 <% shareable = @user.publicly_visible? %>
 <% share_owner = can_manage_circle?(@user) %>
 <% just_created = shareable && share_owner && flash[:created_schedule_id].to_s == @schedule.id.to_s %>
-<%= link_to event_listing_path({ event: @user.event.ruby, pref: @user.prefecture.kana }, date: date), class: 'schedule-detail__back' do %>
+<% participant_guides = column_related_guides(event: @user.event, audience: 'participant') unless just_created %>
+<% has_other_schedules = @schedules.where.not(id: @schedule.id).exists? || @past_schedules.where.not(id: @schedule.id).exists? %>
+<%= link_to event_listing_path({ event: @user.event.ruby, pref: @user.prefecture.kana }, date: date), class: 'schedule-detail__back cb-destination__back' do %>
   <%= lucide_icon 'chevron-right' %><%= calendar_schedule_date(date) %>の<%= @user.event.name %>一覧
 <% end %>
 
-<% if can_manage_circle?(@user) %>
+<% if share_owner %>
   <div class="schedule-detail__management-preview"><span>一般公開ページのプレビュー</span><%= link_to '主催者の管理画面へ', manage_user_schedule_path(@user, @schedule), class: 'schedule-detail__back' %></div>
 <% end %>
 
@@ -17,92 +19,108 @@
   <%= render 'columns/related_guides', event: @user.event, audience: 'organizer', heading: '開催までに、道具も確認しておきませんか？' %>
 <% end %>
 
-<article class="schedule-detail__card">
-  <div class="schedule-detail__heading">
-    <div class="schedule-detail__topline"><span><%= @user.event.name %> · <%= @user.prefecture.name %></span><span class="schedule-detail__status status-<%= status[:key] %>"><%= status[:label] %></span></div>
-    <h1 class="schedule-detail__title"><%= @schedule.title.presence || "#{@user.event.name}の活動" %></h1>
-  </div>
-  <div class="schedule-detail__image schedule_top_image">
-    <%= image_tag schedule_image_source(@schedule, user: @user), alt: @schedule.title.presence || @user.event.name, class: 'top_img', decoding: 'async', fetchpriority: 'high' %>
-  </div>
-  <div class="schedule-detail__summary">
-    <dl class="schedule-detail__facts">
-      <div><%= lucide_icon 'calendar-days' %><dt>開催日</dt><dd><time datetime="<%= date.iso8601 %>"><%= date.year %>年<%= calendar_schedule_date(date) %></time></dd></div>
-      <div><%= lucide_icon 'clock' %><dt>時間</dt><dd><strong><%= calendar_schedule_time(@schedule) %></strong></dd></div>
-      <div><%= lucide_icon 'map-pin' %><dt>エリア</dt><dd><%= [@user.prefecture.name, @schedule.venue.presence].compact.join(' · ') %></dd></div>
-      <% if @schedule.cost.present? %><div><%= lucide_icon 'banknote' %><dt>参加費</dt><dd><%= @schedule.cost %></dd></div><% end %>
-      <% if @schedule.recruitment_numbers.to_i.positive? %>
-        <div><%= lucide_icon 'users' %><dt>募集人数</dt><dd><%= @schedule.recruitment_numbers %>名<% if accepted_count.positive? %>（参加人数：<%= accepted_count %>名）<% end %></dd></div>
-      <% elsif @schedule.recruitment_numbers == 0 %>
-        <div><%= lucide_icon 'users' %><dt>募集人数</dt><dd>制限なし<% if accepted_count.positive? %>（参加人数：<%= accepted_count %>名）<% end %></dd></div>
-      <% elsif accepted_count.positive? %>
-        <div><%= lucide_icon 'users' %><dt>参加人数</dt><dd><%= accepted_count %>名</dd></div>
-      <% end %>
-    </dl>
-    <%= render 'users/parts/admin_user_check', admin_user: @user.admin_user %>
+<% if (data = public_event_structured_data(@schedule, user: @user, accepted_count: accepted_count)) %>
+  <script type="application/ld+json"><%= raw json_escape(data.to_json) %></script>
+<% else %>
+  <%= render 'shared/structured_data', data: public_schedule_page_structured_data(@schedule, user: @user) %>
+<% end %>
+
+<div class="cb-destination__grid schedule-detail__grid">
+  <article class="cb-destination__main schedule-detail__hero schedule-detail__card cb-destination__card">
+    <div class="schedule-detail__heading">
+      <div class="schedule-detail__topline cb-destination__eyebrow"><span><%= @user.event.name %> · <%= @user.prefecture.name %></span><span class="schedule-detail__status status-<%= status[:key] %>"><%= status[:label] %></span></div>
+      <h1 class="schedule-detail__title cb-destination__title"><%= @schedule.title.presence || "#{@user.event.name}の活動" %></h1>
+    </div>
+    <div class="schedule-detail__image schedule_top_image">
+      <%= image_tag schedule_image_source(@schedule, user: @user), alt: @schedule.title.presence || @user.event.name, class: 'top_img', decoding: 'async', fetchpriority: 'high' %>
+    </div>
+    <div class="schedule-detail__summary">
+      <dl class="schedule-detail__facts">
+        <div><%= lucide_icon 'calendar-days' %><dt>開催日</dt><dd><time datetime="<%= date.iso8601 %>"><%= date.year %>年<%= calendar_schedule_date(date) %></time></dd></div>
+        <div><%= lucide_icon 'clock' %><dt>時間</dt><dd><strong><%= calendar_schedule_time(@schedule) %></strong></dd></div>
+        <div><%= lucide_icon 'map-pin' %><dt>エリア</dt><dd><%= [@user.prefecture.name, @schedule.venue.presence].compact.join(' · ') %></dd></div>
+        <% if @schedule.cost.present? %><div><%= lucide_icon 'banknote' %><dt>参加費</dt><dd><%= @schedule.cost %></dd></div><% end %>
+        <% if @schedule.recruitment_numbers.to_i.positive? %>
+          <div><%= lucide_icon 'users' %><dt>募集人数</dt><dd><%= @schedule.recruitment_numbers %>名<% if accepted_count.positive? %>（参加人数：<%= accepted_count %>名）<% end %></dd></div>
+        <% elsif @schedule.recruitment_numbers == 0 %>
+          <div><%= lucide_icon 'users' %><dt>募集人数</dt><dd>制限なし<% if accepted_count.positive? %>（参加人数：<%= accepted_count %>名）<% end %></dd></div>
+        <% elsif accepted_count.positive? %>
+          <div><%= lucide_icon 'users' %><dt>参加人数</dt><dd><%= accepted_count %>名</dd></div>
+        <% end %>
+      </dl>
+      <%= render 'users/parts/admin_user_check', admin_user: @user.admin_user %>
+    </div>
+  </article>
+
+  <aside class="cb-destination__side schedule-detail__host schedule-detail__card cb-destination__card schedule-detail__section" aria-label="主催サークル">
+    <h2>主催サークル</h2>
+    <%= link_to circle_path(@user), class: 'schedule-detail__organizer' do %>
+      <%= circle_avatar_tag @user, class: 'schedule-detail__avatar' %>
+      <div><h3><%= @user.name %></h3><p><%= @user.prefecture.name %> · <%= @user.event.name %></p></div><%= lucide_icon 'chevron-right' %>
+    <% end %>
     <% if @user.switch == '募集中' %>
       <%= link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'schedule-detail__contact cb-participant') do %>
         <%= lucide_icon 'message-circle' %>この活動について問い合わせる
       <% end %>
       <p class="schedule-detail__hint">会場の詳細・参加条件は主催者に確認できます。</p>
     <% end %>
-  </div>
-</article>
-<% if (data = public_event_structured_data(@schedule, user: @user, accepted_count: accepted_count)) %>
-  <script type="application/ld+json"><%= raw json_escape(data.to_json) %></script>
-<% else %>
-  <%= render 'shared/structured_data', data: public_schedule_page_structured_data(@schedule, user: @user) %>
-<% end %>
-<%= link_to "#{@user.prefecture.name}の#{@user.event.name}開催予定を見る", event_listing_path(event: @user.event.ruby, pref: @user.prefecture.kana), class: 'schedule-detail__back' %>
-
-<section class="schedule-detail__card schedule-detail__section">
-  <h2>活動内容・参加条件</h2>
-  <% if @schedule.note.present? %>
-    <%= render 'schedules/note', schedule: @schedule, extra_class: 'schedule-detail__body cb-reading-body' %>
-  <% else %>
-    <p>活動内容の掲載はありません。レベルや持ち物、当日の流れは主催者へお問い合わせください。</p>
-  <% end %>
-  <% if @user.link&.link02_url.present? || @user.web.present? %>
-    <div class="schedule-detail__links">
-      <% if @user.link&.link02_url.present? %><%= link_to 'サークルのリンク集', "/link/#{@user.link.unique_id}" %><% end %>
-      <% if @user.web.present? %><%= link_to 'サークルのWebサイト', @user.web, rel: 'nofollow' %><% end %>
+    <div class="schedule-detail__actions">
+      <%= link_to circle_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'info' %><span>サークル詳細</span><% end %>
+      <%= link_to user_schedules_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'calendar-days' %><span>ほかの活動日を見る</span><% end %>
     </div>
-  <% end %>
-  <% if @user.switch == '募集中' %>
-    <%= link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'schedule-detail__contact cb-participant') do %>
-      <%= lucide_icon 'message-circle' %>この活動について問い合わせる
+  </aside>
+
+  <div class="cb-destination__main schedule-detail__content">
+    <section class="schedule-detail__card cb-destination__card schedule-detail__section">
+      <h2>活動内容・参加条件</h2>
+      <% if @schedule.note.present? %>
+        <%= render 'schedules/note', schedule: @schedule, extra_class: 'schedule-detail__body cb-reading-body' %>
+      <% else %>
+        <p>活動内容の掲載はありません。レベルや持ち物、当日の流れは主催者へお問い合わせください。</p>
+      <% end %>
+      <% if @user.link&.link02_url.present? || @user.web.present? %>
+        <div class="schedule-detail__links">
+          <% if @user.link&.link02_url.present? %><%= link_to 'サークルのリンク集', "/link/#{@user.link.unique_id}" %><% end %>
+          <% if @user.web.present? %><%= link_to 'サークルのWebサイト', @user.web, rel: 'nofollow' %><% end %>
+        </div>
+      <% end %>
+      <% if @user.switch == '募集中' %>
+        <%= link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'schedule-detail__contact schedule-detail__contact--secondary cb-participant') do %>
+          <%= lucide_icon 'message-circle' %>この活動について問い合わせる
+        <% end %>
+        <p class="schedule-detail__hint">会場の詳細・参加条件は主催者に確認できます。</p>
+      <% end %>
+    </section>
+
+    <% if participant_guides.present? %>
+      <div id="schedule-participant-guides">
+        <%= render 'columns/related_guides', event: @user.event, audience: 'participant', guides: participant_guides %>
+      </div>
     <% end %>
-    <p class="schedule-detail__hint">会場の詳細・参加条件は主催者に確認できます。</p>
-  <% end %>
-</section>
 
-<% unless just_created %><%= render 'columns/related_guides', event: @user.event, audience: 'participant' %><% end %>
-
-<section class="schedule-detail__card schedule-detail__section">
-  <h2>主催サークル</h2>
-  <%= link_to circle_path(@user), class: 'schedule-detail__organizer' do %>
-    <%= circle_avatar_tag @user, class: 'schedule-detail__avatar' %>
-    <div><h3><%= @user.name %></h3><p><%= @user.prefecture.name %> · <%= @user.event.name %></p></div><%= lucide_icon 'chevron-right' %>
-  <% end %>
-  <div class="schedule-detail__actions">
-    <%= link_to circle_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'info' %><span>サークル詳細</span><% end %>
-    <%= link_to user_schedules_path(@user), class: 'schedule-detail__button schedule-detail__button--participant' do %><%= lucide_icon 'calendar-days' %><span>ほかの活動日を見る</span><% end %>
+    <% if has_other_schedules %>
+      <section id="schedule-related-activities" class="schedule-detail__related">
+        <h2>このサークルのほかの活動日</h2>
+        <%= render 'schedules/schedule_list' %>
+      </section>
+    <% end %>
   </div>
-</section>
 
-
-
-<p class="schedule-detail__notice">募集状況は変更されることがあります。参加前に主催者からの案内をご確認ください。</p>
-<% if shareable && !just_created %>
-  <%= render 'schedules/share', schedule: @schedule, owner: share_owner, created: false %>
-<% elsif just_created %>
-  <%= link_to '#schedule-share', class: 'schedule-detail__back', data: { schedule_share_reopen: true } do %><%= lucide_icon 'share-2' %>このイベントをSNSで知らせる<% end %>
-<% end %>
-
-<% if @schedules.where.not(id: @schedule.id).exists? || @past_schedules.where.not(id: @schedule.id).exists? %>
-  <section class="schedule-detail__related">
-    <h2>このサークルのほかの活動日</h2>
-    <%= render 'schedules/schedule_list' %>
-  </section>
-<% end %>
+  <div class="cb-destination__side schedule-detail__follow-up">
+    <section class="schedule-detail__card cb-destination__card schedule-detail__section">
+      <h2>あわせて見る</h2>
+      <div class="schedule-detail__follow-up-links">
+        <%= link_to "#{@user.prefecture.name}の#{@user.event.name}開催予定を見る", event_listing_path(event: @user.event.ruby, pref: @user.prefecture.kana) %>
+        <% if participant_guides.present? %><%= link_to '準備ガイドを見る', '#schedule-participant-guides' %><% end %>
+        <% if has_other_schedules %><%= link_to 'このサークルのほかの活動日', '#schedule-related-activities' %><% end %>
+      </div>
+    </section>
+    <% if shareable && !just_created %>
+      <%= render 'schedules/share', schedule: @schedule, owner: share_owner, created: false %>
+    <% elsif just_created %>
+      <%= link_to '#schedule-share', class: 'schedule-detail__back', data: { schedule_share_reopen: true } do %><%= lucide_icon 'share-2' %>このイベントをSNSで知らせる<% end %>
+    <% end %>
+    <p class="schedule-detail__notice">募集状況は変更されることがあります。参加前に主催者からの案内をご確認ください。</p>
+  </div>
+</div>
 <%= render 'layouts/ad_square' %>

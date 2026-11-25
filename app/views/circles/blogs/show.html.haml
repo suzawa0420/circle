@@ -1,138 +1,119 @@
 - set_meta_tags title: "#{@blog.title}｜#{@user.name}｜#{@user.prefecture.name}の#{@user.event.txt}｜サークルブック", description: @blog.content, og: { image: @blog.ogp_img }
 - breadcrumb :blog_show, @blog
 = render 'shared/structured_data', data: blog_post_structured_data(@blog)
+- blog_public = @blog.publicly_visible?
+- can_manage = can_manage_circle?(@user)
+- photos = [@blog.image_01, @blog.image_02, @blog.image_03, @blog.image_04].select(&:present?)
+- can_share = @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
 
-.user_main.user-show
-  .container
-    - if !@blog.publicly_visible?
-      .attention_content このブログは現在、一般には公開されていません。
+.cb-destination.cb-destination-blog
+  %nav.cb-destination__back.cb-destination-blog__breadcrumbs{ "aria-label" => "記事の位置" }
+    = link_to "サークルブック", root_path
+    = lucide_icon "chevron-right"
+    = link_to "ブログ", circle_blogs_path(@user)
+    = lucide_icon "chevron-right"
+    %span{ "aria-current" => "page" } 記事
+  .cb-destination__grid
+    .cb-destination__main
+      - unless blog_public
+        %p.cb-destination__card.cb-destination-blog__notice.attention_content このブログは現在、一般には公開されていません。
 
-    - if webmaster?
-      = render "webmasters/shared/moderation_reasons", record: @blog
-      - if !@user.publicly_visible?
-        = render "webmasters/shared/moderation_reasons", record: @user
+      - if webmaster?
+        = render "webmasters/shared/moderation_reasons", record: @blog
+        - unless @user.publicly_visible?
+          = render "webmasters/shared/moderation_reasons", record: @user
 
-    .form.users-form.cb-blog-article
-      .form-body.blog_show
-        .post-body
-          - if @blog.image_01.present?
-            - if @blog.image_02.blank? && @blog.image_03.blank? && @blog.image_04.blank?
-              = lazysizes_image_tag @blog.image_01.url , class:'content_image_one'
+      %article.cb-destination-blog__article
+        .cb-destination__card
+          %span.cb-destination__eyebrow 活動ブログ
+          %h1.cb-destination__title= @blog.title
+          - if photos.one?
+            = lazysizes_image_tag photos.first.url, class: 'cb-destination-blog__photo content_image_one', alt: ''
+          - elsif photos.many?
+            .swiper-container.cb-destination-blog__gallery{ role: 'region', "aria-label" => '記事の写真' }
+              .swiper-wrapper
+                - photos.each do |photo|
+                  .swiper-slide= image_tag photo.url, class: 'cb-destination-blog__photo content_image', alt: '', loading: 'lazy', decoding: 'async'
+              .swiper-pagination.cb-destination-blog__pagination
+          %dl.cb-destination-blog__dates
+            %dt 作成日
+            %dd= time_tag @blog.created_at, format: '%Y年%-m月%-d日'
+            - if @blog.updated_at.to_i > @blog.created_at.to_i
+              %dt 更新日
+              %dd= time_tag @blog.updated_at, format: '%Y年%-m月%-d日'
+          - if can_manage
+            .cb-destination__actions
+              = link_to edit_circle_blog_path(@user, @blog) do
+                = lucide_icon "square-pen"
+                記事を編集する
+              = link_to circle_blog_path(@user, @blog), method: :delete, data: { confirm: "投稿を削除しますか？" } do
+                = lucide_icon "trash-2"
+                記事を削除する
+        %section.cb-destination__card{ "aria-labelledby" => "circle-blog-article-label" }
+          %h2#circle-blog-article-label.cb-destination-blog__heading 活動の記録
+          = render "users/parts/admin_user_check", admin_user: @user.admin_user
+          .rich_text_main.cb-reading-body
+            - if @blog.content.include?("<div>")
+              = raw Rinku.auto_link(sanitize @blog.content, tags: %w(p a br h1 strong ul li div), attributes: %w(id class href))
             - else
-              .swiper-container
-                .swiper-wrapper
-                  - if @blog.image_01.present?
-                    .swiper-slide= image_tag @blog.image_01.url , class:'content_image'
-                  - if @blog.image_02.present?
-                    .swiper-slide= image_tag @blog.image_02.url , class:'content_image'
-                  - if @blog.image_03.present?
-                    .swiper-slide= image_tag @blog.image_03.url , class:'content_image'
-                  - if @blog.image_04.present?
-                    .swiper-slide= image_tag @blog.image_04.url , class:'content_image'
-                / Add Pagination
-                .pagination-wrap
-                  .swiper-pagination
-          .cont-width
-            %h1.blog_1st_title= @blog.title
-            .header-post.blog_profile
-              = link_to(circle_path(@user.id)) do
-                = circle_avatar_tag @user, class:'content_icon'
-                .post-user_wrap
-                  .post-user
-                    .post-top= @user.name.truncate(40)
-                    .post-bottom
-                      = "作成日：#{time_tag @blog.created_at.to_date}"
-                      - if @blog.updated_at.to_i > @blog.created_at.to_i
-                        %time{ datetime: @blog.updated_at.iso8601 }= "更新日：#{@blog.updated_at.strftime('%Y年%-m月%-d日')}"
-            .post_share.blog_share
-              .share_btn_tw
-                - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
-                  = link_to("https://twitter.com/share?url=#{request.url}&text=#{@blog.title}｜#{@user.name}%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-                    = lucide_icon "share-2"
-                    ツイートする
+              = raw Rinku.auto_link(simple_format(@blog.content))
 
-
-              - if webmaster? || admin_user_signed_in?
-                - if can_manage_circle?(@user)
-                  .post_edit
-                    = link_to(edit_circle_blog_path) do
-                      = lucide_icon "square-pen"
-                  .post_delete
-                    = link_to(circle_blog_path, method: :delete, data: {confirm: "投稿を削除しますか？"}) do
-                      = lucide_icon "trash-2"
-            = render "users/parts/admin_user_check", admin_user: @user.admin_user
-            .rich_text_main.cb-reading-body
-              - if @blog.content.include?("<div>")
-                = raw Rinku.auto_link(sanitize @blog.content, tags: %w(p a br h1 strong ul li div), attributes:  %w(id class href))
-              - else
-                = raw Rinku.auto_link(simple_format @blog.content)
-      .post_cta
+    %aside.cb-destination__side{ "aria-label" => "サークルの情報" }
+      .cb-destination__card.cb-destination__card--tint
+        %h2.cb-destination-blog__heading 記事を書いたサークル
+        = link_to circle_path(@user), class: 'cb-destination__circle-link' do
+          = circle_avatar_tag @user, class: 'cb-destination__avatar', alt: ''
+          %span= @user.name
         - if @user.switch == "募集中"
-          .admin_user_check_wrap
-            = render "users/parts/admin_user_check", admin_user: @user.admin_user
-          = render "/users/contact_btn"
+          = link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'cb-destination__button cb-participant') do
+            = lucide_icon "mail"
+            このサークルにお問い合わせ
+        - if can_share
+          - share_href = "https://twitter.com/share?#{URI.encode_www_form(url: request.url, text: "#{@blog.title}｜#{@user.name}\n##{@user.event.name} ##{@user.prefecture.name} #サークルブック")}"
+          = link_to share_href, class: 'cb-destination__secondary', target: '_blank', rel: 'noopener' do
+            = lucide_icon "share-2"
+            Xで共有
+        - if @user.switch.present?
+          %ul.cb-destination-blog__tags
+            %li= link_to @user.event.name, event_path(@user.event.ruby)
+            %li= link_to @user.prefecture.name, event_prefecture_path(@user.event.ruby, @user.prefecture.kana)
+          - if @user.schedule.present? || @user.area.present? || @user.recruitment.present?
+            .cb-destination-blog__circle-notes
+              - if @user.schedule.present?
+                %p
+                  = lucide_icon "calendar-days"
+                  = @user.schedule
+              - if @user.area.present?
+                %p
+                  = lucide_icon "map-pin"
+                  = @user.area
+              - if @user.recruitment.present?
+                %p= @user.recruitment.to_s.truncate(110)
 
-      - if @user.switch.present?
-        .border
-        .users-index-item.ribbon-wrapper
-          .tag_lists_wrap
-            %ul.tag_lists
-              %li
-                = link_to event_path(@user.event.ruby), class: "tag_btn" do
-                  = lucide_icon "tags", class: "tag-color"
-                  = @user.event.name
-              %li
-                = link_to event_prefecture_path(@user.event.ruby, @user.prefecture.kana), class: "tag_btn" do
-                  = lucide_icon "tags", class: "tag-color"
-                  = @user.prefecture.name
-          = link_to(user_path(@user.id)) do
-            .user-content
-              = circle_avatar_tag @user, class:'image_icon'
-              .list_wrapper
-                .list_01
-                  %h2.user_name= @user.name.truncate(40)
-              .list_cnts
-                .list_02
-                  %span.user_schedule
-                    = lucide_icon "calendar-days", class: "icon_c"
-                    = @user.schedule
-                .list_03
-                  %span.user_area
-                    = lucide_icon "map-pin", class: "icon_c"
-                    = @user.prefecture.name
-                    = "：" if @user.area.present?
-                    = @user.area
-                .list_04
-                  %span.user_recruitment= @user.recruitment.to_s.truncate(110)
-
-
-
-
-
-    - if @blog.publicly_visible? && (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blog'))
-      = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blog'
-    - else
-      = render "/layouts/ad_square"
-    .ad_space
-
-    - if @blogs.size >= 1
-      %section.circle-blog-related{ "aria-labelledby" => "circle-blog-related-title" }
-        %h2#circle-blog-related-title.circle-blog-related__heading このサークルの他の記事
-        .circle-blog-related__list
-          - @blogs.first(5).each do |blog|
-            = link_to circle_blog_path(blog.user_id, blog.id), class: "circle-blog-related__card" do
-              - if blog.image_01.present?
-                = lazysizes_image_tag blog.image_01.url, class: "circle-blog-related__image", alt: ""
-              .circle-blog-related__body
-                %time.circle-blog-related__date{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime("%Y年%-m月%-d日")
-                %h3.circle-blog-related__title= blog.title
-                %p.circle-blog-related__excerpt= strip_tags(blog.content.to_s).squish.truncate(100)
-        - if @blogs.size > 5
-          = link_to circle_blogs_path(@user), class: "circle-blog-related__more" do
-            ブログをもっと見る
-            = lucide_icon "chevron-right"
-      .ad_space
-      - if @blogs.size >= 3
+    .cb-destination__lower
+      - if blog_public && (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blog'))
+        = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blog'
+      - else
         = render "/layouts/ad_square"
+      .ad_space
+      - if @blogs.any?
+        %section.cb-destination__card.circle-blog-related{ "aria-labelledby" => "circle-blog-related-title" }
+          %h2.cb-destination-blog__heading あわせて見る
+          %h3#circle-blog-related-title.circle-blog-related__heading このサークルの他の記事
+          .circle-blog-related__list
+            - @blogs.first(5).each do |blog|
+              = link_to circle_blog_path(blog.user_id, blog.id), class: "circle-blog-related__card" do
+                - if blog.image_01.present?
+                  = lazysizes_image_tag blog.image_01.url, class: "circle-blog-related__image", alt: ""
+                .circle-blog-related__body
+                  %time.circle-blog-related__date{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime("%Y年%-m月%-d日")
+                  %h4.circle-blog-related__title= blog.title
+                  %p.circle-blog-related__excerpt= strip_tags(blog.content.to_s).squish.truncate(100)
+          - if @blogs.size > 5
+            = link_to circle_blogs_path(@user), class: "circle-blog-related__more" do
+              ブログをもっと見る
+              = lucide_icon "chevron-right"
         .ad_space
-    .space_btm
+        - if @blogs.size >= 3
+          = render "/layouts/ad_square"
+          .ad_space

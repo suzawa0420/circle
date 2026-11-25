@@ -139,3 +139,53 @@
   ol { list-style: decimal; }
   pre { white-space: pre-wrap; }
 }
+
+// The activity destination keeps each card in the shared desktop frame.
+.schedule-detail.cb-destination {
+  .schedule-detail__grid {
+    grid-template-areas: "event host" "content follow-up";
+    row-gap: 16px;
+  }
+
+  .schedule-detail__hero { grid-area: event; min-width: 0; margin: 0; padding: 0; }
+  .schedule-detail__host { grid-area: host; min-width: 0; margin: 0; }
+  .schedule-detail__content { grid-area: content; min-width: 0; }
+  .schedule-detail__follow-up { grid-area: follow-up; min-width: 0; }
+  .schedule-detail__heading { padding-top: 17px; }
+  .schedule-detail__title { font-size: clamp(20px, 4.5vw, 28px); }
+  .schedule-detail__status { flex: none; }
+  .schedule-detail__image img.top_img { border-radius: 8px; }
+  .schedule-detail__facts { margin-bottom: 0; }
+  .schedule-detail__facts + .attention_content { margin-top: 12px; }
+  .schedule-detail__host .schedule-detail__contact { margin-top: 16px; }
+  .schedule-detail__host .schedule-detail__actions { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 11px; }
+  .schedule-detail__host .schedule-detail__button {
+    justify-content: flex-start; min-height: 42px; padding: 8px 3px;
+    background: transparent; border: 0; border-radius: 0; text-align: left;
+    color: #17684e;
+  }
+  .schedule-detail__host .schedule-detail__button + .schedule-detail__button { border-top: 1px solid #d3e0d9; }
+  .schedule-detail__host .schedule-detail__button:hover { text-decoration: underline; }
+  .schedule-detail__contact--secondary {
+    background: transparent; color: #17684e; border: 1px solid #d3e0d9;
+  }
+  .schedule-detail__contact--secondary:hover,
+  .schedule-detail__contact--secondary:focus {
+    background: #e8f4ee; color: #17684e;
+  }
+  .schedule-detail__follow-up .schedule-detail__back { margin: 0; }
+  .schedule-detail__follow-up-links { display: grid; gap: 8px; }
+  .schedule-detail__follow-up-links a { color: #17684e; overflow-wrap: anywhere; }
+  #schedule-participant-guides, #schedule-related-activities { scroll-margin-top: 76px; }
+  .schedule-detail__follow-up .schedule-share { margin-top: 0; }
+  .schedule-detail__follow-up .schedule-share__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .schedule-detail__follow-up .schedule-share__text,
+  .schedule-detail__follow-up .schedule-share__url { min-width: 0; }
+  .schedule-detail__related { margin-top: 18px; }
+
+  @media (max-width: 991px) {
+    .schedule-detail__grid { grid-template-areas: "event" "host" "content" "follow-up"; gap: 14px; }
+  }
+}

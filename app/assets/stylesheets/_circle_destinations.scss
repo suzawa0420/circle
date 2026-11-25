@@ -1,0 +1,170 @@
+// Public circle child pages share the dimensions from the approved wireframes.
+.cb-site .cb-destination {
+  --cb-destination-ink: #15302b;
+  --cb-destination-muted: #4c655f;
+  --cb-destination-brand: #17684e;
+  --cb-destination-border: #d3e0d9;
+  --cb-destination-tint: #e8f4ee;
+  box-sizing: border-box;
+  width: calc(100% - 32px);
+  max-width: 960px;
+  margin-inline: auto;
+  margin-bottom: 28px;
+  padding: 16px 24px 28px;
+  background: #fff;
+  border-radius: 14px;
+  color: var(--cb-destination-ink);
+  overflow-wrap: anywhere;
+}
+
+.cb-destination__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px 32px;
+  align-items: start;
+}
+
+.cb-destination__main,
+.cb-destination__side,
+.cb-destination__lower {
+  min-width: 0;
+}
+
+.cb-destination__main,
+.cb-destination__lower {
+  grid-column: 1;
+}
+
+.cb-destination__side {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.cb-destination__card {
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid var(--cb-destination-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.cb-destination__card:last-child { margin-bottom: 0; }
+.cb-destination__side.cb-destination__card,
+.cb-destination__side .cb-destination__card { background: var(--cb-destination-tint); }
+
+.cb-site .cb-destination__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 44px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cb-destination-brand);
+}
+
+.cb-destination__eyebrow {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cb-destination-muted);
+}
+
+.cb-destination .cb-destination__title {
+  margin: 0;
+  color: var(--cb-destination-ink);
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 750;
+  line-height: 1.38;
+}
+
+.cb-destination__actions {
+  display: grid;
+  gap: 8px;
+}
+
+.cb-destination :focus-visible {
+  outline: 2px solid var(--cb-destination-brand);
+  outline-offset: 2px;
+}
+
+.cb-destination__context {
+  width: calc(100% - 32px);
+  max-width: 960px;
+  margin: 0 auto 24px;
+}
+
+.cb-site .cb-destination__context .mobile-circle-summary {
+  position: static;
+  max-width: none;
+  border-radius: 10px;
+}
+
+@media (max-width: 991px) {
+  .cb-site .cb-destination {
+    max-width: 680px;
+    padding: 12px 16px 20px;
+  }
+  .cb-destination__grid { display: block; }
+  .cb-destination__grid > * + * { margin-top: 16px; }
+  .cb-destination__context { max-width: 680px; }
+}
+
+@media (max-width: 767px) {
+  .cb-site.circle-destination-page { padding-top: 60px; }
+  .cb-site .cb-destination { width: calc(100% - 16px); padding-inline: 12px; }
+  .cb-destination__context { width: calc(100% - 16px); }
+}
+
+.cb-site .cb-destination {
+  .cb-destination__card--tint { background: var(--cb-destination-tint); }
+  .cb-destination__circle-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    color: var(--cb-destination-ink);
+    font-weight: 700;
+  }
+  .cb-destination__circle-link:hover { text-decoration: underline; }
+  .cb-destination__avatar {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #d6e7db;
+    color: var(--cb-destination-brand);
+  }
+  .cb-destination__button,
+  .cb-destination__secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    margin-top: 8px;
+    padding: 7px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    white-space: normal;
+    text-align: center;
+  }
+  .cb-destination__button { width: 100%; color: #fff; background: var(--cb-destination-brand); }
+  .cb-destination__button:hover,
+  .cb-destination__button:focus-visible { color: #fff; background: #11503d; }
+  .cb-destination__secondary {
+    justify-content: flex-start;
+    padding-inline: 0;
+    color: var(--cb-destination-brand);
+    text-align: left;
+  }
+  .cb-destination__secondary:hover { text-decoration: underline; }
+  .cb-destination__actions > * { margin-top: 0; }
+}

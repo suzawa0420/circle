@@ -1,0 +1,113 @@
+.cb-destination.cb-question-detail, .cb-destination.cb-destination-blog {
+  .cb-question-detail__heading, .cb-destination-blog__heading {
+    margin: 0 0 9px;
+    color: #15302b;
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.4;
+  }
+  .cb-destination__side .cb-question-detail__heading,
+  .cb-destination__side .cb-destination-blog__heading { font-size: 15px; }
+  .cb-reading-body {
+    color: #15302b;
+    font-size: 15px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+    > :last-child { margin-bottom: 0; }
+    a { text-decoration: underline; }
+  }
+}
+
+.cb-question-detail {
+  .cb-question-detail__header { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; justify-content: space-between; }
+  .cb-question-detail__status {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 4px 8px;
+    color: #4c655f;
+    background: #eef2f0;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+    &.is-answered { color: #17684e; background: #e8f4ee; }
+  }
+  .cb-question-detail__back-icon { transform: rotate(180deg); }
+  #question-answer {
+    scroll-margin-top: 100px;
+    textarea { width: 100%; min-height: 100px; margin: 0 0 10px; resize: vertical; font-size: 16px; }
+  }
+  .cb-question-detail__related {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li + li { border-top: 1px solid #d3e0d9; }
+    a { display: block; padding: 8px 0; color: #17684e; }
+    a:hover .cb-question-detail__related-title { text-decoration: underline; }
+  }
+  .cb-question-detail__related-title { display: block; margin: 0 0 5px; font-weight: 700; overflow-wrap: anywhere; }
+  .cb-question-detail__related-link { display: inline-flex; align-items: center; gap: 5px; margin-left: 5px; font-size: 12px; }
+}
+
+.cb-destination-blog {
+  .cb-destination-blog__breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    a { color: inherit; }
+    a:hover { text-decoration: underline; }
+  }
+  .cb-destination-blog__article > .cb-destination__card:first-child:not(:last-child) { margin-bottom: 12px; }
+  .cb-destination-blog__photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 440px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #eef4ef;
+  }
+  .cb-destination-blog__gallery {
+    position: relative;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0 !important;
+    height: auto;
+    border-radius: 8px;
+    background: #eef4ef;
+    .swiper-slide { background: transparent; }
+    .cb-destination-blog__photo { aspect-ratio: 16 / 9; }
+    .swiper-pagination-bullet { background: #15302b; border: 1px solid #fff; box-sizing: border-box; }
+    .swiper-pagination-bullet-active { background: #17684e; }
+  }
+  .cb-destination-blog__dates {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 2px 10px;
+    margin: 10px 0 0;
+    font-size: 13px;
+    dt, dd { margin: 0; }
+  }
+  .cb-destination-blog__notice { border-color: #ead5ae; background: #fff5e6; color: #62492d; }
+  .cb-destination-blog__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 12px 0 0;
+    list-style: none;
+    a { color: #17684e; font-size: 12px; }
+    a:hover { text-decoration: underline; }
+  }
+  .cb-destination-blog__circle-notes {
+    margin-top: 8px;
+    color: #4c655f;
+    p { margin: 4px 0; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+  }
+  .circle-blog-related { max-width: none; margin: 0; }
+  .circle-blog-related__heading { margin: 0 0 6px; font-size: 14px; }
+  .circle-blog-related__list { grid-template-columns: minmax(0, 1fr); }
+  .circle-blog-related__card { min-height: 0; }
+}

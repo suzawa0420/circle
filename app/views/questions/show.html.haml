@@ -1,99 +1,85 @@
-- set_meta_tags title: "#{@question.content}｜#{@user.name}の質問コーナー",og: {title: "#{@user.name}の質問コーナー｜#{@question.content}",description: "",image: "https://res.cloudinary.com/hgvtbyy8v/image/upload/l_text:Sawarabi%20Gothic_60:#{@question.content},y_-35,co_rgb:333333,w_900,c_fit/v1586676520/qa_vipkmx.jpg"},twitter: { card: 'summary_large_image'}
-.user_main.users-index
-  = render 'shared/structured_data', data: question_page_structured_data(@question, user: @user)
-  .container.bg_white
-    = link_to user_questions_path(@user) do
-      %span.cb-text-link 質問一覧へ戻る
-    = render "users/parts/user_switching", user: @user
-    .ribbon-wrapper.qa_card_img
-      .ribbon-content
-        - if @question.answer.nil?
-          %span.ribbon.red 未回答
-        - else
-          %span.ribbon.green 回答済み
-      .qa_large
-        .user_slide_qa
-          .user_slide_qa_wrap
-            .user_slide_qa_content_wrap
-              %h1= @question.content
-    .qa_wrap
-      .qa_profile_wrap
-        = render "/users/parts/user_name", user: @user
-        .reset
-        .qa_answer.speech_bubble_a#answer
-          - if @question.answer.present?
-            = raw Rinku.auto_link(simple_format @question.answer)
+- set_meta_tags title: "#{@question.content}｜#{@user.name}の質問コーナー", og: { title: "#{@user.name}の質問コーナー｜#{@question.content}", description: "", image: "https://res.cloudinary.com/hgvtbyy8v/image/upload/l_text:Sawarabi%20Gothic_60:#{@question.content},y_-35,co_rgb:333333,w_900,c_fit/v1586676520/qa_vipkmx.jpg" }, twitter: { card: 'summary_large_image' }
+= render 'shared/structured_data', data: question_page_structured_data(@question, user: @user)
+- can_manage = can_manage_circle?(@user)
+- answered = @question.answer.present?
+- visitor_actions = !webmaster? && !admin_user_signed_in? && @user.switch == "募集中" && !AccountBlock.exists?(ip_address: request.remote_ip)
+- other_questions = @questions.reject { |question| question.content == @question.content }
+
+.cb-destination.cb-question-detail
+  = link_to user_questions_path(@user), class: "cb-destination__back" do
+    = lucide_icon "chevron-right", class: "cb-question-detail__back-icon"
+    質問一覧へ戻る
+  = render "users/parts/user_switching", user: @user
+  .cb-destination__grid
+    .cb-destination__main
+      %section.cb-destination__card
+        .cb-question-detail__header
+          %span.cb-destination__eyebrow サークルへの質問
+          %span.cb-question-detail__status{ class: answered ? 'is-answered' : nil }= answered ? '回答済み' : '未回答'
+        %h1.cb-destination__title= @question.content
+      %section.cb-destination__card{ "aria-labelledby" => "circle-question-answer-title" }
+        %h2#circle-question-answer-title.cb-question-detail__heading サークルからの回答
+        #answer.cb-reading-body
+          - if answered
+            = raw Rinku.auto_link(simple_format(@question.answer))
           - else
-            未回答の質問です。
-            %br/
-            回答するまで、しばらくお待ちください。
-        - if webmaster? || admin_user_signed_in?
-          - if can_manage_circle?(@user)
-            .q_delete
-              = link_to(user_question_path(@user, @question), method: :delete, data: {confirm: "質問を削除しますか？"}) do
-                = lucide_icon "trash-2"
-                質問を削除する
-              - if @question.ip_address.present?
-                %span.ml-10
-                  - if AccountBlock.find_by(ip_address: @question.ip_address)
-                    = lucide_icon "ban"
-                    このアカウントは通報済みです
-                  - else
-                    = link_to("/users/#{@user.id}/questions/#{@question.id}/block", method: :update, data: {confirm: "質問者を通報しますか？"}) do
-                      = lucide_icon "ban"
-                      質問者を通報する
-            .qa_answer_form#question-answer
-              %h2 回答を入力する
-              = form_for ([@user,@question]) do |f|
-                = render "layouts/error_messages", model: f.object
-                = f.label :answer, "回答"
-                = f.text_area :answer, class: 'form-control form-note change_question' ,placeholder: "回答を書いてください！"
-                - if @question.answer.present?
-                  %input.submit_btn{"data-disable-with" => "編集する", :name => "commit", :type => "submit", :value => "編集する"}/
-                - else
-                  %input.submit_btn{"data-disable-with" => "回答する", :name => "commit", :type => "submit", :value => "回答する"}/
-                .reset
-        - if webmaster? || admin_user_signed_in?
-          - if can_manage_circle?(@user)
-            .qa_tw_share
-              = link_to("https://twitter.com/share?url=#{request.url}&text=#{@question.answer}%0a%0a%23質問コーナー%20%23サークルブック%0a", target: '_blank') do
-                .share_btn_tw
-                  = lucide_icon "share-2"
-                  回答をTwitterでシェアする！
-        - else
-          - if @user.switch == "募集中"
-            - if AccountBlock.find_by(ip_address: request.remote_ip)
-            - else
-              .post_cta.profile_cta
-                = link_to user_questions_path(@user) do
-                  .contact-button.qa_btn.qa
-                    = lucide_icon "messages-square"
-                    このサークルに質問する！
-              .post_cta
-                .contact_link
-                  = link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user) do
-                    .btn.btn_c.btn_green.btn_cubic
-                      = lucide_icon "mail"
-                      このサークルにお問い合わせする
-    = render "/layouts/ad_square"
-    .ad_space
-    .qa_card_warp
-      - if @questions.each.count > 1
-        .qa_card_txt
-          ▼ #{@user.name}さんに寄せられた他の質問です！
-      %ul
-        - @questions.each do |question|
-          - if question.content != @question.content
-            %li.ribbon-wrapper
-              .ribbon-content
-                - if question.answer.nil?
-                  %span.ribbon.red 未回答
-                - else
-                  %span.ribbon.green 回答済み
-              = link_to "/users/#{@user.id}/questions/#{question.id}" do
-                .qa_large
-                  .user_slide_qa
-                    .user_slide_qa_wrap
-                      .user_slide_qa_content_wrap
-                        %h2= question.content
-    = paginate @questions
+            %p 未回答の質問です。回答するまで、しばらくお待ちください。
+
+      - if can_manage
+        %section#question-answer.cb-destination__card{ "aria-labelledby" => "circle-question-owner-title" }
+          %h2#circle-question-owner-title.cb-question-detail__heading 回答を入力する
+          = form_for [@user, @question] do |f|
+            = render "layouts/error_messages", model: f.object
+            = f.label :answer, "回答"
+            = f.text_area :answer, class: "form-control", rows: 5, placeholder: "回答を書いてください！"
+            - answer_label = answered ? "編集する" : "回答する"
+            = f.submit answer_label, class: "cb-destination__button", data: { disable_with: answer_label }
+          .cb-destination__actions
+            = link_to user_question_path(@user, @question), method: :delete, data: { confirm: "質問を削除しますか？" } do
+              = lucide_icon "trash-2"
+              質問を削除する
+            - if @question.ip_address.present?
+              - if AccountBlock.exists?(ip_address: @question.ip_address)
+                %span
+                  = lucide_icon "ban"
+                  このアカウントは通報済みです
+              - else
+                = link_to "#{user_question_path(@user, @question)}/block", method: :post, data: { confirm: "質問者を通報しますか？" } do
+                  = lucide_icon "ban"
+                  質問者を通報する
+
+    %aside.cb-destination__side{ "aria-label" => "サークルの情報" }
+      .cb-destination__card.cb-destination__card--tint
+        %h2.cb-question-detail__heading= answered ? '回答したサークル' : '質問先のサークル'
+        = link_to circle_path(@user), class: 'cb-destination__circle-link' do
+          = circle_avatar_tag @user, class: 'cb-destination__avatar', alt: ''
+          %span= @user.name
+        - if visitor_actions
+          = link_to user_questions_path(@user), class: 'cb-destination__button' do
+            = lucide_icon "messages-square"
+            このサークルに質問する
+          = link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: 'cb-destination__secondary') do
+            このサークルにお問い合わせ
+            = lucide_icon "arrow-right"
+        - if can_manage && answered
+          - share_href = "https://twitter.com/share?#{URI.encode_www_form(url: request.url, text: "#{@question.answer}\n\n#質問コーナー #サークルブック")}"
+          = link_to share_href, class: 'cb-destination__secondary', target: '_blank', rel: 'noopener' do
+            = lucide_icon "share-2"
+            回答をXで共有する
+
+    .cb-destination__lower
+      = render "/layouts/ad_square"
+      .ad_space
+      - if other_questions.any?
+        %section.cb-destination__card{ "aria-labelledby" => "circle-other-questions-title" }
+          %h2#circle-other-questions-title.cb-question-detail__heading あわせて見る
+          %ul.cb-question-detail__related
+            - other_questions.each do |question|
+              %li
+                = link_to user_question_path(@user, question) do
+                  %span.cb-question-detail__related-title= "ほかの質問｜#{question.content}"
+                  %span.cb-question-detail__status{ class: question.answer.present? ? 'is-answered' : nil }= question.answer.present? ? '回答済み' : '未回答'
+                  %span.cb-question-detail__related-link
+                    質問を見る
+                    = lucide_icon "arrow-right"
+      = paginate @questions
