@@ -17,28 +17,51 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
         assert_select '.mobile-circle-summary__image', count: 1
         assert_select '.mobile-circle-summary__bookmark', count: 0
       end
-      assert_select '.mobile-circle-summary__bookmark', count: path == circle_path(@circle) ? 0 : 1
+      assert_select '.mobile-circle-summary__bookmark', count: 1
     end
   end
 
-  test 'circle details keeps the share row bookmark without a second mobile bookmark' do
+  test 'circle details keeps one save control in the same place across account states' do
     get circle_path(@circle)
     assert_response :success
-    assert_select '.contact_area .bookmark_btn_wrap', count: 1
-    assert_select '.mobile-circle-summary__bookmark', count: 0
+    assert_select '.mobile-circle-summary__bookmark .mobile-circle-save.cb-participant[href=?]', new_member_registration_path, count: 1
+    assert_select '.bookmark_btn_wrap', count: 0
+
     post member_session_path, params: { member: { email: @member.email, password: 'test-password-123' } }
     assert_response :redirect
     get circle_path(@circle)
-    assert_select '.contact_area .bookmark_btn_wrap a[data-method=post]', count: 1
-    assert_select '.mobile-circle-summary__bookmark', count: 0
-    @member.bookmarks.create!(user: @circle)
+    assert_select '.mobile-circle-summary__bookmark .mobile-circle-save.cb-participant[data-method=post]', count: 1
+
+    post user_bookmarks_path(@circle), xhr: true
+    assert_response :success
+    assert_includes response.body, "mobile-circle-bookmark-#{@circle.id}"
+    assert_includes response.body, '保存済み'
     get circle_path(@circle)
-    assert_select '.contact_area .bookmark_btn_wrap a[data-method=delete]', text: '保存済み', count: 1
+    assert_select '.mobile-circle-summary__bookmark .mobile-circle-save.cb-participant[data-method=delete]', text: '保存済み', count: 1
+
+    delete user_bookmarks_path(@circle), xhr: true
+    assert_response :success
+    get circle_path(@circle)
+    assert_select '.mobile-circle-summary__bookmark .mobile-circle-save[data-method=post]', count: 1
+
     delete destroy_member_session_path
     login(@owner)
     get circle_path(@circle)
-    assert_select '.contact_area .bookmark_btn_wrap', count: 0
-    assert_select '.mobile-circle-summary__bookmark', count: 1
+    assert_select '.mobile-circle-summary__bookmark .mobile-circle-save[href=?]', new_member_registration_path, count: 1
+  end
+
+  test 'circle detail cover has purpose-built tags and owner actions' do
+    second = Prefecture.create!(name: '神奈川県', kana: 'chat-kanagawa', order: '2', sort: 2)
+    @circle.update_column(:prefecture_sub_id, second.id)
+    get circle_path(@circle)
+    assert_select '.circle-detail-cover__tags span', count: 3
+    assert_select '.circle-detail-cover__tags span', text: '神奈川県'
+    assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--share', count: 1
+    assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--edit', count: 0
+
+    login(@owner)
+    get circle_path(@circle)
+    assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--edit[href=?]', edit_user_path(@circle), text: 'プロフィール編集', count: 1
   end
 
   test 'blog list retains the complete long circle name for accessible single line display' do
@@ -114,7 +137,7 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.login-choice__card.cb-participant #organizer-login-title', count: 0
     get circle_path(@circle)
     assert_response :success
-    assert_select '.contact_area .bookmark_btn_wrap a[href=?]', new_member_registration_path, count: 1
+    assert_select '.mobile-circle-summary__bookmark .mobile-circle-save[href=?]', new_member_registration_path, count: 1
     assert_select '.mobile-circle-summary__image--empty', text: 'チ'
     assert_select '.circle-avatar--empty.profile_imege', text: 'チ'
     get user_schedules_path(@circle)

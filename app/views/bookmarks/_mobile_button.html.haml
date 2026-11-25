@@ -1,7 +1,7 @@
 - saved = member_signed_in? && user.bookmarked_by?(current_member)
 - label = saved ? "保存済み" : "保存"
 - if member_signed_in?
-  = link_to user_bookmarks_path(user), remote: true, method: saved ? :delete : :post, class: "mobile-circle-save cb-participant #{'is-saved' if saved}", role: "button", "aria-pressed" => saved.to_s, "aria-label" => saved ? "サークルの保存を解除" : "サークルを保存" do
+  = link_to user_bookmarks_path(user), remote: true, method: saved ? :delete : :post, class: "mobile-circle-save cb-participant#{saved ? ' is-saved' : ''}", role: "button", "aria-pressed" => saved.to_s, "aria-label" => saved ? "サークルの保存を解除" : "サークルを保存" do
     = lucide_icon "bookmark"
     %span= label
 - else

@@ -21,7 +21,7 @@
       = render "webmasters/shared/moderation_reasons", record: @user
 
     .user-profile
-      .header-wrapper.ribbon-wrapper
+      .header-wrapper.ribbon-wrapper.circle-detail-cover
         .ribbon-content
           - if @user.switch == "募集中"
             %span.ribbon.green= @user.switch
@@ -29,7 +29,7 @@
             %span.ribbon.red= @user.switch
 
         - if @user.pic_header.present?
-          .pop-box
+          .pop-box.circle-detail-cover__image
             %label{:for => "popup-on_header"}
               %label{:for => "popup-on_header"}
                 .btn-open_header
@@ -62,32 +62,25 @@
                   .btn-close_profile 閉じる
         - else
           = circle_avatar_tag @user, class:'profile_imege'
-        .data-box.slide_content
+        .circle-detail-cover__tags{ "aria-label" => "活動カテゴリ・地域" }
           - if @user.event_id.present?
-            %span.data-r= @user.event.name if @user.event_id?
+            %span= @user.event.name
           - if @user.prefecture_id.present?
-            %span.data-l= @user.prefecture.name if @user.prefecture_id?
-          - if @user.prefecture_sub_id.present?
-            %span.data-l= @sub_prefecture.name
+            %span= @user.prefecture.name
+          - if @sub_prefecture.present?
+            %span= @sub_prefecture.name
 
+        .circle-detail-cover__actions
+          - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
+            = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank', rel: 'noopener', class: 'circle-detail-cover__action circle-detail-cover__action--share') do
+              = lucide_icon "share-2"
+              ツイート
 
-        .contact_area
-          .share_btn_tw.btn_tw_space
-            - if @user.name.present? && @user.event.name.present? && @user.prefecture.name.present?
-              = link_to("https://twitter.com/share?url=#{request.url}&text=#{@user.name}%0a%0a%23#{@user.event.name}%20%23#{@user.prefecture.name}%20%23サークルブック%0a", target: '_blank') do
-                = lucide_icon "share-2"
-                ツイート
-
-          - if webmaster? || admin_user_signed_in?
-            - if can_manage_circle?(@user)
-              = link_to edit_user_path(@user), data: {"turbolinks" => false} do
-                .contact-button.edit プロフィール編集
-          - else
-            = render 'bookmarks/bookmark_area', user: @user
-
+          - if (webmaster? || admin_user_signed_in?) && can_manage_circle?(@user)
+            = link_to 'プロフィール編集', edit_user_path(@user), data: { turbolinks: false }, class: 'circle-detail-cover__action circle-detail-cover__action--edit'
 
       .circle-header-sentinel{ "aria-hidden" => "true" }
-      = render "mobile_summary", active_tab: :details, show_back: false, show_bookmark: (webmaster? || admin_user_signed_in?)
+      = render "mobile_summary", active_tab: :details, show_back: false
 
       .profile-content
         - if @user.user_time.present?
