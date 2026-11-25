@@ -15,8 +15,9 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".mobile-bottom-nav a[href='#{circles_path}']", text: 'サークル検索'
     assert_select ".mobile-bottom-nav a[href='#{dates_path}']", text: 'イベント検索'
     assert_select ".mobile-bottom-nav a[href='#{login_path}']", text: '無料登録・ログイン'
-    assert_select '.mobile-circle-summary__bookmark', count: 0
-    assert_select ".bookmark_btn_wrap a[href='#{new_member_registration_path}']", text: '保存', count: 1
+    assert_select '.mobile-circle-summary__bookmark', count: 1
+    assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 1
+    assert_select '.bookmark_btn_wrap, .mobile-circle-save[data-remote]', count: 0
     get user_schedules_path(@circle)
     assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 1
     assert_select '.mobile-circle-save[data-remote]', count: 0
@@ -41,8 +42,8 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
       assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}"
       assert_includes response.body, 'replaceWith'
       get circle_path(@circle)
-      assert_select '.mobile-circle-save', count: 0
-      assert_select '.bookmark_btn_wrap a[data-method=delete]', text: '保存済み', count: 1
+      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 1
+      assert_select '.bookmark_btn_wrap', count: 0
       get user_schedules_path(@circle)
       assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 1
 
@@ -50,8 +51,8 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}"
       get circle_path(@circle)
-      assert_select '.mobile-circle-save', count: 0
-      assert_select '.bookmark_btn_wrap a[data-method=post]', text: '保存', count: 1
+      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 1
+      assert_select '.bookmark_btn_wrap', count: 0
       get user_schedules_path(@circle)
       assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 1
     end
