@@ -33,6 +33,7 @@
   - if can_delete || can_report
     .cb-circle-reviews__actions
       - if can_delete
-        = link_to "削除", user_review_path(review.user_id, review), method: :delete, data: { confirm: "口コミを削除しますか？公開後の削除は再投稿できません。" }
+        %span.review_delete
+          = link_to "削除", user_review_path(review.user_id, review), method: :delete, data: { confirm: "口コミを削除しますか？公開後の削除は再投稿できません。" }
       - if can_report
         = link_to "評価の確認・通報", conversation_path(review.conversation_review.conversation, anchor: 'evaluation')
