@@ -3,7 +3,7 @@
 = render 'shared/structured_data', data: blog_listing_structured_data(@blogs)
 
 = render layout: 'circles/shared/public_tab', locals: { circle: @user, active_tab: :blogs } do
-  %header.cb-circle-tab-heading
+  .cb-circle-tab-heading
     %h1{ class: ("management-heading" if mobile_circle_switcher?) } 活動ブログ
     %p 写真とレポートで、活動の雰囲気を見てみる。
   = render "/users/parts/user_switching", user: @user, url_path: "blogs"

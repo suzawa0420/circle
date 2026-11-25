@@ -2,7 +2,7 @@
 = render 'shared/structured_data', data: circle_profile_structured_data(@user, reviews: @reviews.to_a)
 = render layout: 'circles/shared/public_tab', locals: { circle: @user, active_tab: :reviews } do
   .cb-circle-reviews
-    %header.cb-circle-tab-heading
+    .cb-circle-tab-heading
       %h1{ class: ("management-heading" if mobile_circle_switcher?) } 口コミ・評価
       %p 参加前に、実際の感想を確認できます。
     = render 'users/parts/user_switching', user: @user, url_path: 'reviews'

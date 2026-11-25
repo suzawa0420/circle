@@ -3,7 +3,9 @@
 //= require circle_contact_warning
 //= require circle_readmore
 //= require circle_faq
+//= require circle_detail_share
 //= require circle_video
+//= require circle_gallery
 //= require swiper.min
 
 (function () {

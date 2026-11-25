@@ -95,7 +95,7 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
     assert_select '.cb-detail-sidebar .cb-detail-facts', count: 1
     assert_select '.cb-detail-main > .circle-upcoming + .cb-detail-media + .cb-composition-display + .cb-detail-introduction'
     assert_select '.cb-detail-composition__pie[aria-hidden="true"]', count: 1
-    assert_select '#circle-video-dialog', count: 1
+    assert_select '#circle-gallery-dialog', count: 1
     assert_select '.cb-detail-blogs li', count: 2
     assert_select '.cb-detail-blogs li:first-child strong', text: '公開済み活動ブログ0'
     assert_select '.cb-detail-blogs li:nth-child(2) strong', text: '公開済み活動ブログ1'
@@ -110,7 +110,7 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.cb-detail-organizer h3', text: @owner.nickname
     assert_select '.cb-detail-organizer__identity p', text: /30代/
-    assert_select '.cb-detail-organizer .admin_user_txt', text: @owner.profile
+    assert_select '.cb-detail-organizer .cb-detail-organizer__bio', text: @owner.profile
     assert_select '.cb-detail-links a[href="https://example.test/circle"]', count: 1
 
     @owner.update!(open: 0)

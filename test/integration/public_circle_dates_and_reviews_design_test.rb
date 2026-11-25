@@ -29,6 +29,8 @@ class PublicCircleDatesAndReviewsDesignTest < ActionDispatch::IntegrationTest
     assert_select '.cb-public-circle__main .cb-circle-reviews__score', text: '4.25'
     assert_select '.cb-circle-reviews__summary-details', text: /2件の口コミ/
     assert_select '.cb-circle-reviews__card', count: 2
+    assert_select '.cb-circle-reviews > div.cb-circle-tab-heading > h1', text: '口コミ・評価'
+    assert_select '.cb-circle-reviews__card > div.cb-circle-reviews__card-header + .cb-circle-reviews__body', count: 2
     assert_select '.cb-circle-reviews__avatar img', count: 2
     assert_select '.cb-circle-reviews__author a[href=?]', member_profile_path(@member)
     assert_select '.cb-circle-reviews__rating', text: '良かった'

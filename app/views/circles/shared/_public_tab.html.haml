@@ -7,7 +7,7 @@
           = image_tag circle_listing_image_url(circle, "profile"), class: "cb-public-circle__avatar", alt: "", width: 48, height: 48, decoding: "async"
         - else
           = circle_avatar_tag circle, class: "cb-public-circle__avatar", alt: ""
-        %span.cb-public-circle__name= circle.name
+        %span.cb-public-circle__name{ title: circle.name }= circle.name
       .cb-public-circle__badges{ aria: { label: "募集状況・カテゴリ・活動地域" } }
         - if circle.switch.present?
           %span.cb-public-circle__status{ class: ("is-recruiting" if circle.switch == "募集中") }= circle.switch
@@ -17,9 +17,19 @@
           %span= circle.prefecture.name
         - if circle.prefecture_sub.present?
           %span= circle.prefecture_sub.name
-    = render "circles/shared/public_circle_navigation", circle: circle, active_tab: active_tab
+    .circle-header-sentinel{ "aria-hidden" => "true" }
+    .cb-public-circle__sticky
+      .cb-public-circle__sticky-identity
+        = link_to circle_path(circle), class: "cb-public-circle__sticky-profile" do
+          - if circle.pic_profile.present?
+            = image_tag circle_listing_image_url(circle, "profile"), class: "cb-public-circle__sticky-avatar", alt: "", width: 40, height: 40, decoding: "async"
+          - else
+            %span.cb-public-circle__sticky-avatar.is-placeholder{ "aria-hidden" => "true" }= circle.name.to_s.first
+          %span.cb-public-circle__name{ title: circle.name }= circle.name
+      = render "circles/shared/public_circle_navigation", circle: circle, active_tab: active_tab
     .cb-public-circle__grid
       .cb-public-circle__main
         = yield
       %aside.cb-public-circle__sidebar{ aria: { label: "サークルへの操作" } }
         = render "circles/shared/public_circle_actions", circle: circle
+  = render "circles/shared/public_circle_floating_inquiry", circle: circle

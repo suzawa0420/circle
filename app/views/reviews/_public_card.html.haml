@@ -3,7 +3,7 @@
 - gender_label = { "1" => "男性", "2" => "女性", "0" => "その他" }[gender]
 - age_group = member ? member.age_group : review.age
 %article.cb-circle-reviews__card{ id: "review-#{review.id}" }
-  %header.cb-circle-reviews__card-header
+  .cb-circle-reviews__card-header
     .cb-circle-reviews__avatar
       - if member && member.image_profile.present?
         = lazysizes_image_tag member.image_profile.url, alt: ''

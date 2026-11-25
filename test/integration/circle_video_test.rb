@@ -17,16 +17,17 @@ class CircleVideoTest < ActionDispatch::IntegrationTest
 
     get circle_path(@circle)
     assert_response :success
-    assert_select '.cb-detail-media > .circle-video', count: 1
-    assert_select '.circle-video__preview img[src="https://i.ytimg.com/vi/Abcde_123-4/hqdefault.jpg"]'
-    assert_select 'dialog[data-video-id="Abcde_123-4"]'
-    assert_select '.circle-video iframe', count: 0
+    assert_select '.cb-detail-media[data-circle-gallery] #circle-gallery-dialog', count: 1
+    assert_select '[data-circle-gallery-open][data-circle-gallery-kind="video"] img[src="https://i.ytimg.com/vi/Abcde_123-4/hqdefault.jpg"]'
+    assert_select '[data-circle-gallery-open][data-circle-gallery-video-id="Abcde_123-4"][href="https://www.youtube.com/watch?v=Abcde_123-4"]'
+    assert_select '#circle-gallery-dialog [data-circle-gallery-move]', count: 0
+    assert_select '#circle-gallery-dialog iframe', count: 0
 
     patch user_path(@circle), params: { user: { youtube_url: '' } }
     assert_response :redirect
     assert_equal '', @circle.reload.youtube_url
     get circle_path(@circle)
-    assert_select '.circle-video', count: 0
+    assert_select '.cb-detail-media', count: 0
   end
 
   test 'invalid video URL shows an error and preserves saved data' do
@@ -71,12 +72,45 @@ class CircleVideoTest < ActionDispatch::IntegrationTest
   test 'a circle without a video has no preview or player' do
     get circle_path(@circle)
     assert_response :success
-    assert_select '.circle-video', count: 0
+    assert_select '.cb-detail-media', count: 0
   end
 
-  test 'public detail stylesheet retains the video preview and dialog styles' do
+  test 'gallery combines photos and video without another popup or a text close button' do
+    photos = { gallery_01: 'gallery-proof-one.jpg', gallery_03: 'gallery-proof-three.jpg' }
+    @circle.update_columns(photos.merge(youtube_url: 'https://youtu.be/Abcde_123-4'))
+    stored_paths = photos.map do |mount, filename|
+      uploader = @circle.public_send(mount)
+      File.join(uploader.root, uploader.store_path(filename))
+    end
+    stored_paths.each do |path|
+      FileUtils.mkdir_p(File.dirname(path))
+      FileUtils.cp(Rails.root.join('public/images/listing-default-header-v1.jpg'), path)
+    end
+
+    get circle_path(@circle)
+    assert_response :success
+
+    assert_select '.cb-detail-media[data-circle-gallery]' do
+      assert_select '[data-circle-gallery-open]', count: 3
+      assert_select '[data-circle-gallery-kind="image"]', count: 2
+      assert_select '[data-circle-gallery-kind="video"]', count: 1
+      assert_select 'dialog#circle-gallery-dialog', count: 1 do
+        assert_select 'button[data-circle-gallery-move="-1"][aria-label="前の写真・動画"]', count: 1
+        assert_select 'button[data-circle-gallery-move="1"][aria-label="次の写真・動画"]', count: 1
+        assert_select 'button[data-circle-gallery-close][aria-label="閉じる"]', count: 1, text: ''
+        assert_select '[data-circle-gallery-status][aria-live="polite"]', count: 1
+        assert_select 'a[data-circle-gallery-fallback][hidden]', count: 1
+        assert_select 'iframe', count: 0
+      end
+      assert_select '.popup, input[type="checkbox"]', count: 0
+    end
+  ensure
+    FileUtils.rm_f(stored_paths || [])
+  end
+
+  test 'public detail stylesheet retains the gallery preview and dialog styles' do
     css = Rails.application.assets.find_asset('public_detail.css').to_s
-    %w[.circle-video__preview .circle-video__play .circle-video__dialog .circle-video__player .circle-video__close].each do |selector|
+    %w[.cb-circle-gallery__thumbnails .cb-circle-gallery__play .cb-circle-gallery__dialog .cb-circle-gallery__media .cb-circle-gallery__control .cb-circle-gallery__next].each do |selector|
       assert_includes css, selector
     end
   end

@@ -30,7 +30,7 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     assert_select '.cb-detail-blogs a.cb-detail-inline-link[href=?]', circle_blogs_path(@circle)
     assert_select '.cb-detail-review a[href=?]', user_reviews_path(@circle), minimum: 1
     assert_select '.cb-reading-body', text: /サークルでの活動内容です/
-    assert_select '.circle-readmore--organizer .admin_user_txt', text: @owner.profile
+    assert_select '.circle-readmore--organizer .cb-detail-organizer__bio', text: @owner.profile
     assert_select '#check_admin_prof, .admin_user_profile_wrap .readmore-label', count: 0
   end
 
@@ -38,7 +38,7 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     @owner.update!(open: 1, nickname: '主催者さくら', profile: 'よろしくお願いします。')
     get circle_path(@circle)
     assert_response :success
-    assert_select '.circle-readmore--organizer .admin_user_txt', text: 'よろしくお願いします。'
+    assert_select '.circle-readmore--organizer .cb-detail-organizer__bio', text: 'よろしくお願いします。'
     assert_select '.circle-readmore--organizer button[hidden][aria-controls=circle-organizer-content]'
   end
 
@@ -72,9 +72,9 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     assert_includes css, '.circle-readmore--organizer'
   end
 
-  test 'public detail JavaScript includes the shared readmore and video controls' do
+  test 'public detail JavaScript includes the shared readmore and gallery controls' do
     javascript = Rails.application.assets.find_asset('public_detail.js').to_s
-    %w[data-circle-readmore data-circle-video-open .circle-faq__question].each do |selector|
+    %w[data-circle-readmore data-circle-gallery-open .circle-faq__question].each do |selector|
       assert_includes javascript, selector
     end
   end

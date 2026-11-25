@@ -4,7 +4,7 @@
   - set_meta_tags title: "活動スケジュール｜#{@user.name}", og: {title: "活動スケジュール｜#{@user.name}", description: "#{@user.prefecture.name}で活動している#{@user.event.name}サークル｜#{@user.name}", image: image_url("/images/schedule_ogp.jpg")}
   = render layout: 'circles/shared/public_tab', locals: { circle: @user, active_tab: :schedules } do
     .cb-circle-dates
-      %header.cb-circle-tab-heading
+      .cb-circle-tab-heading
         %h1 活動スケジュール
         %p 活動日を選んで、その日の予定を確認できます。
       = render 'users/parts/user_switching', user: @user, url_path: 'schedules'

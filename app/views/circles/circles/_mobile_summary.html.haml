@@ -12,7 +12,7 @@
       - else
         .mobile-circle-summary__image.mobile-circle-summary__image--empty{ "aria-hidden" => "true" }= @user.name.to_s.first
       .mobile-circle-summary__heading
-        %h2= @user.name
+        %h2{ title: @user.name }= @user.name
         %p
           = @user.switch
           %span ・

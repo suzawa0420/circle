@@ -1,0 +1,20 @@
+- public_url = circle_url(circle)
+- destinations = [["Xで共有", "https://twitter.com/intent/tweet?#{ { text: circle.name, url: public_url }.to_query }"], ["Threadsで共有", "https://www.threads.com/intent/post?#{ { text: "#{circle.name}\n#{public_url}" }.to_query }"], ["LINEで共有", "https://social-plugins.line.me/lineit/share?#{ { url: public_url }.to_query }"]]
+%button.circle-detail-cover__action.circle-detail-cover__action--share{ type: "button", aria: { haspopup: "dialog", controls: "circle-detail-share-dialog" }, data: { circle_share_open: true } }
+  = lucide_icon "share-2", **{ "aria-hidden" => "true" }
+  %span 共有
+%dialog#circle-detail-share-dialog.cb-circle-share{ aria: { labelledby: "circle-detail-share-title" }, data: { circle_share_dialog: true } }
+  .cb-circle-share__heading
+    %h2#circle-detail-share-title このサークルを共有
+    %form{ method: "dialog" }
+      %button.cb-circle-share__close{ type: "submit", aria: { label: "閉じる" } }= lucide_icon "x", **{ "aria-hidden" => "true" }
+  .cb-circle-share__options
+    - destinations.each do |label, url|
+      = link_to label, url, target: "_blank", rel: "noopener noreferrer"
+    %button{ type: "button", data: { circle_share_copy: true } } URLをコピー
+  %label.cb-circle-share__label{ for: "circle-detail-share-url" } 公開URL
+  %input#circle-detail-share-url.cb-circle-share__url{ type: "text", inputmode: "url", value: public_url, readonly: true }
+  %p.cb-circle-share__status{ role: "status", aria: { live: "polite" }, data: { circle_share_status: true } }
+%noscript
+  - destinations.each do |label, url|
+    = link_to label, url, target: "_blank", rel: "noopener noreferrer"

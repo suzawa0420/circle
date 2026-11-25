@@ -1,0 +1,4 @@
+- if circle.switch == "募集中" && !can_manage_circle?(circle)
+  - options = circle_inquiry_link_options(circle)
+  = link_to circle_inquiry_path(circle), options.merge(class: "cb-public-circle__floating-inquiry cb-participant", title: "このサークルにお問い合わせ", aria: (options[:aria] || {}).merge(label: "このサークルにお問い合わせ")) do
+    = lucide_icon "message-circle", **{ "aria-hidden" => "true" }

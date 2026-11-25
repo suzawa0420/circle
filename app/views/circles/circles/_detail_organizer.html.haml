@@ -15,7 +15,7 @@
     .circle-readmore.circle-readmore--organizer{ data: { circle_readmore: true } }
       #circle-organizer-content.circle-readmore__content
         .circle-readmore__body
-          .admin_user_txt
+          .cb-detail-organizer__bio
             = raw Rinku.auto_link(simple_format(organizer.profile))
       %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-organizer-content", "aria-label" => "主催者のプロフィールをもっと見る", data: { readmore_label: "主催者のプロフィール" } }
         %span{ data: { readmore_text: true } } 自己紹介をもっと見る

@@ -28,6 +28,41 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '[id^=mobile-circle-bookmark-]', count: 1
   end
 
+  test 'public circle pages share scroll navigation, the mobile footer and the same inquiry entry point' do
+    @circle.update_column(:name, '長いサークル名' * 12)
+    routes = {
+      '詳細' => circle_path(@circle),
+      '活動日' => user_schedules_path(@circle),
+      '口コミ' => user_reviews_path(@circle),
+      'Q&A' => user_questions_path(@circle),
+      'ブログ' => circle_blogs_path(@circle)
+    }
+    routes.each do |label, path|
+      get path
+      assert_response :success
+      assert_select 'body.circle-scroll-header .circle-header-sentinel', count: 1
+      assert_select 'nav[aria-label="サークル内のページ"] [aria-current="page"]', text: label, count: 1
+      assert_select 'nav.mobile-bottom-nav', count: 1
+      assert_select '.cb-public-circle__sticky-profile .cb-public-circle__name[title=?]', @circle.name, count: 1 unless label == '詳細'
+      assert_select 'a.cb-public-circle__floating-inquiry.cb-participant[data-circle-inquiry-click=true][aria-label="このサークルにお問い合わせ"]', count: 1 do |links|
+        assert_equal new_user_conversation_path(@circle), URI.parse(links.first['href']).path
+      end
+    end
+  end
+
+  test 'floating inquiry is absent on the owner view and when recruitment is closed' do
+    @circle.update_column(:switch, '募集終了')
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-public-circle__floating-inquiry', count: 0
+
+    @circle.update_column(:switch, '募集中')
+    login(@owner)
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-public-circle__floating-inquiry', count: 0
+  end
+
   test 'circle details keeps one save control in the same place across account states' do
     get circle_path(@circle)
     assert_response :success
@@ -57,18 +92,40 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.mobile-circle-summary__bookmark .mobile-circle-save[href=?]', new_member_registration_path, count: 1
   end
 
+  test 'the public organizer introduction preserves line breaks and paragraphs' do
+    @owner.update_columns(open: 1, nickname: '主催者', profile: "最初の行\r\n次の行\r\n\r\n別の段落")
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-detail-organizer__bio p', count: 2
+    assert_select '.cb-detail-organizer__bio p:first-child br', count: 1
+    assert_select '.cb-detail-organizer__bio p:last-child', text: '別の段落'
+  end
+
   test 'circle detail cover has purpose-built tags and owner actions' do
     second = Prefecture.create!(name: '神奈川県', kana: 'chat-kanagawa', order: '2', sort: 2)
     @circle.update_column(:prefecture_sub_id, second.id)
     get circle_path(@circle)
     assert_select '.circle-detail-cover__tags span', count: 3
     assert_select '.circle-detail-cover__tags span', text: '神奈川県'
-    assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--share', count: 1
+    assert_select '.circle-detail-cover__actions button.circle-detail-cover__action--share', count: 1
     assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--edit', count: 0
 
     login(@owner)
     get circle_path(@circle)
     assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--edit[href=?]', edit_user_path(@circle), text: 'プロフィール編集', count: 1
+  end
+
+  test 'the circle detail share menu offers three external destinations and a clean public URL' do
+    get circle_path(@circle), params: { source: 'tracking-example' }
+    assert_response :success
+    assert_select 'button[data-circle-share-open][aria-controls="circle-detail-share-dialog"]', text: '共有', count: 1
+    assert_select 'dialog#circle-detail-share-dialog', count: 1 do
+      assert_select 'a[href^="https://twitter.com/intent/tweet?"][rel="noopener noreferrer"]', text: 'Xで共有'
+      assert_select 'a[href^="https://www.threads.com/intent/post?"]', text: 'Threadsで共有'
+      assert_select 'a[href^="https://social-plugins.line.me/lineit/share?"]', text: 'LINEで共有'
+      assert_select 'button[data-circle-share-copy]', text: 'URLをコピー'
+      assert_select 'input[readonly][value=?]', circle_url(@circle)
+    end
   end
 
   test 'blog list retains the complete long circle name for accessible single line display' do
