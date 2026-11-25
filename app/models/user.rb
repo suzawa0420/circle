@@ -230,8 +230,9 @@ class User < ApplicationRecord
 	belongs_to :prefecture
 	belongs_to :prefecture_sub, class_name: 'Prefecture', foreign_key: 'prefecture_sub_id', optional: true
 	belongs_to :category, optional: true
-	belongs_to :event
-  counter_culture :event, column_name: 'users_count'
+  # The built-in counter cache updates the event without duplicating this
+  # record and recaching its mounted images on every profile save.
+	belongs_to :event, counter_cache: :users_count
 	belongs_to :admin_user, optional: true
 
 	with_options presence: true do
