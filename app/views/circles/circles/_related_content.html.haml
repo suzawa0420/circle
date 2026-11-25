@@ -1,50 +1,15 @@
-- recent_blogs = @user.blogs.publicly_visible.order(created_at: "DESC").limit(5).to_a
+- recent_blogs = @user.blogs.publicly_visible.order(created_at: :desc).limit(3).to_a
 - if recent_blogs.any?
-  %h2.user_sub_title サークルのブログ
-  .circle-readmore.circle-readmore--blogs{ data: { circle_readmore: true } }
-    #circle-blogs-content.circle-readmore__content
-      .circle-readmore__body
-        - recent_blogs.each do |blog|
-          = link_to(circle_blog_path(blog.user_id, blog.id)) do
-            .form.users-form
-              .form-body
-                .header-post.cont-width
-                  = circle_avatar_tag @user, class:'content_icon'
-                  .post-user_wrap
-                    .post-user
-                      .post-top= @user.name.truncate(40)
-                      .post-bottom= blog.created_at.strftime("%Y年%-m月%-d日 %H:%M")
-                %div
-                  - if blog.image_01.present?
-                    - if blog.image_02.blank? && blog.image_03.blank? && blog.image_04.blank?
-                      = lazysizes_image_tag blog.image_01.url , class:'content_image_one'
-                    - else
-                      .swiper-container
-                        .swiper-wrapper
-                          - if blog.image_01.present?
-                            .swiper-slide= lazysizes_image_tag blog.image_01.url , class:'content_image'
-                          - if blog.image_02.present?
-                            .swiper-slide= lazysizes_image_tag blog.image_02.url , class:'content_image'
-                          - if blog.image_03.present?
-                            .swiper-slide= lazysizes_image_tag blog.image_03.url , class:'content_image'
-                          - if blog.image_04.present?
-                            .swiper-slide= lazysizes_image_tag blog.image_04.url , class:'content_image'
-                        / Add Pagination
-                        .pagination-wrap
-                          .swiper-pagination
-                  .cont-width
-                    %h3.blog_title= blog.title
-                    .rich_text_main
-                      - if blog.content.include?("<div>")
-                        = sanitize blog.content.truncate(140), tags: %w(p br h1 strong ul li div), attributes:  %w(id class href)
-                      - else
-                        = simple_format blog.content.truncate(140)
-    %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-blogs-content", "aria-label" => "サークルのブログをもっと見る", data: { readmore_label: "サークルのブログ" } }
-      %span{ data: { readmore_text: true } } もっと見る
-      %span.circle-readmore__chevron{ "aria-hidden" => "true" }
-  .circle-readmore__archive= link_to "ブログの一覧を見る", circle_blogs_path(@user)
-
+  %section.cb-detail-card.cb-detail-blogs
+    %h2 活動ブログ
+    %ul.cb-detail-links__list
+      - recent_blogs.first(2).each do |blog|
+        %li
+          = link_to circle_blog_path(blog.user_id, blog.id) do
+            = time_tag blog.created_at.to_date, blog.created_at.strftime("%-m/%-d")
+            %strong= blog.title
+            = lucide_icon "chevron-right"
+    = link_to "ブログの一覧を見る", circle_blogs_path(@user), class: "cb-detail-inline-link"
 - if recent_blogs.size >= 3 || @users.size >= 3
   = render "/layouts/ad_square"
   .ad_space
-.space_btm

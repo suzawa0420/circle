@@ -1,0 +1,28 @@
+.header-wrapper.ribbon-wrapper.circle-detail-cover
+  .ribbon-content
+    - if @user.switch == "募集中"
+      %span.ribbon.green= @user.switch
+    - else
+      %span.ribbon.red= @user.switch
+
+  - if @user.pic_header.present?
+    .pop-box.circle-detail-cover__image
+      %label{ for: "popup-on_header" }
+        %span.btn-open_header= circle_detail_header_image @user
+      %input#popup-on_header{ type: "checkbox", aria: { label: "ヘッダー画像を拡大" } }/
+      .popup
+        %label.icon-close_header{ for: "popup-on_header" }
+          = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
+        .popup-content
+          = lazysizes_image_tag @user.pic_header.url, alt: "ヘッダー画像｜#{@user.name}"
+        %label{ for: "popup-on_header" }
+          %span.btn-close_header 閉じる
+  - else
+    = circle_detail_header_image @user
+  .circle-detail-cover__tags{ "aria-label" => "活動カテゴリ・地域" }
+    - if @user.event_id.present?
+      %span= @user.event.name
+    - if @user.prefecture_id.present?
+      %span= @user.prefecture.name
+    - if @sub_prefecture.present?
+      %span= @sub_prefecture.name

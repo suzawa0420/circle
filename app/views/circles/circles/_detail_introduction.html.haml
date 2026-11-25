@@ -1,0 +1,13 @@
+- if @user.appeal.present?
+  .circle-readmore.circle-readmore--introduction{ data: { circle_readmore: true } }
+    #circle-introduction-content.circle-readmore__content
+      .circle-readmore__body
+        - if @user.appeal.include?("<div>")
+          .profile_list_p.profile_list_a.rich_text_sub.cb-reading-body
+            = raw Rinku.auto_link(sanitize @user.appeal, tags: %w(p a br strong ul li div), attributes:  %w(id class href))
+        - else
+          .profile_list_p.profile_list_a.cb-reading-body
+            = raw Rinku.auto_link(simple_format @user.appeal)
+    %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-introduction-content", "aria-label" => "サークルの詳細内容をもっと見る", data: { readmore_label: "サークルの詳細内容" } }
+      %span{ data: { readmore_text: true } } もっと見る
+      %span.circle-readmore__chevron{ "aria-hidden" => "true" }

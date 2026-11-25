@@ -1,0 +1,17 @@
+- age_labels = @user.age_ids.present? ? @user_ages.sort.map(&:name).join("、") : @user.average_age
+- group_labels = @user.group_ids.present? ? @user_groups.sort.map(&:name).join("、") : @user.grouping
+- area = [@user.prefecture&.name, @sub_prefecture&.name].compact.join("・")
+- area = [area.presence, @user.area.presence].compact.join("：")
+- facts = [["活動種目", @user.event.txt], ["活動曜日・時間", @user.schedule], ["活動エリア", area], ["メンバー", @user.member], ["年齢層", age_labels], ["募集対象", group_labels], ["参加費", @user.cost], ["活動目標", @user.goal]]
+%section.cb-detail-card.cb-detail-facts
+  %h2 基本情報
+  %dl.cb-detail-facts__list
+    - (facts + @user.public_sport_details.to_a).each do |label, value|
+      - next if value.blank?
+      %div
+        %dt= label
+        %dd= value
+    - if @user.match.present? && @user.match.recruit == "募集中"
+      %div
+        %dt 練習試合
+        %dd= link_to "練習試合の募集ページ", match_path(@user.match.id)

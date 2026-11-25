@@ -9,7 +9,7 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
 
   test 'schedule header links both the circle name and icon to details in a new tab' do
     schedule = @circle.schedules.create!(title: '週末の練習', venue: '体育館', day: (Date.current + 7).to_s)
-    [user_schedule_path(@circle, schedule), user_schedules_path(@circle), circle_path(@circle)].each do |path|
+    [user_schedule_path(@circle, schedule), circle_path(@circle)].each do |path|
       get path
       assert_response :success
       assert_select '.mobile-circle-summary__identity a.mobile-circle-summary__profile[href=?][target="_blank"][rel="noopener"]', circle_path(@circle), count: 1 do
@@ -19,6 +19,13 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
       end
       assert_select '.mobile-circle-summary__bookmark', count: 1
     end
+    get user_schedules_path(@circle)
+    assert_response :success
+    assert_select 'a.cb-public-circle__profile[href=?][target="_blank"][rel="noopener"]', circle_path(@circle), count: 1 do
+      assert_select '.cb-public-circle__name', text: @circle.name
+      assert_select '.cb-public-circle__avatar', count: 1
+    end
+    assert_select '[id^=mobile-circle-bookmark-]', count: 1
   end
 
   test 'circle details keeps one save control in the same place across account states' do
@@ -139,7 +146,7 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.mobile-circle-summary__bookmark .mobile-circle-save[href=?]', new_member_registration_path, count: 1
     assert_select '.mobile-circle-summary__image--empty', text: 'チ'
-    assert_select '.circle-avatar--empty.profile_imege', text: 'チ'
+    assert_select '.circle-avatar--empty.cb-detail-avatar__image', text: 'チ'
     get user_schedules_path(@circle)
     assert_select '.mobile-circle-save.cb-participant', count: 1
   end

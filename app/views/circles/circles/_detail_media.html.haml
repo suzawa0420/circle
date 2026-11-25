@@ -1,0 +1,24 @@
+- image_slots = %i[gallery_01 gallery_02 gallery_03 gallery_04].map { |slot| @user.public_send(slot) }.each_with_index.select { |image, _| image.present? }
+- if image_slots.present? || @user.youtube_video_id.present?
+  %section.cb-detail-card.cb-detail-media
+    %h2 写真・動画
+    - if image_slots.present?
+      .gallery_wrap
+        .gallery_even
+          .gallery_container
+            - image_slots.each do |image, index|
+              - number = format("%02d", index + 1)
+              - input_id = "popup-on_#{number}"
+              .pop-box
+                %label{ for: input_id, class: "cb-detail-media__trigger" }
+                  %span{ class: "btn-open_#{number}" }
+                    = lazysizes_image_tag image.url, class: "gallery_imege", alt: "#{@user.name}の活動写真 #{index + 1}"
+                %input{ id: input_id, type: "checkbox", aria: { label: "#{@user.name}の活動写真 #{index + 1}を拡大" } }
+                .popup
+                  %label{ for: input_id, class: "icon-close_#{number}" }
+                    = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
+                  .popup-content
+                    = lazysizes_image_tag image.url, alt: "#{@user.name}の活動写真 #{index + 1}"
+                  %label{ for: input_id }
+                    %span{ class: "btn-close_#{number}" } 閉じる
+    = render "users/youtube_video", user: @user

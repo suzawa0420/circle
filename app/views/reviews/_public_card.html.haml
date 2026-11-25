@@ -1,0 +1,38 @@
+- member = review.member
+- gender = member ? member.gender : review.gender
+- gender_label = { "1" => "男性", "2" => "女性", "0" => "その他" }[gender]
+- age_group = member ? member.age_group : review.age
+%article.cb-circle-reviews__card{ id: "review-#{review.id}" }
+  %header.cb-circle-reviews__card-header
+    .cb-circle-reviews__avatar
+      - if member && member.image_profile.present?
+        = lazysizes_image_tag member.image_profile.url, alt: ''
+      - else
+        = default_user_avatar_tag gender, alt: '', loading: 'lazy'
+    .cb-circle-reviews__author
+      .cb-circle-reviews__name
+        - if member
+          = link_to "#{member.nickname}さん", member_profile_path(member)
+        - elsif review.nickname.present?
+          = "#{review.nickname}さん"
+        - else
+          ゲストユーザー
+      .cb-circle-reviews__metadata
+        - demographics = [gender_label, age_group].compact_blank
+        - if demographics.any?
+          %span= demographics.join('・')
+        %time{ datetime: review.created_at.to_date.iso8601 }= review.created_at.strftime("%Y年%-m月%-d日")
+    - if [0, 1].include?(review.review)
+      %span.cb-circle-reviews__rating{ class: ('is-negative' if review.review == 0) }
+        = review.review == 1 ? '良かった' : '残念だった'
+  .cb-circle-reviews__body= simple_format review.comment
+  - if review.conversation_review
+    %small.cb-circle-reviews__context= review.conversation_review.participated? ? "参加した感想（自己申告）" : "メッセージのやり取りの感想"
+  - can_report = review.conversation_review && admin_user_signed_in? && current_admin_user.id == review.user.admin_user_id
+  - can_delete = can_delete_review?(review)
+  - if can_delete || can_report
+    .cb-circle-reviews__actions
+      - if can_delete
+        = link_to "削除", user_review_path(review.user_id, review), method: :delete, data: { confirm: "口コミを削除しますか？公開後の削除は再投稿できません。" }
+      - if can_report
+        = link_to "評価の確認・通報", conversation_path(review.conversation_review.conversation, anchor: 'evaluation')

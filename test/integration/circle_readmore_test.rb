@@ -17,7 +17,7 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     end
     get circle_path(@circle)
     assert_response :success
-    %w[introduction reviews questions blogs organizer].each do |section|
+    %w[introduction reviews questions organizer].each do |section|
       assert_select ".circle-readmore--#{section}", count: 1 do
         assert_select "#circle-#{section}-content.circle-readmore__content", count: 1
         assert_select "button[aria-controls='circle-#{section}-content'][aria-expanded=false][hidden]", count: 1
@@ -26,9 +26,9 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     end
     assert_select '.circle-faq__item', count: 8
     assert_select '.review_contents', count: 3
-    assert_select '.circle-readmore--blogs .blog_title', count: 5
-    assert_select '.circle-readmore__archive a[href=?]', circle_blogs_path(@circle)
-    assert_select '.review_link_b a[href=?]', user_reviews_path(@circle)
+    assert_select '.cb-detail-blogs li', count: 2
+    assert_select '.cb-detail-blogs a.cb-detail-inline-link[href=?]', circle_blogs_path(@circle)
+    assert_select '.cb-detail-review a[href=?]', user_reviews_path(@circle), minimum: 1
     assert_select '.cb-reading-body', text: /サークルでの活動内容です/
     assert_select '.circle-readmore--organizer .admin_user_txt', text: @owner.profile
     assert_select '#check_admin_prof, .admin_user_profile_wrap .readmore-label', count: 0

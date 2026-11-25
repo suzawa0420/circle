@@ -1,0 +1,38 @@
+- if !@user.publicly_visible?
+  .attention_content
+    - if @user.publication_status == "draft"
+      公開準備中です。不足項目：
+      = @user.missing_publication_fields.join("、")
+      = link_to "サークルを編集", edit_user_path(@user)
+    - if @user.moderation_status == "review"
+      内容を確認中のため、サークルとブログは一時的に非公開です。
+    - elsif @user.moderation_status == "blocked"
+      このサークルは公開停止中です。
+    - elsif @user.publication_status != "draft"
+      このサークルは一般には公開されていません。
+
+- if webmaster?
+  = render "webmasters/shared/moderation_reasons", record: @user
+- if @user.user_time.present?
+  - if @user.user_time.to_time <= Time.current.ago(1.years)
+    .attention_content
+      = lucide_icon "triangle-alert"
+      このサークルは1年以上更新されていません。
+- else
+  .attention_content
+    = lucide_icon "triangle-alert"
+    このサークルは1年以上更新されていません。
+
+= render "users/parts/admin_user_check", admin_user: @user.admin_user
+- if webmaster? || admin_user_signed_in?
+  - if can_manage_circle?(@user)
+    .admin_area
+      .admin_edit= link_to("編集", edit_user_path(@user), data: {"turbolinks" => false})
+      .admin_delete= link_to("削除", user_path(@user), method: :delete, data: {confirm: circle_deletion_confirmation(@user)})
+    - if webmaster? && @admin_user.users.count > 1
+      .admin_user_list
+        - @admin_user.users.each do |user|
+          %ul
+            - if user.id != @user.id
+              %li
+                = "● #{link_to(user.name,"/users/#{user.id}")}"

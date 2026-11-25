@@ -1,0 +1,27 @@
+- links = []
+- links << ["運営サイト・公式サイト", @user.web, "external-link", "nofollow noopener noreferrer"] if @user.web.to_s.match?(%r{\Ahttps?://}i)
+- links << ["Instagram", "https://www.instagram.com/#{@user.instagram}", "camera", "nofollow noopener noreferrer"] if @user.instagram.present?
+- links << ["X（旧Twitter）", "https://twitter.com/#{@user.twitter}", "share-2", "nofollow noopener noreferrer"] if @user.twitter.present?
+- links << ["サークルのリンク集", "https://circle-book.com/link/#{@user.link.unique_id}", "link", nil] if @user.link&.link02_url.present?
+- if links.any?
+  %section.cb-detail-card.cb-detail-links
+    %h2 サークルのリンク
+    %ul.cb-detail-links__list
+      - links.each do |label, url, icon, rel|
+        %li
+          = link_to url, rel: rel do
+            = lucide_icon icon
+            %span= label
+            = lucide_icon "chevron-right"
+
+%section.cb-detail-card.cb-detail-tags
+  %h2 タグ・地域
+  %ul
+    %li= link_to @user.event.name, event_path(@user.event.ruby)
+    %li= link_to @user.prefecture.name, prefecture_path(@user.prefecture.kana)
+    - if @sub_prefecture.present?
+      %li= link_to @sub_prefecture.name, prefecture_path(@sub_prefecture.kana)
+    - @user_cities.sort.each do |city|
+      %li= link_to city.name, event_prefecture_city_path(@user.event.ruby, city.prefecture.kana, city.city_kana)
+    - @user.tags.order(:order => :asc).each do |tag|
+      %li= link_to tag.name, tag_path(tag.id)

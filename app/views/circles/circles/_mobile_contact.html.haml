@@ -1,7 +1,11 @@
 .mobile-circle-contact
   - if admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
-    = link_to "サークルを編集", edit_user_path(@user), class: "mobile-circle-summary__cta"
+    = link_to edit_user_path(@user), class: "mobile-circle-summary__cta" do
+      = lucide_icon "pencil", **{ "aria-hidden" => "true" }
+      サークルを編集
   - elsif @user.switch == "募集中"
-    = link_to "このサークルにお問い合わせする", circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: "mobile-circle-summary__cta cb-participant")
+    = link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: "mobile-circle-summary__cta cb-participant") do
+      = lucide_icon "message-circle", **{ "aria-hidden" => "true" }
+      このサークルにお問い合わせする
   - else
     %span.mobile-circle-summary__cta.mobile-circle-summary__cta--disabled 募集終了

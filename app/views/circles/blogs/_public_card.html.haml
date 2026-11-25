@@ -1,0 +1,30 @@
+- photos = [blog.image_01, blog.image_02, blog.image_03, blog.image_04].select(&:present?)
+- excerpt = truncate(strip_tags(blog.content.to_s).squish, length: 140)
+%article.cb-circle-blogs__card
+  - unless blog.publicly_visible?
+    %p.cb-circle-blogs__visibility このブログは現在、一般には公開されていません。
+  .cb-circle-blogs__body{ class: photos.any? ? 'cb-circle-blogs__body--with-photos' : nil }
+    - if photos.any?
+      .cb-circle-blogs__media
+        - if photos.one?
+          = link_to circle_blog_path(blog.user_id, blog.id), aria: { label: "#{blog.title}の記事を読む" } do
+            = lazysizes_image_tag photos.first.url, class: 'cb-circle-blogs__image', alt: ''
+        - else
+          .swiper-container.cb-circle-blogs__swiper{ role: 'region', 'aria-label': "#{blog.title}の写真" }
+            .swiper-wrapper
+              - photos.each do |photo|
+                .swiper-slide= lazysizes_image_tag photo.url, class: 'cb-circle-blogs__image', alt: ''
+            .swiper-pagination
+          %span.cb-circle-blogs__photo-count 写真#{photos.size}枚
+    .cb-circle-blogs__copy
+      .cb-circle-blogs__meta
+        = circle_avatar_tag circle, class: 'cb-circle-blogs__avatar', alt: ''
+        %span.cb-circle-blogs__author= circle.name
+        %time{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime('%Y年%-m月%-d日 %H:%M')
+      = link_to circle_blog_path(blog.user_id, blog.id), class: 'cb-circle-blogs__article-link' do
+        %h3.blog_title= blog.title
+        - if excerpt.present?
+          %p.cb-circle-blogs__excerpt= excerpt
+        %span.cb-circle-blogs__read
+          記事を読む
+          = lucide_icon "arrow-right", **{ "aria-hidden" => "true" }

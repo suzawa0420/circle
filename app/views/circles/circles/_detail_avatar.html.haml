@@ -1,0 +1,15 @@
+- if @user.pic_profile.present?
+  .pop-box
+    %label{ for: "popup-on_profile" }
+      %span.btn-open_profile
+        = circle_avatar_tag @user, class: "cb-detail-avatar__image", alt: "プロフィール画像｜#{@user.name}"
+    %input#popup-on_profile{ type: "checkbox", aria: { label: "プロフィール画像を拡大" } }/
+    .popup
+      %label.icon-close_profile{ for: "popup-on_profile" }
+        = lucide_icon "x", **{ "aria-label" => "閉じる", "aria-hidden" => "false", role: "img" }
+      .popup-content
+        = circle_avatar_tag @user, alt: "プロフィール画像｜#{@user.name}"
+      %label{ for: "popup-on_profile" }
+        %span.btn-close_profile 閉じる
+- else
+  = circle_avatar_tag @user, class: "cb-detail-avatar__image"

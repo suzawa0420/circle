@@ -2,58 +2,24 @@
 - breadcrumb :circle_blog_index, @user
 = render 'shared/structured_data', data: blog_listing_structured_data(@blogs)
 
-.user_main.user-show
-  .container
+= render layout: 'circles/shared/public_tab', locals: { circle: @user, active_tab: :blogs } do
+  %header.cb-circle-tab-heading
+    %h1{ class: ("management-heading" if mobile_circle_switcher?) } 活動ブログ
+    %p 写真とレポートで、活動の雰囲気を見てみる。
+  = render "/users/parts/user_switching", user: @user, url_path: "blogs"
 
-    .users-index-item
-      %h1{ class: mobile_circle_switcher? ? "management-heading" : "top_title" } 活動ブログ
-      = render "/users/parts/user_switching", user: @user, url_path: "blogs"
-    .space_content
-      %div
-        - if @blogs.any?
-          - @blogs.each do |blog|
-            - if !blog.publicly_visible?
-              .attention_content このブログは現在、一般には公開されていません。
-            = link_to(circle_blog_path(blog.user_id, blog.id)) do
-              .form.users-form
-                .form-body
-                  .header-post.cont-width
-                    = circle_avatar_tag @user, class:'content_icon'
-                    .post-user_wrap
-                      .post-user
-                        .post-top= @user.name.truncate(40)
-                        .post-bottom= blog.created_at.strftime("%Y年%-m月%-d日 %H:%M")
-                  %div
-                    - if blog.image_01.present?
-                      - if blog.image_02.blank? && blog.image_03.blank? && blog.image_04.blank?
-                        = lazysizes_image_tag blog.image_01.url , class:'content_image_one'
-                      - else
-                        .swiper-container
-                          .swiper-wrapper
-                            - if blog.image_01.present?
-                              .swiper-slide= lazysizes_image_tag blog.image_01.url , class:'content_image'
-                            - if blog.image_02.present?
-                              .swiper-slide= lazysizes_image_tag blog.image_02.url , class:'content_image'
-                            - if blog.image_03.present?
-                              .swiper-slide= lazysizes_image_tag blog.image_03.url , class:'content_image'
-                            - if blog.image_04.present?
-                              .swiper-slide= lazysizes_image_tag blog.image_04.url , class:'content_image'
-                          / Add Pagination
-                          .pagination-wrap
-                            .swiper-pagination
-                    .cont-width
-                      %h3.blog_title= blog.title
-                      .rich_text_main
-                        - if blog.content.include?("<div>")
-                          = sanitize blog.content.truncate(140), tags: %w(p br h1 strong ul li div), attributes:  %w(id class href)
-                        - else
-                          = simple_format blog.content.truncate(140)
-        .ad_space
-        - if @user.publicly_visible? && (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blogs'))
-          = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blogs'
-        - else
-          = render "/layouts/ad_square"
-        .ad_space
-        = paginate @blogs
+  - if @blogs.any?
+    %section.cb-circle-blogs__list{ aria: { labelledby: "circle-blog-list-heading" } }
+      %h2#circle-blog-list-heading.sr-only 記事一覧
+      - @blogs.each do |blog|
+        = render 'circles/blogs/public_card', blog: blog, circle: @user
+  - else
+    %p.cb-circle-tab-empty まだ活動ブログはありません。
 
-    = render "users/inquiry_button"
+  .ad_space
+  - if @user.publicly_visible? && (affiliate_ad = affiliate_ad_for_event(@user.event, placement: 'circle_blogs'))
+    = render 'layouts/ads/affiliate', ad: affiliate_ad, placement: 'circle_blogs'
+  - else
+    = render "/layouts/ad_square"
+  .ad_space
+  = paginate @blogs

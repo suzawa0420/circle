@@ -21,7 +21,7 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
     @circle.schedules.create!(day: '2026-10-29', time_s: '18:00', venue: '夜の体育館', title: '夜の活動')
     get circle_path(@circle)
     assert_response :success
-    assert_select '.content_02 + .circle-upcoming' do
+    assert_select '.cb-detail-main > .circle-upcoming' do
       assert_select 'time[datetime=?]', upcoming.day
       assert_select 'p.circle-upcoming__summary[tabindex="0"]', text: /10月29日.*09:00.*公開の体育館/m
       assert_select 'a[href=?]', user_schedules_path(@circle)
@@ -51,14 +51,14 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
     candidates[0].update_columns(publication_status: 'draft')
     candidates[1].update_columns(moderation_status: 'blocked')
     get circle_path(@circle)
-    assert_select '.profile-content > .mobile-circle-contact + .circle-related-candidates' do
+    assert_select '.cb-detail-main > .cb-detail-bottom-contact + .cb-detail-similar' do
       assert_select 'a', count: 3
       assert_select 'a[href=?]', circle_path(@circle), count: 0
       assert_select 'a' do |links|
         assert_equal candidates.drop(2).map { |circle| circle_path(circle) }, links.map { |link| link['href'] }
       end
     end
-    assert_select '.others-user', count: 1
+    assert_select '.cb-detail-similar h2', count: 1
     refute_includes response.body, candidates[0].name
     refute_includes response.body, candidates[1].name
   end
@@ -66,7 +66,7 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
   test 'missing related candidates has an explicit empty state' do
     get circle_path(@circle)
     assert_select '.circle-related-empty', text: /ほかに見つかりません/
-    assert_select '.circle-related-candidates a', count: 0
+    assert_select '.cb-detail-similar a', count: 0
   end
 
   test 'other areas sports and closed recruitment cannot become related candidates' do
@@ -78,7 +78,46 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
       candidate.save!
     end
     get circle_path(@circle)
-    assert_select '.circle-related-candidates a', count: 0
+    assert_select '.cb-detail-similar a', count: 0
     assert_select '.circle-related-empty', count: 1
   end
+  test 'public detail orders page sections and limits latest activity blogs without leaking held posts' do
+    @circle.update!(youtube_url: 'https://youtu.be/Abcde_123-4', member_male_percentage: 40)
+    3.times do |index|
+      @circle.blogs.create!(title: "公開済み活動ブログ#{index}", content: "第#{index}回の活動の様子をまとめた公開記事です。" * 8, created_at: index.days.ago)
+    end
+    hidden_blog = @circle.blogs.create!(title: '公開できないブログ', content: '活動の様子をまとめた確認前記事です。' * 8)
+    hidden_blog.update_columns(moderation_status: 'review')
+
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-detail-identity h1', text: @circle.name, count: 1
+    assert_select '.cb-detail-sidebar .cb-detail-facts', count: 1
+    assert_select '.cb-detail-main > .circle-upcoming + .cb-detail-media + .cb-composition-display + .cb-detail-introduction'
+    assert_select '.cb-detail-composition__pie[aria-hidden="true"]', count: 1
+    assert_select '#circle-video-dialog', count: 1
+    assert_select '.cb-detail-blogs li', count: 2
+    assert_select '.cb-detail-blogs li:first-child strong', text: '公開済み活動ブログ0'
+    assert_select '.cb-detail-blogs li:nth-child(2) strong', text: '公開済み活動ブログ1'
+    assert_select '.cb-detail-blogs a[href=?]', circle_blogs_path(@circle), count: 1
+    refute_includes response.body, hidden_blog.title
+  end
+
+  test 'organizer publication setting is independent from a registered circle link' do
+    @owner.update!(open: 1, nickname: '主催者の表示名', profile: '主催者の自己紹介です。', gender: '1', age: '30代')
+    @circle.update!(web: 'https://example.test/circle')
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-detail-organizer h3', text: @owner.nickname
+    assert_select '.cb-detail-organizer__identity p', text: /30代/
+    assert_select '.cb-detail-organizer .admin_user_txt', text: @owner.profile
+    assert_select '.cb-detail-links a[href="https://example.test/circle"]', count: 1
+
+    @owner.update!(open: 0)
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-detail-organizer', count: 0
+    assert_select '.cb-detail-links a[href="https://example.test/circle"]', count: 1
+  end
+
 end

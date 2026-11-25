@@ -3,7 +3,7 @@
 <% if ages.present? || !male.nil? %>
   <section class="cb-composition-display" aria-labelledby="member-composition-heading">
     <h2 id="member-composition-heading">メンバー構成</h2>
-    <p class="cb-composition-caption">主催者による目安です。</p>
+    <div class="cb-detail-composition__charts">
     <% if ages.present? %>
       <div class="cb-composition-group">
         <h3>年齢の割合</h3>
@@ -25,17 +25,15 @@
       </div>
     <% end %>
     <% unless male.nil? %>
-      <div class="cb-composition-group">
+      <div class="cb-composition-group cb-detail-composition__gender">
         <h3>男女比</h3>
-        <div class="cb-composition-gender-bar" aria-hidden="true">
-          <span class="cb-composition-gender-male" style="--composition-ratio: <%= male.to_i %>%"></span>
-          <span class="cb-composition-gender-female" style="--composition-ratio: <%= 100 - male %>%"></span>
-        </div>
+        <div class="cb-detail-composition__pie" style="--cb-detail-male: <%= male.to_i %>%" aria-hidden="true"></div>
         <ul class="cb-composition-gender-labels">
           <li>男性 <strong><%= male %>%</strong></li>
           <li>女性 <strong><%= 100 - male %>%</strong></li>
         </ul>
       </div>
     <% end %>
+    </div>
   </section>
 <% end %>

@@ -1,0 +1,22 @@
+.cb-public-circle.cb-public-circle--tab{ class: "cb-public-circle--#{active_tab}" }
+  .cb-public-circle__shell
+    = render "circles/shared/public_circle_back", circle: circle
+    .cb-public-circle__identity
+      = link_to circle_path(circle), class: "cb-public-circle__profile", target: "_blank", rel: "noopener", aria: { label: "#{circle.name}の詳細を別タブで開く" } do
+        = circle_avatar_tag circle, class: "cb-public-circle__avatar", alt: ""
+        %span.cb-public-circle__name= circle.name
+      .cb-public-circle__badges{ aria: { label: "募集状況・カテゴリ・活動地域" } }
+        - if circle.switch.present?
+          %span.cb-public-circle__status{ class: ("is-recruiting" if circle.switch == "募集中") }= circle.switch
+        - if circle.event.present?
+          %span= circle.event.name
+        - if circle.prefecture.present?
+          %span= circle.prefecture.name
+        - if circle.prefecture_sub.present?
+          %span= circle.prefecture_sub.name
+    = render "circles/shared/public_circle_navigation", circle: circle, active_tab: active_tab
+    .cb-public-circle__grid
+      .cb-public-circle__main
+        = yield
+      %aside.cb-public-circle__sidebar{ aria: { label: "サークルへの操作" } }
+        = render "circles/shared/public_circle_actions", circle: circle

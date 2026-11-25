@@ -4,213 +4,102 @@
     description: "",
     image: image_url('/images/qa_top.jpg')
   },
-  twitter: { card: 'summary_large_image'}
+  twitter: { card: 'summary_large_image' }
 %>
 
-<div class="user_main users-index">
-  <div class="container bg_white">
+<%= render layout: 'circles/shared/public_tab', locals: { circle: @user, active_tab: :questions } do %>
+  <header class="cb-circle-tab-heading">
+    <h1 class="<%= "management-heading" if mobile_circle_switcher? %>">Q&amp;A</h1>
+    <p>参加前に気になることを、公開の質問で確認できます。</p>
+  </header>
+  <%= render "/users/parts/user_switching", user: @user, url_path: "questions" %>
 
-		<div class="qa_title_wrap">
-      <h1 class="<%= mobile_circle_switcher? ? "management-heading" : "top_title" %>">質問コーナー</h1>
-      <%= render "/users/parts/user_switching", user: @user, url_path: "questions" %>
+  <% can_ask = !AccountBlock.exists?(ip_address: request.remote_ip) && @user.review_permit != false %>
+  <% owner = admin_user_signed_in? && @user.admin_user_id == current_admin_user.id %>
+  <% if can_ask %>
+    <section class="cb-circle-questions__ask" aria-labelledby="circle-ask-heading">
+      <h2 id="circle-ask-heading">サークルに質問する</h2>
+      <p id="circle-question-rules">匿名で投稿できます。個人情報は書かないでください。</p>
+      <%= form_for [@user, @question] do |f| %>
+        <%= render 'layouts/error_messages', model: f.object %>
+        <%= f.text_area :content, id: "input-text", rows: 3, placeholder: "質問を書く（80文字以内）",
+          aria: { label: "質問（80文字以内）", describedby: "circle-question-rules" } %>
+        <div class="cb-circle-questions__form-footer">
+          <span class="cb-circle-questions__counter"><span id="counter"><%= @question.content.to_s.length %></span> / 80文字</span>
+          <%= f.button type: 'submit', class: 'cb-circle-questions__submit',
+            data: { confirm: 'この内容でよろしいですか？', disable_with: '更新中...' } do %>
+            <%= lucide_icon "arrow-right", **{ "aria-hidden" => "true" } %>質問する
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% else %>
+    <p class="cb-circle-tab-empty">現在、このサークルは質問を受け付けていません。</p>
+  <% end %>
+
+  <% if owner %>
+    <div class="cb-circle-questions__share">
+      <%= link_to("https://twitter.com/share?url=#{request.url}&text=質問を募集中です！%0a%0a%23質問コーナー%20%23サークルブック%0a", target: '_blank', rel: 'noopener') do %>
+        <%= lucide_icon "share-2", **{ "aria-hidden" => "true" } %>質問をXで募集する
+      <% end %>
     </div>
+  <% end %>
 
-	<div class="qa_wrap">
-
-
-    <div class="qa_profile_wrap">
-      <%= render "/users/parts/user_name", user: @user %>
-      <div class="qa_answer speech_bubble_a question_notes_wrap">
-        質問を受付中です！<br>
-        ※個人情報は書かないようにお願いします
-      </div>
-    </div>
-
-    <% if AccountBlock.find_by(ip_address: request.remote_ip) || @user.review_permit == false %>
-    <% else %>
-      <div class="qa_answer_form">
-        <%= form_for ([@user, @question]) do |f| %>
-          <%= render 'layouts/error_messages', model: f.object %>
-          <%= f.text_area :content, class: 'form-control form-note change_question', id: "input-text",rows: 4, placeholder: "質問を書いてください！（80文字以内）" %>
-          <div class="counter_wrap"><span id="counter">0文字</span> / 80文字</div>
-
-            <div class="actions">
-              <%= f.submit "質問する", class: "submit_btn", data: { confirm: "この内容でよろしいですか？", disable_with: '更新中...' } %>
-            </div>
-
-          <div class="reset"></div>
-
-        <% end %>
-      </div>
+  <section class="cb-circle-questions__feed" aria-labelledby="circle-questions-heading">
+    <h2 id="circle-questions-heading">寄せられた質問</h2>
+    <% if @questions.none? && !owner %>
+      <p class="cb-circle-tab-empty">まだ質問はありません。</p>
     <% end %>
-
-
-
-
-			<% if admin_user_signed_in?  %>
-				<% if @user.admin_user_id == current_admin_user.id %>
-					<div class="qa_tw_share">
-						<%= link_to("https://twitter.com/share?url=#{request.url}&text=質問を募集中です！%0a%0a%23質問コーナー%20%23サークルブック%0a", target: '_blank') do %>
-							<div class="share_btn_tw">
-                  <%= lucide_icon "share-2" %>質問をTwitterで募集する！
-							</div>
-						<% end %>
-					</div>
-				<% end %>
-			<% end %>
-
-
-	</div>
-
-
-  <div class="qa_card_warp">
-
-    <% if @questions.present? %>
-      <div class="qa_card_txt">
-        ▼ <%= @user.name %>さんに寄せられた質問です！
-      </div>
-    <% end %>
-
-		<ul>
-			<% if @questions.any? %>
-				<% @questions.each do |question| %>
-					<li class="ribbon-wrapper">
-						<div class="ribbon-content">
-							<% if question.answer.nil? %>
-                <span class="ribbon red">未回答</span>
-							<% else %>
-                <span class="ribbon green">回答済み</span>
-							<% end %>
-						</div>
-
-						<%= link_to "/users/#{@user.id}/questions/#{question.id}" do %>
-              <div class="qa_large">
-                <div class="user_slide_qa">
-                  <div class="user_slide_qa_wrap">
-                    <div class="user_slide_qa_content_wrap">
-                      <h2><%= question.content %></h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-						<% end %>
-
-            <% if can_manage_circle?(@user) %>
-              <%= link_to(question.answer.present? ? "回答を編集する" : "回答する", user_question_path(@user, question, anchor: "question-answer"), class: "cb-text-link") %>
+    <ul class="cb-circle-questions__list">
+      <% @questions.each do |question| %>
+        <li class="cb-circle-questions__row">
+          <%= link_to user_question_path(@user, question), class: 'cb-circle-questions__link' do %>
+            <span class="cb-circle-questions__status<%= ' cb-circle-questions__status--answered' if !question.answer.nil? %>">
+              <%= question.answer.nil? ? '未回答' : '回答済み' %>
+            </span>
+            <span class="cb-circle-questions__text"><%= question.content %></span>
+            <%= lucide_icon "chevron-right", **{ "aria-hidden" => "true" } %>
+          <% end %>
+          <% if can_manage_circle?(@user) %>
+            <%= link_to(question.answer.present? ? "回答を編集する" : "回答する", user_question_path(@user, question, anchor: "question-answer"), class: "cb-circle-questions__edit cb-text-link") %>
+          <% end %>
+        </li>
+      <% end %>
+      <% if owner %>
+        <% samples = { first: @question_first, second: @question_second, third: @question_third } %>
+        <% visible_questions = @questions.map(&:content) %>
+        <% samples.reject { |_sample, content| visible_questions.include?(content) }.each do |sample, content| %>
+          <li class="cb-circle-questions__row">
+            <%= link_to({ controller: :questions, action: :question, sample: sample }, class: "cb-circle-questions__link") do %>
+              <span class="cb-circle-questions__status">未回答</span>
+              <span class="cb-circle-questions__text"><%= content %></span>
+              <%= lucide_icon "chevron-right", **{ "aria-hidden" => "true" } %>
             <% end %>
-
-					</li>
-				<% end %>
-			<% end %>
-
-
-			<% @questions.each do |question| %>
-				<% if question.content == @question_first %>
-					<% @question_first_count = 1 %>
-				<% elsif question.content == @question_second %>
-					<% @question_second_count = 1 %>
-				<% else question.content == @question_third %>
-					<% @question_third_count = 1 %>
-				<% end %>
-			<% end %>
-
-			<% if admin_user_signed_in?  %>
-				<% if @user.admin_user_id == current_admin_user.id %>
-
-            <% if @question_first_count != 1 %>
-              <li class="ribbon-wrapper">
-                <div class="ribbon-content">
-                  <span class="ribbon red">未回答</span>
-                </div>
-                <%= link_to controller: :questions, action: :question, sample: "first" do %>
-                  <div class="qa_large">
-                    <div class="user_slide_qa">
-                      <div class="user_slide_qa_wrap">
-                        <div class="user_slide_qa_content_wrap">
-                          <h2><%= @question_first %></h2>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </li>
-            <% end %>
-
-            <% if @question_second_count != 1 %>
-              <li class="ribbon-wrapper">
-                <div class="ribbon-content">
-                  <span class="ribbon red">未回答</span>
-                </div>
-                <%= link_to controller: :questions, action: :question, sample: "second" do %>
-                  <div class="qa_large">
-                    <div class="user_slide_qa">
-                      <div class="user_slide_qa_wrap">
-                        <div class="user_slide_qa_content_wrap">
-                          <h2><%= @question_second %></h2>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </li>
-            <% end %>
-
-            <% if @question_third_count != 1 %>
-              <li class="ribbon-wrapper">
-                <div class="ribbon-content">
-                  <span class="ribbon red">未回答</span>
-                </div>
-                <%= link_to controller: :questions, action: :question, sample: "third" do %>
-                  <div class="qa_large">
-                    <div class="user_slide_qa">
-                      <div class="user_slide_qa_wrap">
-                        <div class="user_slide_qa_content_wrap">
-                          <h2><%= @question_third %></h2>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </li>
-            <% end %>
-
+          </li>
         <% end %>
       <% end %>
+    </ul>
+  </section>
 
-		</ul>
-
-	</div>
-
-	<%= render "/layouts/ad_square" %>
-	<div class="ad_space"></div>
-
+  <%= render "/layouts/ad_square" %>
+  <div class="ad_space"></div>
   <%= paginate @questions %>
+<% end %>
 
-  </div>
-</div>
-
-<!-- 半角 => 全角　変換 -->
+<%# Keep the existing halfwidth punctuation handling, without re-triggering the same change event. %>
 <script>
-  $(function(){
-      $(".change_question").change(function(){
-          var str = $(this).val();
-          str = str.replace(  /["#$%&'()=<>,.?_\[\]{}@^~\\]/g, function(s) {
-              return String.fromCharCode(s.charCodeAt(0) + 65248);
-          });
-          $(this).val(str);
-      }).change();
-  });
-</script>
+  (() => {
+    const input = document.getElementById('input-text');
+    const counter = document.getElementById('counter');
+    if (!input || !counter) return;
 
-
-<!-- 文字カウント -->
-<script>
-  $(function(){
-    $("#input-text").on("keyup", function() {
-      let countNum = String($(this).val().length);
-      $("#counter").text(countNum + "文字");
+    const count = () => { counter.textContent = Array.from(input.value).length; };
+    input.addEventListener('input', count);
+    input.addEventListener('change', () => {
+      input.value = input.value.replace(/["#$%&'()=<>,.?_\[\]{}@^~\\]/g, char => String.fromCharCode(char.charCodeAt(0) + 65248));
+      count();
     });
-  });
+    count();
+  })();
 </script>
-<div class="chat-shell"><%= render 'users/inquiry_button' %></div>
 <%= render 'shared/structured_data', data: questions_listing_structured_data(@questions, user: @user) %>

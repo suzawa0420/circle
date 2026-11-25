@@ -1,0 +1,12 @@
+%h2 Q&A
+- if @questions.any?
+  .circle-readmore.circle-readmore--questions{ data: { circle_readmore: true } }
+    #circle-questions-content.circle-readmore__content
+      .circle-readmore__body
+        = render "questions/accordion", questions: @questions
+    %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-questions-content", "aria-label" => "Q&Aをもっと見る", data: { readmore_label: "Q&A" } }
+      %span{ data: { readmore_text: true } } もっと見る
+      %span.circle-readmore__chevron{ "aria-hidden" => "true" }
+= link_to user_questions_path(@user), class: "cb-detail-inline-link" do
+  = lucide_icon "messages-square"
+  このサークルに質問する

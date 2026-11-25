@@ -1,0 +1,22 @@
+- organizer = @user.admin_user
+- if organizer.open == 1 && organizer.nickname.present? && organizer.profile.present?
+  %section.cb-detail-card.cb-detail-organizer
+    %h2 主催者のプロフィール
+    .cb-detail-organizer__identity
+      - if organizer.image_profile.present?
+        = lazysizes_image_tag organizer.image_profile.url, class: "cb-detail-organizer__avatar", alt: ""
+      - else
+        = default_user_avatar_tag organizer.gender, class: "cb-detail-organizer__avatar", alt: "", loading: "lazy"
+      %div
+        %h3= organizer.nickname
+        - attributes = [{ "1" => "男性", "2" => "女性", "0" => "その他" }[organizer.gender], organizer.age.presence, organizer.prefecture&.name].compact
+        - if attributes.present?
+          %p= attributes.join(" ｜ ")
+    .circle-readmore.circle-readmore--organizer{ data: { circle_readmore: true } }
+      #circle-organizer-content.circle-readmore__content
+        .circle-readmore__body
+          .admin_user_txt
+            = raw Rinku.auto_link(simple_format(organizer.profile))
+      %button.circle-readmore__button{ type: "button", hidden: true, "aria-expanded" => "false", "aria-controls" => "circle-organizer-content", "aria-label" => "主催者のプロフィールをもっと見る", data: { readmore_label: "主催者のプロフィール" } }
+        %span{ data: { readmore_text: true } } 自己紹介をもっと見る
+        %span.circle-readmore__chevron{ "aria-hidden" => "true" }

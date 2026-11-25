@@ -81,7 +81,7 @@
       <% end %>
 
       <%= render "layouts/circle_desktop_toolbar" %>
-      <% if !circle_tab || circle_tab == :details %>
+      <% if !circle_tab || circle_tab == :details || redesigned_public_circle_page?(circle_tab) %>
         <%= render "/layouts/mobile_heading" %>
       <% end %>
       <% if account_access_form_page? && !(webmaster? || member_signed_in? || admin_user_signed_in? || exhibition_group_signed_in?) %>
@@ -105,12 +105,12 @@
         </div>
       <% end %>
 
-      <% if circle_tab == :details %>
+      <% if !redesigned_public_circle_page?(circle_tab) && circle_tab == :details %>
         <div class="mobile-circle-summary__top">
           <%= link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back", data: { circle_search_back: @user.id } %>
           <span>サークル詳細</span>
         </div>
-      <% elsif circle_tab %>
+      <% elsif circle_tab && !redesigned_public_circle_page?(circle_tab) %>
         <%= render "circles/circles/mobile_summary", active_tab: circle_tab %>
       <% end %>
       <%= yield %>

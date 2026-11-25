@@ -1,4 +1,8 @@
 module CircleNavigationHelper
+  def redesigned_public_circle_page?(tab = circle_navigation_tab)
+    tab == :details || (action_name == "index" && %i[schedules reviews questions blogs].include?(tab))
+  end
+
   # Public circle pages only: editor and account screens keep the site header.
   def circle_navigation_tab
     return unless @user&.persisted?
