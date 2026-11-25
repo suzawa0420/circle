@@ -36,7 +36,7 @@ class AccountEmailRecoveryTest < ActionDispatch::IntegrationTest
       assert_select 'input[name=?]', "#{role}[reset_password_token]"
     end
 
-    test "#{role} provider failures leave a path to retry a password reset" do
+    test "#{role} provider failures keep the same public password reset response" do
       account = create_account(model)
       fail_mail do
         assert_no_difference('ActionMailer::Base.deliveries.size') do
@@ -46,7 +46,7 @@ class AccountEmailRecoveryTest < ActionDispatch::IntegrationTest
       assert_response :see_other
       assert_redirected_to public_send("new_#{role}_password_path")
       follow_redirect!
-      assert_includes response.body, '再設定メールを送信できませんでした'
+      assert_includes response.body, AccountPasswordRecovery::RESET_NOTICE
     end
 
     test "#{role} verification can be resent immediately after a transport error" do
@@ -66,14 +66,32 @@ class AccountEmailRecoveryTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'a participant record alone never receives an organizer password reset' do
-    account = create_account(Member)
-    assert_no_difference('ActionMailer::Base.deliveries.size') do
-      post admin_user_password_path, params: { admin_user: { email: account.email } }
+  { admin_user: [AdminUser, Member], member: [Member, AdminUser] }.each do |role, (matching_model, other_model)|
+    test "#{role} valid submissions do not disclose whether an account exists" do
+      registered = create_account(matching_model)
+      other_role = create_account(other_model)
+      path = public_send("#{role}_password_path")
+      redirect_path = public_send("new_#{role}_password_path")
+
+      [registered.email, other_role.email, 'unknown@example.test'].each_with_index do |email, i|
+        assert_difference('ActionMailer::Base.deliveries.size', i.zero? ? 1 : 0) do
+          post path, params: { role => { email: email } }
+        end
+        assert_response :see_other
+        assert_redirected_to redirect_path
+        follow_redirect!
+        assert_includes response.body, AccountPasswordRecovery::RESET_NOTICE
+      end
+      assert_nil other_role.reload.reset_password_sent_at
     end
-    assert_response :success
-    assert_nil account.reload.reset_password_sent_at
-    assert_select 'a[href=?]', new_member_password_path
+
+    test "#{role} malformed address shows an explicit input error without sending mail" do
+      assert_no_difference('ActionMailer::Base.deliveries.size') do
+        post public_send("#{role}_password_path"), params: { role => { email: 'not-an-email' } }
+      end
+      assert_equal 422, response.status
+      assert_includes response.body, 'メールアドレスの形式を確認してください'
+    end
   end
 
   private
