@@ -35,9 +35,9 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     assert_select 'h1', text: /全1件/
     assert_select '.list_02', text: 'パドル貸出あり'
     get circle_path(@circle)
-    assert_select 'td', text: '駅前集合'
+    assert_select '.cb-detail-facts dd', text: '駅前集合'
     assert_select 'a[href=?]', event_path(@sport.ruby), count: 0
-    assert_select 'th', text: 'その他の活動種目', count: 0
+    assert_select '.cb-detail-facts dt', text: 'その他の活動種目', count: 0
     assert_not @circle.has_attribute?(:secondary_event_ids)
   end
 

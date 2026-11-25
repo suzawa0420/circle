@@ -89,7 +89,8 @@ class CoreWebVitalsPagesTest < ActionDispatch::IntegrationTest
     assert_lightweight_assets('public_directory')
     assert_select '.schedule-calendar__day', count: Date.current.end_of_month.day
     assert_select '.schedule-calendar__arrow[href*="month="]', count: 2
-    assert_select '.mobile-circle-summary', count: 1
+    assert_select '.cb-public-circle--schedules .cb-public-circle__identity', count: 1
+    assert_select '.cb-public-circle__tabs [aria-current=page]', text: '活動日', count: 1
   end
 
   test 'signed in owners retain the management bundle on their calendar' do
