@@ -27,6 +27,9 @@ class PublicListingStyles
     context = input[:environment].context_class.new(input)
     root = Rails.root
     globs = SOURCE_GLOBS
+    if %w[public_detail public_directory].include?(input[:name])
+      globs += %w[app/views/circles/shared/*]
+    end
     if input[:name] == 'public_detail'
       globs += %w[app/views/circles/circles/* app/views/users/parts/* app/views/users/_question_card*
         app/views/users/_contact_warning* app/views/bookmarks/* app/views/reviews/* app/views/questions/_accordion*

@@ -73,4 +73,16 @@ class PublicListingStylesTest < ActiveSupport::TestCase
     assert_match(/\.mobile-circle-summary__identity\{[^}]*display:\s*flex/, css)
     assert_operator css.bytesize, :<, Rails.application.assets.find_asset('application.css').to_s.bytesize / 2
   end
+  test 'lightweight circle pages include layout rules from the shared public template' do
+    %w[public_detail public_directory].each do |asset|
+      css = Rails.application.assets.find_asset("#{asset}.css").to_s
+      assert_match(/\.cb-public-circle__grid\{[^}]*grid-template-columns:[^;}]*320px/, css)
+      assert_match(/\.cb-public-circle__back\{[^}]*display:\s*flex/, css)
+    end
+    css = Rails.application.assets.find_asset('public_directory.css').to_s
+    assert_includes css, '.cb-public-circle__identity'
+    assert_includes css, '.cb-public-circle__tabs'
+    assert_includes css, '.cb-public-circle__sidebar'
+  end
+
 end
