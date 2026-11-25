@@ -1,4 +1,5 @@
 class AdminUserEmailVerificationsController < ApplicationController
+  include AccountEmailDelivery
   skip_before_action :set_imperfect_current_user
   before_action :authenticate_admin_user!
   before_action do
@@ -21,6 +22,11 @@ class AdminUserEmailVerificationsController < ApplicationController
       current_admin_user.update!(verification_sent_at: Time.current)
     end
     redirect_to admin_user_email_verification_path, notice: '確認メールを送信しました。リンクの有効期限は24時間です。'
+  rescue *AccountEmailDelivery::DELIVERY_ERRORS => error
+    log_account_email_failure(:verification_resend, :admin_user, error)
+    redirect_to admin_user_email_verification_path,
+      alert: '確認メールを送信できませんでした。時間をおいて再送してください。',
+      status: :see_other
   end
 
   # Mail scanners may open links; only the authenticated confirmation PATCH verifies.

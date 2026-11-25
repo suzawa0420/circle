@@ -1,4 +1,5 @@
 class MemberEmailVerificationsController < ApplicationController
+  include AccountEmailDelivery
   before_action :authenticate_member!
   before_action do
     response.headers['Cache-Control'] = 'private, no-store'
@@ -17,6 +18,11 @@ class MemberEmailVerificationsController < ApplicationController
       current_member.update!(verification_sent_at: Time.current)
     end
     redirect_to member_email_verification_path, notice: '確認メールを送信しました。リンクの有効期限は24時間です。'
+  rescue *AccountEmailDelivery::DELIVERY_ERRORS => error
+    log_account_email_failure(:verification_resend, :member, error)
+    redirect_to member_email_verification_path,
+      alert: '確認メールを送信できませんでした。時間をおいて再送してください。',
+      status: :see_other
   end
 
   # A GET only presents the confirmation form; mail scanners must not verify an account.

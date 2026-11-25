@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 module RegistrationEmailVerification
+  include AccountEmailDelivery
   private
 
   def send_registration_verification(account, delivery)
     begin
       delivery.deliver_now
-    rescue StandardError
+    rescue StandardError => error
+      log_account_email_failure(:signup_verification, resource_name, error)
       flash[:alert] = '会員登録は完了しましたが、確認メールを送信できませんでした。確認画面から再送してください。'
       return
     end

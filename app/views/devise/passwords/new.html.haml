@@ -1,6 +1,9 @@
 .main.users-new
   .container
-    %h1.form-heading パスワードの再設定
+    %h1.form-heading= resource_name == :admin_user ? 'サークル主催者のパスワード再設定' : 'パスワードの再設定'
+    - if resource_name == :admin_user
+      %p 主催者アカウントの登録メールアドレスを入力してください。サークルの連絡先とは異なる場合があります。
+      %p= link_to '参加者アカウントのパスワード再設定はこちら', new_member_password_path
     .form.users-form
       .form-body.cont-body
         = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f|

@@ -53,7 +53,8 @@ Rails.application.routes.draw do
 
   devise_for :admin_users, :controllers => {
     :registrations => 'admin_users/registrations',
-    :sessions => 'admin_users/sessions'
+    :sessions => 'admin_users/sessions',
+    :passwords => 'admin_users/passwords'
   }
 
   devise_for :members, :controllers => {
