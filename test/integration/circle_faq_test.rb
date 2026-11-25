@@ -16,7 +16,7 @@ class CircleFaqTest < ActionDispatch::IntegrationTest
     assert_select '.circle-faq__question', text: /初心者も参加できますか/
     assert_select '.circle-faq__answer', text: /はい、参加できます/
     assert_select '.circle-faq__pending', text: 'まだ回答されていません。'
-    assert_select '.user_qa_btn a[href=?]', user_questions_path(@circle)
+    assert_select '.cb-detail-questions a.cb-detail-inline-link[href=?]', user_questions_path(@circle)
     assert_select '.user_slide_qa', count: 0
   end
 end
