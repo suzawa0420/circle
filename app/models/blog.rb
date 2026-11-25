@@ -36,20 +36,50 @@ class Blog < ApplicationRecord
 
   scope :publicly_visible, -> { where(moderation_status: "clear", user_id: User.publicly_visible.select(:id)) }
 
+  # Keep historical decisions and their publication status intact. Only skip
+  # queue entries whose saved evidence consists entirely of the retired rule.
+  scope :awaiting_moderation, -> {
+    where(moderation_status: "review").where(<<~SQL.squish, '[{"code":"duplicate_content"}]', 'duplicate_content')
+      NOT (
+        moderation_checked_at IS NOT NULL
+        AND moderation_reasons @> CAST(? AS jsonb)
+        AND NOT EXISTS (
+          SELECT 1 FROM jsonb_array_elements(blogs.moderation_reasons) AS reasons(reason)
+          WHERE reasons.reason->>'code' IS DISTINCT FROM ?
+        )
+      )
+    SQL
+  }
+
   def publicly_visible?
     moderation_status == "clear" && user.publicly_visible?
   end
 
-  def moderation_rule_reasons(duplicate_count: nil)
+  def moderation_rule_reasons
     body = ActionView::Base.full_sanitizer.sanitize([title, content].join(" "))
     reasons = []
     reasons << 'foreign_links' if body !~ User::JAPANESE_TEXT && body.scan(User::LINK_TEXT).length >= 2
-    duplicates = duplicate_count || (content.present? ? Blog.where(content: content).where.not(id: id).limit(2).count : 0)
-    reasons << 'duplicate_content' if content.present? && duplicates >= 2
     reasons
   end
 
   private
+
+  def reject_recent_duplicates
+    return if user_id.blank?
+
+    check_title = title.present? && (new_record? || will_save_change_to_title?)
+    check_content = content.present? && (new_record? || will_save_change_to_content?)
+    return unless check_title || check_content
+
+    recent_blogs = Blog.where(user_id: user_id, created_at: 7.days.ago..Time.current)
+    recent_blogs = recent_blogs.where.not(id: id) if persisted?
+    if check_title && recent_blogs.exists?(title: title)
+      errors.add(:base, 'このサークルでは、過去7日以内に同じタイトルのブログが投稿されています。')
+    end
+    if check_content && recent_blogs.exists?(content: content)
+      errors.add(:base, 'このサークルでは、過去7日以内に同じ本文のブログが投稿されています。')
+    end
+  end
 
   def flag_suspicious_content
     return if moderation_status == "blocked"
@@ -67,6 +97,7 @@ class Blog < ApplicationRecord
   validates :title, presence: true
   validates :content, length: { minimum: 100}
   validates :user_id, presence: true
+  validate :reject_recent_duplicates
 
 	mount_uploader :image_01, ImageUploader
 	mount_uploader :image_02, ImageUploader

@@ -24,7 +24,7 @@ class Circles::BlogsController < Circles::ApplicationController
     @blog = Blog.new(blog_params)
 		@blog.user_id = @user.id
 
-		if @blog.save
+		if @user.with_lock { @blog.save }
       record_circle_activity(@user, @blog)
       cb_point(@user)
       @user.save
@@ -32,7 +32,7 @@ class Circles::BlogsController < Circles::ApplicationController
 			flash[:notice] = 'ブログ投稿完了！'
 			redirect_to circle_blog_path(@user, @blog)
 		else
-			render "new"
+			render "new", status: :unprocessable_content
 		end
 	end
 
@@ -61,14 +61,14 @@ class Circles::BlogsController < Circles::ApplicationController
 	def update
 		@blog = Blog.find(params[:id])
 
-		if @blog.update(blog_params)
+		if @user.with_lock { @blog.update(blog_params) }
 
 			@user.user_time = Time.zone.now
       @user.save
 			flash[:notice] = 'ブログ更新完了！'
 			redirect_to circle_blog_path(@blog.user.id, @blog.id)
 		else
-			render "edit"
+			render "edit", status: :unprocessable_content
 		end
 	end
 

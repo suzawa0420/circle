@@ -10,23 +10,25 @@ class ModerationReasonsTest < ActionDispatch::IntegrationTest
     @content = 'みんなで楽しく活動しました。定期的に練習しています。初心者も歓迎しています。' * 5
   end
 
-  test 'duplicate posting reasons are saved with the decision timestamp' do
-    first = @circle.blogs.create!(title: '活動報告1', content: @content)
-    second = @circle.blogs.create!(title: '活動報告2', content: @content)
-    third = @circle.blogs.create!(title: '活動報告3', content: @content)
-    fourth = @circle.blogs.create!(title: '活動報告4', content: @content)
-    assert_equal 'clear', first.moderation_status
-    assert_equal 'clear', second.moderation_status
-    assert_equal ['duplicate_content'], third.reload.moderation_reasons.map { |r| r['code'] }
-    assert_equal ['duplicate_content'], fourth.reload.moderation_reasons.map { |r| r['code'] }
-    assert fourth.moderation_checked_at
-    saved = fourth.moderation_reasons
-    stamp = fourth.moderation_checked_at
-    travel 2.hours
-    fourth.update!(content: @content + '次回の活動も楽しみです。')
-    assert_equal 'review', fourth.reload.moderation_status
-    assert_equal saved, fourth.moderation_reasons
-    assert_equal stamp, fourth.moderation_checked_at
+  test 'only historical duplicate-only decisions are omitted from the master queue' do
+    duplicate_only = @circle.blogs.create!(title: '重複理由のみ', content: @content)
+    mixed = @circle.blogs.create!(title: 'Multiple review reasons', content: 'Read https://one.example.test and https://two.example.test ' * 5)
+    blocked = @circle.blogs.create!(title: '運営による公開停止', content: @content + '停止対象です。')
+    duplicate_reason = ModerationReasonReport.snapshot(['duplicate_content'])
+    duplicate_only.update_columns(moderation_status: 'review', moderation_checked_at: Time.current, moderation_reasons: duplicate_reason)
+    assert_equal "review", mixed.moderation_status
+    mixed.update_column(:moderation_reasons, mixed.moderation_reasons + duplicate_reason)
+    blocked.update_columns(moderation_status: 'blocked', moderation_checked_at: Time.current, moderation_reasons: duplicate_reason)
+
+    login_master
+    get super_admin_circles_path
+    assert_response :success
+    assert_select 'a', text: '重複理由のみ', count: 0
+    assert_select 'a', text: 'Multiple review reasons'
+    assert_select 'a', text: '運営による公開停止'
+    assert_equal 'review', duplicate_only.reload.moderation_status
+    assert_equal duplicate_reason, duplicate_only.moderation_reasons
+    assert_equal 'blocked', blocked.reload.moderation_status
   end
 
   test 'consecutive distinct blogs remain public within the same hour' do
@@ -76,20 +78,18 @@ class ModerationReasonsTest < ActionDispatch::IntegrationTest
   end
 
   test 'legacy decisions are labelled as reference information and unknown stops are explicit' do
-    @circle.blogs.create!(title: '報告1', content: @content)
-    @circle.blogs.create!(title: '報告2', content: @content)
-    old = @circle.blogs.create!(title: '報告3', content: @content)
+    old = @circle.blogs.create!(title: 'Weekly report', content: 'Read https://one.example.test and https://two.example.test ' * 5)
     old.update_columns(moderation_reasons: [], moderation_checked_at: nil)
     login_master
     [super_admin_circles_path, circle_blog_path(@circle, old)].each do |path|
       get path
       assert_response :success
       assert_select '.wm-moderation-reasons', text: /当時の判定理由は未保存/
-      assert_select '.wm-moderation-reasons', text: /同じ本文のブログが2件以上/
+      assert_select '.wm-moderation-reasons', text: /外部リンクが2件以上/
     end
     assert_empty old.reload.moderation_reasons
     assert_nil old.moderation_checked_at
-    old.update_columns(content: @content + '独自の内容に変更しました。', created_at: 2.hours.ago)
+    old.update_columns(title: '活動報告', content: @content + '独自の内容に変更しました。', created_at: 2.hours.ago)
     get circle_blog_path(@circle, old)
     assert_select '.wm-moderation-reasons', text: /現在のデータでは該当条件を確認できません/
     old.update_column(:moderation_status, 'blocked')

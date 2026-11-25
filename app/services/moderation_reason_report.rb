@@ -17,24 +17,15 @@ class ModerationReasonReport
 
   def self.for_records(records)
     records = records.uniq { |record| [record.class.name, record.id] }
-    legacy_blogs = records.select { |record| record.is_a?(Blog) && record.moderation_status != 'clear' && !(record.moderation_reasons.present? && record.moderation_checked_at.present?) }
-    # One body-comparison scan per list, rather than one scan per old blog.
-    duplicate_counts = Blog.where(content: legacy_blogs.map(&:content).compact.uniq).group(:content).count if legacy_blogs.any?
-    records.to_h { |record| [[record.class.name, record.id], build(record, duplicate_counts: duplicate_counts)] }
+    records.to_h { |record| [[record.class.name, record.id], build(record)] }
   end
 
-  def self.build(record, duplicate_counts: nil)
+  def self.build(record)
     saved = record.moderation_reasons.present? && record.moderation_checked_at.present?
     messages = if saved
       record.moderation_reasons.filter_map { |reason| reason['message'] if reason.is_a?(Hash) }.map(&:to_s)
     elsif record.moderation_status == 'review'
-      codes = if record.is_a?(Blog)
-        count = duplicate_counts ? [duplicate_counts.fetch(record.content, 0) - 1, 0].max : nil
-        record.moderation_rule_reasons(duplicate_count: count)
-      else
-        record.moderation_rule_reasons
-      end
-      snapshot(codes).map { |reason| reason.fetch('message') }
+      snapshot(record.moderation_rule_reasons).map { |reason| reason.fetch('message') }
     else
       []
     end
