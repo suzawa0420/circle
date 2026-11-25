@@ -62,8 +62,8 @@ jobs:
         run: |
           bundle exec ruby test/services/youtube_video_test.rb
           node test/security/circle_video_js_test.js
-      - name: Test blog moderation
-        run: bundle exec rails test test/models/blog_test.rb
+      - name: Test blog moderation and duplicate validation
+        run: bundle exec rails test test/models/blog_test.rb test/integration/blog_duplicate_validation_test.rb
       - name: Test facility reviews
         run: bundle exec rails test test/models/place_review_test.rb test/integration/places_directory_test.rb test/integration/place_information_reports_test.rb
       - name: Test official facility discovery and registration

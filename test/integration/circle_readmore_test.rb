@@ -13,8 +13,7 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     8.times { |i| @circle.questions.create!(content: "質問その#{i}は？", answer: '初心者も参加できます。') }
     3.times { |i| @circle.reviews.create!(review: 1, comment: "楽しく参加できました。#{i}" * 20) }
     6.times do |i|
-      blog = @circle.blogs.create!(title: "活動ブログ#{i}", content: '地域で楽しく活動しています。' * 15)
-      blog.update_columns(moderation_status: 'clear')
+      @circle.blogs.create!(title: "活動ブログ#{i}", content: "第#{i}回の活動を地域で楽しみました。" * 15)
     end
     get circle_path(@circle)
     assert_response :success
