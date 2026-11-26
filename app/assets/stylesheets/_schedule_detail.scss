@@ -144,7 +144,7 @@
 .schedule-detail.cb-destination {
   .schedule-detail__grid {
     grid-template-areas: "event host" "content follow-up";
-    row-gap: 16px;
+    row-gap: 16px + $cb-public-section-row-space;
   }
 
   .schedule-detail__hero { grid-area: event; min-width: 0; margin: 0; padding: 0; }
@@ -196,7 +196,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas: "event" "host" "content" "follow-up";
-      gap: 16px;
+      row-gap: 16px + $cb-public-section-row-space;
     }
     .schedule-detail__grid > * { margin-top: 0; }
   }

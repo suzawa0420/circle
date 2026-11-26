@@ -1,0 +1,12 @@
+- dialog_id = 'circle-blog-gallery-dialog'
+.cb-blog-photo-gallery{ data: { circle_gallery: true } }
+  - if photos.one?
+    = render 'circles/blogs/article_photo', photo: photos.first, position: 0, dialog_id: dialog_id, single: true
+  - else
+    .swiper-container.cb-destination-blog__gallery{ role: 'region', aria: { label: '記事の写真' } }
+      .swiper-wrapper
+        - photos.each_with_index do |photo, index|
+          .swiper-slide
+            = render 'circles/blogs/article_photo', photo: photo, position: index, dialog_id: dialog_id, single: false
+      .swiper-pagination.cb-destination-blog__pagination
+  = render 'circles/shared/gallery_dialog', dialog_id: dialog_id, heading: '記事の写真', gallery_size: photos.size, media_label: '写真', video_fallback: false

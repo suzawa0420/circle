@@ -13,17 +13,4 @@
         = link_to "https://www.youtube.com/watch?v=#{video_id}", class: "cb-circle-gallery__thumbnail cb-circle-gallery__thumbnail--video", aria: { label: "サークルの紹介動画を再生", haspopup: "dialog", controls: "circle-gallery-dialog" }, data: { circle_gallery_open: true, circle_gallery_kind: "video", circle_gallery_title: "サークルの紹介動画", circle_gallery_video_id: video_id } do
           = image_tag "https://i.ytimg.com/vi/#{video_id}/hqdefault.jpg", alt: "", loading: "lazy", width: 480, height: 360, class: "cb-circle-gallery__thumbnail-image"
           %span.cb-circle-gallery__play{ aria: { hidden: "true" } }= lucide_icon "play"
-    %dialog#circle-gallery-dialog.cb-circle-gallery__dialog{ aria: { labelledby: "circle-gallery-title" }, data: { circle_gallery_dialog: true } }
-      .cb-circle-gallery__toolbar
-        %h2#circle-gallery-title 写真・動画ギャラリー
-        %button.cb-circle-gallery__control.cb-circle-gallery__close{ type: "button", autofocus: true, aria: { label: "閉じる" }, data: { circle_gallery_close: true } }
-          = lucide_icon "x", **{ "aria-hidden" => "true" }
-      .cb-circle-gallery__stage
-        %div.cb-circle-gallery__media{ data: { circle_gallery_media: true } }
-        - if gallery_size > 1
-          %button.cb-circle-gallery__control.cb-circle-gallery__previous{ type: "button", aria: { label: "前の写真・動画" }, data: { circle_gallery_move: "-1" } }
-            = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
-          %button.cb-circle-gallery__control.cb-circle-gallery__next{ type: "button", aria: { label: "次の写真・動画" }, data: { circle_gallery_move: "1" } }
-            = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
-      %p.cb-circle-gallery__status{ role: "status", aria: { live: "polite", atomic: "true" }, data: { circle_gallery_status: true } }
-      %a.cb-circle-gallery__fallback{ hidden: true, target: "_blank", rel: "noopener noreferrer", data: { circle_gallery_fallback: true } } YouTubeで見る
+    = render 'circles/shared/gallery_dialog', dialog_id: "circle-gallery-dialog", heading: "写真・動画ギャラリー", gallery_size: gallery_size, media_label: "写真・動画", video_fallback: true

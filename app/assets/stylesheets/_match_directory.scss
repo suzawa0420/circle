@@ -42,7 +42,13 @@
   &__card &__avatar { width: 44px; height: 44px; border-radius: 50%; }
   &__card &__avatar.circle-avatar--empty { font-size: 18px; }
   &__card &__identity { gap: 10px; }
-  &__card &__identity h2, &__card &__identity h3 { margin: 0; }
+  &__card &__identity h2, &__card &__identity h3 {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
   &__card &__location { gap: 4px 10px; margin: 4px 0 0; }
   &__location > span, &__facts dt { display: inline-flex; align-items: center; gap: 4px; }
   &__card &__facts { margin-top: 10px; padding: 8px 10px; border: 0; background: $cb-mint-soft; border-radius: 8px; }

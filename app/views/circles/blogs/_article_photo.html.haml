@@ -1,0 +1,9 @@
+- title = "記事の写真 #{position + 1}"
+- photo_url = photo.url
+= link_to photo_url, class: 'cb-blog-photo-gallery__link', aria: { label: "#{title}を拡大", haspopup: 'dialog', controls: dialog_id }, data: { circle_gallery_open: true, circle_gallery_kind: 'image', circle_gallery_title: title, circle_gallery_position: position } do
+  - if single
+    = image_tag photo_url, class: 'cb-destination-blog__photo content_image_one', alt: '', loading: 'lazy', decoding: 'async'
+  - else
+    = image_tag photo_url, class: 'cb-destination-blog__photo content_image', alt: '', loading: 'lazy', decoding: 'async'
+  %span.cb-blog-photo-gallery__zoom{ aria: { hidden: 'true' } }
+    = lucide_icon 'search'

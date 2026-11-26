@@ -27,14 +27,8 @@
         .cb-destination__card
           %span.cb-destination__eyebrow 活動ブログ
           %h1.cb-destination__title= @blog.title
-          - if photos.one?
-            = lazysizes_image_tag photos.first.url, class: 'cb-destination-blog__photo content_image_one', alt: ''
-          - elsif photos.many?
-            .swiper-container.cb-destination-blog__gallery{ role: 'region', "aria-label" => '記事の写真' }
-              .swiper-wrapper
-                - photos.each do |photo|
-                  .swiper-slide= image_tag photo.url, class: 'cb-destination-blog__photo content_image', alt: '', loading: 'lazy', decoding: 'async'
-              .swiper-pagination.cb-destination-blog__pagination
+          - if photos.any?
+            = render 'circles/blogs/article_gallery', photos: photos
           %dl.cb-destination-blog__dates
             %dt 作成日
             %dd= time_tag @blog.created_at, format: '%Y年%-m月%-d日'

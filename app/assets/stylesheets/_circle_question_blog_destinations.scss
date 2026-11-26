@@ -58,7 +58,7 @@
     a { color: inherit; }
     a:hover { text-decoration: underline; }
   }
-  .cb-destination-blog__article > .cb-destination__card:first-child:not(:last-child) { margin-bottom: 12px; }
+  .cb-destination-blog__article > .cb-destination__card:first-child:not(:last-child) { margin-bottom: 12px + $cb-public-section-row-space; }
   .cb-destination-blog__photo {
     display: block;
     width: 100%;

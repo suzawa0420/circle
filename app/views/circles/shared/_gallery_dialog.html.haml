@@ -1,0 +1,18 @@
+- heading_id = dialog_id.sub(/-dialog\z/, "-title")
+%dialog.cb-circle-gallery__dialog{ id: dialog_id, aria: { labelledby: heading_id }, data: { circle_gallery_dialog: true } }
+  .cb-circle-gallery__toolbar
+    %h2.cb-circle-gallery__title{ id: heading_id }= heading
+    %button.cb-circle-gallery__control.cb-circle-gallery__close{ type: "button", autofocus: true, aria: { label: "閉じる" }, data: { circle_gallery_close: true } }
+      = lucide_icon "x", **{ "aria-hidden" => "true" }
+  .cb-circle-gallery__stage
+    %div.cb-circle-gallery__media{ data: { circle_gallery_media: true } }
+    - if gallery_size > 1
+      %button.cb-circle-gallery__control.cb-circle-gallery__previous{ type: "button", aria: { label: "前の#{media_label}" }, data: { circle_gallery_move: "-1" } }
+        = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
+      %button.cb-circle-gallery__control.cb-circle-gallery__next{ type: "button", aria: { label: "次の#{media_label}" }, data: { circle_gallery_move: "1" } }
+        = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
+  %p.cb-circle-gallery__status{ role: "status", aria: { live: "polite", atomic: "true" }, data: { circle_gallery_status: true } }
+  - if video_fallback
+    %a.cb-circle-gallery__fallback{ hidden: true, target: "_blank", rel: "noopener noreferrer", data: { circle_gallery_fallback: true } } YouTubeで見る
+  - else
+    %a.cb-circle-gallery__fallback.cb-circle-gallery__original{ hidden: true, target: "_blank", rel: "noopener noreferrer", data: { circle_gallery_original: true }, aria: { label: "元の画像を開く（新しいタブ）" } } 元の画像を開く

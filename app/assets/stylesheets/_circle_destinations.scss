@@ -20,7 +20,7 @@
 .cb-destination__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 16px 32px;
+  gap: (16px + $cb-public-section-row-space) 32px;
   align-items: start;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .cb-destination__card {
-  margin: 0 0 16px;
+  margin: 0 0 (16px + $cb-public-section-row-space);
   padding: 16px;
   border: 1px solid var(--cb-destination-border);
   border-radius: 12px;

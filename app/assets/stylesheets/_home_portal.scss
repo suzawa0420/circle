@@ -24,7 +24,7 @@
   .home-service:hover { border-color: $cb-action; background: #f7faf8; }
   .home-service > svg { width: 16px; height: 16px; flex: none; margin: 0; }
   .home-service .home-service__arrow { display: none; }
-  &__section { position: relative; margin: 0 0 36px; scroll-margin-top: 104px; }
+  &__section { position: relative; margin: 0 0 (36px + $cb-public-section-row-space); scroll-margin-top: 104px; }
   &__section:last-child { margin-bottom: 0; }
   &__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
   &__heading-copy { min-width: 0; }
@@ -71,7 +71,7 @@
     &__services { grid-template-columns: minmax(0, 1fr); }
     .home-service, .home-service--circles, .home-service--events { grid-column: auto; font-size: 14px; justify-content: flex-start; text-align: left; padding: 8px 12px; gap: 9px; }
     .home-service .home-service__arrow { display: block; margin-left: auto; }
-    &__section { margin-bottom: 48px; }
+    &__section { margin-bottom: 48px + $cb-public-section-row-space; }
   }
   @media (max-width: 767px) {
     padding-top: 0;

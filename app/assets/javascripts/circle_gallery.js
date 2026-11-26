@@ -28,10 +28,16 @@
 
     // Removing the old iframe on every change also stops its audio.
     gallery.media.replaceChildren(media);
-    gallery.fallback.hidden = !isVideo;
-    if (isVideo) gallery.fallback.href = slide.href;
-    else gallery.fallback.removeAttribute('href');
+    setLink(gallery.fallback, isVideo ? slide.href : null);
+    setLink(gallery.original, isVideo ? null : slide.href);
     gallery.status.textContent = (gallery.index + 1) + ' / ' + gallery.slides.length + ' ・ ' + title;
+  }
+
+  function setLink(link, href) {
+    if (!link) return;
+    link.hidden = !href;
+    if (href) link.href = href;
+    else link.removeAttribute('href');
   }
 
   function closeGallery(restoreFocus) {
@@ -40,8 +46,9 @@
     active = null;
     gallery.media.replaceChildren();
     gallery.status.textContent = '';
-    gallery.fallback.hidden = true;
-    gallery.fallback.removeAttribute('href');
+    setLink(gallery.fallback, null);
+    setLink(gallery.original, null);
+    if (gallery.swiperKeyboard) gallery.swiperKeyboard.enable();
     document.documentElement.style.overflow = gallery.previousOverflow;
     if (gallery.dialog.open) gallery.dialog.close();
     if (restoreFocus && gallery.trigger.isConnected) gallery.trigger.focus({ preventScroll: true });
@@ -55,8 +62,21 @@
       if (!container) return;
       var dialog = container.querySelector('[data-circle-gallery-dialog]');
       if (!dialog || typeof dialog.showModal !== 'function') return;
-      var slides = Array.from(container.querySelectorAll('[data-circle-gallery-open]'));
+      var slides = Array.from(container.querySelectorAll('[data-circle-gallery-open]')).filter(function (slide) {
+        return !slide.closest('.swiper-slide-duplicate');
+      });
+      // Looping Swiper duplicates the first/last photo. Keep the real slide
+      // order and map a tap on a clone back to its original photo.
+      var index = slides.indexOf(trigger);
+      if (index < 0 && trigger.hasAttribute('data-circle-gallery-position')) {
+        index = slides.findIndex(function (slide) {
+          return slide.dataset.circleGalleryPosition === trigger.dataset.circleGalleryPosition;
+        });
+      }
+      if (index < 0) return;
       if (active) closeGallery(false);
+      var carousel = trigger.closest('.swiper-container');
+      var keyboard = carousel && carousel.swiper && carousel.swiper.keyboard;
 
       // Leave ordinary links usable when native modal dialogs are unavailable.
       dialog.showModal();
@@ -68,10 +88,13 @@
         media: dialog.querySelector('[data-circle-gallery-media]'),
         status: dialog.querySelector('[data-circle-gallery-status]'),
         fallback: dialog.querySelector('[data-circle-gallery-fallback]'),
+        original: dialog.querySelector('[data-circle-gallery-original]'),
+        swiperKeyboard: keyboard && keyboard.enabled ? keyboard : null,
         previousOverflow: document.documentElement.style.overflow
       };
       document.documentElement.style.overflow = 'hidden';
-      display(slides.indexOf(trigger), trigger.dataset.circleGalleryKind === 'video');
+      if (active.swiperKeyboard) active.swiperKeyboard.disable();
+      display(index, trigger.dataset.circleGalleryKind === 'video');
       return;
     }
 

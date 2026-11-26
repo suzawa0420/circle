@@ -59,7 +59,16 @@ class CircleQuestionBlogDestinationTest < ActionDispatch::IntegrationTest
     assert_select '.cb-destination-blog__article p', text: /試合に参加/
     assert_select '.cb-destination-blog__dates time', count: 2
     assert_select '.cb-destination-blog__gallery', count: 0
-    assert_select '.cb-destination-blog__photo', minimum: 1
+    assert_select '.cb-blog-photo-gallery[data-circle-gallery]' do
+      assert_select 'a[data-circle-gallery-open][aria-controls=circle-blog-gallery-dialog][href=?]', gallery.image_01.url, count: 1 do
+        assert_select 'img.cb-destination-blog__photo', count: 1
+      end
+      assert_select 'dialog#circle-blog-gallery-dialog[aria-labelledby=circle-blog-gallery-title]' do
+        assert_select '[data-circle-gallery-close]', count: 1
+        assert_select '[data-circle-gallery-move]', count: 0
+        assert_select '[data-circle-gallery-original][hidden]', count: 1
+      end
+    end
     assert_select '.cb-destination__side a[data-circle-inquiry-click]', count: 1
     assert_select '.circle-blog-related__card[href=?]', circle_blog_path(@circle, earlier)
 
@@ -68,10 +77,12 @@ class CircleQuestionBlogDestinationTest < ActionDispatch::IntegrationTest
     get article_path
     assert_response :success
     assert_select '.cb-destination-blog__gallery .swiper-slide', count: 2
+    assert_select '.cb-destination-blog__gallery a[data-circle-gallery-open][data-circle-gallery-position]', count: 2
+    assert_select '#circle-blog-gallery-dialog [data-circle-gallery-move]', count: 2
 
     get circle_blog_path(@circle, earlier)
     assert_response :success
-    assert_select '.cb-destination-blog__photo, .cb-destination-blog__gallery', count: 0
+    assert_select '.cb-destination-blog__photo, .cb-destination-blog__gallery, #circle-blog-gallery-dialog', count: 0
     assert_select '.cb-destination-blog__dates time', count: 1
   ensure
     @gallery&.image_01&.remove!
