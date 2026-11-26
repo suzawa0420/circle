@@ -67,6 +67,7 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     end
     assert_includes css, 'linear-gradient('
     assert_includes css, 'prefers-reduced-motion'
+    assert_match(/\.cb-detail-card\.cb-detail-card--nested-cards\s*\{[^}]*padding-inline:\s*0\s*;[^}]*border:\s*0\b/, css)
   end
 
   test 'readmore stylesheet can compile independently through the asset manifest' do

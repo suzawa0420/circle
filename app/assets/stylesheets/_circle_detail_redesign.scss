@@ -103,8 +103,11 @@
     border: 1px solid var(--cb-detail-border); border-radius: 10px;
     background: #fff; color: var(--cb-detail-ink); overflow-wrap: anywhere;
   }
-  // Keep the section inset, but show only the individual cards’ borders.
-  .cb-detail-card--nested-cards { border-color: transparent; }
+  // The inner cards have their own borders and align with adjacent sections.
+  .cb-detail-card.cb-detail-card--nested-cards {
+    padding-inline: 0;
+    border: 0;
+  }
   .cb-detail-card > h2, .circle-upcoming > h2, .cb-composition-display > h2, .cb-detail-action-panel > h2 {
     margin: 0 0 9px; font-size: 18px; font-weight: 700; line-height: 1.45;
   }
