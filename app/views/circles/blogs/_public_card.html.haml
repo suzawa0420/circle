@@ -1,3 +1,4 @@
+- directory = local_assigns.fetch(:directory, false)
 - photos = [blog.image_01, blog.image_02, blog.image_03, blog.image_04].select(&:present?)
 - excerpt = truncate(strip_tags(blog.content.to_s).squish, length: 140)
 %article.cb-circle-blogs__card
@@ -22,9 +23,17 @@
         %span.cb-circle-blogs__author= circle.name
         %time{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime('%Y年%-m月%-d日 %H:%M')
       = link_to circle_blog_path(blog.user_id, blog.id), class: 'cb-circle-blogs__article-link' do
-        %h3.blog_title= blog.title
+        = content_tag(directory ? :h2 : :h3, blog.title, class: 'blog_title cb-circle-blogs__title')
         - if excerpt.present?
           %p.cb-circle-blogs__excerpt= excerpt
         %span.cb-circle-blogs__read
           記事を読む
           = lucide_icon "arrow-right", **{ "aria-hidden" => "true" }
+      - if directory
+        .cb-circle-blogs__tags{ aria: { label: 'サークルの種目・都道府県' } }
+          = link_to event_path(circle.event.ruby), class: 'cb-circle-blogs__tag' do
+            = lucide_icon 'tags', **{ 'aria-hidden' => 'true' }
+            = circle.event.name
+          = link_to event_prefecture_path(circle.event.ruby, circle.prefecture.kana), class: 'cb-circle-blogs__tag' do
+            = lucide_icon 'tags', **{ 'aria-hidden' => 'true' }
+            = circle.prefecture.name

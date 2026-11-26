@@ -56,7 +56,7 @@ class CircleStructuredDataTest < ActionDispatch::IntegrationTest
     assert_equal 6, business['aggregateRating']['reviewCount']
     assert_equal 4.0, business['aggregateRating']['ratingValue']
     assert_equal 3, business['review'].size
-    assert_equal 3, css_select('.review_contents[id]').length
+    assert_equal 3, css_select('.cb-detail-review .cb-circle-reviews__card[id]').length
     assert_equal 1, business['review'].first['reviewRating']['bestRating']
     assert_equal 'ゲストユーザー', business['review'].first['author']['name']
     faq = structured_data('FAQPage')

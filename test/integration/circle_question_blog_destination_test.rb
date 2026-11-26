@@ -50,6 +50,11 @@ class CircleQuestionBlogDestinationTest < ActionDispatch::IntegrationTest
     assert_select 'a.cb-circle-blogs__article-link[href=?]', article_path
     get article_path
     assert_response :success
+    assert_select 'body.circle-destination-page.circle-scroll-header > .cb-blog-article-sentinel + .mobile-circle-summary', count: 1 do
+      assert_select 'nav[aria-label="サークル内のページ"] [aria-current=page]', text: 'ブログ'
+    end
+    assert_select 'body > .mobile-circle-summary ~ .cb-destination-blog', count: 1
+    assert_select '.cb-destination__context .mobile-circle-summary', count: 0
     assert_select '.cb-destination.cb-destination-blog h1', text: gallery.title
     assert_select '.cb-destination-blog__article p', text: /試合に参加/
     assert_select '.cb-destination-blog__dates time', count: 2

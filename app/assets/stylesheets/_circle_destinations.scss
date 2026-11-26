@@ -89,6 +89,21 @@
   outline-offset: 2px;
 }
 
+// Article navigation uses the same scroll handoff as the circle's main tabs.
+.circle-destination-page .cb-blog-article-sentinel { margin-top: 0; }
+.cb-site.circle-destination-page.circle-scroll-header > .mobile-circle-summary {
+  width: calc(100% - 32px);
+  max-width: 960px;
+  margin-bottom: 8px;
+  border-radius: 0 0 10px 10px;
+}
+@media (max-width: 767px) {
+  .cb-site.circle-destination-page.circle-scroll-header > .mobile-circle-summary {
+    width: calc(100% - 16px);
+    max-width: 680px;
+  }
+}
+
 .cb-destination__context {
   width: calc(100% - 32px);
   max-width: 960px;

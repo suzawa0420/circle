@@ -8,53 +8,10 @@
 
 - affiliate_placement = blogs.empty? ? 'blog_search_empty' : 'blog_search'
 - affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement)
-.blog-results-grid
-  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'stored-image-extension-v7-affiliate-position'] do
+.blog-results-grid.blog-directory-cards
+  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'blog-directory-shared-card-v1'] do
     - blogs.each.with_index(1) do |blog, i|
-      .form.users-form
-        .blog-body
-          = link_to(circle_blog_path(blog.user_id, blog.id)) do
-            .header-post.cont-width
-              = circle_avatar_tag blog.user, class:'content_icon'
-              .post-user_wrap
-                .post-user
-                  .post-top{ title: blog.user.name }= blog.user.name
-                  .post-bottom
-                    = "作成日：#{time_tag blog.created_at.to_date}"
-            .post-body
-              - if blog.image_01.present?
-                - if blog.image_02.blank? && blog.image_03.blank? && blog.image_04.blank?
-                  = lazysizes_image_tag blog.image_01.url , class:'content_image_one'
-                - else
-                  .swiper-container
-                    .swiper-wrapper
-                      - if blog.image_01.present?
-                        .swiper-slide= image_tag blog.image_01.url , class:'content_image'
-                      - if blog.image_02.present?
-                        .swiper-slide= image_tag blog.image_02.url , class:'content_image'
-                      - if blog.image_03.present?
-                        .swiper-slide= image_tag blog.image_03.url , class:'content_image'
-                      - if blog.image_04.present?
-                        .swiper-slide= image_tag blog.image_04.url , class:'content_image'
-                    / Add Pagination
-                    .pagination-wrap
-                      .swiper-pagination
-            .cont-width
-              %h2.blog_title= blog.title.truncate(36)
-              .rich_text_main
-                - if blog.content.include?("<div>")
-                  = sanitize blog.content.truncate(120), tags: %w(p br h1 strong ul li div), attributes:  %w(id class href)
-                - else
-                  = simple_format blog.content.truncate(120)
-          .blog_tag.tag_bottom.cont-width
-            = link_to event_path(blog.user.event.ruby), class: "tag_btn" do
-              = lucide_icon "tags", class: "tag-color"
-              = blog.user.event.name
-
-            = link_to event_prefecture_path(blog.user.event.ruby, blog.user.prefecture.kana), class: "tag_btn" do
-              = lucide_icon "tags", class: "tag-color"
-              = blog.user.prefecture.name
-
+      = render 'circles/blogs/public_card', blog: blog, circle: blog.user, directory: true
 
       - if affiliate_ad && affiliate_ad_insert_after?(i, total: blogs.size)
         .affiliate-ad-slot

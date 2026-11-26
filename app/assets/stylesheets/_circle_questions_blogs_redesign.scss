@@ -13,8 +13,7 @@
 
   .cb-circle-tab-empty,
   .cb-circle-questions__ask,
-  .cb-circle-questions__row,
-  .cb-circle-blogs__card {
+  .cb-circle-questions__row {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
@@ -76,8 +75,7 @@
 
   .cb-circle-questions__submit svg,
   .cb-circle-questions__share svg,
-  .cb-circle-questions__link svg,
-  .cb-circle-blogs__read svg {
+  .cb-circle-questions__link svg {
     flex: 0 0 16px;
     width: 16px;
     height: 16px;
@@ -96,8 +94,7 @@
   .cb-circle-questions__list,
   .cb-circle-blogs__list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
 
-  .cb-circle-questions__row,
-  .cb-circle-blogs__card { background: #fff; }
+  .cb-circle-questions__row { background: #fff; }
 
   .cb-circle-questions__link {
     display: grid;
@@ -131,7 +128,14 @@
   .cb-circle-questions__text { overflow-wrap: anywhere; font-size: 13px; font-weight: 700; }
   .cb-circle-questions__edit { display: inline-block; margin: 0 12px 10px; }
 
-  .cb-circle-blogs__card { padding: 13px; }
+}
+
+.cb-public-circle, .blog-directory-cards {
+  .cb-circle-blogs__card {
+    width: 100%; min-width: 0; box-sizing: border-box; padding: 13px;
+    border: 1px solid #d3e0d9; border-radius: 10px; background: #fff;
+  }
+  .cb-circle-blogs__read svg, .cb-circle-blogs__tag svg { flex: 0 0 16px; width: 16px; height: 16px; }
   .cb-circle-blogs__body {
     min-width: 0;
     &--with-photos { display: grid; grid-template-columns: 146px minmax(0, 1fr); gap: 14px; }
@@ -190,24 +194,38 @@
     color: #17684e;
     font-size: 9px;
   }
-  .cb-circle-blogs__author, .cb-circle-blogs__excerpt, .cb-circle-blogs__article-link h3 { overflow-wrap: anywhere; }
+  .cb-circle-blogs__author, .cb-circle-blogs__excerpt, .cb-circle-blogs__title { overflow-wrap: anywhere; }
   .cb-circle-blogs__article-link {
     display: block;
     color: #15302b;
     text-decoration: none;
 
-    h3 { margin: 0 0 5px; font-size: 18px; font-weight: 750; line-height: 1.45; letter-spacing: normal; }
-    &:hover h3, &:hover .cb-circle-blogs__read { text-decoration: underline; }
+    .cb-circle-blogs__title { margin: 0 0 5px; font-size: 18px; font-weight: 750; line-height: 1.45; letter-spacing: normal; }
+    &:hover .cb-circle-blogs__title, &:hover .cb-circle-blogs__read { text-decoration: underline; }
   }
   .cb-circle-blogs__excerpt { margin: 0 0 9px; color: #4c655f; font-size: 12px; line-height: 1.65; }
   .cb-circle-blogs__read { display: inline-flex; align-items: center; gap: 4px; color: #17684e; font-size: 12px; font-weight: 700; }
   .cb-circle-blogs__visibility { margin: 0 0 10px; padding: 8px 10px; border: 1px solid #ead5ae; border-radius: 7px; background: #fff5e6; color: #4b3418; font-size: 12px; }
 }
 
+// The directory retains its existing desktop grid and inline ad positions.
+.blog-directory-cards {
+  .cb-circle-blogs__tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .cb-circle-blogs__tag {
+    display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
+    padding: 3px 8px; border-radius: 999px; background: #e8f4ee;
+    color: #17684e; font-size: 11px; overflow-wrap: anywhere;
+  }
+}
+
 @media (max-width: 991px) {
-  .cb-public-circle {
+  .cb-public-circle, .blog-directory-cards {
     .cb-circle-blogs__body--with-photos { grid-template-columns: minmax(0, 1fr); gap: 9px; }
     .cb-circle-blogs__image { height: clamp(112px, 39vw, 220px); }
     .cb-circle-blogs__read { display: flex; justify-content: flex-end; }
   }
+}
+
+@media (max-width: 899px) {
+  .blog-directory-cards { display: grid; gap: 12px; }
 }

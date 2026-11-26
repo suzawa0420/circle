@@ -66,4 +66,31 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
     gallery&.image_01&.remove!
     gallery&.image_02&.remove!
   end
+  test 'the public blog directory shares circle cards and retains filters and genre and area links' do
+    visible = @circle.blogs.create!(title: '地域の練習会', content: '<p>みんなで練習しました。</p>' * 18)
+    hidden = @circle.blogs.create!(title: '非公開の予定', content: '内部共有用のお知らせです。' * 18,
+                                   moderation_status: 'blocked')
+
+    get circle_blogs_path(@circle)
+    assert_response :success
+    card = css_select('.cb-circle-blogs__card').first
+    expected = %w[.cb-circle-blogs__author time .cb-circle-blogs__title .cb-circle-blogs__excerpt .cb-circle-blogs__read]
+      .to_h { |selector| [selector, card.at_css(selector).text.squish] }
+
+    sign_in @owner
+    [blogs_path, blogs_event_path(@circle.event.ruby), blogs_prefecture_path(@circle.prefecture.kana),
+     blogs_event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana)].each do |path|
+      get path
+      assert_response :success
+      assert_select 'select[name=event_select], select[name=prefecture_select]', count: 2
+      assert_select '.blog-directory-cards article.cb-circle-blogs__card', count: 1 do |cards|
+        expected.each { |selector, text| assert_equal text, cards.first.at_css(selector).text.squish }
+        assert_select 'a.cb-circle-blogs__article-link[href=?] h2.cb-circle-blogs__title', circle_blog_path(@circle, visible)
+        assert_select '.cb-circle-blogs__tags a[href=?]', event_path(@circle.event.ruby), text: @circle.event.name
+        assert_select '.cb-circle-blogs__tags a[href=?]', event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana), text: @circle.prefecture.name
+      end
+      assert_select 'a[href=?]', circle_blog_path(@circle, hidden), count: 0
+    end
+  end
+
 end

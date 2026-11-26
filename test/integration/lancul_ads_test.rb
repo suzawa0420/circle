@@ -53,7 +53,7 @@ class LanculAdsTest < ActionDispatch::IntegrationTest
       @circle.blogs.create!(title: "活動報告#{i}", content: "#{i}回目の英会話の活動で楽しく交流しました。" * 8)
     end
     get blogs_event_path('english')
-    assert_select '.blog-results-grid > .users-form', count: 10
+    assert_select '.blog-results-grid > .cb-circle-blogs__card', count: 10
     assert_select '.blog-results-grid > div:nth-child(3).affiliate-ad-slot', count: 1
     assert_select '.blog-results-grid > .list_ad', count: 0
     get blogs_event_prefecture_path('english', @circle.prefecture.kana)

@@ -39,6 +39,28 @@ class PublicCircleDatesAndReviewsDesignTest < ActionDispatch::IntegrationTest
     assert_select '#review-request', count: 0
   end
 
+  test 'circle detail preview uses the same public review cards and preserves the three-review limit' do
+    old = @circle.reviews.create!(review: 1, comment: '古い口コミです。', created_at: 2.days.ago)
+    member_review = @circle.reviews.create!(member: @member, review: 1, comment: "参加しやすかったです。\nまた行きたいです。")
+    @circle.reviews.create!(review: 0, nickname: '初参加', comment: '自分とは少し違いました。')
+    @circle.reviews.create!(review: 1, comment: '楽しく過ごせました。')
+
+    get user_reviews_path(@circle)
+    assert_response :success
+    tab_cards = css_select('.cb-circle-reviews__card').to_h { |card| [card['id'], card.to_html] }
+    assert_equal 4, tab_cards.size
+
+    get circle_path(@circle)
+    assert_response :success
+    preview = css_select('.cb-detail-review .cb-circle-reviews__list > .cb-circle-reviews__card')
+    assert_equal 3, preview.size
+    assert_equal tab_cards.except("review-#{old.id}"), preview.to_h { |card| [card['id'], card.to_html] }
+    assert_select ".cb-detail-review #review-#{member_review.id} .cb-circle-reviews__author a[href=?]", member_profile_path(@member)
+    assert_select '.cb-detail-review .cb-circle-reviews__avatar > .default-user-avatar > img', count: 3
+    assert_select '.cb-detail-review .cb-circle-reviews__actions', count: 0
+    assert_select '.cb-detail-review a[href=?]', user_reviews_path(@circle), minimum: 1
+  end
+
   test 'empty circle review tab does not show a misleading rating' do
     get user_reviews_path(@circle)
 

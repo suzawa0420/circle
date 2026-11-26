@@ -25,7 +25,7 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
       end
     end
     assert_select '.circle-faq__item', count: 8
-    assert_select '.review_contents', count: 3
+    assert_select '.cb-detail-review .cb-circle-reviews__card', count: 3
     assert_select '.cb-detail-blogs li', count: 2
     assert_select '.cb-detail-blogs a.cb-detail-inline-link[href=?]', circle_blogs_path(@circle)
     assert_select '.cb-detail-review a[href=?]', user_reviews_path(@circle), minimum: 1
