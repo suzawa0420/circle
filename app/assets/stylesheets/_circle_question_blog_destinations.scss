@@ -45,7 +45,7 @@
     a { display: block; padding: 8px 0; color: #17684e; }
     a:hover .cb-question-detail__related-title { text-decoration: underline; }
   }
-  .cb-question-detail__related-title { display: block; margin: 0 0 5px; font-weight: 700; overflow-wrap: anywhere; }
+  .cb-question-detail__related-title { display: block; margin: 0 0 5px; color: $cb-text; font-weight: 700; overflow-wrap: anywhere; }
   .cb-question-detail__related-link { display: inline-flex; align-items: center; gap: 5px; margin-left: 5px; font-size: 12px; }
 }
 

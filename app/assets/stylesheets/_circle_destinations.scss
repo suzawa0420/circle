@@ -89,8 +89,8 @@
   outline-offset: 2px;
 }
 
-// Article navigation uses the same scroll handoff as the circle's main tabs.
-.circle-destination-page .cb-blog-article-sentinel { margin-top: 0; }
+// Sticky destination navigation shares the scroll handoff of the circle's main tabs.
+.circle-destination-page .cb-destination-sticky-sentinel { margin-top: 0; }
 .cb-site.circle-destination-page.circle-scroll-header > .mobile-circle-summary {
   width: calc(100% - 32px);
   max-width: 960px;

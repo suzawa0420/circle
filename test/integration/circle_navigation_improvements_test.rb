@@ -108,6 +108,23 @@ class CircleNavigationImprovementsTest < ActionDispatch::IntegrationTest
     refute_includes response.body, hidden_blog.title
   end
 
+  test 'a question detail uses the sticky circle header above the answer and keeps related question links' do
+    question = @circle.questions.create!(content: '必要な持ち物は何ですか？', answer: '運動靴をご用意ください。')
+    related = @circle.questions.create!(content: '初心者も参加できますか？')
+
+    get user_question_path(@circle, question)
+    assert_response :success
+    assert_select 'body.circle-destination-page.circle-scroll-header > .circle-header-sentinel.cb-destination-sticky-sentinel + .mobile-circle-summary', count: 1 do
+      assert_select 'nav[aria-label="サークル内のページ"] [aria-current=page]', text: 'Q&A'
+    end
+    assert_select 'body > .mobile-circle-summary ~ .cb-question-detail', count: 1
+    assert_select '.cb-destination__context .mobile-circle-summary', count: 0
+    assert_select '.cb-question-detail__related a[href=?]', user_question_path(@circle, related) do
+      assert_select '.cb-question-detail__related-title', text: "ほかの質問｜#{related.content}"
+      assert_select '.cb-question-detail__related-link', text: '質問を見る'
+    end
+  end
+
   test 'organizer publication setting is independent from a registered circle link' do
     @owner.update!(open: 1, nickname: '主催者の表示名', profile: '主催者の自己紹介です。', gender: '1', age: '30代')
     @circle.update!(web: 'https://example.test/circle')
