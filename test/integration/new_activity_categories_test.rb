@@ -31,7 +31,7 @@ class NewActivityCategoriesTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_select 'h1', text: /全1件#{Regexp.escape(name)}サークル募集/
       assert_select 'img[src=?]', "/images/events/#{slug}.jpg"
-      assert_select 'meta[property="og:image"][content$=?]', "/images/events/#{slug}.jpg"
+      assert_select 'meta[property="og:image"][content$=?]', "/images/ogp/events/#{slug}.jpg"
       assert File.file?(Rails.root.join("public/images/events/#{slug}.jpg"))
       assert_includes Event.matching_keyword(name), event
       assert_includes SportDiscoveryHelper::SPORT_GUIDES.keys, slug
