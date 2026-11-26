@@ -33,7 +33,9 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
     assert_includes CircleFilterLanding.each_populated_path.to_a, CircleFilterLanding.path(event: @circle.event, prefecture: @circle.prefecture, group: group)
     get event_path(@circle.event.ruby)
     assert_select 'h1', text: /全1件/
-    assert_select '.list_02', text: 'パドル貸出あり'
+    assert_select '.cb-circle-list-card' do
+      assert_select '.cb-circle-list-card__extra', text: 'パドル貸出あり', count: 1
+    end
     get circle_path(@circle)
     assert_select '.cb-detail-facts dd', text: '駅前集合'
     assert_select 'a[href=?]', event_path(@sport.ruby), count: 0
@@ -52,7 +54,7 @@ class SportDiscoveryTest < ActionDispatch::IntegrationTest
   test 'keyword and region discovery ignore retired secondary sport data' do
     get circles_search_index_path, params: { q: @sport.name }
     assert_response :success
-    assert_select '.list_02', count: 0
+    assert_select '.cb-circle-list-card', count: 0
     @sport.update!(ruby: 'pickleball')
     helper = Object.new.extend(SportDiscoveryHelper)
     refute_includes helper.region_discovery_sports(@circle.prefecture), @sport

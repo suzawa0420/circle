@@ -30,7 +30,7 @@ class EventSearchLandingsTest < ActionDispatch::IntegrationTest
         get base + suffix
         assert_response :success
         assert_select '.event-results__card', count: 1
-        assert_select '.event-results__card-top > span:first-child', text: 'バスケ'
+        assert_select '.event-list-card__meta .event-list-card__fact', text: 'バスケ', count: 1
         assert_select '.event-results__card[href=?]', user_schedule_path(other, other_schedule), count: 0
       end
       get '/dates/badminton' + suffix
