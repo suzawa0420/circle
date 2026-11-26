@@ -38,7 +38,8 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
     assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, @current)}']", count: 0
     assert_select '.event-results__card .event-results__capacity', text: /参加人数：2/, count: 12
     assert_select '.schedule-detail__related .event-results__card', count: 12
-    assert_select '.schedule-detail__related .event-results__image', count: 1
+    assert_select '.schedule-detail__related .event-results__image', count: 12
+    assert_select '.schedule-detail__related .event-results__image[src="/images/events/event.jpg"]', count: 11
     assert_select '.schedule-detail__related .event-results__image[src*="related-registered.jpg"]', count: 1
     assert_select '.schedule-detail__related .event-results__text h4', text: @future.first.title
     assert_select '.schedule-detail__related .event-list-card__date[datetime=?]', (Date.current + 1).iso8601, count: 1
