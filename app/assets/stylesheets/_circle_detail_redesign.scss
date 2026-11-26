@@ -146,8 +146,10 @@
   .cb-detail-facts__list > div + div { border-top: 1px solid #eff4f0; }
   .cb-detail-facts__list dt { color: var(--cb-detail-muted); font-weight: 600; }
   .cb-detail-facts__list dd { min-width: 0; margin: 0; white-space: pre-line; }
-  .circle-upcoming__summary { display: flex; gap: 4px 8px; flex-wrap: wrap; }
-  .circle-upcoming__venue { flex: 1 0 100%; color: var(--cb-detail-muted); }
+  .circle-upcoming__summary { display: grid; row-gap: 4px; }
+  .circle-upcoming__datetime, .circle-upcoming__venue { display: flex; align-items: center; gap: 8px; }
+  .circle-upcoming__datetime > .cb-icon, .circle-upcoming__venue > .cb-icon { display: block; flex: none; margin: 0; }
+  .circle-upcoming__venue { color: var(--cb-detail-muted); }
 
   .cb-detail-composition__charts { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 12px; }
   .cb-detail-composition__charts > :only-child { grid-column: 1 / -1; }

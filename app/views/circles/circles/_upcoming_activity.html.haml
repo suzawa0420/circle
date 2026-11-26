@@ -2,16 +2,17 @@
   %h2 次の活動予定
   - if (schedule = @schedules.first)
     %p.circle-upcoming__summary{ tabindex: 0, 'aria-label' => '次の活動予定の日時と公開場所' }
-      = lucide_icon "calendar-days", **{ "aria-hidden" => "true" }
-      %time{ datetime: schedule.day }= Date.iso8601(schedule.day).strftime("%-m月%-d日（#{%w[日 月 火 水 木 金 土][Date.iso8601(schedule.day).wday]}）")
-      - if schedule.time_s
-        - start = schedule.time_s.in_time_zone("Tokyo").strftime("%H:%M")
-        - finish = schedule.time_e&.in_time_zone("Tokyo")&.strftime("%H:%M") if schedule.respond_to?(:time_e)
-        %span= [start, finish].compact.join("〜")
+      %span.circle-upcoming__datetime
+        = lucide_icon "calendar-days", **{ "aria-hidden" => "true" }
+        %time{ datetime: schedule.day }= Date.iso8601(schedule.day).strftime("%-m月%-d日（#{%w[日 月 火 水 木 金 土][Date.iso8601(schedule.day).wday]}）")
+        - if schedule.time_s
+          - start = schedule.time_s.in_time_zone("Tokyo").strftime("%H:%M")
+          - finish = schedule.time_e&.in_time_zone("Tokyo")&.strftime("%H:%M") if schedule.respond_to?(:time_e)
+          %span= [start, finish].compact.join("〜")
       - if schedule.venue.present?
         %span.circle-upcoming__venue
           = lucide_icon "map-pin", **{ "aria-hidden" => "true" }
-          = schedule.venue
+          %span= schedule.venue
     = link_to '活動スケジュールを見る', user_schedules_path(@user)
     - if @schedules.size > 1
       %details.cb-detail-more-schedules
