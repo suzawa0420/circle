@@ -65,6 +65,15 @@
   }
 }
 
+// Keep the complete heading in the DOM and only abbreviate the directory card.
+.cb-site .blog-directory-cards .cb-blog-listing-card .cb-circle-blogs__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
 .cb-site .cb-blog-listing-excerpts {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

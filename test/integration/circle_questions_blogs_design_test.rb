@@ -95,7 +95,8 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
   end
 
   test 'the public blog directory shares circle cards and retains filters and genre and area links' do
-    visible = @circle.blogs.create!(title: '地域の練習会', content: '<p>みんなで練習しました。</p>' * 18)
+    title = '地域の練習会で新しい仲間を迎え、みんなで一緒に楽しく練習した一日' * 3
+    visible = @circle.blogs.create!(title: title, content: '<p>みんなで練習しました。</p>' * 18)
     hidden = @circle.blogs.create!(title: '非公開の予定', content: '内部共有用のお知らせです。' * 18,
                                    moderation_status: 'blocked')
 
@@ -113,7 +114,7 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
       assert_select 'select[name=event_select], select[name=prefecture_select]', count: 2
       assert_select '.blog-directory-cards article.cb-circle-blogs__card', count: 1 do |cards|
         expected.each { |selector, text| assert_equal text, cards.first.at_css(selector).text.squish }
-        assert_select 'a.cb-circle-blogs__article-link[href=?] h2.cb-circle-blogs__title', circle_blog_path(@circle, visible)
+        assert_select 'a.cb-circle-blogs__article-link[href=?] h2.cb-circle-blogs__title', circle_blog_path(@circle, visible), text: title
         assert_select '.cb-circle-blogs__tags a[href=?]', event_path(@circle.event.ruby), text: @circle.event.name
         assert_select '.cb-circle-blogs__tags a[href=?]', event_prefecture_path(@circle.event.ruby, @circle.prefecture.kana), text: @circle.prefecture.name
       end
