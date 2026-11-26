@@ -126,7 +126,9 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{path}?page=2", count: 1
   end
 
-  test 'circle list preserves full metadata without generating a placeholder cover' do
+  test 'circle list preserves full metadata while displaying the existing sport cover' do
+    @circle.event.update!(ruby: 'basketball')
+    @path = event_prefecture_path('basketball', @circle.prefecture.kana)
     name = '検索一覧で省略されても残る正式サークル名と活動場所の長い表示'
     @circle.update_columns(
       name: name, user_time: Date.new(2026, 10, 9), switch: '募集中', schedule: '毎週月曜',
@@ -141,8 +143,8 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
 
     get @path
     assert_response :success
-    assert_select 'link[rel=preload][as=image]', count: 0
-    assert_select '.cb-circle-list-card__cover', count: 0
+    assert_select 'link[rel=preload][as=image][href="/images/events/basketball.jpg"]', count: 1
+    assert_select '.cb-circle-list-card__cover img[src="/images/events/basketball.jpg"]', count: 1
     assert_select '.cb-circle-list-card__link[href=?][aria-label=?]', circle_path(@circle), name, count: 1
     assert_select '.cb-circle-list-card__name', text: name, count: 1
     assert_select 'time.cb-listing-card__date[datetime="2026-10-09"]', text: '2026年10月9日', count: 1
@@ -167,7 +169,8 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     get @path
     assert_response :success
     assert_select '.cb-circle-list-card', count: 1 do
-      assert_select '.cb-circle-list-card__cover, .cb-circle-list-card__status', count: 0
+      assert_select '.cb-circle-list-card__cover img[src="/images/events/event.jpg"]', count: 1
+      assert_select '.cb-circle-list-card__badge, .cb-circle-list-card__updated', count: 0
       assert_select '.cb-circle-list-card__facts .cb-circle-list-card__fact', count: 3
       [schedule, "参加費：#{cost}", "参加者の年代：#{age}"].each do |fact|
         assert_select '.cb-circle-list-card__facts .cb-circle-list-card__fact > span[title=?]', fact, text: fact

@@ -70,6 +70,7 @@
     border-radius: 8px;
     background: #eef4ef;
   }
+  .cb-destination-blog__photo--cover { aspect-ratio: 5 / 2; object-fit: cover; }
   .cb-destination-blog__gallery {
     position: relative;
     min-width: 0;

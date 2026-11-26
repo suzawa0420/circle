@@ -82,7 +82,8 @@ class CircleQuestionBlogDestinationTest < ActionDispatch::IntegrationTest
 
     get circle_blog_path(@circle, earlier)
     assert_response :success
-    assert_select '.cb-destination-blog__photo, .cb-destination-blog__gallery, #circle-blog-gallery-dialog', count: 0
+    assert_select '.cb-destination-blog__photo--cover[src="/images/events/event.jpg"][alt=""]', count: 1
+    assert_select '.cb-destination-blog__gallery, #circle-blog-gallery-dialog', count: 0
     assert_select '.cb-destination-blog__dates time', count: 1
   ensure
     @gallery&.image_01&.remove!

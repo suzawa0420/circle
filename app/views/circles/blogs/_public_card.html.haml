@@ -12,40 +12,37 @@
 %article.cb-circle-blogs__card.cb-blog-listing-card
   - unless blog.publicly_visible?
     %p.cb-circle-blogs__visibility このブログは現在、一般には公開されていません。
-  .cb-circle-blogs__body{ class: photos.any? ? 'cb-circle-blogs__body--with-photos' : nil }
-    - if photos.any?
-      .cb-circle-blogs__media
-        - if photos.one?
-          = link_to circle_blog_path(blog.user_id, blog.id), aria: { label: "#{blog.title}の記事を読む" } do
-            = lazysizes_image_tag photos.first.url, class: home ? 'cb-circle-blogs__image content_image_one' : 'cb-circle-blogs__image', alt: ''
-        - else
-          .swiper-container.cb-circle-blogs__swiper{ role: 'region', 'aria-label': "#{blog.title}の写真" }
-            .swiper-wrapper
-              - photos.each do |photo|
-                .swiper-slide= lazysizes_image_tag photo.url, class: 'cb-circle-blogs__image', alt: ''
-            .swiper-pagination
-          %span.cb-circle-blogs__photo-count 写真#{photos.size}枚
-        = date_badge
+  .cb-circle-blogs__body.cb-circle-blogs__body--with-photos
+    .cb-circle-blogs__media
+      - if photos.many?
+        .swiper-container.cb-circle-blogs__swiper{ role: 'region', 'aria-label': "#{blog.title}の写真" }
+          .swiper-wrapper
+            - photos.each do |photo|
+              .swiper-slide= lazysizes_image_tag photo.url, class: 'cb-circle-blogs__image', alt: ''
+          .swiper-pagination
+        %span.cb-circle-blogs__photo-count 写真#{photos.size}枚
+      - else
+        - cover = photos.first&.url || circle_listing_image_url(circle, 'header')
+        = link_to circle_blog_path(blog.user_id, blog.id), aria: { label: "#{blog.title}の記事を読む" } do
+          = lazysizes_image_tag cover, class: home ? 'cb-circle-blogs__image content_image_one' : 'cb-circle-blogs__image', alt: ''
+      = date_badge
     .cb-circle-blogs__copy
-      - if show_taxonomy || photos.empty?
+      - if show_taxonomy
         .cb-blog-listing-card__context
-          - if show_taxonomy
-            .cb-circle-blogs__tags{ aria: { label: 'サークルの種目・都道府県' } }
+          .cb-circle-blogs__tags{ aria: { label: 'サークルの種目・都道府県' } }
+            - if circle.event.present?
+              = link_to event_path(circle.event.ruby), class: 'cb-circle-blogs__tag' do
+                = lucide_icon 'tags'
+                = circle.event.name
+            - if circle.prefecture.present?
               - if circle.event.present?
-                = link_to event_path(circle.event.ruby), class: 'cb-circle-blogs__tag' do
-                  = lucide_icon 'tags'
-                  = circle.event.name
-              - if circle.prefecture.present?
-                - if circle.event.present?
-                  = link_to event_prefecture_path(circle.event.ruby, circle.prefecture.kana), class: 'cb-circle-blogs__tag' do
-                    = lucide_icon 'map-pin'
-                    = circle.prefecture.name
-                - else
-                  %span.cb-circle-blogs__tag
-                    = lucide_icon 'map-pin'
-                    = circle.prefecture.name
-          - if photos.empty?
-            = date_badge
+                = link_to event_prefecture_path(circle.event.ruby, circle.prefecture.kana), class: 'cb-circle-blogs__tag' do
+                  = lucide_icon 'map-pin'
+                  = circle.prefecture.name
+              - else
+                %span.cb-circle-blogs__tag
+                  = lucide_icon 'map-pin'
+                  = circle.prefecture.name
       = link_to circle_blog_path(blog.user_id, blog.id), class: 'cb-circle-blogs__article-link' do
         - if summary
           %h3.blog_title.cb-circle-blogs__title

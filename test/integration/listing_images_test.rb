@@ -68,6 +68,24 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     assert_equal 'image/webp', response.media_type
   end
 
+  test 'detail cover uses existing sport and category images before the generic fallback' do
+    @circle.event.update!(ruby: 'volleyball')
+    get circle_path(@circle)
+    assert_response :success
+    assert_select 'img.header_imege[src="/images/events/volleyball.jpg"][alt=""]', count: 1
+    assert_select 'link[rel=preload][href="/images/events/volleyball.jpg"]', count: 1
+    assert_select '#popup-on_header', count: 0
+
+    @circle.event.update!(ruby: 'no-photo-for-this-sport')
+    @circle.event.category.update!(kana: 'ball-sports')
+    get circle_path(@circle)
+    assert_select 'img.header_imege[src="/images/categories/ball-sports.jpg"]', count: 1
+
+    @circle.event.category.update!(kana: 'no-photo-for-this-category')
+    get circle_path(@circle)
+    assert_select 'img.header_imege[src="/images/events/event.jpg"]', count: 1
+  end
+
   test 'public calendar summary uses the small profile derivative instead of the original upload' do
     get user_schedules_path(@circle)
     assert_response :success

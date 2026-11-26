@@ -35,7 +35,7 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
     assert_select '.cb-circle-questions__share a'
   end
 
-  test 'only public blog posts appear to visitors and photo-free posts do not show empty frames' do
+  test 'only public blog posts appear to visitors and photo-free posts use the default activity cover' do
     plain = @circle.blogs.create!(title: 'チームで練習しました', content: '練習の内容を振り返りました。' * 12)
     gallery = @circle.blogs.create!(title: '地域の大会に出場しました', content: '大会で対戦した皆さんに感謝しています。' * 12)
     hidden = @circle.blogs.create!(title: '公開されていない連絡', content: '内部向けに次回の連絡をまとめています。' * 12,
@@ -51,7 +51,7 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
     assert_select '.cb-circle-blogs__card' do |cards|
       plain_card = cards.find { |card| card.at_css('h3').text == plain.title }
       gallery_card = cards.find { |card| card.at_css('h3').text == gallery.title }
-      assert_empty plain_card.css('.cb-circle-blogs__media')
+      assert_select plain_card, '.cb-circle-blogs__media a > img[data-src="/images/events/event.jpg"]', count: 1
       assert_equal 2, gallery_card.css('.swiper-slide').size
       assert_equal circle_blog_path(@circle, gallery), gallery_card.at_css('a.cb-circle-blogs__article-link')['href']
     end
@@ -66,7 +66,7 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
     gallery&.image_01&.remove!
     gallery&.image_02&.remove!
   end
-  test 'blog cards put update dates in the photo area or at the top of the article and keep the original publication date' do
+  test 'blog cards show update dates over uploaded and default covers and retain publication date' do
     @circle.update!(recruitment: '参加者募集中です。')
     plain = @circle.blogs.create!(title: '道具なし練習会レポート', content: '基本動作を確認しながら活動しました。' * 15)
     gallery = @circle.blogs.create!(title: '写真つき大会レポート', content: '参加者全員で活動を振り返りました。' * 13)
@@ -84,8 +84,7 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
       cards = css_select('.cb-blog-listing-card').index_by { |card| card.at_css('.cb-circle-blogs__title').text.squish }
       text_card = cards.fetch(plain.title)
       photo_card = cards.fetch(gallery.title)
-      assert_nil text_card.at_css('.cb-circle-blogs__media')
-      assert_select text_card, '.cb-blog-listing-card__context time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '2026年11月25日'
+      assert_select text_card, '.cb-circle-blogs__media > time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '2026年11月25日'
       assert_select photo_card, '.cb-circle-blogs__media > time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '2026年11月25日'
       assert_select photo_card, 'time.cb-blog-listing-card__published[datetime=?]', published.iso8601, text: '投稿日 2026年11月23日 11:30'
       assert_equal @circle.name, text_card.at_css('.cb-circle-blogs__author')['title']

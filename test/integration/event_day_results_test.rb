@@ -169,13 +169,13 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'without a registered photo or a matching sport image the public card stays imageless' do
+  test 'without a registered photo or matching activity artwork the public card has a generic cover' do
     expected = user_schedule_path(@circle, @open)
     [root_path, '/dates', '/dates/today', user_schedules_path(@circle)].each do |path|
       get path
       assert_response :success, path
       assert_select ".event-list-card[href='#{expected}']", count: 1
-      assert_select ".event-list-card[href='#{expected}'] img, .event-list-card--has-photo[href='#{expected}']", count: 0
+      assert_select ".event-list-card--has-photo[href='#{expected}'] > img[src='/images/events/event.jpg']", count: 1
     end
   end
 

@@ -24,13 +24,14 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
         assert_select 'select[onchange]', count: 0
       end
       assert_select '.match-directory__card', count: 1
+      assert_select '.match-directory__cover[src="/images/events/event.jpg"]', count: 1
       assert_select '.match-directory__card a', href: match_path(@circle)
       assert_select '.match-directory__dates time', text: @match.updated_at.in_time_zone.strftime('%Y年%-m月%-d日')
       assert_select '.match-directory__dates time', count: 1
     end
   end
 
-  test 'design uses the real optional cover and keeps every card field' do
+  test 'uploaded and default covers keep every card field' do
     @match.update_columns(updated_at: Time.zone.parse('2026-10-10 18:00:00'))
     upload = -> { Rack::Test::UploadedFile.new(Rails.root.join('public/images/default.png'), 'image/png') }
     @circle.update!(pic_header: upload.call, pic_profile: upload.call)
@@ -60,7 +61,7 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
     @match.update_columns(recruit: '募集終了', member: nil)
     get matches_path
     assert_response :success
-    assert_select '.match-directory__card-top--cover, .match-directory__cover', count: 0
+    assert_select '.match-directory__card-top--cover > img.match-directory__cover[src="/images/events/event.jpg"]', count: 1
     assert_select '.match-directory__card-top time.cb-listing-card__date', count: 1
     assert_select '.match-directory__card-top .match-directory__status.is-closed', text: '募集終了'
     assert_select '.match-directory__identity .match-directory__avatar.circle-avatar--empty'

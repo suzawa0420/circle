@@ -50,30 +50,63 @@ module ApplicationHelper
     directory && !admin_user_signed_in? && !member_signed_in? && !webmaster? && !exhibition_group_signed_in?
   end
 
+  def circle_detail_cover_source(user)
+    return user.pic_header.url if user.pic_header.identifier.present? && !user.publicly_visible?
+
+    circle_listing_image_url(user, 'detail_header')
+  end
+
   def circle_detail_header_image(user)
-    source = user.publicly_visible? ? circle_listing_image_url(user, 'detail_header') : user.pic_header.url
-    image_tag source, class: 'header_imege', alt: "ヘッダー画像｜#{user.name}",
+    image_tag circle_detail_cover_source(user), class: 'header_imege',
+      alt: user.pic_header.identifier.present? ? "ヘッダー画像｜#{user.name}" : '',
       width: 960, height: 384, loading: 'eager', fetchpriority: 'high', decoding: 'async',
       data: { original_src: user.pic_header.url }
   end
 
   def circle_listing_header_image(user, first: false)
     image_tag circle_listing_image_url(user, 'header'), class: 'header_imege_user_list',
-      alt: "#{user.name}の活動紹介", loading: first ? 'eager' : 'lazy',
+      alt: user.pic_header.identifier.present? ? "#{user.name}の活動紹介" : '', loading: first ? 'eager' : 'lazy',
       fetchpriority: first ? 'high' : 'auto', decoding: 'async', data: { original_src: user.pic_header.url }
   end
 
   def circle_listing_image_url(user, kind)
     uploader = user.public_send(ListingImage::MOUNTS.fetch(kind))
-    return "/images/listing-default-#{kind == 'detail_header' ? 'header' : kind}-v2.webp" if uploader.identifier.blank?
-    listing_image_path(kind: kind, id: user.id, fingerprint: ListingImage.fingerprint(uploader), format: 'webp')
+    if uploader.identifier.blank?
+      return '/images/listing-default-profile-v2.webp' if kind == 'profile'
+
+      default_activity_cover(user.event)
+    else
+      listing_image_path(kind: kind, id: user.id, fingerprint: ListingImage.fingerprint(uploader), format: 'webp')
+    end
+  end
+
+  # Reuse the site's existing sport/category photos rather than introducing new artwork.
+  def default_activity_cover(event)
+    sport_image = activity_cover_asset('events', event&.ruby)
+    return sport_image if sport_image
+
+    category_slug = if event&.association(:category)&.loaded?
+      event.category&.kana
+    elsif event&.category_id.present?
+      (@activity_cover_category_slugs ||= Category.pluck(:id, :kana).to_h)[event.category_id.to_i]
+    end
+    activity_cover_asset('categories', category_slug) || '/images/events/event.jpg'
+  end
+
+  def activity_cover_asset(directory, slug)
+    return unless slug.to_s.match?(/\A[a-z0-9_-]+\z/)
+
+    path = "/images/#{directory}/#{slug}.jpg"
+    (@activity_cover_assets ||= {}).fetch(path) do
+      @activity_cover_assets[path] = File.file?(Rails.root.join('public', path.delete_prefix('/'))) ? path : nil
+    end
   end
 
   def circle_listing_preload_image
     return circle_listing_image_url(@user, 'detail_header') if fast_public_detail?
     return unless fast_public_listing? && @listing_data
     user = @listing_data.users.first
-    circle_listing_image_url(user, 'header') if user&.pic_header&.identifier.present?
+    circle_listing_image_url(user, 'header') if user
   end
 
   def circle_listing_description

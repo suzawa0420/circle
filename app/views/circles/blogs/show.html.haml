@@ -29,6 +29,8 @@
           %h1.cb-destination__title= @blog.title
           - if photos.any?
             = render 'circles/blogs/article_gallery', photos: photos
+          - else
+            = image_tag circle_detail_cover_source(@user), class: 'cb-destination-blog__photo cb-destination-blog__photo--cover', alt: '', decoding: 'async', fetchpriority: 'high'
           %dl.cb-destination-blog__dates
             %dt 作成日
             %dd= time_tag @blog.created_at, format: '%Y年%-m月%-d日'
@@ -97,8 +99,8 @@
           .circle-blog-related__list
             - @blogs.first(5).each do |blog|
               = link_to circle_blog_path(blog.user_id, blog.id), class: "circle-blog-related__card" do
-                - if blog.image_01.present?
-                  = lazysizes_image_tag blog.image_01.url, class: "circle-blog-related__image", alt: ""
+                - related_cover = [blog.image_01, blog.image_02, blog.image_03, blog.image_04].find(&:present?)&.url || circle_listing_image_url(@user, 'header')
+                = lazysizes_image_tag related_cover, class: "circle-blog-related__image", alt: ""
                 .circle-blog-related__body
                   %time.circle-blog-related__date{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime("%Y年%-m月%-d日")
                   %h4.circle-blog-related__title= blog.title

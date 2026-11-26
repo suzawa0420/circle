@@ -77,15 +77,6 @@
   bottom: 8px;
   background: #fff;
 }
-.cb-circle-list-card__status {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px 8px;
-  padding: 8px 12px 0;
-}
-.cb-circle-list-card__status > .cb-circle-list-card__updated { margin-inline-start: auto; }
 .cb-circle-list-card__body { min-width: 0; padding: 9px 12px 10px; }
 .cb-circle-list-card__identity {
   display: flex;
@@ -298,7 +289,6 @@
   .cb-circle-list-card__cover { height: 88px; }
   .cb-site .cb-circle-list-card .cb-circle-list-card__name { font-size: 16px; }
   .cb-circle-list-card__body { padding: 8px 10px 9px; }
-  .cb-circle-list-card__status { padding-inline: 10px; }
   .cb-circle-list-card__facts .cb-circle-list-card__fact > span {
     min-width: 0;
     overflow: hidden;
