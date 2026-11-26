@@ -20,7 +20,7 @@
     .cb-circle-blogs__copy
       .cb-circle-blogs__meta
         = circle_avatar_tag circle, class: 'cb-circle-blogs__avatar', alt: ''
-        %span.cb-circle-blogs__author= circle.name
+        %span.cb-circle-blogs__author{ title: circle.name }= circle.name
         %time{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime('%Y年%-m月%-d日 %H:%M')
       = link_to circle_blog_path(blog.user_id, blog.id), class: 'cb-circle-blogs__article-link' do
         = content_tag(directory ? :h2 : :h3, blog.title, class: 'blog_title cb-circle-blogs__title')
