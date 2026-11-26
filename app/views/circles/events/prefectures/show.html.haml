@@ -4,7 +4,7 @@
 - else
   - title = circle_listing_title
   - description = circle_listing_description
-- set_meta_tags title: title, description: description, keywords: "#{@event.name},#{@prefecture.name},サークル,チーム", og: {image: image_url("/images/events/#{@event.ruby}.jpg")}
+- set_meta_tags title: title, description: description, keywords: "#{@event.name},#{@prefecture.name},サークル,チーム", og: {image: default_activity_ogp_url(@event)}
 - breadcrumb :event_prefecture_show, @event, @prefecture
 = render "circles/markups/circles_list", users: @users
 

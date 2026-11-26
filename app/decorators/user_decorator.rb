@@ -8,7 +8,7 @@ module UserDecorator
     elsif pic_header.present?
       self.pic_header.url
     else
-      default_ogp_image_url
+      default_activity_ogp_url(event)
     end
   end
 

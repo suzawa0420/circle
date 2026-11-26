@@ -85,12 +85,15 @@ module ApplicationHelper
     sport_image = activity_cover_asset('events', event&.ruby)
     return sport_image if sport_image
 
-    category_slug = if event&.association(:category)&.loaded?
+    activity_cover_asset('categories', activity_cover_category_slug(event)) || '/images/events/event.jpg'
+  end
+
+  def activity_cover_category_slug(event)
+    if event&.association(:category)&.loaded?
       event.category&.kana
     elsif event&.category_id.present?
       (@activity_cover_category_slugs ||= Category.pluck(:id, :kana).to_h)[event.category_id.to_i]
     end
-    activity_cover_asset('categories', category_slug) || '/images/events/event.jpg'
   end
 
   def activity_cover_asset(directory, slug)
@@ -100,6 +103,24 @@ module ApplicationHelper
     (@activity_cover_assets ||= {}).fetch(path) do
       @activity_cover_assets[path] = File.file?(Rails.root.join('public', path.delete_prefix('/'))) ? path : nil
     end
+  end
+
+  def default_activity_ogp_url(event)
+    path = activity_cover_asset('ogp/events', event&.ruby) || activity_cover_asset('events', event&.ruby)
+    unless path
+      category_slug = activity_cover_category_slug(event)
+      path = activity_cover_asset('ogp/categories', category_slug) ||
+        activity_cover_asset('categories', category_slug) ||
+        activity_cover_asset('ogp/events', 'event')
+    end
+    path ? image_url(path) : default_ogp_image_url
+  end
+
+  def category_ogp_url(category)
+    path = activity_cover_asset('ogp/categories', category&.kana) ||
+      activity_cover_asset('categories', category&.kana) ||
+      activity_cover_asset('ogp/events', 'event')
+    path ? image_url(path) : default_ogp_image_url
   end
 
   def circle_listing_preload_image

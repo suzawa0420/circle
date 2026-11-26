@@ -46,13 +46,13 @@ class OgpMetaTagsTest < Minitest::Test
     record = Object.new.extend(decorator)
     attributes.each { |key, value| record.define_singleton_method(key) { value } }
     default = @view.default_ogp_image_url
-    record.define_singleton_method(:default_ogp_image_url) { default }
+    record.define_singleton_method(:default_activity_ogp_url) { |_event| default }
     record
   end
 
   def test_circle_image_priority_and_missing_image_fallback
     profile, header = Upload.new('profile.jpg'), Upload.new('header.jpg')
-    record = decorated_record(UserDecorator, pic_profile: profile, pic_header: header)
+    record = decorated_record(UserDecorator, pic_profile: profile, pic_header: header, event: nil)
     assert_equal 'profile.jpg', record.ogp_img
     record.define_singleton_method(:pic_profile) { nil }
     assert_equal 'header.jpg', record.ogp_img
@@ -61,7 +61,7 @@ class OgpMetaTagsTest < Minitest::Test
   end
 
   def test_blog_without_images_uses_the_default
-    circle = Struct.new(:pic_profile, :pic_header).new(nil, nil)
+    circle = Struct.new(:pic_profile, :pic_header, :event).new(nil, nil, nil)
     blog = decorated_record(BlogDecorator, image_01: nil, user: circle)
     assert_equal @view.default_ogp_image_url, blog.ogp_img
     blog.define_singleton_method(:image_01) { Upload.new('blog.jpg') }

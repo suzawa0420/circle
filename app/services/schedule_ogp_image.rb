@@ -8,7 +8,7 @@ require 'tmpdir'
 
 # A deterministic image, built exclusively from the public event information.
 class ScheduleOgpImage
-  VERSION = '2'
+  VERSION = '3'
   WIDTH = 1200
   HEIGHT = 630
   WEEKDAYS = %w[日 月 火 水 木 金 土].freeze
@@ -133,8 +133,10 @@ class ScheduleOgpImage
     event = @schedule.user.event
     [['events', event&.ruby], ['categories', event&.category&.kana], ['events', 'event']].each do |directory, slug|
       next unless slug.to_s.match?(/\A[a-z0-9_-]+\z/)
-      path = Rails.root.join('public/images', directory, "#{slug}.jpg")
-      return path.to_s if File.file?(path)
+      ['public/images/ogp', 'public/images'].each do |root|
+        path = Rails.root.join(root, directory, "#{slug}.jpg")
+        return path.to_s if File.file?(path)
+      end
     end
   end
 

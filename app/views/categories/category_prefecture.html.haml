@@ -1,4 +1,4 @@
-- set_meta_tags title: circle_listing_title,description: "【完全無料／登録不要】#{@prefecture.name}の#{@category.txt}の募集サイトです！10代〜60代、社会人や学生、初心者、経験者など、誰でも参加可能！無料で簡単にメンバーの募集ができます！",keywords: "#{@category.name},#{@prefecture.name},サークル,チーム",og: {image:image_url("/images/categories/#{@category.kana}.jpg")}
+- set_meta_tags title: circle_listing_title,description: "【完全無料／登録不要】#{@prefecture.name}の#{@category.txt}の募集サイトです！10代〜60代、社会人や学生、初心者、経験者など、誰でも参加可能！無料で簡単にメンバーの募集ができます！",keywords: "#{@category.name},#{@prefecture.name},サークル,チーム",og: {image:category_ogp_url(@category)}
 = render "users/parts/local_business_user_list"
 .main.users-index
   .container
