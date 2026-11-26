@@ -65,12 +65,12 @@
     display: block;
     width: 100%;
     height: auto;
-    max-height: 440px;
-    object-fit: contain;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
     border-radius: 8px;
     background: #eef4ef;
   }
-  .cb-destination-blog__photo--cover { aspect-ratio: 5 / 2; object-fit: cover; }
   .cb-destination-blog__gallery {
     position: relative;
     min-width: 0;
@@ -81,7 +81,6 @@
     border-radius: 8px;
     background: #eef4ef;
     .swiper-slide { background: transparent; }
-    .cb-destination-blog__photo { aspect-ratio: 16 / 9; }
     .swiper-pagination-bullet { background: #15302b; border: 1px solid #fff; box-sizing: border-box; }
     .swiper-pagination-bullet-active { background: #17684e; }
   }

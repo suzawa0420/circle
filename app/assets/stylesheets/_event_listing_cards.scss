@@ -98,7 +98,8 @@
   height: auto;
   aspect-ratio: 16 / 9;
   max-height: 180px;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
 }
 .cb-site .event-list-card .event-list-card__detail {
   grid-area: detail;

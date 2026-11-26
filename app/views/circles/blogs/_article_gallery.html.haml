@@ -1,12 +1,12 @@
 - dialog_id = 'circle-blog-gallery-dialog'
 .cb-blog-photo-gallery{ data: { circle_gallery: true } }
-  - if photos.one?
-    = render 'circles/blogs/article_photo', photo: photos.first, position: 0, dialog_id: dialog_id, single: true
+  - if photo_urls.one?
+    = render 'circles/blogs/article_photo', photo_url: photo_urls.first, preview_url: local_assigns[:preview_url], position: 0, dialog_id: dialog_id
   - else
     .swiper-container.cb-destination-blog__gallery{ role: 'region', aria: { label: '記事の写真' } }
       .swiper-wrapper
-        - photos.each_with_index do |photo, index|
+        - photo_urls.each_with_index do |photo_url, index|
           .swiper-slide
-            = render 'circles/blogs/article_photo', photo: photo, position: index, dialog_id: dialog_id, single: false
+            = render 'circles/blogs/article_photo', photo_url: photo_url, position: index, dialog_id: dialog_id
       .swiper-pagination.cb-destination-blog__pagination
-  = render 'circles/shared/gallery_dialog', dialog_id: dialog_id, heading: '記事の写真', gallery_size: photos.size, media_label: '写真', video_fallback: false
+  = render 'circles/shared/gallery_dialog', dialog_id: dialog_id, heading: '記事の写真', gallery_size: photo_urls.size, media_label: '写真', video_fallback: false
