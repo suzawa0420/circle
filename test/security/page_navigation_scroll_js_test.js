@@ -19,7 +19,7 @@ function browser(href, initialMarker, type, referrer) {
   };
   const document = { body: { dataset: { circleSearchList: 'true' } }, referrer, querySelector: () => null, documentElement: { hasAttribute: () => false }, addEventListener(name, fn) { documentHandlers[name] = fn; } };
   const performance = { getEntriesByType: () => [{ type }] };
-  const window = { performance, requestAnimationFrame(fn) { fn(); }, addEventListener(name, fn) { windowHandlers[name] = fn; }, removeEventListener(name) { delete windowHandlers[name]; }, setTimeout() { return 1; }, clearTimeout() {}, scrollTo(...xy) { scrolls.push(xy); } };
+  const window = { performance, scrollY: 0, requestAnimationFrame() { return 1; }, cancelAnimationFrame() {}, addEventListener(name, fn) { windowHandlers[name] = fn; }, removeEventListener(name) { delete windowHandlers[name]; }, setTimeout() { return 1; }, clearTimeout() {}, scrollTo(...xy) { scrolls.push(xy); } };
   vm.runInNewContext(script, { window, document, sessionStorage, performance, URL, location });
   return { location, storage, document, documentHandlers, window, windowHandlers, scrolls };
 }
@@ -56,9 +56,10 @@ async function run() {
   const hash = target + '#schedule';
   assert.deepEqual(arrival(hash, JSON.stringify({ url: hash, at: Date.now() }), 'reload').scrolls, []);
 
-  b.documentHandlers['turbolinks:render']();
+  b.documentHandlers['turbolinks:load']();
+  assert.deepEqual(b.scrolls, [[0, 0]]);
   assert.equal(b.storage.marker, undefined);
-  for (const href of [source + '?date=fixture', target + '#schedule', 'https://other.test/users/10']) {
+  for (const href of [source, target + '#schedule', 'https://other.test/users/10']) {
     const other = browser(source, undefined, 'navigate');
     propose(other, href);
     visit(other, href);
@@ -76,7 +77,8 @@ async function run() {
   const samePath = otherTarget + '?page=2';
   propose(racing, samePath);
   visit(racing, samePath);
-  assert.equal(racing.storage.marker, undefined);
+  assert.equal(JSON.parse(racing.storage.marker).url, samePath);
+  assert.deepEqual(arrival(samePath, racing.storage.marker, 'reload').scrolls, [[0, 0]]);
   assert.deepEqual(arrival(target, JSON.stringify({ url: target, at: Date.now() - 31000 }), 'reload').scrolls, []);
   assert.deepEqual(arrival(target, null, 'reload').scrolls, []);
   const back = browser(source, undefined, 'back_forward');
@@ -100,17 +102,28 @@ async function run() {
   }
   assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', true, searchUrl).scrolls, []);
   assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false, source).scrolls, []);
-  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false).scrolls, []);
+  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false).scrolls, [[0, 0]]);
+  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false, 'https://example.test/').scrolls, [[0, 0]]);
+  const legacy = browser(circleUrl, nativeState, 'navigate', '');
+  legacy.window.performance = { navigation: { type: 0 } };
+  legacy.windowHandlers.pageshow({ persisted: false });
+  assert.deepEqual(legacy.scrolls, [[0, 0]]);
+  const legacyBack = browser(circleUrl, nativeState, 'back_forward', '');
+  legacyBack.window.performance = { navigation: { type: 2 } };
+  legacyBack.windowHandlers.pageshow({ persisted: false });
+  assert.deepEqual(legacyBack.scrolls, []);
   const frames = [];
   const repaint = browser(circleUrl, nativeState, 'navigate', searchUrl);
   repaint.window.requestAnimationFrame = fn => frames.push(fn);
   repaint.windowHandlers.pageshow({ persisted: false });
   // Even when WebKit delays the next animation frame, the initial correction
-  // is performed. A late browser reposition is corrected on that frame.
+  // is performed. Scroll events catch repositioning after the first frame.
   assert.deepEqual(repaint.scrolls, [[0, 0]]);
+  frames.shift()(); // first paint is already at the top
   repaint.window.scrollY = 525;
-  frames.shift()();
+  repaint.windowHandlers.scroll();
   assert.deepEqual(repaint.scrolls, [[0, 0], [0, 0]]);
+  frames.length = 0;
   const interacting = browser(circleUrl, nativeState, 'navigate', searchUrl);
   interacting.window.requestAnimationFrame = fn => frames.push(fn);
   interacting.windowHandlers.pageshow({ persisted: false });
@@ -119,6 +132,15 @@ async function run() {
   frames.shift()();
   assert.deepEqual(interacting.scrolls, [[0, 0]]);
   assert.equal(interacting.windowHandlers.wheel, undefined);
+  assert.equal(interacting.windowHandlers.scroll, undefined);
+  const throttled = browser(circleUrl, nativeState, 'navigate', '');
+  let finish;
+  throttled.window.setTimeout = fn => { finish = fn; return 1; };
+  throttled.windowHandlers.pageshow({ persisted: false });
+  throttled.window.scrollY = 525;
+  finish();
+  assert.deepEqual(throttled.scrolls, [[0, 0], [0, 0]]);
+  assert.equal(throttled.windowHandlers.scroll, undefined);
   const canceledNative = browser(searchUrl, undefined, 'navigate');
   const canceledClick = nativeClick(canceledNative, circleUrl);
   canceledClick.defaultPrevented = true;
@@ -127,7 +149,7 @@ async function run() {
 
   for (const [href, eventAttrs, linkAttrs] of [
     [circleUrl + '#schedule', {}, {}], ['https://other.test/circles/42', {}, {}],
-    [searchUrl + '&sort=3', {}, {}], [circleUrl, { defaultPrevented: true }, {}],
+    [searchUrl, {}, {}], [circleUrl, { defaultPrevented: true }, {}],
     [circleUrl, { button: 1 }, {}], [circleUrl, { metaKey: true }, {}],
     [circleUrl, { ctrlKey: true }, {}], [circleUrl, { altKey: true }, {}],
     [circleUrl, { shiftKey: true }, {}], [circleUrl, {}, { target: '_blank' }],
@@ -139,6 +161,12 @@ async function run() {
     nativeClick(other, href, eventAttrs, linkAttrs);
     assert.equal(other.storage.marker, undefined);
   }
+  const paginated = browser(searchUrl, undefined, 'navigate');
+  const pageTwo = searchUrl.replace('page=2', 'page=3');
+  nativeClick(paginated, pageTwo);
+  assert.deepEqual(arrival(pageTwo, paginated.storage.marker, 'navigate', false, searchUrl).scrolls, [[0, 0]]);
+  assert.deepEqual(arrival(pageTwo, paginated.storage.marker, 'back_forward', false, searchUrl).scrolls, []);
+
   const detailSource = circleUrl + '#updates';
   const relatedDestination = 'https://example.test/circles/83';
   const related = browser(detailSource, undefined, 'navigate');
