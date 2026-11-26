@@ -1,5 +1,18 @@
 <% set_meta_tags noindex: true, nofollow: true %>
 
+<% if (closure_notice = place_closure_notice(@place)) %>
+  <div class="main user-show places-directory place-detail">
+    <div class="container">
+      <section class="place-card place-detail-header" aria-label="施設の概要">
+        <h1><%= @place.name %>（閉館）</h1>
+        <p><%= closure_notice %></p>
+        <% if webmaster? || (admin_user_signed_in? && @place.user && can_manage_circle?(@place.user)) %>
+          <%= link_to "編集", edit_place_path(@place) %>
+        <% end %>
+      </section>
+    </div>
+  </div>
+<% else %>
 <div class="main user-show">
   <div class="container">
 
@@ -127,3 +140,5 @@
 
   </div>
 </div>
+
+<% end %>

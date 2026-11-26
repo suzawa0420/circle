@@ -1,4 +1,12 @@
 module PlacesHelper
+  # Preserve the original place and URL; the successor is a distinct venue.
+  # https://www.city.yokohama.lg.jp/city-info/koho-kocho/koho/insatsubutsu/koyoko/shiban/kohoyokohamaplus/2024/202405.html
+  def place_closure_notice(place)
+    return unless place.id == 538 && place.name == '横浜文化体育館'
+
+    '横浜文化体育館は2020年9月6日に閉館しました。'
+  end
+
   def place_listing_structured_data(places)
     entries = places.map do |place|
       { 'url' => "https://circle-book.com#{place_listing_path(place)}", 'name' => place.name.to_s }
@@ -8,6 +16,7 @@ module PlacesHelper
 
   def facility_structured_data(place)
     return unless public_structured_data_page?
+    return if place_closure_notice(place)
     data = {
       '@context' => 'https://schema.org', '@type' => 'LocalBusiness',
       'additionalType' => 'https://schema.org/SportsActivityLocation',

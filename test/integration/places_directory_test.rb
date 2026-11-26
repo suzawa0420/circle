@@ -118,6 +118,37 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     assert_select '.place-detail-section script', count: 0
   end
 
+  test 'Yokohama Cultural Gymnasium keeps its URL but no longer advertises obsolete usage' do
+    historical = Place.create!(id: 538, name: '横浜文化体育館', prefecture: @tokyo, city: @city,
+      events: [@basketball], tag: '1', address: '旧所在地', time: '旧営業時間',
+      price: '旧利用料金', tel: '045-123-4567', url: 'https://example.test/old-gym')
+    notice = '横浜文化体育館は2020年9月6日に閉館しました。'
+
+    get path_for(historical)
+    assert_response :success
+    assert_select 'h1', text: '横浜文化体育館（閉館）'
+    assert_select 'meta[name=description][content=?]', notice
+    assert_select '.place-detail-category', text: notice
+    assert_select '#place-information-title, #place-price-title, #place-map-title, #place-review-form-title', count: 0
+    assert_select '#place-report-title'
+    refute css_select('script[type="application/ld+json"]').any? { |node| node.text.include?('LocalBusiness') }
+    %w[旧営業時間 旧利用料金 045-123-4567 https://example.test/old-gym].each do |value|
+      assert_not_includes response.body, value
+    end
+
+    get "/places/all/#{@tokyo.kana}/#{@city.city_kana}/#{historical.id}"
+    assert_response :success
+    assert_select 'h1', text: '横浜文化体育館（閉館）'
+    assert_not_includes response.body, '旧営業時間'
+
+    get '/places'
+    assert_response :success
+    assert_select '.place-card h2 a[href=?]', path_for(historical), text: '横浜文化体育館（閉館）'
+    assert_select '.place-card-facts', text: notice
+    assert_not_includes response.body, '旧利用料金'
+    assert_select '.place-card h2 a[href=?]', path_for(@gym), text: @gym.name
+  end
+
   test 'related facilities share list cards and are limited to five other facilities' do
     7.times { |index| facility("関連体育館#{index}", @tokyo, @city, @basketball) }
     get path_for(@gym)

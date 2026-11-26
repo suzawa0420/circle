@@ -1,3 +1,7 @@
+<% closure_notice = place_closure_notice(@place) %>
+<% if closure_notice %>
+  <% set_meta_tags title: "#{@place.name}（閉館）｜#{@prefecture.name}#{@city.name}", description: closure_notice %>
+<% else %>
 <% set_meta_tags title: "#{@place.name}の#{@event.name}コート情報｜#{@prefecture.name}#{@city.name}",
   description: "#{@place.prefecture.name}#{@place.city.name}にある#{@place.name}のコート情報。体育館やアリーナ、屋外にある公園などの情報を分かりやすく掲載しています！住所やアクセス方法、駐車場情報も載っているので便利です。また、#{@place.city.name}で活動している#{@event.name}サークルやチーム、団体などの情報も掲載しています！",
   og: {
@@ -5,8 +9,9 @@
   },
   twitter: { card: 'summary'}
 %>
+<% end %>
 
-<%= render "places/local_business_show", place: @place %>
+<%= render "places/local_business_show", place: @place unless closure_notice %>
 
 
 <div class="main user-show places-directory place-detail">
@@ -17,11 +22,11 @@
           <p class="place-card-location"><%= @prefecture.name %> <%= @city.name %>
             <% if @place.tag.to_i.in?([1, 2]) %><span class="place-card-tag"><%= @place.tag.to_i == 1 ? "屋内" : "屋外" %></span><% end %>
           </p>
-          <h1><%= @place.name %></h1>
+          <h1><%= @place.name %><% if closure_notice %>（閉館）<% end %></h1>
         </div>
         <time class="place-card-updated" datetime="<%= @place.updated_at.to_date.iso8601 %>">更新：<%= l(@place.updated_at.to_date) %></time>
       </div>
-      <p class="place-detail-category"><%= @event.name %>のコート・体育館情報</p>
+      <p class="place-detail-category"><%= closure_notice || "#{@event.name}のコート・体育館情報" %></p>
       <% if webmaster? || (admin_user_signed_in? && @place.user && can_manage_circle?(@place.user)) %>
         <nav class="place-detail-edit" aria-label="施設の管理">
           <%= link_to "編集", edit_place_path(@place) %>
@@ -30,6 +35,7 @@
       <% end %>
     </section>
 
+    <% unless closure_notice %>
     <section class="place-detail-section" aria-labelledby="place-information-title">
       <div class="place-detail-section-heading">
         <h2 id="place-information-title">施設の基本情報</h2>
@@ -68,6 +74,8 @@
       <p class="place-detail-note">掲載情報は変更される場合があります。最新の利用条件や料金は施設の公式サイト・窓口でご確認ください。情報の誤りは下の「情報の修正を依頼する」からお知らせください。</p>
     </section>
 
+    <% end %>
+
     <section class="place-detail-section" aria-labelledby="place-reviews-title">
       <h2 id="place-reviews-title">口コミ・評価</h2>
       <% if @place_reviews.present? %>
@@ -92,7 +100,7 @@
       <% end %>
     </section>
 
-    <% if @ip.blank? %>
+    <% if !closure_notice && @ip.blank? %>
       <section class="place-detail-section place-detail-review-form" aria-labelledby="place-review-form-title">
         <h2 id="place-review-form-title">感想を投稿する</h2>
         <%= form_for ([@place, @place_review]) do |f| %>

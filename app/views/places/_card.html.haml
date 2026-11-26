@@ -1,3 +1,5 @@
+- closure_notice = place_closure_notice(place)
+- title = closure_notice ? "#{place.name}（閉館）" : place.name
 %li.place-card
   .place-card-header
     .place-card-heading
@@ -6,13 +8,16 @@
         = place.city.name
         - if place.tag.to_i.in?([1, 2])
           %span.place-card-tag= place.tag.to_i == 1 ? "屋内" : "屋外"
-      %h2= link_to place.name, place_listing_path(place)
+      %h2= link_to title, place_listing_path(place)
     %time.place-card-updated{datetime: place.updated_at.to_date.iso8601} 更新：#{l(place.updated_at.to_date, format: :default)}
-  %dl.place-card-facts
-    - {"住所" => place.address, "アクセス" => place.access, "利用時間" => place.time, "利用料金" => place.price}.each do |label, value|
-      .place-card-fact
-        %dt= label
-        %dd= place_summary(value)
+  - if closure_notice
+    %p.place-card-facts= closure_notice
+  - else
+    %dl.place-card-facts
+      - {"住所" => place.address, "アクセス" => place.access, "利用時間" => place.time, "利用料金" => place.price}.each do |label, value|
+        .place-card-fact
+          %dt= label
+          %dd= place_summary(value)
   .place-card-footer
     .place-card-reviews
       - if review_count.positive?
