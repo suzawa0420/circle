@@ -34,6 +34,38 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '最終料金'
   end
 
+  test 'reviewed and unreviewed facilities always show the real update date above their names' do
+    @gym.place_reviews.create!(price: 4, facility: 4, access: 4, reservation: 4,
+      average_score: 4, comment: '使いやすい体育館でした。')
+    @gym.place_reviews.create!(price: 5, facility: 5, access: 5, reservation: 5,
+      average_score: 5, comment: '表示されない口コミです。', moderation_status: 'blocked')
+    @gym.update_columns(average_score: 4, updated_at: Time.zone.parse('2026-11-25 13:00:00'))
+    @park.update_columns(tag: '2', updated_at: Time.zone.parse('2026-11-23 13:00:00'))
+
+    get '/places'
+    assert_response :success
+    assert_select '.place-card' do |cards|
+      { @gym => ['2026-11-25', '更新 2026年11月25日', '屋内'],
+        @park => ['2026-11-23', '更新 2026年11月23日', '屋外'] }.each do |place, (iso, date, setting)|
+        card = cards.find { |item| item.at_css('h2 a')&.text == place.name }
+        assert card
+        assert_select card, '.place-card-header > .place-card-meta > time.cb-listing-card__date[datetime=?]', iso, text: date, count: 1
+        assert_select card, '.place-card-header > .place-card-meta > .place-card-tag', text: setting, count: 1
+        assert_select card, 'img, .place-card-footer time', count: 0
+        assert_select card, '.place-card-header h2 a[href=?]', path_for(place)
+        assert_select card, '.place-card-footer a[href=?]', path_for(place)
+        assert_select card, '.place-card-fact dt', count: 4
+        if place == @gym
+          assert_select card, '.place-card-reviews .star svg', count: 5
+          assert_select card, '.place-card-reviews .review_score', text: '4.00'
+          assert_select card, '.place-card-reviews .reviews_count', text: /1\s*件/
+        else
+          assert_select card, '.place-card-reviews', text: '口コミはまだありません'
+        end
+      end
+    end
+  end
+
   test 'combined filters preserve selected values and use AND for keywords' do
     get '/places/search', params: { sport: @basketball.ruby, area: @tokyo.kana, kw: '中央　目黒区' }
     assert_response :success

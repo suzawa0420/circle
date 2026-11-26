@@ -1,0 +1,109 @@
+- context = local_assigns.fetch(:context, :search)
+- compact = context == :related
+- home = context == :home
+- heading = home ? :h3 : :h2
+- event = circle.event
+- area = [circle.prefecture&.name, circle.prefecture_sub&.name].compact.join("・")
+- area = [area.presence, circle.area.presence].compact.join(compact || home ? "・" : "：")
+- actual_cover = !compact && circle.pic_header.identifier.present?
+- updated = circle.user_time.to_s.to_date rescue nil
+- rating_count = compact ? 0 : listing_data.review_count(circle)
+- circle_schedule = circle.schedule.to_s
+- summary = compact ? "" : circle.recruitment.to_s.truncate(home ? 90 : 110)
+- extra_details = context == :search ? [circle.experience, circle.equipment, circle.meeting_area].select(&:present?) : []
+- is_recruiting = circle.switch == "募集中"
+- scheduled_activities = !compact && !home && is_recruiting ? listing_data.schedules_for(circle) : []
+- card_classes = ["cb-circle-list-card", ("home-preview" if home), ("cb-circle-list-card--compact" if compact)].compact
+%article{ class: card_classes }
+  = link_to circle_path(circle), class: "cb-circle-list-card__link", data: (context == :search ? { sport_listing_click: event.ruby } : nil), aria: { label: circle.name } do
+    - if actual_cover
+      .cb-circle-list-card__cover
+        = circle_listing_header_image(circle, first: local_assigns.fetch(:eager, false))
+        - if circle.switch.present?
+          %span.cb-circle-list-card__badge{ class: ("is-recruiting" if is_recruiting) }= circle.switch
+        - if updated
+          %time.cb-listing-card__date.cb-circle-list-card__updated{ datetime: updated.iso8601 }= "更新 #{updated.strftime('%Y年%-m月%-d日')}"
+    - elsif !compact && (updated || circle.switch.present?)
+      .cb-circle-list-card__status
+        - if circle.switch.present?
+          %span.cb-circle-list-card__badge{ class: ("is-recruiting" if is_recruiting) }= circle.switch
+        - if updated
+          %time.cb-listing-card__date.cb-circle-list-card__updated{ datetime: updated.iso8601 }= "更新 #{updated.strftime('%Y年%-m月%-d日')}"
+
+    .cb-circle-list-card__body
+      .cb-circle-list-card__identity
+        - if circle.pic_profile.identifier.present?
+          = image_tag circle_listing_image_url(circle, "profile"), class: "cb-circle-list-card__avatar", alt: "", width: 44, height: 44, loading: "lazy", decoding: "async", data: { original_src: circle.pic_profile.url }
+        - else
+          = circle_avatar_tag circle, class: "cb-circle-list-card__avatar", alt: ""
+        .cb-circle-list-card__identity-text
+          = content_tag(compact ? :strong : heading, circle.name, class: "cb-circle-list-card__name", title: circle.name)
+          - if (event && !compact) || area.present? || (compact && circle_schedule.present?)
+            .cb-circle-list-card__meta
+              - if event && !compact
+                %span.cb-circle-list-card__fact
+                  = lucide_icon "tags"
+                  %span= event.txt.presence || event.name
+              - if area.present?
+                %span.cb-circle-list-card__fact
+                  = lucide_icon "map-pin"
+                  %span= home ? area.truncate(50) : area
+              - if compact && circle_schedule.present?
+                %span.cb-circle-list-card__fact
+                  = lucide_icon "calendar-days"
+                  %span= circle_schedule
+        - if compact
+          = lucide_icon "chevron-right", class: "cb-circle-list-card__compact-arrow"
+      - unless compact
+        - if summary.present?
+          %p.cb-circle-list-card__summary= summary
+        - extra_details.each do |detail|
+          %p.cb-circle-list-card__extra= detail
+        - if circle_schedule.present? || (!home && [circle.cost, circle.average_age].any?(&:present?))
+          .cb-circle-list-card__meta.cb-circle-list-card__facts
+            - if circle_schedule.present?
+              %span.cb-circle-list-card__fact
+                = lucide_icon "calendar-days"
+                %span= home ? circle_schedule.truncate(50) : circle_schedule
+            - if !home && circle.cost.present?
+              %span.cb-circle-list-card__fact
+                = lucide_icon "banknote"
+                %span= "参加費：#{circle.cost.to_s.truncate(80)}"
+            - if !home && circle.average_age.present?
+              %span.cb-circle-list-card__fact
+                = lucide_icon "users"
+                %span= "参加者の年代：#{circle.average_age.to_s.truncate(60)}"
+        - if scheduled_activities.any?
+          .cb-circle-list-card__upcoming
+            %strong
+              = lucide_icon "calendar-check"
+              次の活動
+            %ul
+              - scheduled_activities.each do |schedule|
+                - activity_date = schedule.day.to_s.to_date rescue nil
+                %li
+                  - if activity_date
+                    %time{ datetime: activity_date.iso8601 }= activity_date.strftime("%-m/%-d（#{%w[日 月 火 水 木 金 土][activity_date.wday]}）")
+                  - else
+                    = schedule.day
+                  - if schedule.time_s.present?
+                    = [schedule.time_s.strftime("%-H:%M"), schedule.time_e&.strftime("%-H:%M")].compact.join("〜")
+                  = schedule.venue
+        .cb-circle-list-card__tail
+          - if rating_count.positive?
+            - score = circle.review_score.to_f
+            .cb-circle-list-card__rating
+              = render "layouts/review_stars", review_score: score, reviews_count: rating_count
+              %strong= format("%.2f", score).sub(/0\z/, "")
+              %span= "（#{rating_count}件）"
+          %span.cb-circle-list-card__details
+            サークル詳細
+            = lucide_icon "arrow-right"
+  - if %i[search legacy_search].include?(context) && event && circle.prefecture
+    %ul.cb-circle-list-card__tags{ aria: { label: "関連する種目・地域・タグ" } }
+      %li= link_to event.name, (context == :legacy_search ? "/#{event.ruby}" : event_path(event.ruby))
+      %li= link_to circle.prefecture.name, (context == :legacy_search ? "/prefectures/#{circle.prefecture.kana}" : prefecture_path(circle.prefecture.kana))
+      - if circle.prefecture_sub
+        %li= link_to circle.prefecture_sub.name, (context == :legacy_search ? "/prefectures/#{circle.prefecture_sub.kana}" : prefecture_path(circle.prefecture_sub.kana))
+      - circle.listing_tags.each do |tag|
+        %li= link_to tag.name, (context == :legacy_search ? "/tag/#{tag.id}" : tag_path(tag.id))

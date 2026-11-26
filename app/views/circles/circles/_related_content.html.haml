@@ -2,13 +2,10 @@
 - if recent_blogs.any?
   %section.cb-detail-card.cb-detail-blogs
     %h2 活動ブログ
-    %ul.cb-detail-links__list
+    %ul.cb-blog-listing-excerpts
       - recent_blogs.first(2).each do |blog|
         %li
-          = link_to circle_blog_path(blog.user_id, blog.id) do
-            = time_tag blog.created_at.to_date, blog.created_at.strftime("%-m/%-d")
-            %strong= blog.title
-            = lucide_icon "chevron-right"
+          = render "circles/blogs/public_card", blog: blog, circle: @user, summary: true
     = link_to "ブログの一覧を見る", circle_blogs_path(@user), class: "cb-detail-inline-link"
 - if recent_blogs.size >= 3 || @users.size >= 3
   = render "/layouts/ad_square"

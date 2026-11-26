@@ -33,18 +33,19 @@ class PublicListingStyles
     if input[:name] == 'public_detail'
       globs += %w[app/views/circles/circles/* app/views/users/parts/* app/views/users/_question_card*
         app/views/users/_contact_warning* app/views/bookmarks/* app/views/reviews/* app/views/questions/_accordion*
-        app/views/conversations/_no_reply_notice* app/assets/javascripts/circle_contact_warning.js
+        app/views/conversations/_no_reply_notice* app/views/circles/blogs/_public_card* app/views/schedules/_event_card*
+        app/assets/javascripts/circle_contact_warning.js
         app/views/users/_youtube_video* app/assets/javascripts/circle_video.js
         app/assets/javascripts/circle_readmore.js]
     end
     if input[:name] == 'public_directory'
-      globs += %w[app/views/home/* app/views/schedules/_event* app/views/schedules/dates* app/views/schedules/day* app/views/places/* app/views/schedules/index* app/views/schedules/_calendar*
+      globs += %w[app/views/home/* app/views/circles/blogs/_public_card* app/views/matches/_card* app/views/schedules/_event* app/views/schedules/dates* app/views/schedules/day* app/views/places/* app/views/schedules/index* app/views/schedules/_calendar*
         app/views/schedules/_archive_link* app/views/users/parts/_user_switching*
         app/views/circles/circles/_mobile* app/views/bookmarks/*]
     end
     files = globs.flat_map { |glob| Dir[root.join(glob)] }.select { |path| File.file?(path) }.sort
     files.each { |path| context.depend_on(path) }
-    %w[app/views/circles app/views/columns app/views/layouts app/views/shared app/views/tags app/views/users app/views/schedules app/views/places app/views/home app/helpers app/assets/javascripts].each do |directory|
+    %w[app/views/circles app/views/columns app/views/layouts app/views/shared app/views/tags app/views/users app/views/schedules app/views/places app/views/matches app/views/home app/helpers app/assets/javascripts].each do |directory|
       ([root.join(directory).to_s] + Dir[root.join(directory, '**/')]).uniq.each { |path| context.depend_on(path) }
     end
     context.depend_on(__FILE__)

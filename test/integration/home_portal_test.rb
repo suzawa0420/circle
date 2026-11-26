@@ -34,6 +34,13 @@ class HomePortalTest < ActionDispatch::IntegrationTest
     assert_select '#home-events .event-results__status.status-open', count: 5
     assert_select '#home-blogs h3', text: '練習ブログ0'
     assert_select '#home-places .home-place__link', count: 6
+    assert_select '#home-circles .cb-circle-list-card', count: 1
+    assert_select '#home-events .event-list-card', count: 5
+    assert_select '#home-blogs .cb-circle-blogs__card', count: 5
+    assert_select '#home-matches .match-directory__card a[href=?]', match_path(@circle), count: 5
+    assert_select '#home-places .place-card .cb-listing-card__date', count: 6
+    assert_select '#home-places .place-card-sports', text: 'バスケ', count: 6
+    assert_select '.home-portal__item > li', count: 0
     assert_select '.home-portal .pagination, .home-portal .list_ad', count: 0
 
     @circle.update_columns(publication_status: 'draft')

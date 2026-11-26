@@ -1,28 +1,42 @@
 - user = matching.user
+- has_cover = user.pic_header.present?
+- updated_at = match_updated_at(matching)
 %article.match-directory__card
   = link_to match_path(user.id), class: 'match-directory__card-link' do
-    .match-directory__card-top
-      %span.match-directory__sport= user.event&.name
+    .match-directory__card-top{ class: ('match-directory__card-top--cover' if has_cover) }
+      - if has_cover
+        = image_tag circle_listing_image_url(user, 'header'), class: 'match-directory__cover', alt: '', loading: 'lazy', decoding: 'async', data: { original_src: user.pic_header.url }
+      - if updated_at
+        .match-directory__dates
+          = time_tag updated_at, "更新 #{updated_at.strftime('%Y年%-m月%-d日')}", class: 'cb-listing-card__date'
       %span.match-directory__status{ class: matching.recruit == '募集中' ? nil : 'is-closed' }= matching.recruit.presence || '募集状況未設定'
-    .match-directory__identity
-      = match_avatar user
-      %div
-        - if local_assigns[:related]
-          %h3= user.name
-        - else
-          %h2= user.name
-        %p.match-directory__location
-          = lucide_icon 'map-pin'
-          = user.prefecture&.name
-    %dl.match-directory__facts
-      - { '年齢層' => matching.age_group, 'メンバー' => matching.member, 'レベル' => matching.level }.each do |label, value|
+    .match-directory__card-content
+      .match-directory__identity
+        = match_avatar user
         %div
-          %dt= label
-          %dd= value.presence || '未設定'
-    - if matching.comment.present?
-      %p.match-directory__excerpt= truncate(matching.comment, length: 90)
-    .match-directory__card-bottom
-      = render 'matches/updated_dates', matching: matching
-      %span.match-directory__more
-        募集詳細
-        = lucide_icon 'chevron-right'
+          - if local_assigns[:related]
+            %h3= user.name
+          - else
+            %h2= user.name
+          %p.match-directory__location
+            - if user.event
+              %span.match-directory__sport
+                = lucide_icon 'tags'
+                = user.event.name
+            - if user.prefecture
+              %span
+                = lucide_icon 'map-pin'
+                = user.prefecture.name
+      %dl.match-directory__facts
+        - { '年齢層' => ['calendar-days', matching.age_group], 'メンバー' => ['users', matching.member], 'レベル' => ['chart-no-axes-combined', matching.level] }.each do |label, (icon, value)|
+          %div
+            %dt
+              = lucide_icon icon
+              = label
+            %dd= value.presence || '未設定'
+      - if matching.comment.present?
+        %p.match-directory__excerpt= truncate(matching.comment, length: 90)
+      .match-directory__card-bottom
+        %span.match-directory__more
+          募集詳細
+          = lucide_icon 'chevron-right'

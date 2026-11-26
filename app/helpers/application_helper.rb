@@ -73,7 +73,7 @@ module ApplicationHelper
     return circle_listing_image_url(@user, 'detail_header') if fast_public_detail?
     return unless fast_public_listing? && @listing_data
     user = @listing_data.users.first
-    circle_listing_image_url(user, 'header') if user
+    circle_listing_image_url(user, 'header') if user&.pic_header&.identifier.present?
   end
 
   def circle_listing_description

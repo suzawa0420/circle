@@ -2,15 +2,8 @@
   %h2= "条件が似ている#{@user.event.name if @user.event_id?}サークル"
   - if @users.any?
     %p 同じ都道府県・同じ種目で募集中のサークル
-    %ul.cb-detail-links__list
+    %ul.cb-detail-links__list.cb-circle-list-card__related-list
       - @users.each do |user|
-        %li
-          = link_to circle_path(user.id) do
-            = circle_avatar_tag user, class: "cb-detail-similar__avatar", alt: ""
-            .cb-detail-similar__copy
-              %strong= user.name
-              - if user.area.present? || user.schedule.present?
-                %small= [user.area.presence, user.schedule.presence].compact.join(" ｜ ")
-            = lucide_icon "chevron-right"
+        %li= render "circles/commons/listing_card", circle: user, context: :related
   - else
     %p.circle-related-empty 同じ地域・種目で募集中のサークルは、ほかに見つかりませんでした。

@@ -9,7 +9,7 @@
 - affiliate_placement = blogs.empty? ? 'blog_search_empty' : 'blog_search'
 - affiliate_ad = affiliate_ad_for_event(@event, placement: affiliate_placement)
 .blog-results-grid.blog-directory-cards
-  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'blog-directory-shared-card-v1'] do
+  - cache [blogs, affiliate_ad_cache_key(affiliate_ad), 'blog-directory-shared-card-v2'] do
     - blogs.each.with_index(1) do |blog, i|
       = render 'circles/blogs/public_card', blog: blog, circle: blog.user, directory: true
 

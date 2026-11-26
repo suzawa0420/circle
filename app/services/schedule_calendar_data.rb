@@ -1,5 +1,6 @@
 class ScheduleCalendarData
-  COLUMNS = ScheduleListingData::COLUMNS
+  # Use only lightweight card data (ImageUploader needs updated_at for its URL).
+  COLUMNS = (ScheduleListingData::CARD_COLUMNS + [:cost]).freeze
 
   attr_reader :month, :selected_date, :today, :past_page
 

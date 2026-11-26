@@ -25,9 +25,46 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
       end
       assert_select '.match-directory__card', count: 1
       assert_select '.match-directory__card a', href: match_path(@circle)
-      assert_select '.match-directory__dates time', text: @match.updated_at.in_time_zone.strftime('%Y/%m/%d')
+      assert_select '.match-directory__dates time', text: @match.updated_at.in_time_zone.strftime('更新 %Y年%-m月%-d日')
       assert_select '.match-directory__dates time', count: 1
     end
+  end
+
+  test 'design uses the real optional cover and keeps every card field' do
+    @match.update_columns(updated_at: Time.zone.parse('2026-10-10 18:00:00'))
+    upload = -> { Rack::Test::UploadedFile.new(Rails.root.join('public/images/default.png'), 'image/png') }
+    @circle.update!(pic_header: upload.call, pic_profile: upload.call)
+    header = @circle.reload.pic_header.identifier
+    avatar = @circle.pic_profile.identifier
+    get matches_path
+    assert_response :success
+    assert_select '.match-directory__card' do
+      assert_select '.match-directory__card-link[href=?]', match_path(@circle), count: 1
+      assert_select '.match-directory__card-top--cover' do
+        assert_select 'img.match-directory__cover[data-original-src*=?][loading=lazy]', header, count: 1
+        assert_select '.match-directory__status', text: '募集中', count: 1
+        assert_select 'time.cb-listing-card__date[datetime="2026-10-12T12:00:00+09:00"]', text: '更新 2026年10月12日', count: 1
+      end
+      assert_select 'img.match-directory__avatar[src*=?]', avatar, count: 1
+      assert_select '.match-directory__identity h2', text: @circle.name
+      assert_select '.match-directory__sport', text: @circle.event.name
+      assert_select '.match-directory__location', text: /東京都/
+      assert_select '.match-directory__facts dt', count: 3
+      assert_select '.match-directory__facts dd', text: '20代中心'
+      assert_select '.match-directory__facts dd', text: '男女混合'
+      assert_select '.match-directory__facts dd', text: '中級'
+      assert_select '.match-directory__excerpt', text: @match.comment
+    end
+
+    @circle.update!(remove_pic_header: true, remove_pic_profile: true)
+    @match.update_columns(recruit: '募集終了', member: nil)
+    get matches_path
+    assert_response :success
+    assert_select '.match-directory__card-top--cover, .match-directory__cover', count: 0
+    assert_select '.match-directory__card-top time.cb-listing-card__date', count: 1
+    assert_select '.match-directory__card-top .match-directory__status.is-closed', text: '募集終了'
+    assert_select '.match-directory__identity .match-directory__avatar.circle-avatar--empty'
+    assert_select '.match-directory__facts dd', text: '未設定'
   end
 
   test 'combined search uses existing canonical landing URLs and keeps both selections' do
@@ -92,9 +129,9 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
   test 'newest update is shown once and matches structured data on lists and detail' do
     @match.update_columns(updated_at: Time.zone.parse('2026-10-10 18:00:00'))
     get matches_path
-    assert_select '.match-directory__dates', text: /更新日：/, count: 1
+    assert_select '.match-directory__dates', text: /更新 2026年10月12日/, count: 1
     assert_select '.match-directory__dates time', count: 1
-    assert_select '.match-directory__dates time[datetime="2026-10-12T12:00:00+09:00"]', text: '2026/10/12'
+    assert_select '.match-directory__dates time[datetime="2026-10-12T12:00:00+09:00"]', text: '更新 2026年10月12日'
     list = structured_data_of_type('ItemList')
     assert_equal 'ItemList', list['@type']
     assert_equal 1, list['itemListElement'].first['position']

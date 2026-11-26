@@ -1,6 +1,6 @@
 @import "brand_palette";
 
-.places-directory {
+.places-directory, .home-portal__item--places {
   .places-intro { margin: 0 0 20px; }
   .places-eyebrow { color: $cb-action; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
   .places-intro h1 { font-size: 26px; font-weight: 700; line-height: 1.5; margin-bottom: 8px; }
@@ -37,11 +37,27 @@
   .place-card h2 a { color: $cb-text; font-size: 20px; font-weight: 700; }
   .place-card h2 a:hover { color: $cb-action; }
   .place-card-updated { position: absolute; top: 0; right: 0; color: $cb-muted; font-size: 11px; padding-top: 3px; }
-  .place-card-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+  .place-card .place-card-header { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-bottom: 10px; }
+  .place-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .place-card .place-card-updated { position: static; padding: 3px 7px; }
+  .place-card .place-card-location, .place-card-sports { display: flex; align-items: center; gap: 5px; padding-right: 0; margin: 0 0 3px; color: $cb-muted; font-size: 12px; }
+  .place-card-sports { margin: 4px 0 0; }
+  .place-card h2, .place-card h2 a, .place-card h3, .place-card h3 a { color: $cb-text; font-size: 18px; font-weight: 700; line-height: 1.45; margin: 0; padding: 0; overflow-wrap: anywhere; }
+  .place-card .place-card-meta .place-card-tag { margin: 0; font-size: 11px; line-height: 1.5; white-space: nowrap; }
+  .place-card-facts { display: grid; margin: 0; padding: 4px 10px; gap: 0; border-radius: 8px; background: $cb-mint-soft; }
+  .place-card-facts--notice { display: block; padding: 8px 10px; }
+  .place-card-facts > div { padding: 5px 0; }
+  .place-card-facts > div + div { border-top: 1px solid $cb-border; }
+  .place-card .place-card-fact dt { display: flex; gap: 4px; align-items: center; flex-basis: 74px; }
+  .place-card .place-card-fact dd { font-weight: 600; }
+  .place-card .place-card-location .cb-icon, .place-card .place-card-sports .cb-icon, .place-card .place-card-fact .cb-icon { width: 14px; height: 14px; flex: 0 0 14px; color: $cb-action-hover; }
   .place-card-fact { display: flex; gap: 10px; min-width: 0; font-size: 13px; line-height: 1.6; }
   .place-card-fact dt { color: $cb-muted; font-weight: 500; flex: 0 0 56px; }
   .place-card-fact dd { min-width: 0; margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
   .place-card-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid $cb-border; margin-top: 14px; padding-top: 14px; }
+  .place-card .place-card-footer { margin-top: 8px; padding-top: 5px; gap: 6px 12px; }
+  .place-card .place-card-footer .places-action { background: transparent; color: $cb-action-hover; padding: 6px 0 6px 6px; margin-left: auto; font-size: 12px; }
+  .place-card .place-card-footer .places-action:hover { text-decoration: underline; }
   .place-card-reviews { color: $cb-muted; font-size: 12px; }
   .place-card-reviews .review_set { padding: 0; margin: 0; }
   .places-empty-hint { color: $cb-muted; font-size: 14px; margin: 8px 0 16px; }
@@ -62,7 +78,7 @@
     .place-card-header { position: relative; display: block; }
     .place-card-updated { font-size: 10px; padding-top: 2px; }
     .place-card h2, .place-card h2 a { font-size: 18px; }
-    .place-card-facts { grid-template-columns: 1fr; gap: 8px; }
+    .place-card-facts { grid-template-columns: minmax(0, 1fr); }
     .place-card-fact dt { flex-basis: 56px; }
     .place-card-footer .places-action { padding: 10px 12px; }
   }

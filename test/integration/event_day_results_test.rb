@@ -139,24 +139,30 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { page: 2 } }
   end
 
-  test 'missing photos use existing sport images and category fallback across result pages' do
+  test 'unregistered photos omit the image and photo area only from public cards' do
     @circle.update!(recruitment: '初心者歓迎')
     @circle.event.update!(ruby: 'basketball', txt: 'バスケサークル')
     get '/dates/today'
-    assert_select '.event-results__image[src="/images/events/basketball.jpg"]', count: 5
-    assert_not_includes response.body, '/images/default.png'
+    assert_response :success
+    assert_select '.event-list-card img, .event-list-card--has-photo', count: 0
+    assert_select '.event-list-card time[datetime=?]', Date.current.iso8601, count: 5
     get '/dates'
-    assert_select '.event-results__image[src="/images/events/basketball.jpg"]', minimum: 1
+    assert_response :success
+    assert_select '.event-list-card img, .event-list-card--has-photo', count: 0
     get user_schedule_path(@circle, @open)
     assert_select '.schedule_top_image > img.top_img[src="/images/events/basketball.jpg"]', count: 1
+  end
 
-    @circle.event.update!(ruby: 'unknown-sport')
-    @circle.event.category.update!(kana: 'ball-sports')
-    get '/dates/today'
-    assert_select '.event-results__image[src="/images/categories/ball-sports.jpg"]', count: 5
-    @circle.event.category.update!(kana: '../../missing')
-    get '/dates/today'
-    assert_select '.event-results__image[src="/images/events/event.jpg"]', count: 5
+  test 'only the uploaded event photo renders in dates, home and calendar cards' do
+    @open.update_column(:top_image, 'registered-event-photo.jpg')
+    expected = user_schedule_path(@circle, @open)
+    [root_path, '/dates', '/dates/today', user_schedules_path(@circle)].each do |path|
+      get path
+      assert_response :success, path
+      assert_select ".event-list-card--has-photo[href='#{expected}'] > img[src*='registered-event-photo.jpg']", count: 1
+      assert_select '.event-list-card img', count: 1
+      assert_select ".event-list-card[href='#{expected}'] time[datetime=?]", @open.day, count: 1
+    end
   end
 
   test 'uploaded schedule images retain their cache version with the narrow projection' do
@@ -268,7 +274,7 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_select '.event-results__days a', count: 7
     assert_select '.event-results__card', count: 8
     assert_select ".event-results__card[href='#{user_schedule_path(@circle, monday)}']", count: 1
-    assert_select ".event-results__card[href='#{user_schedule_path(@circle, sunday)}'] .event-results__time", text: /10月18日.*日/m
+    assert_select ".event-results__card[href='#{user_schedule_path(@circle, sunday)}'] .event-list-card__date[datetime='2026-10-18']", text: /10月.*18.*日/m
     assert_select ".event-results__card[href='#{user_schedule_path(@circle, following)}']", count: 0
     assert_select 'link[rel="canonical"]', href: 'https://circle-book.com' + filtered_path(period: 'this_week')
     assert_select 'meta[name="description"]', content: /今週.*10月12日.*10月18日.*バスケ/

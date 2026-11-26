@@ -13,6 +13,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
   end
 
   test 'national regional city category and tag listings share title conventions' do
+    @circle.update_columns(pic_header: 'test-cover.jpg')
     event = @circle.event.ruby
     prefecture = @circle.prefecture.kana
     category = @circle.category
@@ -125,7 +126,39 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{path}?page=2", count: 1
   end
 
+  test 'circle list preserves full metadata without generating a placeholder cover' do
+    name = '検索一覧で省略されても残る正式サークル名と活動場所の長い表示'
+    @circle.update_columns(
+      name: name, user_time: Date.new(2026, 10, 9), switch: '募集中', schedule: '毎週月曜',
+      area: '世田谷区', sport_details: { experience: '未経験者も歓迎', equipment: '室内シューズ持参', meeting_area: '体育館受付集合' }
+    )
+    tag = Tag.create!(name: '社会人歓迎', text: '社会人歓迎の')
+    UserTag.create!(user: @circle, tag: tag)
+    @circle.reviews.create!(review: 1, comment: '楽しく活動できました。')
+    3.times do |i|
+      @circle.schedules.create!(day: (Date.current + i + 1).iso8601, title: "テスト活動#{i}", venue: "検証体育館#{i}")
+    end
+
+    get @path
+    assert_response :success
+    assert_select 'link[rel=preload][as=image]', count: 0
+    assert_select '.cb-circle-list-card__cover', count: 0
+    assert_select '.cb-circle-list-card__link[href=?][aria-label=?]', circle_path(@circle), name, count: 1
+    assert_select '.cb-circle-list-card__name', text: name, count: 1
+    assert_select 'time.cb-listing-card__date[datetime="2026-10-09"]', text: '更新 2026年10月9日', count: 1
+    assert_select '.cb-circle-list-card__badge', text: '募集中'
+    %w[初心者歓迎 未経験者も歓迎 室内シューズ持参 体育館受付集合 一回５００円 ２０代中心 世田谷区 毎週月曜].each do |value|
+      assert_select '.cb-circle-list-card', text: /#{value}/
+    end
+    assert_select '.cb-circle-list-card__rating .star > *', count: 5
+    assert_select '.cb-circle-list-card__rating', text: /1件/
+    assert_select '.cb-circle-list-card__tags a[href=?]', tag_path(tag), text: tag.name
+    assert_select '.cb-circle-list-card__upcoming li', count: 2
+    assert_select '.cb-circle-list-card__upcoming', text: /検証体育館0.*検証体育館1/m
+  end
+
   test 'public landing page prioritizes first image and omits editing scripts' do
+    @circle.update_columns(pic_header: 'test-cover.jpg')
     get @path, params: { sort: '3', page: '1', utm_source: 'test', gclid: 'test' }
     assert_response :success
     assert_select 'link[rel=canonical][href=?]', "https://circle-book.com#{@path}"

@@ -1,16 +1,44 @@
-<%= link_to user_schedule_path(schedule.user_id, schedule.id), class: 'event-results__card' do %>
-  <div class="event-results__card-top"><span><%= user.event&.name %></span><span class="event-results__status status-<%= status[:key] %>"><%= status[:label] %></span></div>
-  <div class="event-results__body">
-    <%= image_tag schedule_image_source(schedule, user: user), alt: '', width: 640, height: 360, loading: local_assigns[:eager] ? 'eager' : 'lazy', class: 'event-results__image' %>
-    <div class="event-results__text">
-      <%= content_tag local_assigns.fetch(:heading_tag, :h3), schedule.title.presence || "#{user.event&.name}の活動" %>
-      <p class="event-results__time"><%= lucide_icon 'clock' %><span><% if local_assigns[:show_date] %><%= calendar_schedule_date(Date.iso8601(schedule.day)) %> <br class="event-results__date-break"><% end %><%= calendar_schedule_time(schedule) %></span></p>
-      <p class="event-results__location"><%= lucide_icon 'map-pin' %><%= [user.prefecture&.name, schedule.venue.presence].compact.join('・') %></p>
-      <% if schedule.has_attribute?(:cost) && schedule.cost.present? %><p><%= lucide_icon 'banknote' %>参加費：<%= schedule.cost %></p><% end %>
+<% date = Date.iso8601(schedule.day) %>
+<% calendar_card = local_assigns[:calendar_card] %>
+<% accepted = local_assigns[:accepted_count].to_i %>
+<% event_name = user.event&.name %>
+<% photo = schedule.top_image.url if schedule.has_attribute?(:top_image) && schedule.top_image.identifier.present? %>
+<% capacity = if accepted.positive?
+     "参加人数：#{accepted}#{"/#{schedule.recruitment_numbers}" if schedule.recruitment_numbers.to_i.positive?}名"
+   elsif schedule.recruitment_numbers.to_i.positive?
+     "募集人数#{calendar_card ? '：' : ' '}#{schedule.recruitment_numbers}名"
+   elsif calendar_card && schedule.recruitment_numbers == 0
+     "募集人数：制限なし"
+   end %>
+<%= link_to user_schedule_path(schedule.user_id, schedule.id), class: class_names('event-results__card event-list-card', 'event-list-card--has-photo' => photo.present?, 'schedule-calendar__event' => calendar_card) do %>
+  <time class="event-list-card__date" datetime="<%= date.iso8601 %>" aria-label="<%= date.year %>年<%= calendar_schedule_date(date) %>">
+    <span><%= "#{date.year}年" if calendar_card %><%= date.month %>月</span>
+    <strong><%= date.day %></strong>
+    <span><%= SchedulesHelper::SCHEDULE_WEEKDAYS[date.wday] %>曜日</span>
+  </time>
+  <div class="event-results__text event-list-card__facts">
+    <div class="event-list-card__meta">
+      <% if event_name.present? %>
+        <span class="event-list-card__fact"><%= lucide_icon 'tags' %><span><%= event_name %></span></span>
+      <% end %>
+      <span class="event-results__status event-list-card__status status-<%= status[:key] %> <%= 'schedule-calendar__status' if calendar_card %>"><% if status[:mark].present? %><span aria-hidden="true"><%= status[:mark] %></span> <% end %><%= status[:label] %></span>
     </div>
+    <%= content_tag local_assigns.fetch(:heading_tag, :h3), schedule.title.presence || "#{event_name}の活動" %>
+    <p class="event-results__time event-list-card__fact"><%= lucide_icon 'clock' %><span><%= calendar_schedule_time(schedule) %></span></p>
+    <% location = [user.prefecture&.name, schedule.venue.presence].compact.join('・') %>
+    <% if location.present? %>
+      <p class="event-results__location event-list-card__fact <%= 'schedule-calendar__venue' if calendar_card %>"><%= lucide_icon 'map-pin' %><span><%= location %></span></p>
+    <% end %>
+    <% cost = schedule.cost.presence if schedule.has_attribute?(:cost) %>
+    <% if cost.present? || capacity.present? %>
+      <p class="event-list-card__fact"><%= lucide_icon(cost.present? ? 'banknote' : 'users') %><span><% if cost.present? %>参加費：<%= cost %><% end %><% if cost.present? && capacity.present? %><span aria-hidden="true">｜</span><% end %><% if capacity.present? %><span class="event-results__capacity <%= 'schedule-calendar__capacity' if calendar_card %>"><%= capacity %></span><% end %></span></p>
+    <% end %>
+    <% if capacity.blank? && !calendar_card %>
+      <p class="event-results__capacity event-list-card__condition">詳細で参加条件を確認</p>
+    <% end %>
   </div>
-  <div class="event-results__card-bottom">
-    <span class="event-results__capacity"><% if local_assigns[:accepted_count].to_i.positive? %>参加人数：<%= accepted_count %><%= "/#{schedule.recruitment_numbers}" if schedule.recruitment_numbers.to_i.positive? %>名<% elsif schedule.recruitment_numbers.to_i.positive? %>募集人数 <%= schedule.recruitment_numbers %>名<% else %>詳細で参加条件を確認<% end %></span>
-    <span>詳細を見る <%= lucide_icon 'chevron-right' %></span>
-  </div>
+  <% if photo.present? %>
+    <%= image_tag photo, alt: '', width: 640, height: 360, loading: local_assigns[:eager] ? 'eager' : 'lazy', class: 'event-results__image event-list-card__photo' %>
+  <% end %>
+  <span class="event-list-card__detail"><%= calendar_card ? '活動の詳細を見る' : '詳細を見る' %> <%= lucide_icon 'chevron-right' %></span>
 <% end %>

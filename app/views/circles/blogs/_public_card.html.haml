@@ -1,7 +1,16 @@
 - directory = local_assigns.fetch(:directory, false)
+- summary = local_assigns.fetch(:summary, false)
+- home = local_assigns[:context] == :home
+- show_taxonomy = (directory || home) && (circle.event.present? || circle.prefecture.present?)
+- date = blog.updated_at.in_time_zone
+- date_badge = capture do
+  %time.cb-circle-blogs__updated.cb-listing-card__date{ datetime: date.iso8601 }
+    更新
+    = date.strftime('%Y年%-m月%-d日')
 - photos = [blog.image_01, blog.image_02, blog.image_03, blog.image_04].select(&:present?)
+- photos = photos.first(1) if home
 - excerpt = truncate(strip_tags(blog.content.to_s).squish, length: 140)
-%article.cb-circle-blogs__card
+%article.cb-circle-blogs__card.cb-blog-listing-card
   - unless blog.publicly_visible?
     %p.cb-circle-blogs__visibility このブログは現在、一般には公開されていません。
   .cb-circle-blogs__body{ class: photos.any? ? 'cb-circle-blogs__body--with-photos' : nil }
@@ -9,7 +18,7 @@
       .cb-circle-blogs__media
         - if photos.one?
           = link_to circle_blog_path(blog.user_id, blog.id), aria: { label: "#{blog.title}の記事を読む" } do
-            = lazysizes_image_tag photos.first.url, class: 'cb-circle-blogs__image', alt: ''
+            = lazysizes_image_tag photos.first.url, class: home ? 'cb-circle-blogs__image content_image_one' : 'cb-circle-blogs__image', alt: ''
         - else
           .swiper-container.cb-circle-blogs__swiper{ role: 'region', 'aria-label': "#{blog.title}の写真" }
             .swiper-wrapper
@@ -17,23 +26,43 @@
                 .swiper-slide= lazysizes_image_tag photo.url, class: 'cb-circle-blogs__image', alt: ''
             .swiper-pagination
           %span.cb-circle-blogs__photo-count 写真#{photos.size}枚
+        = date_badge
     .cb-circle-blogs__copy
-      .cb-circle-blogs__meta
-        = circle_avatar_tag circle, class: 'cb-circle-blogs__avatar', alt: ''
-        %span.cb-circle-blogs__author{ title: circle.name }= circle.name
-        %time{ datetime: blog.created_at.iso8601 }= blog.created_at.strftime('%Y年%-m月%-d日 %H:%M')
+      - if show_taxonomy || photos.empty?
+        .cb-blog-listing-card__context
+          - if show_taxonomy
+            .cb-circle-blogs__tags{ aria: { label: 'サークルの種目・都道府県' } }
+              - if circle.event.present?
+                = link_to event_path(circle.event.ruby), class: 'cb-circle-blogs__tag' do
+                  = lucide_icon 'tags'
+                  = circle.event.name
+              - if circle.prefecture.present?
+                - if circle.event.present?
+                  = link_to event_prefecture_path(circle.event.ruby, circle.prefecture.kana), class: 'cb-circle-blogs__tag' do
+                    = lucide_icon 'map-pin'
+                    = circle.prefecture.name
+                - else
+                  %span.cb-circle-blogs__tag
+                    = lucide_icon 'map-pin'
+                    = circle.prefecture.name
+          - if photos.empty?
+            = date_badge
       = link_to circle_blog_path(blog.user_id, blog.id), class: 'cb-circle-blogs__article-link' do
-        = content_tag(directory ? :h2 : :h3, blog.title, class: 'blog_title cb-circle-blogs__title')
+        - if summary
+          %h3.blog_title.cb-circle-blogs__title
+            %strong= blog.title
+        - else
+          = content_tag(directory ? :h2 : :h3, blog.title, class: 'blog_title cb-circle-blogs__title')
+        .cb-circle-blogs__meta
+          = circle_avatar_tag circle, class: 'cb-circle-blogs__avatar', alt: ''
+          %span.cb-circle-blogs__author{ title: circle.name }= circle.name
+          - published = blog.created_at.in_time_zone
+          %time.cb-blog-listing-card__published{ datetime: published.iso8601 }
+            = lucide_icon 'calendar-days'
+            投稿日
+            = published.strftime('%Y年%-m月%-d日 %H:%M')
         - if excerpt.present?
           %p.cb-circle-blogs__excerpt= excerpt
         %span.cb-circle-blogs__read
           記事を読む
-          = lucide_icon "arrow-right", **{ "aria-hidden" => "true" }
-      - if directory
-        .cb-circle-blogs__tags{ aria: { label: 'サークルの種目・都道府県' } }
-          = link_to event_path(circle.event.ruby), class: 'cb-circle-blogs__tag' do
-            = lucide_icon 'tags', **{ 'aria-hidden' => 'true' }
-            = circle.event.name
-          = link_to event_prefecture_path(circle.event.ruby, circle.prefecture.kana), class: 'cb-circle-blogs__tag' do
-            = lucide_icon 'tags', **{ 'aria-hidden' => 'true' }
-            = circle.prefecture.name
+          = lucide_icon 'arrow-right'

@@ -66,6 +66,34 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
     gallery&.image_01&.remove!
     gallery&.image_02&.remove!
   end
+  test 'blog cards put update dates in the photo area or at the top of the article and keep the original publication date' do
+    @circle.update!(recruitment: '参加者募集中です。')
+    plain = @circle.blogs.create!(title: '道具なし練習会レポート', content: '基本動作を確認しながら活動しました。' * 15)
+    gallery = @circle.blogs.create!(title: '写真つき大会レポート', content: '参加者全員で活動を振り返りました。' * 13)
+    @gallery = gallery
+    image = Rails.root.join('public/images/events/basketball.jpg')
+    File.open(image) { |f| gallery.image_01.store!(f) }
+    gallery.update_columns(image_01: gallery.image_01.identifier)
+    stamp = Time.zone.local(2026, 11, 25, 11, 30)
+    published = stamp - 2.days
+    [plain, gallery].each { |post| post.update_columns(created_at: published, updated_at: stamp) }
+
+    [blogs_path, circle_blogs_path(@circle), circle_path(@circle)].each do |path|
+      get path
+      assert_response :success
+      cards = css_select('.cb-blog-listing-card').index_by { |card| card.at_css('.cb-circle-blogs__title').text.squish }
+      text_card = cards.fetch(plain.title)
+      photo_card = cards.fetch(gallery.title)
+      assert_nil text_card.at_css('.cb-circle-blogs__media')
+      assert_select text_card, '.cb-blog-listing-card__context time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '更新 2026年11月25日'
+      assert_select photo_card, '.cb-circle-blogs__media > time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '更新 2026年11月25日'
+      assert_select photo_card, 'time.cb-blog-listing-card__published[datetime=?]', published.iso8601, text: '投稿日 2026年11月23日 11:30'
+      assert_equal @circle.name, text_card.at_css('.cb-circle-blogs__author')['title']
+    end
+  ensure
+    @gallery&.image_01&.remove!
+  end
+
   test 'the public blog directory shares circle cards and retains filters and genre and area links' do
     visible = @circle.blogs.create!(title: '地域の練習会', content: '<p>みんなで練習しました。</p>' * 18)
     hidden = @circle.blogs.create!(title: '非公開の予定', content: '内部共有用のお知らせです。' * 18,

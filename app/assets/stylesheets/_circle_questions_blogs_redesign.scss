@@ -130,7 +130,7 @@
 
 }
 
-.cb-public-circle, .blog-directory-cards {
+.cb-public-circle, .blog-directory-cards, .cb-blog-listing-home {
   .cb-circle-blogs__card {
     width: 100%; min-width: 0; box-sizing: border-box; padding: 13px;
     border: 1px solid #d3e0d9; border-radius: 10px; background: #fff;
@@ -211,7 +211,7 @@
 }
 
 // The directory retains its existing desktop grid and inline ad positions.
-.blog-directory-cards {
+.blog-directory-cards, .cb-blog-listing-home {
   .cb-circle-blogs__tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .cb-circle-blogs__tag {
     display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
@@ -221,7 +221,7 @@
 }
 
 @media (max-width: 991px) {
-  .cb-public-circle, .blog-directory-cards {
+  .cb-public-circle, .blog-directory-cards, .cb-blog-listing-home {
     .cb-circle-blogs__body--with-photos { grid-template-columns: minmax(0, 1fr); gap: 9px; }
     .cb-circle-blogs__image { height: clamp(112px, 39vw, 220px); }
     .cb-circle-blogs__read { display: flex; justify-content: flex-end; }

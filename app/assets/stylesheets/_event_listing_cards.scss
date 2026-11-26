@@ -1,0 +1,139 @@
+// Shared event result card, including schedule calendar and home preview surfaces.
+.cb-site a.event-results__card.event-list-card {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-areas: "date facts" "detail detail";
+  align-items: start;
+  align-content: start;
+  gap: 10px 12px;
+  min-width: 0;
+  margin-inline: 0;
+  padding: 12px;
+  border: 1px solid #d3e0d9;
+  border-radius: 10px;
+  background: #fff;
+  color: #15302b;
+  text-decoration: none;
+}
+.cb-site a.event-results__card.event-list-card:hover {
+  background: #f7faf8;
+  border-color: #83b29f;
+}
+.cb-site a.event-results__card.event-list-card:focus-visible {
+  outline: 2px solid #17684e;
+  outline-offset: 3px;
+}
+.cb-site a.event-results__card.event-list-card--has-photo {
+  grid-template-areas: "date facts" "photo photo" "detail detail";
+}
+.cb-site .event-list-card .event-list-card__date {
+  grid-area: date;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 7px 2px;
+  border-radius: 8px;
+  color: #17684e;
+  background: #e8f4ee;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.cb-site .event-list-card .event-list-card__date strong { font-size: 25px; line-height: 1.15; }
+.cb-site .event-list-card .event-list-card__facts {
+  grid-area: facts;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cb-site .event-list-card .event-list-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px 8px;
+  margin: 0 0 5px;
+  color: #4c655f;
+}
+.cb-site .event-list-card .event-list-card__fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin: 3px 0 0;
+  line-height: 1.5;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.cb-site .event-list-card .event-list-card__meta .event-list-card__fact { margin: 0; }
+.cb-site .event-list-card .event-list-card__status { margin: 0; }
+.cb-site .event-list-card .event-list-card__status.status-few { background: #fff4d8; color: #79530d; }
+.cb-site .event-list-card .event-list-card__status.status-full,
+.cb-site .event-list-card .event-list-card__status.status-ended { background: #eff1f0; color: #626d67; }
+.cb-site .event-list-card .event-list-card__status.status-cancelled { background: #fff0ed; color: #a13c32; }
+.cb-site .event-list-card .event-list-card__fact svg,
+.cb-site .event-list-card .event-list-card__detail svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin-top: 2px;
+}
+.cb-site .event-list-card .event-list-card__facts h3,
+.cb-site .event-list-card .event-list-card__facts h4 {
+  min-height: 0;
+  height: auto;
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 750;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.cb-site .event-list-card .event-list-card__photo {
+  grid-area: photo;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 180px;
+  object-fit: contain;
+}
+.cb-site .event-list-card .event-list-card__detail {
+  grid-area: detail;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding-top: 7px;
+  border-top: 1px solid #e9efeb;
+  color: #17684e;
+  font-size: 12px;
+  font-weight: 700;
+}
+.cb-site .event-list-card .event-list-card__condition { color: #4c655f; }
+
+@media (min-width: 768px) {
+  .cb-site a.event-results__card.event-list-card--has-photo {
+    grid-template-columns: 58px minmax(0, 1fr) minmax(0, 27%);
+    grid-template-areas: "date facts photo" "detail detail detail";
+  }
+  // Homepage preview cards retain their existing narrow horizontal rail.
+  .cb-site .home-portal a.event-results__card.event-list-card--has-photo {
+    grid-template-columns: 58px minmax(0, 1fr);
+    grid-template-areas: "date facts" "photo photo" "detail detail";
+  }
+}
+@media (min-width: 900px) {
+  .cb-site .event-results > .event-results__container .event-results__list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 374px) {
+  .cb-site a.event-results__card.event-list-card,
+  .cb-site a.event-results__card.event-list-card--has-photo {
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 8px;
+    padding: 9px;
+  }
+}

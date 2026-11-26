@@ -9,5 +9,6 @@ class HomeController < ApplicationController
       .preload(user: [:event, :prefecture]).order(updated_at: :desc, id: :desc).moderation_last, limit: 5)
     @places = Place.joins(:prefecture, :city, :events).distinct
       .preload(:prefecture, :city, :events).order(updated_at: :desc, id: :desc).limit(6)
+    @home_place_review_counts = PlaceReview.where(place_id: @places.map(&:id), moderation_status: "clear").group(:place_id).count
   end
 end

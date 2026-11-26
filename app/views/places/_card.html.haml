@@ -1,29 +1,39 @@
 - closure_notice = place_closure_notice(place)
 - title = closure_notice ? "#{place.name}（閉館）" : place.name
-%li.place-card
+- updated_on = place.updated_at.in_time_zone.to_date
+- card_path = local_assigns[:show_sports] ? place_listing_path(place, event: place.events.first) : place_listing_path(place)
+= content_tag(local_assigns.fetch(:card_tag, :li), class: 'place-card') do
   .place-card-header
+    .place-card-meta
+      = time_tag updated_on, "更新 #{updated_on.strftime('%Y年%-m月%-d日')}", class: 'place-card-updated cb-listing-card__date'
+      - if place.tag.to_i.in?([1, 2])
+        %span.place-card-tag= place.tag.to_i == 1 ? '屋内' : '屋外'
     .place-card-heading
       %p.place-card-location
+        = lucide_icon 'map-pin'
         = place.prefecture.name
         = place.city.name
-        - if place.tag.to_i.in?([1, 2])
-          %span.place-card-tag= place.tag.to_i == 1 ? "屋内" : "屋外"
-      %h2= link_to title, place_listing_path(place)
-    %time.place-card-updated{datetime: place.updated_at.to_date.iso8601} 更新：#{l(place.updated_at.to_date, format: :default)}
+      = content_tag(local_assigns.fetch(:heading_tag, :h2), link_to(title, card_path))
+      - if local_assigns[:show_sports]
+        %p.place-card-sports
+          = lucide_icon 'tags'
+          = place.events.map(&:name).join('・')
   - if closure_notice
-    %p.place-card-facts= closure_notice
+    %p.place-card-facts.place-card-facts--notice= closure_notice
   - else
     %dl.place-card-facts
-      - {"住所" => place.address, "アクセス" => place.access, "利用時間" => place.time, "利用料金" => place.price}.each do |label, value|
+      - { '住所' => ['map-pin', place.address], 'アクセス' => ['bus', place.access], '利用時間' => ['clock', place.time], '利用料金' => ['banknote', place.price] }.each do |label, (icon, value)|
         .place-card-fact
-          %dt= label
+          %dt
+            = lucide_icon icon
+            = label
           %dd= place_summary(value)
   .place-card-footer
     .place-card-reviews
       - if review_count.positive?
-        = render "layouts/review_score", review_score: place.average_score.to_f, reviews_count: review_count
+        = render 'layouts/review_score', review_score: place.average_score.to_f, reviews_count: review_count
       - else
         %span 口コミはまだありません
-    = link_to place_listing_path(place), class: "places-action", "aria-label" => "#{place.name}の詳細を確認する" do
+    = link_to card_path, class: ['places-action', ('home-place__link' if local_assigns[:show_sports])].compact.join(' '), 'aria-label' => "#{place.name}の詳細を確認する" do
       詳細を確認する
-      = lucide_icon "chevron-right"
+      = lucide_icon 'chevron-right'

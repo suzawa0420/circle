@@ -21,6 +21,7 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
 
   test 'public detail keeps every related upcoming date and aggregates accepted answers without loading them' do
     @future.first.update!(note: '関連一覧に表示しない本文')
+    @future.first.update_column(:top_image, 'related-registered.jpg')
     records = Hash.new(0)
     queries = []
     listener = ->(*args) { payload = args.last; records[payload[:class_name]] += payload[:record_count] }
@@ -37,9 +38,10 @@ class ScheduleListingTest < ActionDispatch::IntegrationTest
     assert_select ".schedule_list_wrap a[href='#{user_schedule_path(@circle, @current)}']", count: 0
     assert_select '.event-results__card .event-results__capacity', text: /参加人数：2/, count: 12
     assert_select '.schedule-detail__related .event-results__card', count: 12
-    assert_select '.schedule-detail__related .event-results__image', count: 12
+    assert_select '.schedule-detail__related .event-results__image', count: 1
+    assert_select '.schedule-detail__related .event-results__image[src*="related-registered.jpg"]', count: 1
     assert_select '.schedule-detail__related .event-results__text h4', text: @future.first.title
-    assert_select '.schedule-detail__related .event-results__time', text: /#{Regexp.escape(SchedulesController.helpers.calendar_schedule_date(Date.current + 1))}/
+    assert_select '.schedule-detail__related .event-list-card__date[datetime=?]', (Date.current + 1).iso8601, count: 1
     assert_select '.schedule-detail__related .status-ended', count: 0
     assert_select '.schedule-detail__related .schedule-calendar__archive-link', text: '過去に開催したスケジュールを見る'
     assert_not response.body.include?('関連一覧に表示しない本文'), 'Related activity bodies must not be rendered'

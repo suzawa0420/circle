@@ -38,8 +38,8 @@ module PlacesHelper
     data
   end
 
-  def place_listing_path(place)
-    event = @event || place.events.find { |candidate| candidate.place == 1 } || place.events.first
+  def place_listing_path(place, event: @event)
+    event ||= place.events.find { |candidate| candidate.place == 1 } || place.events.first
     sport = event&.ruby.presence || "all"
     "/places/#{sport}/#{place.prefecture.kana}/#{place.city.city_kana}/#{place.id}"
   end

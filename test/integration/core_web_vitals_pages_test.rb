@@ -49,6 +49,7 @@ class CoreWebVitalsPagesTest < ActionDispatch::IntegrationTest
   end
 
   test 'station listings preload the displayed image and keep results and filters' do
+    @circle.update_columns(pic_header: 'test-cover.jpg')
     base = "/#{@circle.prefecture.kana}/#{@city.city_kana}/#{@station.id}"
     ["/#{@circle.event.ruby}#{base}", "/prefectures#{base}"].each do |path|
       get path
