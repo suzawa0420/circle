@@ -5,7 +5,7 @@
 = content_tag(local_assigns.fetch(:card_tag, :li), class: 'place-card') do
   .place-card-header
     .place-card-meta
-      = time_tag updated_on, "更新 #{updated_on.strftime('%Y年%-m月%-d日')}", class: 'place-card-updated cb-listing-card__date'
+      = time_tag updated_on, updated_on.strftime('%Y年%-m月%-d日'), class: 'place-card-updated cb-listing-card__date'
       - if place.tag.to_i.in?([1, 2])
         %span.place-card-tag= place.tag.to_i == 1 ? '屋内' : '屋外'
     .place-card-heading

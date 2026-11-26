@@ -145,7 +145,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select '.cb-circle-list-card__cover', count: 0
     assert_select '.cb-circle-list-card__link[href=?][aria-label=?]', circle_path(@circle), name, count: 1
     assert_select '.cb-circle-list-card__name', text: name, count: 1
-    assert_select 'time.cb-listing-card__date[datetime="2026-10-09"]', text: '更新 2026年10月9日', count: 1
+    assert_select 'time.cb-listing-card__date[datetime="2026-10-09"]', text: '2026年10月9日', count: 1
     assert_select '.cb-circle-list-card__badge', text: '募集中'
     %w[初心者歓迎 未経験者も歓迎 室内シューズ持参 体育館受付集合 一回５００円 ２０代中心 世田谷区 毎週月曜].each do |value|
       assert_select '.cb-circle-list-card', text: /#{value}/

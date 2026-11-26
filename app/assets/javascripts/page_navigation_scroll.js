@@ -6,9 +6,9 @@
   var proposedVisit;
   var markedVisit;
 
-  function storeMarker(value) {
+  function storeMarker(value, source) {
     try {
-      if (value) sessionStorage.setItem(marker, JSON.stringify({ url: value, at: Date.now() }));
+      if (value) sessionStorage.setItem(marker, JSON.stringify({ url: value, source: source, at: Date.now() }));
       else sessionStorage.removeItem(marker);
     } catch (_) {
       // In restricted browser contexts, leave native restoration alone.
@@ -22,6 +22,25 @@
       return null;
     }
   }
+
+  // Lightweight search pages use ordinary browser navigation, so they do
+  // not emit turbolinks:before-visit. Mark only ordinary in-tab detail clicks.
+  document.addEventListener('click', function (event) {
+    if (!document.body || document.body.dataset.circleSearchList !== 'true') return;
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    var link = event.target && event.target.closest && event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target.toLowerCase() !== '_self')) return;
+    var base = document.querySelector('base[target]');
+    if (!link.target && base && base.target.toLowerCase() !== '_self') return;
+    var target = new URL(link.href, location.href);
+    if (target.origin !== location.origin || target.hash || target.pathname === location.pathname || !/^\/circles\/\d+\/?$/.test(target.pathname)) return;
+    storeMarker(target.href, location.href);
+    // A later delegated handler may cancel this click.
+    Promise.resolve().then(function () {
+      var marker = readMarker();
+      if (event.defaultPrevented && marker && marker.url === target.href && marker.source === location.href) storeMarker(null);
+    });
+  });
 
   document.addEventListener('turbolinks:before-visit', function (event) {
     var target = new URL(event.data.url, location.href);
@@ -53,7 +72,12 @@
     // Public pages and changed bundles may require a full reload after
     // Turbolinks changes the URL, causing scroll from the previous document
     // to be restored against the destination. Correct that reload only.
-    if (event.persisted || !navigation || navigation.type !== 'reload' || location.hash) return;
+    if (event.persisted || !navigation || location.hash) return;
+    if (arrival.source) {
+      if (navigation.type !== 'navigate' || document.referrer !== arrival.source.split('#')[0]) return;
+    } else if (navigation.type !== 'reload') {
+      return;
+    }
     // The browser can restore the reload position just after pageshow.
     window.requestAnimationFrame(function () {
       if (location.href === arrival.url) window.scrollTo(0, 0);

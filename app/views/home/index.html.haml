@@ -40,7 +40,7 @@
               %p= service[:description]
             %span.home-portal__label= service[:label]
           - records = service[:key] == "events" ? @schedules : @users
-          - if records.load.any?
+          - if records.to_a.any?
             %ul.home-portal__list{ "aria-label" => "#{service[:title]}の掲載一覧" }
               - records.each_with_index do |record, index|
                 %li.home-portal__item{ class: "home-portal__item--#{service[:key]}" }

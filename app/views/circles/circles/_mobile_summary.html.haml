@@ -22,6 +22,8 @@
     - if local_assigns.fetch(:show_bookmark, true)
       .mobile-circle-summary__bookmark{ id: "mobile-circle-bookmark-#{@user.id}" }
         = render "bookmarks/mobile_button", user: @user
+    - if local_assigns.fetch(:show_sticky_actions, false)
+      = render "circles/shared/public_circle_sticky_actions", circle: @user
   %nav.mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
     = render "circles/circles/mobile_tab", path: circle_path(@user), label: "詳細", icon: "info", current: active_tab == :details, disabled: false
     = render "circles/circles/mobile_tab", path: user_schedules_path(@user), label: "活動日", icon: "calendar-days", current: active_tab == :schedules, disabled: !owns_circle && !@user.schedules.exists?

@@ -26,6 +26,7 @@
           - else
             %span.cb-public-circle__sticky-avatar.is-placeholder{ "aria-hidden" => "true" }= circle.name.to_s.first
           %span.cb-public-circle__name{ title: circle.name }= circle.name
+        = render "circles/shared/public_circle_sticky_actions", circle: circle
       = render "circles/shared/public_circle_navigation", circle: circle, active_tab: active_tab
     .cb-public-circle__grid
       .cb-public-circle__main

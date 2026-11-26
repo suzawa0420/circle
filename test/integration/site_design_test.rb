@@ -44,8 +44,19 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
       assert_select 'nav[aria-label="サークル内のページ"] [aria-current="page"]', text: label, count: 1
       assert_select 'nav.mobile-bottom-nav', count: 1
       assert_select '.cb-public-circle__sticky-profile .cb-public-circle__name[title=?]', @circle.name, count: 1 unless label == '詳細'
-      assert_select 'a.cb-public-circle__floating-inquiry.cb-participant[data-circle-inquiry-click=true][aria-label="このサークルにお問い合わせ"]', count: 1 do |links|
+      assert_select '.cb-public-circle__sticky-actions a[aria-label="無料参加者登録してサークルを保存"]', count: 1
+      assert_select 'a.cb-public-circle__sticky-inquiry[data-circle-inquiry-click=true][aria-label="このサークルにお問い合わせ"]', count: 1 do |links|
         assert_equal new_user_conversation_path(@circle), URI.parse(links.first['href']).path
+        assert_includes links.first.inner_html, 'cb-icon--mail'
+      end
+      assert_select 'a.cb-public-circle__floating-inquiry.cb-participant[data-circle-inquiry-click=true][aria-label="このサークルにお問い合わせ"]', count: 1 do |links|
+        assert_includes links.first.inner_html, 'cb-icon--mail'
+        assert_equal new_user_conversation_path(@circle), URI.parse(links.first['href']).path
+      end
+      if label == '詳細'
+        assert_select '.cb-detail-primary a.mobile-circle-summary__cta svg.cb-icon--mail', count: 1
+      else
+        assert_select '.cb-public-circle__action-panel a.cb-public-circle__primary svg.cb-icon--mail', count: 1
       end
     end
   end
@@ -54,13 +65,13 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     @circle.update_column(:switch, '募集終了')
     get circle_path(@circle)
     assert_response :success
-    assert_select '.cb-public-circle__floating-inquiry', count: 0
+    assert_select '.cb-public-circle__floating-inquiry, .cb-public-circle__sticky-inquiry', count: 0
 
     @circle.update_column(:switch, '募集中')
     login(@owner)
     get circle_path(@circle)
     assert_response :success
-    assert_select '.cb-public-circle__floating-inquiry', count: 0
+    assert_select '.cb-public-circle__floating-inquiry, .cb-public-circle__sticky-inquiry', count: 0
   end
 
   test 'circle details keeps one save control in the same place across account states' do
@@ -207,7 +218,7 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.mobile-circle-summary__image--empty', text: 'チ'
     assert_select '.circle-avatar--empty.cb-detail-avatar__image', text: 'チ'
     get user_schedules_path(@circle)
-    assert_select '.mobile-circle-save.cb-participant', count: 1
+    assert_select '.mobile-circle-save.cb-participant', count: 2
   end
 
   test 'participant chat scope and author identities remain distinct' do

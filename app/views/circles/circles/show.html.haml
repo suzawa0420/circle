@@ -17,7 +17,7 @@
         - if @user.user_time.present?
           %p.cb-detail-identity__updated 更新日：#{time_tag @user.user_time.to_date}
     .circle-header-sentinel{ "aria-hidden" => "true" }
-    = render "mobile_summary", active_tab: :details, show_back: false, show_bookmark: false
+    = render "mobile_summary", active_tab: :details, show_back: false, show_bookmark: false, show_sticky_actions: true
     = render "detail_moderation"
 
     .cb-public-circle__grid.cb-detail-grid

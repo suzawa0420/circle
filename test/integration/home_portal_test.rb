@@ -24,10 +24,10 @@ class HomePortalTest < ActionDispatch::IntegrationTest
     assert_select '.home-service__arrow', count: 5
     assert_select '#home-circles .home-portal__list > li .cb-circle-list-card', count: 1
     assert_select '#home-circles .cb-circle-list-card__link[href=?]', circle_path(@circle)
-    assert_select '#home-events .home-portal__list > li .event-list-card', count: 3
-    assert_select '#home-events .event-results__status.status-open', count: 3
-    assert_select '#home-events .event-results__card', text: /参加費：500円/, count: 3
-    expected_events = EventDayListing.new(date: Date.current).schedules.limit(3).map { |s| user_schedule_path(@circle, s) }
+    assert_select '#home-events .home-portal__list > li .event-list-card', count: 1
+    assert_select '#home-events .event-results__status.status-open', count: 1
+    assert_select '#home-events .event-results__card', text: /参加費：500円/, count: 1
+    expected_events = EventDayListing.new(date: Date.current, sort: '3').schedules.limit(1).map { |s| user_schedule_path(@circle, s) }
     assert_equal expected_events, css_select('#home-events .event-list-card').map { |a| a['href'] }
     assert_select '#home-blogs, #home-matches, #home-places, .home-portal__rail, .home-portal__slide-hint', count: 0
     ['/circles', '/dates'].each { |path| assert_select ".home-portal__more[href='#{path}']", count: 1 }
@@ -38,6 +38,54 @@ class HomePortalTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '#home-circles .home-portal__item, #home-events .home-portal__item', count: 0
     assert_select '#home-events .home-portal__empty', text: /今日のイベントはまだありません/
+  end
+
+  test 'homepage picks earliest eligible events from distinct sports and prefers different organizers' do
+    climbing = Event.create!(name: '登山', ruby: 'preview-climbing', category: @circle.category, order: '2')
+    tennis = Event.create!(name: 'テニス', ruby: 'preview-tennis', category: @circle.category, order: '3')
+    dance = Event.create!(name: 'バレエ', ruby: 'preview-ballet', category: @circle.category, order: '4')
+    new_owner = AdminUser.create!(email: 'preview-other@example.test', password: 'test-password-123', email_verified_at: Time.current)
+    make_circle = ->(name, owner, event) do
+      User.create!(name: name, appeal: @circle.appeal, category: @circle.category,
+                   event: event, prefecture: @circle.prefecture, admin_user: owner, switch: '募集中')
+    end
+    extra_climbing = make_circle.call('同種目の登山会', new_owner, climbing)
+    same_owner_tennis = make_circle.call('近所のテニス会', new_owner, tennis)
+    other_tennis = make_circle.call('もう一つのテニス会', @owner, tennis)
+    draft = make_circle.call('非公開の体験会', @owner, dance)
+    draft.update_columns(publication_status: 'draft')
+    today = Date.current.iso8601
+    make_schedule = ->(circle, title, time, day = today) do
+      circle.schedules.create!(day: day, title: title, venue: '公開体育館', time_s: time, time_e: '23:00', recruitment: '募集中')
+    end
+
+    first = make_schedule.call(extra_climbing, '最初の登山', '13:00')
+    12.times { |index| make_schedule.call(extra_climbing, "同種目の活動#{index}", '13:15') }
+    preferred = make_schedule.call(other_tennis, '別主催者のテニス', '17:00')
+    declined = make_schedule.call(same_owner_tennis, '同じ主催者のテニス', '14:00')
+    make_schedule.call(draft, '非公開の今日', '12:30')
+    make_schedule.call(other_tennis, '別日の開催', '12:30', Date.tomorrow.iso8601)
+    third = make_schedule.call(@circle, '今日のバスケ', '18:00')
+
+    get root_path
+    assert_response :success
+    assert_equal [first, preferred, third].map { |schedule| user_schedule_path(schedule.user_id, schedule) },
+                 css_select('#home-events .event-list-card').map { |a| a['href'] }
+    assert_equal %w[登山 テニス バスケ], css_select('#home-events .event-list-card__meta .event-list-card__fact').map(&:text)
+
+    get dates_path
+    assert_response :success
+    assert_select 'a.event-list-card[href=?]', user_schedule_path(same_owner_tennis, declined)
+  end
+
+  test 'circle location retains its full text despite its single-line card layout' do
+    area = '長い活動場所' * 14
+    @circle.update_columns(area: area, user_time: '2026-10-14')
+    get root_path
+    assert_response :success
+    full_location = "東京都・#{area}"
+    assert_select '#home-circles .cb-circle-list-card__fact--location > span[title=?]', full_location, text: full_location
+    assert_select '#home-circles .cb-circle-list-card__updated[datetime="2026-10-14"]', text: '2026年10月14日'
   end
 
   test 'homepage skips the queries for removed previews and does not perform separate existence scans' do

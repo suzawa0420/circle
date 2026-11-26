@@ -5,7 +5,7 @@
     = link_to "サークルを編集", edit_user_path(circle), class: "cb-public-circle__primary", data: { turbolinks: false }
   - elsif circle.switch == "募集中"
     = link_to circle_inquiry_path(circle), circle_inquiry_link_options(circle).merge(class: "cb-public-circle__primary cb-participant") do
-      = lucide_icon "message-circle", **{ "aria-hidden" => "true" }
+      = lucide_icon "mail", **{ "aria-hidden" => "true" }
       %span このサークルにお問い合わせ
   - else
     %span.cb-public-circle__primary.is-disabled 募集終了

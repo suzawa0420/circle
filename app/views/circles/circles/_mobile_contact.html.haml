@@ -5,7 +5,7 @@
       サークルを編集
   - elsif @user.switch == "募集中"
     = link_to circle_inquiry_path(@user), circle_inquiry_link_options(@user).merge(class: "mobile-circle-summary__cta cb-participant") do
-      = lucide_icon "message-circle", **{ "aria-hidden" => "true" }
+      = lucide_icon "mail", **{ "aria-hidden" => "true" }
       このサークルにお問い合わせする
   - else
     %span.mobile-circle-summary__cta.mobile-circle-summary__cta--disabled 募集終了

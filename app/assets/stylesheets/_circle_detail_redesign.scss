@@ -66,6 +66,7 @@
     padding: 0; border: 1px solid var(--cb-detail-border); border-radius: 50%;
     background-clip: padding-box;
   }
+  .cb-detail-avatar__image.circle-avatar--empty { display: grid; place-items: center; line-height: 1; }
   .cb-detail-avatar .btn-open_profile {
     display: block; position: static; width: 100%; height: auto; margin: 0;
     border-radius: 50%; background: transparent;
@@ -270,7 +271,7 @@
   .mobile-circle-summary__heading p { display: none; }
 }
 .cb-site.circle-context.circle-scroll-header .cb-detail-redesign .mobile-circle-summary__heading h2 {
-  white-space: normal;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 @media (max-width: 991px) {
   .cb-site .cb-detail-redesign .cb-detail-main > .circle-reply-notice { order: 0; }

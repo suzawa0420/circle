@@ -45,8 +45,8 @@ class PlacesDirectoryTest < ActionDispatch::IntegrationTest
     get '/places'
     assert_response :success
     assert_select '.place-card' do |cards|
-      { @gym => ['2026-11-25', '更新 2026年11月25日', '屋内'],
-        @park => ['2026-11-23', '更新 2026年11月23日', '屋外'] }.each do |place, (iso, date, setting)|
+      { @gym => ['2026-11-25', '2026年11月25日', '屋内'],
+        @park => ['2026-11-23', '2026年11月23日', '屋外'] }.each do |place, (iso, date, setting)|
         card = cards.find { |item| item.at_css('h2 a')&.text == place.name }
         assert card
         assert_select card, '.place-card-header > .place-card-meta > time.cb-listing-card__date[datetime=?]', iso, text: date, count: 1

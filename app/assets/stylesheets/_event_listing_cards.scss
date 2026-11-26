@@ -59,7 +59,7 @@
 }
 .cb-site .event-list-card .event-list-card__fact {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 5px;
   margin: 3px 0 0;
   line-height: 1.5;
@@ -77,7 +77,8 @@
   width: 14px;
   height: 14px;
   flex: none;
-  margin-top: 2px;
+  display: block;
+  margin: 0;
 }
 .cb-site .event-list-card .event-list-card__facts h3,
 .cb-site .event-list-card .event-list-card__facts h4 {

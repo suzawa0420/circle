@@ -25,7 +25,7 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
       end
       assert_select '.match-directory__card', count: 1
       assert_select '.match-directory__card a', href: match_path(@circle)
-      assert_select '.match-directory__dates time', text: @match.updated_at.in_time_zone.strftime('更新 %Y年%-m月%-d日')
+      assert_select '.match-directory__dates time', text: @match.updated_at.in_time_zone.strftime('%Y年%-m月%-d日')
       assert_select '.match-directory__dates time', count: 1
     end
   end
@@ -43,7 +43,7 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
       assert_select '.match-directory__card-top--cover' do
         assert_select 'img.match-directory__cover[data-original-src*=?][loading=lazy]', header, count: 1
         assert_select '.match-directory__status', text: '募集中', count: 1
-        assert_select 'time.cb-listing-card__date[datetime="2026-10-12T12:00:00+09:00"]', text: '更新 2026年10月12日', count: 1
+        assert_select 'time.cb-listing-card__date[datetime="2026-10-12T12:00:00+09:00"]', text: '2026年10月12日', count: 1
       end
       assert_select 'img.match-directory__avatar[src*=?]', avatar, count: 1
       assert_select '.match-directory__identity h2', text: @circle.name
@@ -129,9 +129,9 @@ class MatchesDesignTest < ActionDispatch::IntegrationTest
   test 'newest update is shown once and matches structured data on lists and detail' do
     @match.update_columns(updated_at: Time.zone.parse('2026-10-10 18:00:00'))
     get matches_path
-    assert_select '.match-directory__dates', text: /更新 2026年10月12日/, count: 1
+    assert_select '.match-directory__dates', text: /2026年10月12日/, count: 1
     assert_select '.match-directory__dates time', count: 1
-    assert_select '.match-directory__dates time[datetime="2026-10-12T12:00:00+09:00"]', text: '更新 2026年10月12日'
+    assert_select '.match-directory__dates time[datetime="2026-10-12T12:00:00+09:00"]', text: '2026年10月12日'
     list = structured_data_of_type('ItemList')
     assert_equal 'ItemList', list['@type']
     assert_equal 1, list['itemListElement'].first['position']

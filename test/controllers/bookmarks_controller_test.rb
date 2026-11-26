@@ -16,10 +16,10 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".mobile-bottom-nav a[href='#{dates_path}']", text: 'イベント検索'
     assert_select ".mobile-bottom-nav a[href='#{login_path}']", text: '無料登録・ログイン'
     assert_select '.mobile-circle-summary__bookmark', count: 1
-    assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 1
+    assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 2
     assert_select '.bookmark_btn_wrap, .mobile-circle-save[data-remote]', count: 0
     get user_schedules_path(@circle)
-    assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 1
+    assert_select ".mobile-circle-save[href='#{new_member_registration_path}']", text: '保存', count: 2
     assert_select '.mobile-circle-save[data-remote]', count: 0
     get login_path
     assert_select "a[href='#{new_admin_user_registration_path}']", text: '無料で新規登録'
@@ -39,22 +39,22 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     2.times do
       assert_difference('Bookmark.count', 1) { post user_bookmarks_path(@circle), xhr: true }
       assert_response :success
-      assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}"
+      assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}, #sticky-circle-bookmark-#{@circle.id}"
       assert_includes response.body, 'replaceWith'
       get circle_path(@circle)
-      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 1
+      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 2
       assert_select '.bookmark_btn_wrap', count: 0
       get user_schedules_path(@circle)
-      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 1
+      assert_select '.mobile-circle-save[aria-pressed=true][data-method=delete]', text: '保存済み', count: 2
 
       assert_difference('Bookmark.count', -1) { delete user_bookmarks_path(@circle), xhr: true }
       assert_response :success
-      assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}"
+      assert_includes response.body, "#mobile-circle-bookmark-#{@circle.id}, #sticky-circle-bookmark-#{@circle.id}"
       get circle_path(@circle)
-      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 1
+      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 2
       assert_select '.bookmark_btn_wrap', count: 0
       get user_schedules_path(@circle)
-      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 1
+      assert_select '.mobile-circle-save[aria-pressed=false][data-method=post]', text: '保存', count: 2
     end
   end
 end

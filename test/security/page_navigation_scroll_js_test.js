@@ -6,7 +6,7 @@ const script = fs.readFileSync('app/assets/javascripts/page_navigation_scroll.js
 const source = 'https://example.test/users/10/schedules';
 const target = source + '/42';
 
-function browser(href, initialMarker, type) {
+function browser(href, initialMarker, type, referrer) {
   const documentHandlers = {};
   const windowHandlers = {};
   const scrolls = [];
@@ -17,7 +17,7 @@ function browser(href, initialMarker, type) {
     setItem(_key, value) { storage.marker = value; },
     removeItem() { delete storage.marker; }
   };
-  const document = { documentElement: { hasAttribute: () => false }, addEventListener(name, fn) { documentHandlers[name] = fn; } };
+  const document = { body: { dataset: { circleSearchList: 'true' } }, referrer, querySelector: () => null, documentElement: { hasAttribute: () => false }, addEventListener(name, fn) { documentHandlers[name] = fn; } };
   const performance = { getEntriesByType: () => [{ type }] };
   const window = { performance, requestAnimationFrame(fn) { fn(); }, addEventListener(name, fn) { windowHandlers[name] = fn; }, scrollTo(...xy) { scrolls.push(xy); } };
   vm.runInNewContext(script, { window, document, sessionStorage, performance, URL, location });
@@ -31,8 +31,8 @@ function visit(b, url) {
   b.location.href = url;
   b.documentHandlers['turbolinks:visit']({ data: { url } });
 }
-function arrival(href, state, type, persisted = false) {
-  const b = browser(href, state, type);
+function arrival(href, state, type, persisted = false, referrer = undefined) {
+  const b = browser(href, state, type, referrer);
   b.windowHandlers.pageshow({ persisted });
   return b;
 }
@@ -82,6 +82,43 @@ async function run() {
   const back = browser(source, undefined, 'back_forward');
   visit(back, target); // history restoration has no before-visit.
   assert.equal(back.storage.marker, undefined);
+  const searchUrl = 'https://example.test/circles?q=test&page=2';
+  const circleUrl = 'https://example.test/circles/42';
+  function nativeClick(b, href, overrides = {}, attrs = {}) {
+    const element = { href, target: '', hasAttribute: key => Object.hasOwn(attrs, key), ...attrs };
+    const event = { button: 0, defaultPrevented: false, target: { closest: () => element }, ...overrides };
+    b.documentHandlers.click(event);
+    return event;
+  }
+
+  const search = browser(searchUrl, undefined, 'navigate');
+  nativeClick(search, circleUrl);
+  const nativeState = search.storage.marker;
+  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false, searchUrl).scrolls, [[0, 0]]);
+  for (const type of ['reload', 'back_forward']) {
+    assert.deepEqual(arrival(circleUrl, nativeState, type, false, searchUrl).scrolls, []);
+  }
+  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', true, searchUrl).scrolls, []);
+  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false, source).scrolls, []);
+  assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false).scrolls, []);
+  const canceledNative = browser(searchUrl, undefined, 'navigate');
+  const canceledClick = nativeClick(canceledNative, circleUrl);
+  canceledClick.defaultPrevented = true;
+  await Promise.resolve();
+  assert.equal(canceledNative.storage.marker, undefined);
+
+  for (const [href, eventAttrs, linkAttrs] of [
+    [circleUrl + '#schedule', {}, {}], ['https://other.test/circles/42', {}, {}],
+    [searchUrl + '&sort=3', {}, {}], [circleUrl, { defaultPrevented: true }, {}],
+    [circleUrl, { button: 1 }, {}], [circleUrl, { metaKey: true }, {}],
+    [circleUrl, { ctrlKey: true }, {}], [circleUrl, { altKey: true }, {}],
+    [circleUrl, { shiftKey: true }, {}], [circleUrl, {}, { target: '_blank' }],
+    [circleUrl, {}, { download: true }]
+  ]) {
+    const other = browser(searchUrl, undefined, 'navigate');
+    nativeClick(other, href, eventAttrs, linkAttrs);
+    assert.equal(other.storage.marker, undefined);
+  }
   const canceled = browser(source, undefined, 'navigate');
   propose(canceled, target);
   await Promise.resolve();

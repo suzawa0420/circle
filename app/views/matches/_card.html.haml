@@ -8,7 +8,7 @@
         = image_tag circle_listing_image_url(user, 'header'), class: 'match-directory__cover', alt: '', loading: 'lazy', decoding: 'async', data: { original_src: user.pic_header.url }
       - if updated_at
         .match-directory__dates
-          = time_tag updated_at, "更新 #{updated_at.strftime('%Y年%-m月%-d日')}", class: 'cb-listing-card__date'
+          = time_tag updated_at, updated_at.strftime('%Y年%-m月%-d日'), class: 'cb-listing-card__date'
       %span.match-directory__status{ class: matching.recruit == '募集中' ? nil : 'is-closed' }= matching.recruit.presence || '募集状況未設定'
     .match-directory__card-content
       .match-directory__identity

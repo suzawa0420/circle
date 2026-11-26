@@ -22,13 +22,13 @@
         - if circle.switch.present?
           %span.cb-circle-list-card__badge{ class: ("is-recruiting" if is_recruiting) }= circle.switch
         - if updated
-          %time.cb-listing-card__date.cb-circle-list-card__updated{ datetime: updated.iso8601 }= "更新 #{updated.strftime('%Y年%-m月%-d日')}"
+          %time.cb-listing-card__date.cb-circle-list-card__updated{ datetime: updated.iso8601 }= updated.strftime('%Y年%-m月%-d日')
     - elsif !compact && (updated || circle.switch.present?)
       .cb-circle-list-card__status
         - if circle.switch.present?
           %span.cb-circle-list-card__badge{ class: ("is-recruiting" if is_recruiting) }= circle.switch
         - if updated
-          %time.cb-listing-card__date.cb-circle-list-card__updated{ datetime: updated.iso8601 }= "更新 #{updated.strftime('%Y年%-m月%-d日')}"
+          %time.cb-listing-card__date.cb-circle-list-card__updated{ datetime: updated.iso8601 }= updated.strftime('%Y年%-m月%-d日')
 
     .cb-circle-list-card__body
       .cb-circle-list-card__identity
@@ -45,9 +45,9 @@
                   = lucide_icon "tags"
                   %span= event.txt.presence || event.name
               - if area.present?
-                %span.cb-circle-list-card__fact
+                %span.cb-circle-list-card__fact.cb-circle-list-card__fact--location
                   = lucide_icon "map-pin"
-                  %span= home ? area.truncate(50) : area
+                  %span{ title: area }= area
               - if compact && circle_schedule.present?
                 %span.cb-circle-list-card__fact
                   = lucide_icon "calendar-days"
@@ -81,13 +81,15 @@
             %ul
               - scheduled_activities.each do |schedule|
                 - activity_date = schedule.day.to_s.to_date rescue nil
-                %li
+                - activity_day = activity_date ? activity_date.strftime("%-m/%-d（#{%w[日 月 火 水 木 金 土][activity_date.wday]}）") : schedule.day
+                - activity_time = [schedule.time_s&.strftime("%-H:%M"), schedule.time_e&.strftime("%-H:%M")].compact.join("〜")
+                - activity_text = [activity_day, activity_time.presence, schedule.venue.presence].compact.join(" ")
+                %li{ title: activity_text }
                   - if activity_date
-                    %time{ datetime: activity_date.iso8601 }= activity_date.strftime("%-m/%-d（#{%w[日 月 火 水 木 金 土][activity_date.wday]}）")
+                    %time{ datetime: activity_date.iso8601 }= activity_day
                   - else
-                    = schedule.day
-                  - if schedule.time_s.present?
-                    = [schedule.time_s.strftime("%-H:%M"), schedule.time_e&.strftime("%-H:%M")].compact.join("〜")
+                    = activity_day
+                  = activity_time
                   = schedule.venue
         .cb-circle-list-card__tail
           - if rating_count.positive?

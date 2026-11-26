@@ -85,8 +85,8 @@ class CircleQuestionsBlogsDesignTest < ActionDispatch::IntegrationTest
       text_card = cards.fetch(plain.title)
       photo_card = cards.fetch(gallery.title)
       assert_nil text_card.at_css('.cb-circle-blogs__media')
-      assert_select text_card, '.cb-blog-listing-card__context time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '更新 2026年11月25日'
-      assert_select photo_card, '.cb-circle-blogs__media > time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '更新 2026年11月25日'
+      assert_select text_card, '.cb-blog-listing-card__context time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '2026年11月25日'
+      assert_select photo_card, '.cb-circle-blogs__media > time.cb-listing-card__date[datetime=?]', stamp.iso8601, text: '2026年11月25日'
       assert_select photo_card, 'time.cb-blog-listing-card__published[datetime=?]', published.iso8601, text: '投稿日 2026年11月23日 11:30'
       assert_equal @circle.name, text_card.at_css('.cb-circle-blogs__author')['title']
     end

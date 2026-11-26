@@ -12,18 +12,20 @@ class CircleContactWarningTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '#circle-contact-warning', count: 0
     assert_select 'a[data-circle-contact-warning]', count: 0
-    assert_select "a[data-circle-inquiry-click][href^='#{new_user_conversation_path(@circle)}?']", minimum: 1
-    assert_select 'a[data-circle-inquiry-click]', count: 3
+    assert_select "a[data-circle-inquiry-click][href^='#{new_user_conversation_path(@circle)}?']", count: 4
+    assert_select 'a[data-circle-inquiry-click]', count: 4
+    assert_select 'a.cb-public-circle__sticky-inquiry[data-circle-inquiry-click]', count: 1
     assert_select 'a.cb-public-circle__floating-inquiry[data-circle-inquiry-click]', count: 1
   end
 
-  test 'network business flag adds one dialog shared by all three detail inquiry links' do
+  test 'network business flag adds one dialog shared by all detail inquiry links including sticky' do
     @owner.update!(check: 1)
     get circle_path(@circle)
     assert_response :success
     assert_select '#circle-contact-warning', count: 1
-    assert_select 'a[data-circle-contact-warning][aria-haspopup=dialog][aria-controls=circle-contact-warning]', count: 3
-    assert_select 'a[data-circle-contact-warning][data-circle-inquiry-click]', count: 3
+    assert_select 'a[data-circle-contact-warning][aria-haspopup=dialog][aria-controls=circle-contact-warning]', count: 4
+    assert_select 'a[data-circle-contact-warning][data-circle-inquiry-click]', count: 4
+    assert_select 'a.cb-public-circle__sticky-inquiry[data-circle-contact-warning]', count: 1
     assert_select 'a.cb-public-circle__floating-inquiry[data-circle-contact-warning]', count: 1
     assert_select 'a[data-contact-warning-continue][data-circle-inquiry-click]', count: 0
     assert_select '#circle-contact-warning-title', text: '勧誘目的の可能性があります'

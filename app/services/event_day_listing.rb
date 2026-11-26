@@ -49,7 +49,40 @@ class EventDayListing
     @base.joins("LEFT JOIN (#{counts}) attendance ON attendance.schedule_id = schedules.id")
       .select(*columns, 'COALESCE(attendance.accepted_count, 0) AS accepted_count', "(#{ended}) AS event_ended")
       .preload(user: [{ event: :category }, :prefecture])
-      .order(Arel.sql([@upcoming ? 'schedules.day ASC' : nil, "CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC", order].compact.join(', '))).moderation_last
+      .order(*[@upcoming ? 'schedules.day ASC' : nil, "CASE WHEN (#{closed}) OR (#{ended}) THEN 1 ELSE 0 END ASC", order].compact.map { |clause| Arel.sql(clause) }).moderation_last
+  end
+
+  # Only the home teaser samples a genre once. Apply exclusions in SQL so a
+  # large number of earlier schedules from the same sport cannot hide the rest.
+  def genre_preview(limit:)
+    base = schedules.except(:preload).joins(:user).where.not(users: { event_id: nil })
+      .select('users.event_id AS preview_genre_id', 'users.admin_user_id AS preview_owner_id')
+    genres = []
+    owners = []
+    selected = []
+    limit.times do
+      choices = base.where.not(users: { event_id: genres })
+      if owners.any?
+        # Keep moderation and availability priority, then prefer a different
+        # organizer before comparing start times.
+        priority = Schedule.sanitize_sql_array([
+          'CASE WHEN users.admin_user_id IN (?) THEN 1 ELSE 0 END ASC', owners
+        ])
+        order = base.order_values.dup
+        order.insert(-2, Arel.sql(priority))
+        choices = choices.reorder(*order)
+      end
+      choice = choices.limit(1).take
+      break unless choice
+
+      selected << choice
+      genres << choice[:preview_genre_id]
+      owners << choice[:preview_owner_id]
+    end
+    ActiveRecord::Associations::Preloader.new(
+      records: selected, associations: { user: [{ event: :category }, :prefecture] }
+    ).call
+    selected
   end
 
   def status(schedule)

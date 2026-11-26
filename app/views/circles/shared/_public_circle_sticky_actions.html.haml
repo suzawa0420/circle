@@ -1,0 +1,7 @@
+.cb-public-circle__sticky-actions
+  %div{ id: "sticky-circle-bookmark-#{circle.id}" }
+    = render "bookmarks/mobile_button", user: circle
+  - if circle.switch == "募集中" && !can_manage_circle?(circle)
+    - options = circle_inquiry_link_options(circle)
+    = link_to circle_inquiry_path(circle), options.merge(class: "cb-public-circle__sticky-inquiry cb-participant", aria: (options[:aria] || {}).merge(label: "このサークルにお問い合わせ")) do
+      = lucide_icon "mail", **{ "aria-hidden" => "true" }
