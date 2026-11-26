@@ -19,10 +19,10 @@ class CoreWebVitalsPagesTest < ActionDispatch::IntegrationTest
     get root_path
     assert_response :success
     assert_lightweight_assets('public_directory')
-    assert_select '.home-portal__section', count: 5
+    assert_select '.home-portal__section', count: 2
     assert_select '.home-portal__hero-art img[fetchpriority=high]', count: 1
     css = Rails.application.assets.find_asset('public_directory.css').to_s
-    %w[.home-portal .home-portal__hero .home-preview .home-portal__rail .event-results__status .home-service--circles .home-service--places].each do |selector|
+    %w[.home-portal .home-portal__hero .home-preview .home-portal__list .home-portal__sidebar .event-results__status .home-service--circles .home-service].each do |selector|
       assert_includes css, selector
     end
   end

@@ -117,11 +117,7 @@
     grid-template-columns: 58px minmax(0, 1fr) minmax(0, 27%);
     grid-template-areas: "date facts photo" "detail detail detail";
   }
-  // Homepage preview cards retain their existing narrow horizontal rail.
-  .cb-site .home-portal a.event-results__card.event-list-card--has-photo {
-    grid-template-columns: 58px minmax(0, 1fr);
-    grid-template-areas: "date facts" "photo photo" "detail detail";
-  }
+
 }
 @media (min-width: 900px) {
   .cb-site .event-results > .event-results__container .event-results__list {

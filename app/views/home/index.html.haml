@@ -1,4 +1,6 @@
-- set_meta_tags title: "サークル・イベント・活動ブログ・対戦相手・コート体育館を探す", description: "サークルブックで好きな活動を見つけよう。サークルのメンバー募集、今日のイベント、活動ブログ、対戦相手の募集、コート・体育館情報を探せます。"
+- page_title = "近くで見つける スポーツと趣味のサークル"
+- page_description = "久しぶりに体を動かしたい日も、新しい趣味を始めたいときも。地域や種目からスポーツ・趣味のサークルやイベントを探せます。"
+- set_meta_tags title: page_title, description: page_description, og: { title: page_title, description: page_description }, twitter: { title: page_title, description: page_description }
 = render "users/parts/local_business_user_list"
 %main.home-portal
   .home-portal__container
@@ -8,49 +10,51 @@
         %img{src: "/images/circlebook-hero-mobile-v1.webp", alt: "", width: "1182", height: "1330", fetchpriority: "high", decoding: "async"}
       .home-portal__hero-copy
         %h1
-          好きなことから、
+          近くで見つける
           %br
-          新しいつながり。
+          スポーツと趣味のサークル
         %p
-          %span.home-portal__hero-description-line スポーツも、趣味も。
-          %span.home-portal__hero-description-line あなたにぴったりなサークルを見つけよう。
+          %span.home-portal__hero-description-line 久しぶりに体を動かしたい日も、
+          %span.home-portal__hero-description-line 新しい趣味を始めたいときも。
+          %span.home-portal__hero-description-line.home-portal__hero-description-end 気になる活動からのぞいてみよう。
         = link_to circles_path, class: "home-portal__hero-search" do
           = lucide_icon "search"
           サークルを探す
-    %nav.home-portal__services{"aria-label" => "目的から探す"}
-      - home_services.each do |service|
-        = link_to service[:path], class: "home-service home-service--#{service[:key]}" do
-          = lucide_icon service[:icon]
-          %span= service[:title]
-
-    - home_services.each do |service|
-      %section.home-portal__section{id: "home-#{service[:key]}", "aria-labelledby" => "home-#{service[:key]}-title"}
-        .home-portal__heading
-          .home-portal__heading-copy
-            %h2{id: "home-#{service[:key]}-title"}
-              = lucide_icon service[:icon]
-              = service[:title]
-            %p= service[:description]
-          %span.home-portal__label= service[:label]
-        - records = { "circles" => @users, "events" => @schedules, "blogs" => @blogs, "matches" => @matches, "places" => @places }.fetch(service[:key])
-        - if records.load.any?
-          %p.home-portal__slide-hint
-            横にスライドして見る
+  .home-portal__layout
+    %aside.home-portal__sidebar{ "aria-labelledby" => "home-search-menu" }
+      %h2#home-search-menu 目的から探す
+      %nav.home-portal__services{ "aria-label" => "目的から探す" }
+        - home_services.each do |service|
+          = link_to service[:path], class: "home-service home-service--#{service[:key]}" do
+            = lucide_icon service[:icon]
+            %span= service[:title]
+            = lucide_icon "chevron-right", class: "home-service__arrow"
+    .home-portal__main
+      - home_services.select { |service| %w[circles events].include?(service[:key]) }.each do |service|
+        %section.home-portal__section{ id: "home-#{service[:key]}", "aria-labelledby" => "home-#{service[:key]}-title" }
+          .home-portal__heading
+            .home-portal__heading-copy
+              %h2{ id: "home-#{service[:key]}-title" }
+                = lucide_icon service[:icon]
+                = service[:title]
+              %p= service[:description]
+            %span.home-portal__label= service[:label]
+          - records = service[:key] == "events" ? @schedules : @users
+          - if records.load.any?
+            %ul.home-portal__list{ "aria-label" => "#{service[:title]}の掲載一覧" }
+              - records.each_with_index do |record, index|
+                %li.home-portal__item{ class: "home-portal__item--#{service[:key]}" }
+                  - if service[:key] == "events"
+                    - key, label = @day_listing.status(record)
+                    = render "schedules/event_card", schedule: record, user: record.user, status: { key: key, label: label }, accepted_count: record[:accepted_count].to_i, eager: false
+                  - else
+                    = render "home/circles_card", record: record, index: index
+          - else
+            .home-portal__empty
+              - if service[:key] == "events"
+                %p 今日のイベントはまだありません。ほかの開催日も探してみましょう。
+              - else
+                %p 掲載情報はまだありません。一覧ページから条件を選んで探せます。
+          = link_to service[:path], class: "home-portal__more" do
+            = service[:more]
             = lucide_icon "chevron-right"
-          %ul.home-portal__rail{tabindex: "0", "aria-label" => "#{service[:title]}の掲載一覧"}
-            - records.each_with_index do |record, index|
-              %li.home-portal__item{class: "home-portal__item--#{service[:key]}"}
-                - if service[:key] == "events"
-                  - key, label = @day_listing.status(record)
-                  = render "schedules/event_card", schedule: record, user: record.user, status: { key: key, label: label }, eager: false
-                - else
-                  = render "home/#{service[:key]}_card", record: record, index: index
-        - else
-          .home-portal__empty
-            - if service[:key] == "events"
-              %p 今日のイベントはまだありません。ほかの開催日も探してみましょう。
-            - else
-              %p 掲載情報はまだありません。一覧ページから条件を選んで探せます。
-        = link_to service[:path], class: "home-portal__more" do
-          = service[:more]
-          = lucide_icon "chevron-right"
