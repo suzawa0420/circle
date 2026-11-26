@@ -139,29 +139,43 @@ class EventDayResultsTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) { get '/dates', params: { page: 2 } }
   end
 
-  test 'unregistered photos omit the image and photo area only from public cards' do
+  test 'unregistered photos use the existing sport image on every public card' do
     @circle.update!(recruitment: '初心者歓迎')
     @circle.event.update!(ruby: 'basketball', txt: 'バスケサークル')
-    get '/dates/today'
+    expected = user_schedule_path(@circle, @open)
+    [root_path, '/dates', '/dates/today', user_schedules_path(@circle)].each do |path|
+      get path
+      assert_response :success, path
+      assert_select ".event-list-card--has-photo[href='#{expected}'] > img[src='/images/events/basketball.jpg']", count: 1
+      assert_select ".event-list-card[href='#{expected}'] time[datetime=?]", @open.day, count: 1
+    end
+    get '/images/events/basketball.jpg'
     assert_response :success
-    assert_select '.event-list-card img, .event-list-card--has-photo', count: 0
-    assert_select '.event-list-card time[datetime=?]', Date.current.iso8601, count: 5
-    get '/dates'
-    assert_response :success
-    assert_select '.event-list-card img, .event-list-card--has-photo', count: 0
+    assert_equal 'image/jpeg', response.media_type
     get user_schedule_path(@circle, @open)
     assert_select '.schedule_top_image > img.top_img[src="/images/events/basketball.jpg"]', count: 1
   end
 
-  test 'only the uploaded event photo renders in dates, home and calendar cards' do
+  test 'uploaded event photo takes precedence over the sport image in all public cards' do
+    @circle.event.update!(ruby: 'volleyball')
     @open.update_column(:top_image, 'registered-event-photo.jpg')
     expected = user_schedule_path(@circle, @open)
     [root_path, '/dates', '/dates/today', user_schedules_path(@circle)].each do |path|
       get path
       assert_response :success, path
       assert_select ".event-list-card--has-photo[href='#{expected}'] > img[src*='registered-event-photo.jpg']", count: 1
-      assert_select '.event-list-card img', count: 1
+      assert_select ".event-list-card[href='#{expected}'] > img[src='/images/events/volleyball.jpg']", count: 0
       assert_select ".event-list-card[href='#{expected}'] time[datetime=?]", @open.day, count: 1
+    end
+  end
+
+  test 'without a registered photo or a matching sport image the public card stays imageless' do
+    expected = user_schedule_path(@circle, @open)
+    [root_path, '/dates', '/dates/today', user_schedules_path(@circle)].each do |path|
+      get path
+      assert_response :success, path
+      assert_select ".event-list-card[href='#{expected}']", count: 1
+      assert_select ".event-list-card[href='#{expected}'] img, .event-list-card--has-photo[href='#{expected}']", count: 0
     end
   end
 

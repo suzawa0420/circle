@@ -177,6 +177,12 @@
   .schedule-detail__follow-up-links { display: grid; gap: 8px; }
   .schedule-detail__follow-up-links a { color: #17684e; overflow-wrap: anywhere; }
   #schedule-participant-guides, #schedule-related-activities { scroll-margin-top: 76px; }
+  #schedule-participant-guides > .column-guide-links {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
   .schedule-detail__follow-up .schedule-share { margin-top: 0; }
   .schedule-detail__follow-up .schedule-share__actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -186,6 +192,12 @@
   .schedule-detail__related { margin-top: 18px; }
 
   @media (max-width: 991px) {
-    .schedule-detail__grid { grid-template-areas: "event" "host" "content" "follow-up"; gap: 14px; }
+    .schedule-detail__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "event" "host" "content" "follow-up";
+      gap: 16px;
+    }
+    .schedule-detail__grid > * { margin-top: 0; }
   }
 }

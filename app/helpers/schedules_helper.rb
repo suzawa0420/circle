@@ -157,12 +157,24 @@ module SchedulesHelper
     return user.pic_header.url if user.pic_header.present?
 
     event = user.event
-    [["events", event&.ruby], ["categories", event&.category&.kana]].each do |directory, slug|
-      next unless slug.to_s.match?(/\A[a-z0-9_-]+\z/)
-      path = "/images/#{directory}/#{slug}.jpg"
-      return path if File.file?(Rails.root.join('public', path.delete_prefix('/')))
+    schedule_default_image('events', event&.ruby) ||
+      schedule_default_image('categories', event&.category&.kana) ||
+      '/images/events/event.jpg'
+  end
+
+  def schedule_listing_image_source(schedule, event:)
+    if schedule.has_attribute?(:top_image) && schedule.top_image.identifier.present?
+      return schedule.top_image.url
     end
-    '/images/events/event.jpg'
+
+    schedule_default_image('events', event&.ruby)
+  end
+
+  def schedule_default_image(directory, slug)
+    return unless slug.to_s.match?(/\A[a-z0-9_-]+\z/)
+
+    path = "/images/#{directory}/#{slug}.jpg"
+    path if File.file?(Rails.root.join('public', path.delete_prefix('/')))
   end
 
   def public_schedule_status(schedule, accepted_count:, now: Time.current)

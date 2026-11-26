@@ -19,9 +19,9 @@ function browser(href, initialMarker, type, referrer) {
   };
   const document = { body: { dataset: { circleSearchList: 'true' } }, referrer, querySelector: () => null, documentElement: { hasAttribute: () => false }, addEventListener(name, fn) { documentHandlers[name] = fn; } };
   const performance = { getEntriesByType: () => [{ type }] };
-  const window = { performance, requestAnimationFrame(fn) { fn(); }, addEventListener(name, fn) { windowHandlers[name] = fn; }, scrollTo(...xy) { scrolls.push(xy); } };
+  const window = { performance, requestAnimationFrame(fn) { fn(); }, addEventListener(name, fn) { windowHandlers[name] = fn; }, removeEventListener(name) { delete windowHandlers[name]; }, setTimeout() { return 1; }, clearTimeout() {}, scrollTo(...xy) { scrolls.push(xy); } };
   vm.runInNewContext(script, { window, document, sessionStorage, performance, URL, location });
-  return { location, storage, document, documentHandlers, windowHandlers, scrolls };
+  return { location, storage, document, documentHandlers, window, windowHandlers, scrolls };
 }
 
 function propose(b, url) {
@@ -101,6 +101,24 @@ async function run() {
   assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', true, searchUrl).scrolls, []);
   assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false, source).scrolls, []);
   assert.deepEqual(arrival(circleUrl, nativeState, 'navigate', false).scrolls, []);
+  const frames = [];
+  const repaint = browser(circleUrl, nativeState, 'navigate', searchUrl);
+  repaint.window.requestAnimationFrame = fn => frames.push(fn);
+  repaint.windowHandlers.pageshow({ persisted: false });
+  // Even when WebKit delays the next animation frame, the initial correction
+  // is performed. A late browser reposition is corrected on that frame.
+  assert.deepEqual(repaint.scrolls, [[0, 0]]);
+  repaint.window.scrollY = 525;
+  frames.shift()();
+  assert.deepEqual(repaint.scrolls, [[0, 0], [0, 0]]);
+  const interacting = browser(circleUrl, nativeState, 'navigate', searchUrl);
+  interacting.window.requestAnimationFrame = fn => frames.push(fn);
+  interacting.windowHandlers.pageshow({ persisted: false });
+  interacting.windowHandlers.touchstart();
+  interacting.window.scrollY = 525;
+  frames.shift()();
+  assert.deepEqual(interacting.scrolls, [[0, 0]]);
+  assert.equal(interacting.windowHandlers.wheel, undefined);
   const canceledNative = browser(searchUrl, undefined, 'navigate');
   const canceledClick = nativeClick(canceledNative, circleUrl);
   canceledClick.defaultPrevented = true;
@@ -113,7 +131,9 @@ async function run() {
     [circleUrl, { button: 1 }, {}], [circleUrl, { metaKey: true }, {}],
     [circleUrl, { ctrlKey: true }, {}], [circleUrl, { altKey: true }, {}],
     [circleUrl, { shiftKey: true }, {}], [circleUrl, {}, { target: '_blank' }],
-    [circleUrl, {}, { download: true }]
+    [circleUrl, {}, { download: true }], [circleUrl, {}, { 'data-method': 'delete' }],
+    [circleUrl, {}, { 'data-remote': 'true' }],
+    [circleUrl, {}, { 'data-circle-search-back': '42' }]
   ]) {
     const other = browser(searchUrl, undefined, 'navigate');
     nativeClick(other, href, eventAttrs, linkAttrs);
@@ -129,13 +149,27 @@ async function run() {
   assert.deepEqual(arrival(relatedDestination, relatedState, 'back_forward', false, circleUrl).scrolls, []);
   assert.deepEqual(arrival(relatedDestination, relatedState, 'navigate', true, circleUrl).scrolls, []);
 
-  for (const destination of [relatedDestination, relatedDestination + '#schedule']) {
-    const detail = browser(detailSource, undefined, 'navigate');
-    detail.document.body.dataset = { circleSearchList: 'false', publicCircleDetail: 'true' };
-    nativeClick(detail, destination, {}, { closest: () => destination.includes('#') });
-    assert.equal(detail.storage.marker, undefined);
-  }
+  // Calendar/listing destinations, circle tabs and related profiles all use
+  // ordinary native anchors and should not need opt-in markup per page.
+  for (const [from, to] of [
+    ['https://example.test/dates/today', target],
+    [source, target],
+    [circleUrl, 'https://example.test/users/42/schedules'],
+    [circleUrl, 'https://example.test/users/42/reviews'],
+    [circleUrl, 'https://example.test/users/42/questions'],
+    [circleUrl, 'https://example.test/circles/42/blogs']
+  ]) {
+    const page = browser(from, undefined, 'navigate');
+    page.document.body.dataset = {};
+    nativeClick(page, to);
+    const marker = page.storage.marker;
+    assert.deepEqual(arrival(to, marker, 'navigate', false, from).scrolls, [[0, 0]]);
+    assert.deepEqual(arrival(to, marker, 'back_forward', false, from).scrolls, []);
 
+    const anchored = browser(from, undefined, 'navigate');
+    nativeClick(anchored, to + '#schedule');
+    assert.equal(anchored.storage.marker, undefined);
+  }
   const canceled = browser(source, undefined, 'navigate');
   propose(canceled, target);
   await Promise.resolve();

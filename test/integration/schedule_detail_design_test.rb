@@ -70,6 +70,20 @@ class ScheduleDetailDesignTest < ActionDispatch::IntegrationTest
     @schedule.top_image.remove!
   end
 
+  test 'public participant guides preserve their article carousel, images and affiliate disclosure' do
+    guide = Column.create!(title: 'バスケの持ち物', text: 'シューズの選び方', publication_status: 'published',
+      audience: 'participant', event: @circle.event, affiliate: true)
+    guide.update_column(:image, 'shoes.jpg')
+    Column.create!(title: '初参加の準備', text: 'ウェアの準備', publication_status: 'published', audience: 'participant')
+
+    get user_schedule_path(@circle, @schedule)
+    assert_response :success
+    assert_select '#schedule-participant-guides > .column-guide-links--carousel h2', text: '参加前に、持ち物をそろえよう'
+    assert_select '#schedule-participant-guides .column-guide-links__track[tabindex="0"][role="region"] > a', count: 2
+    assert_select '#schedule-participant-guides a[href=?] img[src*="shoes.jpg"]', column_path(guide), count: 1
+    assert_select '#schedule-participant-guides a[href=?] .column-guide-links__meta', column_path(guide), text: /広告を含む記事/
+  end
+
   test 'availability respects Japanese clock times and does not load participant records' do
     NameSchedule.insert_all!([{ schedule_id: @schedule.id, answer: 1, created_at: Time.current, updated_at: Time.current }])
     @schedule.update!(recruitment_numbers: 1)

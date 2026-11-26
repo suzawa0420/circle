@@ -23,20 +23,19 @@
     }
   }
 
-  // Lightweight pages use ordinary browser navigation, so they do not
-  // emit turbolinks:before-visit. Track search and related-circle links.
+  // Lightweight pages (including the event calendars) navigate natively.
+  // Record ordinary link visits without changing the browser's history behavior.
   document.addEventListener('click', function (event) {
-    if (!document.body) return;
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     var link = event.target && event.target.closest && event.target.closest('a[href]');
     if (!link || link.hasAttribute('download') || (link.target && link.target.toLowerCase() !== '_self')) return;
-    var surface = document.body.dataset;
-    if (surface.circleSearchList !== 'true' &&
-        !(surface.publicCircleDetail === 'true' && link.closest('.cb-circle-list-card__related-list'))) return;
+    // Rails UJS links can represent a mutation or an Ajax action, not a visit.
+    if (link.hasAttribute('data-method') || link.hasAttribute('data-remote')) return;
+    if (link.hasAttribute('data-circle-search-back')) return; // Restores its own listing position.
     var base = document.querySelector('base[target]');
     if (!link.target && base && base.target.toLowerCase() !== '_self') return;
     var target = new URL(link.href, location.href);
-    if (target.origin !== location.origin || target.hash || target.pathname === location.pathname || !/^\/circles\/\d+\/?$/.test(target.pathname)) return;
+    if (target.origin !== location.origin || target.hash || target.pathname === location.pathname) return;
     storeMarker(target.href, location.href);
     // A later delegated handler may cancel this click.
     Promise.resolve().then(function () {
@@ -72,18 +71,33 @@
     storeMarker(null);
     if (arrival.url !== location.href || Date.now() - arrival.at > 30000) return;
     var navigation = window.performance && performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-    // Public pages and changed bundles may require a full reload after
-    // Turbolinks changes the URL, causing scroll from the previous document
-    // to be restored against the destination. Correct that reload only.
+    // Never reset a history traversal, BFCache resume or explicit anchor.
     if (event.persisted || !navigation || location.hash) return;
     if (arrival.source) {
       if (navigation.type !== 'navigate' || document.referrer !== arrival.source.split('#')[0]) return;
     } else if (navigation.type !== 'reload') {
+      // Turbolinks can turn a visit into a reload after changing the URL.
       return;
     }
-    // The browser can restore the reload position just after pageshow.
+    // WebKit can defer animation frames on the newly shown document. Reset
+    // immediately, and also catch any restoration applied just after pageshow.
+    var shownAt = Date.now();
+    var retry = true;
+    var intentEvents = ['wheel', 'touchstart', 'touchmove', 'pointerdown', 'keydown', 'focusin'];
+    function cancelRetry() {
+      retry = false;
+      intentEvents.forEach(function (type) { window.removeEventListener(type, cancelRetry, true); });
+    }
+
+    window.scrollTo(0, 0);
+    intentEvents.forEach(function (type) {
+      window.addEventListener(type, cancelRetry, { capture: true, passive: true });
+    });
+    var timeout = window.setTimeout(cancelRetry, 250);
     window.requestAnimationFrame(function () {
-      if (location.href === arrival.url) window.scrollTo(0, 0);
+      if (retry && Date.now() - shownAt < 250 && location.href === arrival.url && window.scrollY > 0) window.scrollTo(0, 0);
+      window.clearTimeout(timeout);
+      cancelRetry();
     });
   });
 }());

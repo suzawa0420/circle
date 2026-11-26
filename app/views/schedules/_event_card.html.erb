@@ -1,8 +1,9 @@
 <% date = Date.iso8601(schedule.day) %>
 <% calendar_card = local_assigns[:calendar_card] %>
 <% accepted = local_assigns[:accepted_count].to_i %>
-<% event_name = user.event&.name %>
-<% photo = schedule.top_image.url if schedule.has_attribute?(:top_image) && schedule.top_image.identifier.present? %>
+<% event = user.event %>
+<% event_name = event&.name %>
+<% photo = schedule_listing_image_source(schedule, event: event) %>
 <% capacity = if accepted.positive?
      "参加人数：#{accepted}#{"/#{schedule.recruitment_numbers}" if schedule.recruitment_numbers.to_i.positive?}名"
    elsif schedule.recruitment_numbers.to_i.positive?
