@@ -1,4 +1,4 @@
-@import "brand_palette";
+@import "design_tokens";
 
 .match-directory {
   background: $cb-page-canvas;
@@ -25,7 +25,7 @@
   &__summary { margin: 26px 0 16px; }
   &__summary h2 { font-size: 15px; font-weight: 500; }
   &__summary strong { font-size: 26px; margin-right: 5px; }
-  &__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  &__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: (16px + $cb-listing-card-row-space) 16px; }
   &__card { min-width: 0; overflow: hidden; transition: border-color .15s; }
   &__card:hover { border-color: $cb-action; }
   &__card-link:focus-visible { outline: 3px solid $cb-participant; outline-offset: -3px; }

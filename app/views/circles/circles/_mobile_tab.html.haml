@@ -1,8 +1,3 @@
-- if disabled
-  %span.is-empty{ "aria-disabled" => "true", "aria-current" => ("page" if current), title: "#{label}はまだありません" }
-    = lucide_icon icon
-    %span= label
-- else
-  = link_to path, class: ("is-current" if current), "aria-current" => ("page" if current) do
-    = lucide_icon icon
-    %span= label
+= link_to path, class: ("is-current" if current), "aria-current" => ("page" if current) do
+  = lucide_icon icon
+  %span= label

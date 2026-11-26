@@ -86,7 +86,8 @@
 }
 .cb-public-circle__tabs {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0,1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   align-items: stretch;
   margin: 0 0 30px;
   border-bottom: 1px solid var(--cb-circle-line);
@@ -104,7 +105,6 @@
   text-decoration: none;
 }
 .cb-public-circle__tabs .is-current { color: var(--cb-circle-brand); border-color: var(--cb-circle-brand); }
-.cb-public-circle__tabs [aria-disabled="true"] { color: #66746e; }
 .cb-public-circle__action-panel {
   padding: 16px;
   background: var(--cb-circle-pale);

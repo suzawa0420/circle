@@ -1,3 +1,5 @@
+@import "design_tokens";
+
 // Keep discovery page content and card columns aligned on desktop only.
 @media (min-width: 900px) {
   $directory-content-width: 1040px;
@@ -9,7 +11,7 @@
     }
     .event-results > .event-results__container, .match-directory.directory-listing > .match-directory__container { max-width: $directory-content-width; }
     .circle-results-grid, .blog-results-grid, .places-results, .match-directory__list {
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: (20px + $cb-listing-card-row-space) 20px;
       margin: 0; padding: 0; list-style: none;
     }
     .circle-results-grid > .user_item_wrap, .blog-results-grid > .users-form, .places-results > .place-card {

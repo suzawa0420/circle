@@ -32,7 +32,7 @@
   &__heading h2 svg { width: 24px; height: 24px; flex-shrink: 0; color: $cb-action; }
   &__heading p { font-size: 13px; line-height: 1.6; color: $cb-muted; margin: 0; }
   &__label { flex-shrink: 0; padding: 4px 8px; border-radius: 6px; background: #eef0f2; color: $cb-muted; font-size: 11px; line-height: 1.6; }
-  &__list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 0; margin: 0; list-style: none; }
+  &__list { display: grid; grid-template-columns: minmax(0, 1fr); gap: (12px + $cb-listing-card-row-space) 12px; padding: 0; margin: 0; list-style: none; }
   &__item { min-width: 0; }
   &__item > * { width: 100%; margin: 0; min-width: 0; }
   &__more { display: flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; max-width: 100%; min-height: 48px; margin: 16px auto 0; padding: 10px 20px; border: 1px solid #9fbfd9; border-radius: 8px; color: #2469a8; background: white; font-weight: 700; font-size: 14px; }
@@ -81,6 +81,16 @@
     &__hero-search { margin-top: 10px; }
     &__hero-art img { bottom: -48px; }
     &__hero-description-line { display: block; }
+  }
+  @media (max-width: 539px) {
+    // Keep the two main tiles even and give the longest of the three
+    // secondary labels a little extra room, without shrinking its type.
+    &__services { grid-template-columns: 1fr 1fr 1.4fr .6fr 1.4fr 1.4fr; }
+    .home-service:not(.home-service--circles):not(.home-service--events) {
+      flex-direction: column;
+      gap: 3px;
+      white-space: nowrap;
+    }
   }
   @media (max-width: 360px) {
     &__heading { flex-wrap: wrap; }

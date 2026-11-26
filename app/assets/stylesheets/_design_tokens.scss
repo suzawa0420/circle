@@ -14,6 +14,8 @@ $cb-type-scale: (
   page-title: (size: 24px, desktop: 28px, line: 1.35, weight: 700),
   display: (size: 32px, desktop: 36px, line: 1.3, weight: 700)
 );
+// Additional vertical breathing room between public listing cards (not within cards).
+$cb-listing-card-row-space: 4px;
 $cb-radius-control: 8px;
 $cb-radius-card: 16px;
 $cb-radius-dialog: 20px;

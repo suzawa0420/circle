@@ -49,9 +49,9 @@
                   = lucide_icon "map-pin"
                   %span{ title: area }= area
               - if compact && circle_schedule.present?
-                %span.cb-circle-list-card__fact
+                %span.cb-circle-list-card__fact.cb-circle-list-card__fact--related-schedule
                   = lucide_icon "calendar-days"
-                  %span= circle_schedule
+                  %span{ title: circle_schedule }= circle_schedule
         - if compact
           = lucide_icon "chevron-right", class: "cb-circle-list-card__compact-arrow"
       - unless compact
@@ -64,15 +64,17 @@
             - if circle_schedule.present?
               %span.cb-circle-list-card__fact
                 = lucide_icon "calendar-days"
-                %span= home ? circle_schedule.truncate(50) : circle_schedule
+                %span{ title: circle_schedule }= circle_schedule
             - if !home && circle.cost.present?
+              - cost_label = "参加費：#{circle.cost}"
               %span.cb-circle-list-card__fact
                 = lucide_icon "banknote"
-                %span= "参加費：#{circle.cost.to_s.truncate(80)}"
+                %span{ title: cost_label }= cost_label
             - if !home && circle.average_age.present?
+              - age_label = "参加者の年代：#{circle.average_age}"
               %span.cb-circle-list-card__fact
                 = lucide_icon "users"
-                %span= "参加者の年代：#{circle.average_age.to_s.truncate(60)}"
+                %span{ title: age_label }= age_label
         - if scheduled_activities.any?
           .cb-circle-list-card__upcoming
             %strong

@@ -14,8 +14,6 @@
         - if reviews_count.positive?
           = link_to user_reviews_path(@user), class: "cb-detail-identity__rating" do
             = render "layouts/review_score", review_score: @user.review_score.to_f, reviews_count: reviews_count
-        - if @user.user_time.present?
-          %p.cb-detail-identity__updated 更新日：#{time_tag @user.user_time.to_date}
     .circle-header-sentinel{ "aria-hidden" => "true" }
     = render "mobile_summary", active_tab: :details, show_back: false, show_bookmark: false, show_sticky_actions: true
     = render "detail_moderation"
@@ -46,7 +44,7 @@
               %p.cb-detail-recruitment= @user.recruitment
             = render "detail_introduction"
 
-        %section.cb-detail-card.cb-detail-review
+        %section.cb-detail-card.cb-detail-review{ class: ("cb-detail-card--nested-cards" if reviews_count.positive?) }
           %h2 口コミ
           - if reviews_count.positive?
             = link_to user_reviews_path(@user), class: "cb-detail-identity__rating" do

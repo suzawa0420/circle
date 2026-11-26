@@ -25,6 +25,13 @@
       border-radius: 10px;
       object-fit: cover;
     }
+    .circle-detail-cover__updated {
+      position: absolute; z-index: 2; inset: 10px auto auto 10px;
+      padding: 3px 10px; border-radius: 200px;
+      background: #fff; color: var(--cb-detail-ink);
+      font-size: 11px; font-weight: 700; line-height: 1.5;
+      white-space: nowrap; pointer-events: none;
+    }
     .ribbon-content { z-index: 2; inset: 10px 10px auto auto; width: auto; position: absolute; overflow: visible; }
     .ribbon {
       position: static; display: inline-flex; min-width: 50px; width: auto; height: auto;
@@ -54,7 +61,6 @@
     line-height: 1.4;
     overflow-wrap: anywhere;
   }
-  .cb-detail-identity__updated { margin: 6px 0 0; font-size: 12px; color: var(--cb-detail-muted); }
   .cb-detail-identity__rating { display: inline-flex; align-items: center; max-width: 100%; }
   .cb-detail-identity__rating .review_set {
     display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0;
@@ -97,6 +103,8 @@
     border: 1px solid var(--cb-detail-border); border-radius: 10px;
     background: #fff; color: var(--cb-detail-ink); overflow-wrap: anywhere;
   }
+  // Keep the section inset, but show only the individual cards’ borders.
+  .cb-detail-card--nested-cards { border-color: transparent; }
   .cb-detail-card > h2, .circle-upcoming > h2, .cb-composition-display > h2, .cb-detail-action-panel > h2 {
     margin: 0 0 9px; font-size: 18px; font-weight: 700; line-height: 1.45;
   }

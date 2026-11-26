@@ -28,6 +28,63 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '[id^=mobile-circle-bookmark-]', count: 1
   end
 
+  test 'circle cover shows the stored update date with Japanese weekday, including without a photo' do
+    @circle.update_column(:user_time, Time.zone.local(2026, 11, 26, 12))
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.circle-detail-cover time[datetime="2026-11-26"]', text: "2026年11月26日（木）", count: 1
+    assert_select 'time[datetime="2026-11-26"]', count: 1
+    assert_select '.cb-detail-identity time', count: 0
+    assert_select '.circle-detail-cover .ribbon', text: "募集中", count: 1
+    assert_select '.circle-detail-cover__tags', count: 1
+
+    @circle.update_column(:user_time, nil)
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.circle-detail-cover time', count: 0
+  end
+
+  test 'circle navigation hides unavailable tabs without hiding the current page or owner entry points' do
+    tabs = -> { css_select('nav[aria-label="サークル内のページ"] > a').map { |link| link.text.strip } }
+    get circle_path(@circle)
+    assert_response :success
+    assert_equal ["詳細", "Q&A"], tabs.call
+
+    get user_reviews_path(@circle)
+    assert_response :success
+    assert_equal ["詳細", "口コミ", "Q&A"], tabs.call
+    assert_select 'nav[aria-label="サークル内のページ"] > a[aria-current=page]', text: "口コミ"
+
+    get user_schedules_path(@circle)
+    assert_response :success
+    assert_equal ["詳細", "活動日", "Q&A"], tabs.call
+    assert_select 'nav[aria-label="サークル内のページ"] > a[aria-current=page]', text: "活動日"
+
+    get circle_blogs_path(@circle)
+    assert_response :success
+    assert_equal ["詳細", "Q&A", "ブログ"], tabs.call
+    assert_select 'nav[aria-label="サークル内のページ"] > a[aria-current=page]', text: "ブログ"
+
+    @circle.schedules.create!(title: "練習", venue: "体育館", day: (Date.current + 7).iso8601)
+    @circle.blogs.create!(title: "確認中", content: "公開前の記事" * 25, moderation_status: "pending")
+    get circle_path(@circle)
+    assert_equal ["詳細", "活動日", "Q&A"], tabs.call
+    assert_select 'nav[aria-label="サークル内のページ"] > [aria-disabled=true]', count: 0
+
+    @circle.reviews.create!(member: @member, review: 1, comment: "楽しかったです")
+    @circle.blogs.create!(title: "公開記事", content: "活動の記録" * 25)
+    get circle_path(@circle)
+    assert_equal ["詳細", "活動日", "口コミ", "Q&A", "ブログ"], tabs.call
+
+    @circle.schedules.delete_all
+    @circle.reviews.delete_all
+    @circle.blogs.delete_all
+    login(@owner)
+    get circle_path(@circle)
+    assert_response :success
+    assert_equal ["詳細", "活動日", "Q&A", "ブログ"], tabs.call
+  end
+
   test 'public circle pages share scroll navigation, the mobile footer and the same inquiry entry point' do
     @circle.update_column(:name, '長いサークル名' * 12)
     routes = {

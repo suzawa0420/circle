@@ -1,6 +1,9 @@
+@import "design_tokens";
+
 // Circle result card: presentation only. Directory pagination and ad slots stay in their own wrappers.
 .cb-site .user_item_wrap.cb-circle-list-card-shell {
   min-width: 0;
+  overflow: visible;
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -9,22 +12,14 @@
   position: relative;
   min-width: 0;
   margin: 0;
+  // Keep the real outline outside the child scroll/clip layers; an overlay
+  // can be masked at the rounded corners by Safari's scroll compositing.
   overflow: hidden;
-  border: 0;
+  border: 1px solid #d3e0d9;
   border-radius: 12px;
   background: #fff;
   color: #15302b;
   box-shadow: none;
-}
-// Paint the whole rounded stroke above the image, link and tag-row backgrounds.
-.cb-site .cb-circle-list-card:not(.cb-circle-list-card--compact)::after {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  border: 1px solid #d3e0d9;
-  border-radius: inherit;
-  content: "";
-  pointer-events: none;
 }
 .cb-site .cb-circle-list-card > .cb-circle-list-card__link {
   display: block;
@@ -142,7 +137,8 @@
   max-width: 100%;
   overflow-wrap: anywhere;
 }
-.cb-circle-list-card__fact--location > span {
+.cb-circle-list-card__fact--location > span,
+.cb-circle-list-card__fact--related-schedule > span {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -260,12 +256,24 @@
   white-space: nowrap;
 }
 .cb-site .cb-circle-list-card__tags a:focus-visible { outline: 2px solid #17684e; outline-offset: 1px; }
+.cb-site .cb-circle-list-card__related-list > li + li {
+  margin-block-start: $cb-listing-card-row-space;
+}
+.cb-site ul:not(.circle-results-grid) > .user_item_wrap.cb-circle-list-card-shell {
+  margin-bottom: cb-space(6) + $cb-listing-card-row-space;
+}
 .cb-site .cb-circle-list-card__related-list .cb-circle-list-card--compact {
   border: 0;
   border-radius: 5px;
 }
 .cb-site .cb-circle-list-card__related-list .cb-circle-list-card--compact > a { display: block; padding: 0; }
-.cb-circle-list-card--compact .cb-circle-list-card__body { padding: 5px 0; }
+.cb-circle-list-card--compact .cb-circle-list-card__body { padding: 7px 0; }
+.cb-circle-list-card--compact .cb-circle-list-card__meta {
+  flex-flow: column nowrap;
+  align-items: stretch;
+  gap: 4px;
+  margin-top: 2px;
+}
 .cb-site .cb-circle-list-card--compact .cb-circle-list-card__name { font-size: 14px; }
 .cb-site .cb-circle-list-card--compact .cb-circle-list-card__avatar { width: 36px; height: 36px; flex-basis: 36px; }
 .cb-circle-list-card--compact .cb-circle-list-card__compact-arrow { margin-inline-start: auto; }
@@ -283,6 +291,7 @@
     width: 100%;
     max-width: 100%;
     margin-inline: auto;
+    margin-bottom: cb-space(6) + $cb-listing-card-row-space;
   }
 }
 @media (max-width: 767px) {
@@ -290,5 +299,11 @@
   .cb-site .cb-circle-list-card .cb-circle-list-card__name { font-size: 16px; }
   .cb-circle-list-card__body { padding: 8px 10px 9px; }
   .cb-circle-list-card__status { padding-inline: 10px; }
+  .cb-circle-list-card__facts .cb-circle-list-card__fact > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .cb-site .cb-circle-list-card .cb-circle-list-card__avatar { width: 38px; height: 38px; flex-basis: 38px; }
 }

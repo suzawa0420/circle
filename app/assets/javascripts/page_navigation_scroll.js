@@ -23,13 +23,16 @@
     }
   }
 
-  // Lightweight search pages use ordinary browser navigation, so they do
-  // not emit turbolinks:before-visit. Mark only ordinary in-tab detail clicks.
+  // Lightweight pages use ordinary browser navigation, so they do not
+  // emit turbolinks:before-visit. Track search and related-circle links.
   document.addEventListener('click', function (event) {
-    if (!document.body || document.body.dataset.circleSearchList !== 'true') return;
+    if (!document.body) return;
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     var link = event.target && event.target.closest && event.target.closest('a[href]');
     if (!link || link.hasAttribute('download') || (link.target && link.target.toLowerCase() !== '_self')) return;
+    var surface = document.body.dataset;
+    if (surface.circleSearchList !== 'true' &&
+        !(surface.publicCircleDetail === 'true' && link.closest('.cb-circle-list-card__related-list'))) return;
     var base = document.querySelector('base[target]');
     if (!link.target && base && base.target.toLowerCase() !== '_self') return;
     var target = new URL(link.href, location.href);

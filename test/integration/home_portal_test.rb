@@ -22,6 +22,7 @@ class HomePortalTest < ActionDispatch::IntegrationTest
     assert_select '.home-portal__sidebar nav[aria-label="目的から探す"] .home-service', count: 5
     %w[circles dates blogs matches places].each { |path| assert_select ".home-service[href='/#{path}']", count: 1 }
     assert_select '.home-service__arrow', count: 5
+    assert_select '.home-service--places[href="/places"] > span', text: 'コート・体育館を探す', count: 1
     assert_select '#home-circles .home-portal__list > li .cb-circle-list-card', count: 1
     assert_select '#home-circles .cb-circle-list-card__link[href=?]', circle_path(@circle)
     assert_select '#home-events .home-portal__list > li .event-list-card', count: 1

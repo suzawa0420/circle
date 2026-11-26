@@ -9,7 +9,7 @@
 - users = listing_data.users
 - show_picte_ad = picte_camera_event?(@event)
 - affiliate_ad = affiliate_ad_for_event(@event, placement: 'search')
-- cache [users, show_picte_ad, affiliate_ad_cache_key(affiliate_ad), 'seo-list-v14-affiliate-position', 'listing-card-v2-20261126'] do
+- cache [users, show_picte_ad, affiliate_ad_cache_key(affiliate_ad), 'seo-list-v14-affiliate-position', 'listing-card-v3-20261126'] do
   %ul.circle-results-grid
     - users.each.with_index(1) do |user, i|
       %li.user_item_wrap.cb-circle-list-card-shell

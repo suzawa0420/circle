@@ -13,6 +13,20 @@ module UsersHelper
     { data: { circle_contact_warning: true }, aria: { haspopup: 'dialog', controls: 'circle-contact-warning' } }
   end
 
+  def circle_public_navigation_tabs(circle, active_tab)
+    owns_circle = admin_user_signed_in? && current_admin_user.id == circle.admin_user_id
+
+    [
+      [circle_path(circle), "詳細", :details, "info", true],
+      [user_schedules_path(circle), "活動日", :schedules, "calendar-days", active_tab == :schedules || owns_circle || circle.schedules.exists?],
+      [user_reviews_path(circle), "口コミ", :reviews, "message-circle", active_tab == :reviews || circle.reviews.exists?],
+      [user_questions_path(circle), "Q&A", :questions, "circle-help", true],
+      [circle_blogs_path(circle), "ブログ", :blogs, "book-open", active_tab == :blogs || owns_circle || circle.blogs.publicly_visible.exists?]
+    ].filter_map do |path, label, key, icon, available|
+      [path, label, key, icon] if available
+    end
+  end
+
   def circle_inquiry_link_options(user)
     options = circle_contact_warning_options(user)
     options.merge(data: (options[:data] || {}).merge(circle_inquiry_click: true))

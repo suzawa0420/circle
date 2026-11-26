@@ -1,4 +1,4 @@
-@import "brand_palette";
+@import "design_tokens";
 
 .places-directory, .home-portal__item--places {
   .places-intro { margin: 0 0 20px; }
@@ -176,4 +176,10 @@
   .place-circle-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid $cb-border; padding-top: 12px; margin-top: 14px; color: $cb-action; font-size: 13px; font-weight: 700; }
   .place-circle-footer .cb-icon { width: 18px; height: 18px; }
   .place-circles-more { display: flex; width: fit-content; max-width: 100%; margin: 16px auto 0; white-space: normal; text-align: center; }
+}
+
+@media (max-width: 899px) {
+  .places-directory .places-results > .place-card {
+    margin-bottom: 12px + $cb-listing-card-row-space;
+  }
 }

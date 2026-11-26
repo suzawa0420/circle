@@ -1,3 +1,5 @@
+@import "design_tokens";
+
 // Shared event result card, including schedule calendar and home preview surfaces.
 .cb-site a.event-results__card.event-list-card {
   display: grid;
@@ -123,7 +125,7 @@
 @media (min-width: 900px) {
   .cb-site .event-results > .event-results__container .event-results__list {
     grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: (12px + $cb-listing-card-row-space) 12px;
   }
 }
 @media (max-width: 374px) {
@@ -133,4 +135,8 @@
     gap: 8px;
     padding: 9px;
   }
+}
+
+.cb-site .schedule-calendar__events > .event-list-card:not(:last-child) {
+  margin-bottom: 10px + $cb-listing-card-row-space;
 }

@@ -25,8 +25,9 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
       end
     end
     assert_select '.circle-faq__item', count: 8
-    assert_select '.cb-detail-review .cb-circle-reviews__card', count: 3
-    assert_select '.cb-detail-blogs li', count: 2
+    assert_select '.cb-detail-review.cb-detail-card--nested-cards .cb-circle-reviews__card', count: 3
+    assert_select '.cb-detail-blogs.cb-detail-card--nested-cards li .cb-circle-blogs__card', count: 2
+    assert_select '.cb-detail-questions.cb-detail-card:not(.cb-detail-card--nested-cards)', count: 1
     assert_select '.cb-detail-blogs a.cb-detail-inline-link[href=?]', circle_blogs_path(@circle)
     assert_select '.cb-detail-review a[href=?]', user_reviews_path(@circle), minimum: 1
     assert_select '.cb-reading-body', text: /サークルでの活動内容です/
@@ -54,6 +55,8 @@ class CircleReadmoreTest < ActionDispatch::IntegrationTest
     get circle_path(@circle)
     assert_response :success
     assert_select '.circle-readmore--introduction', count: 1
+    assert_select '.cb-detail-review.cb-detail-card:not(.cb-detail-card--nested-cards)', count: 1
+    assert_select '.cb-detail-blogs', count: 0
     %w[reviews questions blogs].each { |section| assert_select ".circle-readmore--#{section}", count: 0 }
   end
 

@@ -157,6 +157,47 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_select '.cb-circle-list-card__upcoming', text: /検証体育館0.*検証体育館1/m
   end
 
+  test 'circle facts keep full schedule cost and age even when a small screen elides them' do
+    schedule = '毎週日曜日の夕方に体育館で活動しています。' * 5
+    cost = '参加費は会場によって異なります。' * 6
+    age = '十代から幅広い年齢の参加者を歓迎します。' * 5
+    @circle.update_columns(schedule: schedule, cost: cost, average_age: age, user_time: nil, switch: '')
+    SearchResultCountCache::STORE.clear
+
+    get @path
+    assert_response :success
+    assert_select '.cb-circle-list-card', count: 1 do
+      assert_select '.cb-circle-list-card__cover, .cb-circle-list-card__status', count: 0
+      assert_select '.cb-circle-list-card__facts .cb-circle-list-card__fact', count: 3
+      [schedule, "参加費：#{cost}", "参加者の年代：#{age}"].each do |fact|
+        assert_select '.cb-circle-list-card__facts .cb-circle-list-card__fact > span[title=?]', fact, text: fact
+      end
+    end
+  end
+
+  test 'similar circle cards keep the complete location and schedule in distinct fields' do
+    area = '港区三田・' + '田町駅周辺の体育館' * 7
+    schedule = '毎週土曜日の夕方から練習しています。' * 5
+    related = @circle.dup
+    related.assign_attributes(name: '地域のバスケサークル', area: area, schedule: schedule)
+    related.save!
+
+    get circle_path(@circle)
+    assert_response :success
+    assert_select '.cb-circle-list-card__related-list .cb-circle-list-card__link[href=?]', circle_path(related), count: 1 do
+      location = "東京都・#{area}"
+      assert_select '.cb-circle-list-card__fact--location', count: 1 do
+        assert_select 'svg.cb-icon--map-pin', count: 1
+        assert_select 'span[title=?]', location, text: location
+      end
+      assert_select '.cb-circle-list-card__fact--related-schedule', count: 1 do
+        assert_select 'svg.cb-icon--calendar-days', count: 1
+        assert_select 'span[title=?]', schedule, text: schedule
+      end
+      assert_select '.cb-circle-list-card__compact-arrow', count: 1
+    end
+  end
+
   test 'public landing page prioritizes first image and omits editing scripts' do
     @circle.update_columns(pic_header: 'test-cover.jpg')
     get @path, params: { sort: '3', page: '1', utm_source: 'test', gclid: 'test' }

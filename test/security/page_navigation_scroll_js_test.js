@@ -21,7 +21,7 @@ function browser(href, initialMarker, type, referrer) {
   const performance = { getEntriesByType: () => [{ type }] };
   const window = { performance, requestAnimationFrame(fn) { fn(); }, addEventListener(name, fn) { windowHandlers[name] = fn; }, scrollTo(...xy) { scrolls.push(xy); } };
   vm.runInNewContext(script, { window, document, sessionStorage, performance, URL, location });
-  return { location, storage, documentHandlers, windowHandlers, scrolls };
+  return { location, storage, document, documentHandlers, windowHandlers, scrolls };
 }
 
 function propose(b, url) {
@@ -119,6 +119,23 @@ async function run() {
     nativeClick(other, href, eventAttrs, linkAttrs);
     assert.equal(other.storage.marker, undefined);
   }
+  const detailSource = circleUrl + '#updates';
+  const relatedDestination = 'https://example.test/circles/83';
+  const related = browser(detailSource, undefined, 'navigate');
+  related.document.body.dataset = { circleSearchList: 'false', publicCircleDetail: 'true' };
+  nativeClick(related, relatedDestination, {}, { closest: selector => selector === '.cb-circle-list-card__related-list' });
+  const relatedState = related.storage.marker;
+  assert.deepEqual(arrival(relatedDestination, relatedState, 'navigate', false, circleUrl).scrolls, [[0, 0]]);
+  assert.deepEqual(arrival(relatedDestination, relatedState, 'back_forward', false, circleUrl).scrolls, []);
+  assert.deepEqual(arrival(relatedDestination, relatedState, 'navigate', true, circleUrl).scrolls, []);
+
+  for (const destination of [relatedDestination, relatedDestination + '#schedule']) {
+    const detail = browser(detailSource, undefined, 'navigate');
+    detail.document.body.dataset = { circleSearchList: 'false', publicCircleDetail: 'true' };
+    nativeClick(detail, destination, {}, { closest: () => destination.includes('#') });
+    assert.equal(detail.storage.marker, undefined);
+  }
+
   const canceled = browser(source, undefined, 'navigate');
   propose(canceled, target);
   await Promise.resolve();

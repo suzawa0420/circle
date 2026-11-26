@@ -1,4 +1,7 @@
 .header-wrapper.ribbon-wrapper.circle-detail-cover
+  - if @user.user_time.present?
+    - updated_on = @user.user_time.to_date
+    = time_tag updated_on, l(updated_on, format: "%Y年%-m月%-d日（%a）", locale: :ja), class: "circle-detail-cover__updated"
   .ribbon-content
     - if @user.switch == "募集中"
       %span.ribbon.green= @user.switch

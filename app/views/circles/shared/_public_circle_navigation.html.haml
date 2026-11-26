@@ -1,8 +1,3 @@
-- owns_circle = admin_user_signed_in? && current_admin_user.id == circle.admin_user_id
-- pages = [[circle_path(circle), "詳細", :details, false], [user_schedules_path(circle), "活動日", :schedules, !owns_circle && active_tab != :schedules && !circle.schedules.exists?], [user_reviews_path(circle), "口コミ", :reviews, active_tab != :reviews && !circle.reviews.exists?], [user_questions_path(circle), "Q&A", :questions, false], [circle_blogs_path(circle), "ブログ", :blogs, !owns_circle && active_tab != :blogs && !circle.blogs.publicly_visible.exists?]]
 %nav.cb-public-circle__tabs{ "aria-label" => "サークル内のページ" }
-  - pages.each do |path, label, key, disabled|
-    - if disabled
-      %span{ "aria-disabled" => "true", title: "#{label}はまだありません" }= label
-    - else
-      = link_to label, path, class: ("is-current" if key == active_tab), "aria-current" => ("page" if key == active_tab)
+  - circle_public_navigation_tabs(circle, active_tab).each do |path, label, key, _icon|
+    = link_to label, path, class: ("is-current" if key == active_tab), "aria-current" => ("page" if key == active_tab)

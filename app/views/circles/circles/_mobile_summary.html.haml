@@ -1,5 +1,4 @@
 - active_tab = local_assigns.fetch(:active_tab, :details)
-- owns_circle = admin_user_signed_in? && current_admin_user.id == @user.admin_user_id
 - if local_assigns.fetch(:show_back, true)
   .mobile-circle-summary__top
     = link_to "‹ サークル検索へ", circles_path, class: "mobile-circle-summary__back", data: { circle_search_back: @user.id }
@@ -25,8 +24,5 @@
     - if local_assigns.fetch(:show_sticky_actions, false)
       = render "circles/shared/public_circle_sticky_actions", circle: @user
   %nav.mobile-circle-summary__tabs{ "aria-label" => "サークル内のページ" }
-    = render "circles/circles/mobile_tab", path: circle_path(@user), label: "詳細", icon: "info", current: active_tab == :details, disabled: false
-    = render "circles/circles/mobile_tab", path: user_schedules_path(@user), label: "活動日", icon: "calendar-days", current: active_tab == :schedules, disabled: !owns_circle && !@user.schedules.exists?
-    = render "circles/circles/mobile_tab", path: user_reviews_path(@user), label: "口コミ", icon: "message-circle", current: active_tab == :reviews, disabled: !@user.reviews.exists?
-    = render "circles/circles/mobile_tab", path: user_questions_path(@user), label: "Q&A", icon: "circle-help", current: active_tab == :questions, disabled: false
-    = render "circles/circles/mobile_tab", path: circle_blogs_path(@user), label: "ブログ", icon: "book-open", current: active_tab == :blogs, disabled: !owns_circle && !@user.blogs.publicly_visible.exists?
+    - circle_public_navigation_tabs(@user, active_tab).each do |path, label, key, icon|
+      = render "circles/circles/mobile_tab", path: path, label: label, icon: icon, current: active_tab == key

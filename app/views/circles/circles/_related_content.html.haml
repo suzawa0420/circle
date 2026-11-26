@@ -1,6 +1,6 @@
 - recent_blogs = @user.blogs.publicly_visible.order(created_at: :desc).limit(3).to_a
 - if recent_blogs.any?
-  %section.cb-detail-card.cb-detail-blogs
+  %section.cb-detail-card.cb-detail-blogs.cb-detail-card--nested-cards
     %h2 活動ブログ
     %ul.cb-blog-listing-excerpts
       - recent_blogs.first(2).each do |blog|
