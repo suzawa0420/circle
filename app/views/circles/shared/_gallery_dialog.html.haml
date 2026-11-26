@@ -4,14 +4,15 @@
     %h2.cb-circle-gallery__title{ id: heading_id }= heading
     %button.cb-circle-gallery__control.cb-circle-gallery__close{ type: "button", autofocus: true, aria: { label: "閉じる" }, data: { circle_gallery_close: true } }
       = lucide_icon "x", **{ "aria-hidden" => "true" }
-  .cb-circle-gallery__stage
-    %div.cb-circle-gallery__media{ data: { circle_gallery_media: true } }
+  %div.cb-circle-gallery__media{ data: { circle_gallery_media: true } }
+  .cb-circle-gallery__navigation{ class: ("cb-circle-gallery__navigation--multiple" if gallery_size > 1) }
     - if gallery_size > 1
       %button.cb-circle-gallery__control.cb-circle-gallery__previous{ type: "button", aria: { label: "前の#{media_label}" }, data: { circle_gallery_move: "-1" } }
         = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
+    %p.cb-circle-gallery__status{ role: "status", aria: { live: "polite", atomic: "true" }, data: { circle_gallery_status: true } }
+    - if gallery_size > 1
       %button.cb-circle-gallery__control.cb-circle-gallery__next{ type: "button", aria: { label: "次の#{media_label}" }, data: { circle_gallery_move: "1" } }
         = lucide_icon "chevron-right", **{ "aria-hidden" => "true" }
-  %p.cb-circle-gallery__status{ role: "status", aria: { live: "polite", atomic: "true" }, data: { circle_gallery_status: true } }
   - if video_fallback
     %a.cb-circle-gallery__fallback{ hidden: true, target: "_blank", rel: "noopener noreferrer", data: { circle_gallery_fallback: true } } YouTubeで見る
   - else

@@ -78,7 +78,8 @@ class CircleQuestionBlogDestinationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.cb-destination-blog__gallery .swiper-slide', count: 2
     assert_select '.cb-destination-blog__gallery a[data-circle-gallery-open][data-circle-gallery-position]', count: 2
-    assert_select '#circle-blog-gallery-dialog [data-circle-gallery-move]', count: 2
+    assert_select '#circle-blog-gallery-dialog .cb-circle-gallery__navigation--multiple [data-circle-gallery-move]', count: 2
+    assert_select '#circle-blog-gallery-dialog [data-circle-gallery-media] [data-circle-gallery-move]', count: 0
 
     get circle_blog_path(@circle, earlier)
     assert_response :success
