@@ -95,10 +95,12 @@ class CircleProfileUpdateTest < ActionDispatch::IntegrationTest
   end
 
   test 'main and sub prefectures have separate select all controls and retain saved cities' do
-    sub = Prefecture.create!(name: '神奈川県', kana: 'edit-kanagawa', order: '2', sort: 2)
-    main_city = City.create!(name: '千代田区', prefecture: @circle.prefecture)
+    # ID 50 is reserved for the nationwide option, which has no city selector.
+    main = Prefecture.create!(id: 50_001, name: '東京都', kana: 'edit-tokyo', order: '1', sort: 1)
+    sub = Prefecture.create!(id: 50_002, name: '神奈川県', kana: 'edit-kanagawa', order: '2', sort: 2)
+    main_city = City.create!(name: '千代田区', prefecture: main)
     sub_city = City.create!(name: '横浜市', prefecture: sub)
-    @circle.update!(prefecture_sub_id: sub.id, city_ids: [main_city.id])
+    @circle.update!(prefecture: main, prefecture_sub_id: sub.id, city_ids: [main_city.id])
     login_master
     get "/users/#{@circle.id}/edit2"
     assert_response :success
