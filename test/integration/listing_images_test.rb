@@ -43,6 +43,7 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     expected_url = listing_image_path(kind: 'header', id: @circle.id,
       fingerprint: ListingImage.fingerprint(@circle.pic_header), format: 'webp')
     assert_select 'img.header_imege_user_list[loading=eager][src=?]', expected_url, count: 1
+    assert_select '.cb-circle-list-card__cover .cb-circle-cover-disclosure', count: 0
     assert_select 'link[rel=preload][as=image][href=?]', expected_url, count: 1
     get expected_url
     assert_response :success
@@ -60,6 +61,7 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     get circle_path(@circle)
     assert_response :success
     assert_select 'img.header_imege[src=?][loading=eager]', url, count: 1
+    assert_select '.circle-detail-cover .cb-circle-cover-disclosure', count: 0
     assert_select 'link[rel=preload][href=?]', url, count: 1
     assert_select '.popup-content img[src=?][loading=lazy]', @circle.pic_header.url, count: 1
     get url
@@ -74,6 +76,7 @@ class ListingImagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'img.header_imege[src="/images/events/volleyball.jpg"][alt=""]', count: 1
     assert_select 'link[rel=preload][href="/images/events/volleyball.jpg"]', count: 1
+    assert_select '.circle-detail-cover .cb-circle-cover-disclosure', text: 'イメージ画像', count: 1
     assert_select '#popup-on_header', count: 0
 
     @circle.event.update!(ruby: 'no-photo-for-this-sport')

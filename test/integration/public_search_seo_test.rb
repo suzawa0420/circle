@@ -145,6 +145,7 @@ class PublicSearchSeoTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'link[rel=preload][as=image][href="/images/events/basketball.jpg"]', count: 1
     assert_select '.cb-circle-list-card__cover img[src="/images/events/basketball.jpg"]', count: 1
+    assert_select '.cb-circle-list-card__cover .cb-circle-cover-disclosure', text: 'イメージ画像', count: 1
     assert_select '.cb-circle-list-card__link[href=?][aria-label=?]', circle_path(@circle), name, count: 1
     assert_select '.cb-circle-list-card__name', text: name, count: 1
     assert_select 'time.cb-listing-card__date[datetime="2026-10-09"]', text: '2026年10月9日', count: 1

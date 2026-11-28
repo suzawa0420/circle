@@ -18,6 +18,8 @@
     - unless compact
       .cb-circle-list-card__cover
         = circle_listing_header_image(circle, first: local_assigns.fetch(:eager, false))
+        - if circle.pic_header.identifier.blank?
+          %span.cb-circle-cover-disclosure イメージ画像
         - if circle.switch.present?
           %span.cb-circle-list-card__badge{ class: ("is-recruiting" if is_recruiting) }= circle.switch
         - if updated

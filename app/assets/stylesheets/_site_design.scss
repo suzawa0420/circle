@@ -690,29 +690,6 @@
     margin: 0;
   }
 
-  .circle-detail-cover__tags {
-    position: absolute;
-    inset: auto 12px 10px auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 5px;
-    max-width: calc(100% - 114px);
-    letter-spacing: 0;
-
-    span {
-      padding: 4px 8px;
-      border: 1px solid $cb-border;
-      border-radius: 999px;
-      background: $cb-surface;
-      color: $cb-text;
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-    }
-  }
-
   .circle-detail-cover__actions {
     position: absolute;
     top: 100%;
@@ -750,8 +727,6 @@
 @media (max-width: 359px) {
   .cb-site .circle-detail-cover {
     .profile_imege { width: 72px; height: 72px; bottom: -36px; }
-    .circle-detail-cover__tags { right: 6px; max-width: calc(100% - 98px); }
-    .circle-detail-cover__tags span { padding-inline: 6px; }
     .circle-detail-cover__actions { gap: 5px; }
     .circle-detail-cover__action { padding-inline: 7px; font-size: 12px; }
   }

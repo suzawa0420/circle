@@ -11,6 +11,11 @@
       .cb-detail-avatar= render "detail_avatar"
       .cb-detail-identity__body
         %h1{ title: @user.name }= @user.name
+        - categories_and_areas = [@user.event&.name, @user.prefecture&.name, @sub_prefecture&.name].compact.uniq
+        - if categories_and_areas.any?
+          %ul.cb-detail-identity__tags{ aria: { label: "活動カテゴリ・地域" } }
+            - categories_and_areas.each do |label|
+              %li= label
         - if reviews_count.positive?
           = link_to user_reviews_path(@user), class: "cb-detail-identity__rating" do
             = render "layouts/review_score", review_score: @user.review_score.to_f, reviews_count: reviews_count

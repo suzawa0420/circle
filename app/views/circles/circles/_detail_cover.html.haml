@@ -22,10 +22,5 @@
           %span.btn-close_header 閉じる
   - else
     = circle_detail_header_image @user
-  .circle-detail-cover__tags{ "aria-label" => "活動カテゴリ・地域" }
-    - if @user.event_id.present?
-      %span= @user.event.name
-    - if @user.prefecture_id.present?
-      %span= @user.prefecture.name
-    - if @sub_prefecture.present?
-      %span= @sub_prefecture.name
+  - if @user.pic_header.identifier.blank?
+    %span.cb-circle-cover-disclosure イメージ画像

@@ -36,7 +36,8 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select 'time[datetime="2026-11-26"]', count: 1
     assert_select '.cb-detail-identity time', count: 0
     assert_select '.circle-detail-cover .ribbon', text: "募集中", count: 1
-    assert_select '.circle-detail-cover__tags', count: 1
+    assert_select '.circle-detail-cover .cb-circle-cover-disclosure', text: 'イメージ画像', count: 1
+    assert_select '.cb-detail-identity h1 + ul.cb-detail-identity__tags', count: 1
 
     @circle.update_column(:user_time, nil)
     get circle_path(@circle)
@@ -169,12 +170,13 @@ class SiteDesignTest < ActionDispatch::IntegrationTest
     assert_select '.cb-detail-organizer__bio p:last-child', text: '別の段落'
   end
 
-  test 'circle detail cover has purpose-built tags and owner actions' do
+  test 'circle detail groups category and area with the name and retains owner actions' do
     second = Prefecture.create!(name: '神奈川県', kana: 'chat-kanagawa', order: '2', sort: 2)
     @circle.update_column(:prefecture_sub_id, second.id)
     get circle_path(@circle)
-    assert_select '.circle-detail-cover__tags span', count: 3
-    assert_select '.circle-detail-cover__tags span', text: '神奈川県'
+    assert_select '.circle-detail-cover .cb-detail-identity__tags', count: 0
+    assert_select '.cb-detail-identity h1 + ul.cb-detail-identity__tags > li', count: 3
+    assert_select '.cb-detail-identity__tags > li', text: '神奈川県'
     assert_select '.circle-detail-cover__actions button.circle-detail-cover__action--share', count: 1
     assert_select '.circle-detail-cover__actions a.circle-detail-cover__action--edit', count: 0
 

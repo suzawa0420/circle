@@ -38,7 +38,7 @@
 }
 .cb-circle-list-card__cover {
   position: relative;
-  height: 110px;
+  height: 126px;
   overflow: hidden;
 }
 .cb-site .cb-circle-list-card .cb-circle-list-card__cover > .header_imege_user_list {
@@ -76,6 +76,20 @@
   right: 9px;
   bottom: 8px;
   background: #fff;
+}
+.cb-site .cb-circle-cover-disclosure {
+  position: absolute;
+  inset: auto auto 8px 9px;
+  z-index: 1;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: #444b48;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
 }
 .cb-circle-list-card__body { min-width: 0; padding: 9px 12px 10px; }
 .cb-circle-list-card__identity {
@@ -151,6 +165,13 @@
   font-size: 13px;
   line-height: 1.55;
   overflow-wrap: anywhere;
+}
+.cb-circle-list-card__summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  max-height: 3.1em;
+  overflow: hidden;
 }
 .cb-circle-list-card__extra { margin-top: 2px; color: #486259; font-size: 12px; }
 .cb-circle-list-card__upcoming {
@@ -286,7 +307,7 @@
   }
 }
 @media (max-width: 767px) {
-  .cb-circle-list-card__cover { height: 88px; }
+  .cb-circle-list-card__cover { height: 104px; }
   .cb-site .cb-circle-list-card .cb-circle-list-card__name { font-size: 16px; }
   .cb-circle-list-card__body { padding: 8px 10px 9px; }
   .cb-circle-list-card__facts .cb-circle-list-card__fact > span {
