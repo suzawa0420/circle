@@ -162,6 +162,51 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'completed names are marked only for the selected event and the mark follows corrections' do
+    second = event(@circle, '午後のバスケ')
+    second.name_schedules.create!(name: @yes.name, answer: 1)
+    pending = answer(@event, '受付前の人', 1)
+    get circle_check_in_event_path(@event, token: token)
+    assert_select '.attendance-check-in-mark', count: 0
+
+    post circle_check_in_event_path(@event, token: token), params: { name_id: @yes.name_id }
+    assert_response :success
+    get circle_check_in_event_path(@event, token: token)
+    assert_select '.check-in-option-completed strong', text: @yes.name.name
+    assert_select '.check-in-option-completed strong + svg[aria-label="チェックイン済み"]', count: 1
+    assert_select 'button', text: pending.name.name
+    assert_select 'button', text: @yes.name.name, count: 0
+    get circle_check_in_event_path(second, token: token)
+    assert_select '.attendance-check-in-mark', count: 0
+    assert_select 'button', text: @yes.name.name
+
+    sign_in
+    get manage_attendance_user_schedule_path(@circle, @event)
+    assert_select '.em-answer-person a + svg[aria-label="チェックイン済み"]', count: 1
+    delete remove_check_in_user_schedule_path(@circle, @event, check_in_id: @event.schedule_check_ins.sole.id)
+    get circle_check_in_event_path(@event, token: token)
+    assert_select '.attendance-check-in-mark', count: 0
+    assert_select 'button', text: @yes.name.name
+  end
+
+  test 'attendance names use blue, pink and green in member and organizer lists' do
+    @yes.name.update!(gender: 1)
+    @no.name.update!(gender: 2)
+    other = answer(@event, 'その他の参加者', 1)
+    other.name.update!(gender: 0)
+    unselected = answer(@event, '性別未選択の参加者', 1)
+    expected = { @yes.name => 'blue', @no.name => 'pink', other.name => 'green', unselected.name => 'green' }
+
+    get attendances_path(@circle.unique_id)
+    assert_response :success
+    expected.each { |name, color| assert_select "thead th a.attendance-name--#{color}", text: name.name }
+
+    sign_in
+    get manage_attendance_user_schedule_path(@circle, @event)
+    assert_response :success
+    expected.each { |name, color| assert_select ".em-answer-person a.attendance-name--#{color}", text: name.name }
+  end
+
   test 'future, cancelled, foreign and nonattending submissions are rejected' do
     assert_no_difference('ScheduleCheckIn.count') do
       [[@future, @yes], [@cancelled, @yes], [@foreign, @foreign_yes], [@event, @foreign_yes], [@event, @no]].each do |schedule, attendance|

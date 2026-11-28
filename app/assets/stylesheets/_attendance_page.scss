@@ -58,7 +58,6 @@
     .mark_red { background: $cb-danger-soft; color: $cb-danger-hover; }
     .mark_yellow { background: $cb-warning-soft; color: $cb-warning-text; }
     .mark_gray { background: $cb-canvas; color: $cb-muted; }
-    th .blue a, th .pink a, th .purple a { color: $cb-action-hover; }
     .attendance_comment { font-size: 12px; padding: 0; }
   }
   .attendance-archive { display: flex; justify-content: flex-end; margin-top: cb-space(4); }
@@ -130,4 +129,11 @@
   color: $cb-action-hover;
   font-size: 13px;
   a { display: inline-flex; align-items: center; min-height: 44px; color: $cb-action-hover; text-decoration: underline; text-underline-offset: 3px; }
+}
+
+.cb-site .attendance-page th .attendance-name,
+.event-management .em-answer-person .attendance-name {
+  &.attendance-name--blue { color: #1559ad; }
+  &.attendance-name--pink { color: #ad245a; }
+  &.attendance-name--green { color: $cb-action-hover; }
 }

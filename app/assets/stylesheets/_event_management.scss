@@ -122,3 +122,6 @@
   .em-formatting summary { min-height: 44px; padding: 10px 12px; font-size: 13px; }
   .em-formatting trix-toolbar { margin: 0; padding: 0 8px 8px; }
 }
+
+.event-management .em-answer-person { display: flex; align-items: center; gap: 6px; }
+.event-management .attendance-check-in-mark { flex: none; width: 1.2em; height: 1.2em; color: $cb-action-hover; }

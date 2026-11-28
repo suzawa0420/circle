@@ -5,7 +5,16 @@
   <p>ご自身の名前を選んでください。</p>
   <ul class="check-in-options">
     <% @answers.each do |answer| %>
-      <li><%= button_to confirm_circle_check_in_path(@event, token: params[:token]), params: { name_id: answer.name_id } do %><%= answer.name.name %><% end %></li>
+      <li>
+        <% if @checked_in_name_ids.include?(answer.name_id) %>
+          <div class="check-in-option-completed">
+            <strong><%= answer.name.name %></strong>
+            <%= render 'shared/check_in_mark' %>
+          </div>
+        <% else %>
+          <%= button_to confirm_circle_check_in_path(@event, token: params[:token]), params: { name_id: answer.name_id } do %><%= answer.name.name %><% end %>
+        <% end %>
+      </li>
     <% end %>
   </ul>
 <% else %>

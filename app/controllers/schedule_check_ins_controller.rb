@@ -21,6 +21,7 @@ class ScheduleCheckInsController < ActionController::Base
   def show
     @multiple_events = available_events.offset(1).exists? if action_name == 'show'
     @answers = eligible_answers.includes(:name).order('names.name', :name_id, :id).to_a.uniq(&:name_id)
+    @checked_in_name_ids = @event.schedule_check_ins.pluck(:name_id).to_set
     render :show
   end
 

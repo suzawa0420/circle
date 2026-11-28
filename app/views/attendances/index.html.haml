@@ -66,22 +66,12 @@
               %tr
                 %th.day.fixed.day_title 日程
                 %th.status_title ステータス
-                - @names.each.with_index(1) do |name, i|
+                - @names.each do |name|
                   %th
-                    - if params[:archive] != "1"
-                      - if name.gender == 1
-                        %span.blue= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
-                      - elsif name.gender == 2
-                        %span.pink= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
-                      - else
-                        %span.purple= link_to name.name, edit_attendance_path(@user.unique_id, name.id)
+                    - if archived
+                      %span{ class: attendance_name_class(name) }= name.name
                     - else
-                      - if name.gender == 1
-                        %span.blue= name.name
-                      - elsif name.gender == 2
-                        %span.pink= name.name
-                      - else
-                        %span.purple= name.name
+                      = link_to name.name, edit_attendance_path(@user.unique_id, name.id), class: attendance_name_class(name)
 
             = render "/schedules/attendances/answer_list"
       - else
