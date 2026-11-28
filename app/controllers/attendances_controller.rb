@@ -7,26 +7,48 @@ before_action :set_attendances
 	def index
     # Never cache an organizer's response where a participant could receive it.
     @schedule_share_allowed = admin_user_signed_in? && current_admin_user.id == @user&.admin_user_id
-    response.headers["Cache-Control"] = "private, no-store" if @schedule_share_allowed
+    archive = params[:archive] == "1"
+    @show_check_in_history = archive && can_manage_circle?(@user)
+    response.headers["Cache-Control"] = "private, no-store" if @schedule_share_allowed || @show_check_in_history
 
-    if params[:archive] == "1"
-      @schedules = Schedule.where(user_id: @user.id).where("day <= ?", DateTime.yesterday).limit(5).order(:day => :desc)
+    now = Time.current.in_time_zone('Tokyo')
+    today = now.to_date.iso8601
+    circle_schedules = @user.schedules
+    finished_today = circle_schedules.where(day: today).where.not(time_e: nil)
+      .select(:id, :day, :time_s, :time_e).select { |schedule| schedule.attendance_finished?(now) }
+    past = circle_schedules.where("day < ?", today).or(circle_schedules.where(id: finished_today.map(&:id)))
+    @past_schedules = past.order(day: :desc, time_s: :asc).page(params[:page])
+    @schedules = if archive
+      past.order(day: :desc, time_s: :desc, id: :desc).limit(5)
     else
-      @schedules = Schedule.where(user_id: @user.id).where("day > ?", DateTime.yesterday).order(:day => :asc, :time_s => :asc)
+      circle_schedules.where("day >= ?", today).order(day: :asc, time_s: :asc)
     end
-
-    @past_schedules = Schedule.where(user_id: @user.id).where("day <= ?", DateTime.yesterday).order(:day => :desc, :time_s => :asc).page(params[:page])
-
 
     @name = Name.new
     @name_schedules = @name.name_schedules.build
-
     @today = DateTime.yesterday
 
-    # ▼@nemesの取得
-    schedule_ids = @schedules.pluck(:id)
-    name_ids = NameSchedule.where(schedule_id: schedule_ids).where.not(answer: nil).pluck(:name_id)
-    @names = Name.where(id: name_ids).order(updated_at: :desc)
+    schedule_ids = @schedules.map(&:id)
+    answers = NameSchedule.where(schedule_id: schedule_ids).where.not(answer: nil).order(:id).to_a
+    @answers_by_schedule_and_name = answers.group_by(&:schedule_id).transform_values do |rows|
+      rows.reverse.index_by(&:name_id)
+    end
+    name_ids = answers.map(&:name_id)
+    @check_ins_by_schedule = {}
+    if @show_check_in_history
+      check_ins = ScheduleCheckIn.where(schedule_id: schedule_ids).order(:checked_in_at, :id).to_a
+      @check_ins_by_schedule = check_ins.group_by(&:schedule_id).transform_values { |rows| rows.index_by(&:name_id) }
+      name_ids.concat(check_ins.map(&:name_id))
+    end
+    @names = Name.where(id: name_ids).order(updated_at: :desc).to_a
+    if @show_check_in_history
+      current_name_ids = @names.map(&:id).to_set
+      check_ins.reverse.uniq(&:name_id).each do |record|
+        next if current_name_ids.include?(record.name_id)
+
+        @names << Name.new(id: record.name_id, name: record.display_name)
+      end
+    end
   end
 
   def new

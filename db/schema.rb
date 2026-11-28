@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_11_22_001000) do
+ActiveRecord::Schema.define(version: 2026_11_28_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -881,6 +881,7 @@ ActiveRecord::Schema.define(version: 2026_11_22_001000) do
     t.string "cost"
     t.string "top_image"
     t.uuid "creation_key"
+    t.datetime "check_in_started_at"
     t.index ["user_id", "creation_key"], name: "index_schedules_on_user_and_creation_key", unique: true, where: "(creation_key IS NOT NULL)"
     t.index ["user_id"], name: "index_schedules_on_user_id"
   end

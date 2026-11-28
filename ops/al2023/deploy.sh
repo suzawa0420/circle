@@ -130,6 +130,8 @@ case "$mode" in
     bundle exec rails db:migrate:up VERSION=20261122000000
     # Optional organizer-supplied demographic estimates; no existing rows are backfilled.
     bundle exec rails db:migrate:up VERSION=20261122001000
+    # Optional reception start timestamp; no existing rows are modified.
+    bundle exec rails db:migrate:up VERSION=20261128000000
     bundle exec rails db:abort_if_pending_migrations
     sudo -n nginx -t
     ;;

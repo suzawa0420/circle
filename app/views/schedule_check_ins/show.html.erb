@@ -2,15 +2,22 @@
 <h2><%= @event.title %></h2>
 <p><%= render 'event_details', event: @event %></p>
 <% if @answers.any? %>
-  <p>ご自身の名前を選んでください。</p>
+  <p>ご自身の名前を選んでください。同じブラウザーで行ったチェックインは、名前をもう一度選ぶと取り消せます。</p>
   <ul class="check-in-options">
     <% @answers.each do |answer| %>
       <li>
-        <% if @checked_in_name_ids.include?(answer.name_id) %>
-          <div class="check-in-option-completed">
-            <strong><%= answer.name.name %></strong>
-            <%= render 'shared/check_in_mark' %>
-          </div>
+        <% if (check_in_id = @check_in_ids_by_name[answer.name_id]) %>
+          <% if @undoable_check_in_ids.include?(check_in_id) %>
+            <%= button_to circle_check_in_event_path(@event, token: params[:token]), method: :delete, params: { check_in_id: check_in_id }, class: 'check-in-option-completed', aria: { label: "#{answer.name.name}のチェックインを取り消す" } do %>
+              <strong><%= answer.name.name %></strong>
+              <%= render 'shared/check_in_mark' %>
+            <% end %>
+          <% else %>
+            <div class="check-in-option-completed">
+              <strong><%= answer.name.name %></strong>
+              <%= render 'shared/check_in_mark' %>
+            </div>
+          <% end %>
         <% else %>
           <%= button_to confirm_circle_check_in_path(@event, token: params[:token]), params: { name_id: answer.name_id } do %><%= answer.name.name %><% end %>
         <% end %>

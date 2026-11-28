@@ -1,4 +1,4 @@
 <h1>チェックインが完了しました</h1>
 <p><%= @event.title %></p>
 <p><strong><%= @check_in.display_name %></strong>さんのチェックインを受け付けました。</p>
-<%= link_to '受付ページに戻る', circle_check_in_path(token: params[:token]) %>
+<%= link_to '名前の選択に戻る', circle_check_in_event_path(@event, token: params[:token]) %>

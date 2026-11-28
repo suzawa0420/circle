@@ -58,6 +58,17 @@
     .mark_red { background: $cb-danger-soft; color: $cb-danger-hover; }
     .mark_yellow { background: $cb-warning-soft; color: $cb-warning-text; }
     .mark_gray { background: $cb-canvas; color: $cb-muted; }
+    .attendance-reception-line { display: flex; justify-content: center; align-items: center; gap: 4px; }
+    .attendance-reception {
+      display: inline-block;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .attendance-reception--done { background: #edf7f2; color: #0f6849; }
+    .attendance-reception--missing { background: #fff2ec; color: #993d26; }
     .attendance_comment { font-size: 12px; padding: 0; }
   }
   .attendance-archive { display: flex; justify-content: flex-end; margin-top: cb-space(4); }

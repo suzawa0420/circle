@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     get '/:schedule_id', to: 'schedule_check_ins#show', as: :circle_check_in_event
     post '/:schedule_id/confirm', to: 'schedule_check_ins#confirm', as: :confirm_circle_check_in
     post '/:schedule_id', to: 'schedule_check_ins#create'
+    delete '/:schedule_id', to: 'schedule_check_ins#destroy'
   end
   post 'picte-ad-clicks', to: 'picte_ad_clicks#create', as: :picte_ad_clicks
   get '/circle-images/:kind/:id/:fingerprint.:format', to: 'listing_images#show',
@@ -189,6 +190,7 @@ Rails.application.routes.draw do
         get :manage_attendance
         get :check_in_qr, to: 'schedule_check_in_management#show'
         post :enable_check_in, to: 'schedule_check_in_management#create'
+        post :record_check_in_usage, to: 'schedule_check_in_management#record_usage'
         delete 'check_ins/:check_in_id', to: 'schedule_check_in_management#destroy', as: :remove_check_in
         get :confirm_delete
       end

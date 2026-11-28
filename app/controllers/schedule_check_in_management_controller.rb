@@ -16,6 +16,17 @@ class ScheduleCheckInManagementController < ApplicationController
     redirect_to check_in_manage_path, status: :see_other
   end
 
+  def record_usage
+    return head :not_found unless @schedule && @circle.attendance_check_in_token.present?
+
+    @schedule.with_lock do
+      return head :not_found unless @schedule.day == ScheduleCheckIn.today && @schedule.recruitment != '中止'
+
+      @schedule.record_check_in_usage!
+    end
+    redirect_to manage_attendance_user_schedule_path(@circle, @schedule, anchor: 'day-check-ins'), status: :see_other
+  end
+
   def destroy
     @schedule.with_lock { @schedule.schedule_check_ins.find(params[:check_in_id]).destroy! }
     redirect_to manage_attendance_user_schedule_path(@circle, @schedule, anchor: 'day-check-ins'), status: :see_other

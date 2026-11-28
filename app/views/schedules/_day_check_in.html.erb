@@ -3,6 +3,10 @@
   <% if @user.attendance_check_in_token.present? %>
     <p>会場で毎回使える固定QRコードです。</p>
     <%= link_to '会場掲示用QRコードを表示', check_in_qr_user_schedule_path(@user, @schedule), class: 'em-button', data: { turbolinks: false } %>
+    <% if @schedule.day == ScheduleCheckIn.today && @schedule.recruitment != '中止' && @schedule.check_in_started_at.blank? && @day_check_ins.empty? %>
+      <p>チェックインが0人でも、この日程の未受付を過去の出欠に残せます。</p>
+      <%= button_to 'この日程の受付を記録する', record_check_in_usage_user_schedule_path(@user, @schedule), class: 'em-button' %>
+    <% end %>
   <% else %>
     <p>会場掲示用のQRコードを発行できます。発行したQRコードは今後の開催でも使えます。</p>
     <%= button_to enable_check_in_user_schedule_path(@user, @schedule), class: 'em-button' do %>受付QRコードを発行<% end %>

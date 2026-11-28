@@ -1,6 +1,6 @@
 <div class="user_main event-management"><div class="container"><div class="em-shell">
   <%= render 'schedules/management_header', title: '出欠管理', back_path: manage_user_schedule_path(@user, @schedule), back_label: 'イベント管理へ' %>
-  <nav class="em-tabs" aria-label="出欠の表示"><span aria-current="page">イベント別</span><% if @user.unique_id.present? %><%= link_to '全日程', attendances_path(@user.unique_id, archive: (@schedule.day < Date.current.iso8601 ? '1' : nil)) %><% end %></nav>
+  <nav class="em-tabs" aria-label="出欠の表示"><span aria-current="page">イベント別</span><% if @user.unique_id.present? %><%= link_to '全日程', attendances_path(@user.unique_id, archive: (@schedule.attendance_finished? ? '1' : nil)) %><% end %></nav>
   <section class="em-card"><h2><%= @schedule.title %></h2><p class="em-muted"><%= calendar_schedule_date(Date.iso8601(@schedule.day)) %> <%= calendar_schedule_time(@schedule) %></p><div class="em-count"><span>参加 <strong><%= @management.count(@schedule, 1) %></strong><%= @schedule.recruitment_numbers.to_i.positive? ? " / #{@schedule.recruitment_numbers}名" : '名' %></span><span>不参加 <%= @management.count(@schedule, 0) %> · 未回答 <%= @management.unanswered(@schedule) %></span></div></section>
   <%= render 'schedules/day_check_in' %>
   <nav class="em-tabs em-tabs--answers" aria-label="回答で絞り込み"><% { 'all' => 'すべて', 'yes' => '参加', 'no' => '不参加', 'unanswered' => '未回答' }.each do |key, label| %><%= link_to label, manage_attendance_user_schedule_path(@user, @schedule, answer: key), aria: { current: (@attendance_filter == key ? 'page' : nil) } %><% end %></nav>

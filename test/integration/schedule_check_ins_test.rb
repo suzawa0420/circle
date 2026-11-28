@@ -175,7 +175,7 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     assert_select '.check-in-option-completed strong', text: @yes.name.name
     assert_select '.check-in-option-completed strong + svg[aria-label="チェックイン済み"]', count: 1
     assert_select 'button', text: pending.name.name
-    assert_select 'button', text: @yes.name.name, count: 0
+    assert_select 'button.check-in-option-completed', text: @yes.name.name
     get circle_check_in_event_path(second, token: token)
     assert_select '.attendance-check-in-mark', count: 0
     assert_select 'button', text: @yes.name.name
@@ -187,6 +187,76 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     get circle_check_in_event_path(@event, token: token)
     assert_select '.attendance-check-in-mark', count: 0
     assert_select 'button', text: @yes.name.name
+  end
+
+  test 'only the browser that created a check-in can undo it by tapping the name' do
+    key = token
+    path = circle_check_in_event_path(@event, token: key)
+    post path, params: { name_id: @yes.name_id }
+    first = @event.schedule_check_ins.sole
+    get path
+    assert_select 'button.check-in-option-completed[aria-label=?]', "#{@yes.name.name}のチェックインを取り消す"
+
+    other_browser = open_session
+    other_browser.get path
+    other_browser.assert_select 'div.check-in-option-completed', count: 1
+    other_browser.post path, params: { name_id: @yes.name_id }
+    other_browser.delete path, params: { check_in_id: first.id }
+    other_browser.assert_response :not_found
+    assert_equal first.id, @event.schedule_check_ins.sole.id
+
+    assert_difference('ScheduleCheckIn.count', -1) do
+      delete path, params: { check_in_id: first.id }
+      assert_redirected_to path
+    end
+    follow_redirect!
+    assert_select '.attendance-check-in-mark', count: 0
+    assert_equal 1, @yes.reload.answer
+    assert @event.reload.check_in_started_at.present?
+
+    other_browser.post path, params: { name_id: @yes.name_id }
+    assert_no_difference('ScheduleCheckIn.count') do
+      delete path, params: { check_in_id: first.id }
+      assert_response :not_found
+    end
+  end
+
+  test 'past attendance shows checked in and missing only to the organizer for tracked non-cancelled events' do
+    @event.update!(time_e: '12:00')
+    key = token
+    pending = answer(@event, '受付記録なし', 1)
+    present = @yes.name
+    post circle_check_in_event_path(@event, token: key), params: { name_id: present.id }
+    assert_response :success
+    @yes.destroy! # Keep the historical record after an RSVP is removed.
+    present.destroy! # Keep the saved name in the organizer's history, too.
+    untracked = event(@circle, '受付未使用', day: '2026-11-21')
+    answer(untracked, '従来の開催', 1)
+    answer(@cancelled, '中止回', 1)
+    @cancelled.update!(time_e: '12:00', check_in_started_at: Time.current)
+    zero = event(@circle, '受付ゼロ人', time_e: '12:00')
+    answer(zero, '受付ゼロ人の参加予定', 1)
+
+    sign_in
+    post record_check_in_usage_user_schedule_path(@circle, zero)
+    assert_response :see_other
+    archive = attendances_path(@circle.unique_id, archive: 1)
+    get archive
+    assert_select '.attendance-reception', count: 0
+    travel_to Time.utc(2026, 11, 22, 3, 1) # 12:01 in Japan, same day.
+    get archive
+    assert_response :success
+    assert_includes response.headers['Cache-Control'], 'no-store'
+    assert_select 'thead th span', text: pending.name.name
+    assert_select 'thead th span', text: '参加予定'
+    assert_select '.attendance-reception--done', text: '受付済み', count: 1
+    assert_select '.attendance-reception--missing', text: '未チェックイン', count: 2
+    open_session do |visitor|
+      visitor.get archive
+      visitor.assert_response :success
+      visitor.assert_select '.attendance-reception', count: 0
+      visitor.assert_select 'thead th span', text: '参加予定', count: 0
+    end
   end
 
   test 'attendance names use blue, pink and green in member and organizer lists' do
@@ -342,6 +412,16 @@ class ScheduleCheckInsTest < ActionDispatch::IntegrationTest
     post circle_check_in_event_path(@event, token: key), params: { name_id: @yes.name_id, authenticity_token: guest_csrf }, headers: { 'Origin' => guest_origin }
     assert_response :success
     assert_equal @yes.name_id, @event.schedule_check_ins.sole.name_id
+    registered = @event.schedule_check_ins.sole
+    assert_raises(ActionController::InvalidAuthenticityToken) do
+      delete circle_check_in_event_path(@event, token: key), params: { check_in_id: registered.id }, headers: { 'Origin' => guest_origin }
+    end
+    assert ScheduleCheckIn.exists?(registered.id)
+    get circle_check_in_event_path(@event, token: key)
+    undo_csrf = css_select('meta[name=csrf-token]').first['content']
+    delete circle_check_in_event_path(@event, token: key), params: { check_in_id: registered.id, authenticity_token: undo_csrf }, headers: { 'Origin' => guest_origin }
+    assert_response :see_other
+    assert_not ScheduleCheckIn.exists?(registered.id)
   ensure
     ActionController::Base.allow_forgery_protection = original_protection
     ActionController::Base.forgery_protection_origin_check = original_origin_check

@@ -21,7 +21,8 @@ class ScheduleCheckInsController < ActionController::Base
   def show
     @multiple_events = available_events.offset(1).exists? if action_name == 'show'
     @answers = eligible_answers.includes(:name).order('names.name', :name_id, :id).to_a.uniq(&:name_id)
-    @checked_in_name_ids = @event.schedule_check_ins.pluck(:name_id).to_set
+    @check_in_ids_by_name = @event.schedule_check_ins.pluck(:name_id, :id).to_h
+    @undoable_check_in_ids = check_in_receipts.to_set
     render :show
   end
 
@@ -30,22 +31,46 @@ class ScheduleCheckInsController < ActionController::Base
   end
 
   def create
-    @event.with_lock do
-      # Recheck after the lock in case timing or the event changed since the form was shown.
-      raise ActiveRecord::RecordNotFound unless @event.day == ScheduleCheckIn.today && @event.recruitment != '中止'
-
-      raise ActiveRecord::RecordNotFound unless @circle.reload.attendance_check_in_token == params[:token]
-
-      answer = selected_answer(lock: true)
-      name = answer.name
+    # Only the session which created the record can correct it from the shared QR.
+    created_here = false
+    with_open_event do
+      name = selected_answer(lock: true).name
       @check_in = @event.schedule_check_ins.find_or_create_by!(name_id: name.id) do |check_in|
         check_in.display_name = name.name
         check_in.checked_in_at = Time.current
+        created_here = true
       end
+      @event.record_check_in_usage!(@check_in.checked_in_at)
     end
+    session[:check_in_receipts] = (check_in_receipts + [@check_in.id]).last(20) if created_here
+  end
+
+  def destroy
+    receipt = params.require(:check_in_id).to_s
+    check_in_id = check_in_receipts.find { |id| id.to_s == receipt }
+    raise ActiveRecord::RecordNotFound unless check_in_id
+
+    with_open_event do
+      @event.schedule_check_ins.find(check_in_id).destroy!
+    end
+    session[:check_in_receipts] = check_in_receipts - [check_in_id]
+    redirect_to circle_check_in_event_path(@event, token: params[:token]), status: :see_other
   end
 
   private
+
+  def check_in_receipts
+    Array(session[:check_in_receipts])
+  end
+
+  def with_open_event
+    @event.with_lock do
+      raise ActiveRecord::RecordNotFound unless @event.day == ScheduleCheckIn.today && @event.recruitment != '中止'
+      raise ActiveRecord::RecordNotFound unless @circle.reload.attendance_check_in_token == params[:token]
+
+      yield
+    end
+  end
 
   def private_response
     response.headers['Cache-Control'] = 'private, no-store'

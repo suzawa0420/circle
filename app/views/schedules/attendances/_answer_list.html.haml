@@ -42,32 +42,35 @@
                 %span.set.mark_red 満員御礼
               - else
                 %span.set.mark_green 募集中
+          - elsif schedule.recruitment == "中止"
+            %span.set.mark_yellow 中止
           - else
             %span.set.mark_gray 開催終了
         / ▲日程の行 表示▲
 
 
         / ▼名前＋ステータス 表示▼
+        - schedule_check_ins = @check_ins_by_schedule&.fetch(schedule.id, {}) || {}
+        - tracking = @show_check_in_history && schedule.recruitment != "中止" && (schedule.check_in_started_at.present? || schedule_check_ins.any?)
+        - schedule_answers = @answers_by_schedule_and_name&.fetch(schedule.id, {}) || schedule.name_schedules.order(:id).to_a.reverse.index_by(&:name_id)
         - @names.each do |name|
-          - if name.name_schedules.find_by(schedule_id: schedule.id).present?
-            - if name.name_schedules.find_by(schedule_id: schedule.id).answer == 1
-              %td
-                .answer_content
-                  .answer1
-                  - if name.name_schedules.find_by(schedule_id: schedule.id).comment.present?
-                    .attendance_comment
-                      .attendance_comment_scroll
-                        = name.name_schedules.find_by(schedule_id: schedule.id).comment
-            - elsif name.name_schedules.find_by(schedule_id: schedule.id).answer == 0
-              %td
-                .answer_content
-                  .answer0
-                  - if name.name_schedules.find_by(schedule_id: schedule.id).comment.present?
-                    .attendance_comment
-                      .attendance_comment_scroll
-                        = name.name_schedules.find_by(schedule_id: schedule.id).comment
-            - else
-              %td
-          - else
-            %td
+          - answer = schedule_answers[name.id]
+          - checked_in = tracking && schedule_check_ins.key?(name.id)
+          - missing = tracking && !checked_in && answer&.answer == 1
+          %td
+            - if answer || checked_in
+              .answer_content
+                .attendance-reception-line
+                  - if answer&.answer == 1
+                    .answer1
+                  - elsif answer&.answer == 0
+                    .answer0
+                  - if checked_in
+                    %span.attendance-reception.attendance-reception--done 受付済み
+                  - elsif missing
+                    %span.attendance-reception.attendance-reception--missing 未チェックイン
+                - if answer&.comment.present?
+                  .attendance_comment
+                    .attendance_comment_scroll
+                      = answer.comment
         / ▲名前＋ステータス 表示▲

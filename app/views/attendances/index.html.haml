@@ -55,6 +55,8 @@
           %p.attendance-scroll-hint
             左右にスクロールして日程を確認
             = lucide_icon "arrow-right", **{ "aria-hidden" => "true" }
+      - if @show_check_in_history && @schedules.present?
+        %p.attendance-guide 未チェックインは参加予定で受付記録がない方です。受付を利用していない日程には表示されません。
       - unless archived
         %ul.attendance-guide
           %li 名前を選ぶと、出欠の変更・追加ができます。
